@@ -32,7 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      * startup.
      */
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        self.openDataStore()
+        self.openLastLibrary()
         
         // TODO: do stuff
     }
@@ -65,14 +65,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     /**
      * Implements the data store loading and info window logic.
      */
-    func openDataStore() {
+    func openLastLibrary() {
+        // short circuit if option was held
+        let flags = NSEvent.modifierFlags
+        if flags.contains(.option) {
+            // try to open the selected library
+            if let url = self.presentLibraryPicker() {
+                self.openLibrary(url)
+                return
+            }
+            
+            // if that failed, we can go down the normal path
+        }
+        
+        // try the last container path
+        
+        // nothing was available. open a picker, quit if that fails
+        guard let url = self.presentLibraryPicker() else {
+            return NSApp.terminate(self)
+        }
+        self.openLibrary(url)
+    }
+    
+    /**
+     * Attempt to open a data store at the given URL. If opening fails, the library picker is opened again but
+     * with an error message.
+     */
+    func openLibrary(_ url: URL) {
+        // register it with the history manager
+        LibraryHistoryManager.openLibrary(url)
     }
     
     /**
      * Presents the data store picker. A tuple of attempted URL and error can be passed to display an error
      * why a store failed to open.
      */
-    func presentStorePicker(_ failureInfo: (URL, Error)?) {
+    func presentLibraryPicker(_ failureInfo: (URL, Error)? = nil) -> URL! {
+        let picker = LibraryPickerController()
+        
+        if let info = failureInfo {
+            picker.setErrorInfo(url: info.0, error: info.1)
+        }
+        
+        return picker.presentModal()
     }
 }
 

@@ -18,10 +18,10 @@ import CocoaLumberjackSwift
  */
 public class ContainerHelper {
     /// App group name, this must be hardcoded. lol sorry
-    static let groupName = "8QDQ246B94.SmokeShed"
+    private static let groupName = "8QDQ246B94.SmokeShed"
     
     /// Base URL to the group container
-    static var groupContainer: URL {
+    public static var groupContainer: URL {
         let fm = FileManager.default
         
         // safe to force unwrap since always valid on macOS
@@ -31,7 +31,7 @@ public class ContainerHelper {
     
     
     /// Base URL of the application specific cache directory
-    static var appCache: URL? {
+    public static var appCache: URL? {
         do {
             return try FileManager.default.url(for: .cachesDirectory,
                                        in: .userDomainMask,
@@ -43,7 +43,7 @@ public class ContainerHelper {
     }
     
     /// Base URL of the application specific data directory
-    static var appData: URL? {
+    public static var appData: URL? {
         do {
             return try FileManager.default.url(for: .applicationSupportDirectory,
                                        in: .userDomainMask,
