@@ -1,0 +1,10 @@
+#  CarthageInputs.xcfilelist
+#  Smokeshed
+#
+#  Created by Tristan Seifert on 20200605.
+#  
+
+# These are the Carthage frameworks we would like to copy into the Mac app.
+$(SRCROOT)/Carthage/Build/Mac/CocoaLumberjack.framework
+$(SRCROOT)/Carthage/Build/Mac/CocoaLumberjackSwift.framework
+

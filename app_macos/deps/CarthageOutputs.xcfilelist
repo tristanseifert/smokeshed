@@ -1,0 +1,10 @@
+#  CarthageInputs.xcfilelist
+#  Smokeshed
+#
+#  Created by Tristan Seifert on 20200605.
+#  
+
+# Output paths of the Carthage frameworks.
+$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework
+$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjackSwift.framework
+
