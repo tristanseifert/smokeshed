@@ -38,6 +38,7 @@
 		6A4CEF35248B62D400145E49 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */; };
 		6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */; };
+		6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		6A4CEF2C248B59F900145E49 /* Bowl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bowl.h; path = frameworks/Bowl/src/include/Bowl.h; sourceTree = "<group>"; };
 		6A4CEF33248B5F5500145E49 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = frameworks/Bowl/src/Logging/Logger.swift; sourceTree = "<group>"; };
 		6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryHistoryManager.swift; path = "app_macos/src/UI State Handling/LibraryHistoryManager.swift"; sourceTree = "<group>"; };
+		6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library UI.xcassets"; path = "app_macos/assets/Library UI.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +185,7 @@
 			children = (
 				6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */,
 				6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */,
+				6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */,
 			);
 			name = "Library UI";
 			sourceTree = "<group>";
@@ -597,6 +600,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,

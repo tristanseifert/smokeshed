@@ -7,10 +7,12 @@
 
 import Cocoa
 
+import CocoaLumberjackSwift
+
 /**
  * Provides an UI to allow picking a library.
  */
-class LibraryPickerController: NSWindowController, NSWindowDelegate {
+class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableViewDelegate, NSMenuItemValidation {
     /// URL of the library to open
     private var pickedUrl: URL! = nil
     
@@ -30,7 +32,7 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
         self.loadHistory()
     }
     
-    // MARK: - Modal handling
+    // MARK: - General UI
     /**
      * Modally presents the window. The URL of a new library to open, or nil if the process was aborted, is
      * returned.
@@ -39,15 +41,28 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
         let resp = NSApp.runModal(for: self.window!)
         
         // dismiss the window when we return
-        self.window?.close()
+        if self.window!.isVisible {
+            self.window?.close()
+        }
     
         // was the "open selected" option chosen?
         if resp == .OK {
+            DDLogVerbose("Library picked: \(self.pickedUrl!)")
             return self.pickedUrl
         }
         // no URL was decided on
         else {
             return nil
+        }
+    }
+    
+    /**
+     * First time the window is presented, if an error message/faulting URL is available, we want to present
+     * that as a sheet.
+     */
+    func windowDidChangeOcclusionState(_ notification: Notification) {
+        if self.window!.occlusionState.contains(.visible) {
+            self.presentErrorInfo()
         }
     }
     
@@ -58,7 +73,6 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
         NSApp.stopModal(withCode: .cancel)
     }
     
-    // MARK: - General UI
     /// Box containing detail info
     @IBOutlet var detailsBox: NSBox! = nil
     /// Layout constraint for box height
@@ -125,15 +139,16 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
                 
                 // library is accessible if we got its attributes
                 self.accessible = true
+                
+                // also, get the icon
+                self.icon = NSWorkspace.shared.icon(forFile: url.path)
             } catch {
                 // ignore errors
             }
         }
         
         /// An icon for the file; this will probably just be the file type icon
-        @objc dynamic var icon: NSImage! {
-            return NSWorkspace.shared.icon(forFile: self.fullUrl.path)
-        }
+        @objc dynamic var icon: NSImage! = NSImage(named: NSImage.cautionName)
         /// Full URL of the library file
         @objc dynamic var fullUrl: URL! = nil
         /// Date last opened
@@ -146,6 +161,25 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
         @objc dynamic var numPhotos: UInt = 0
         /// Whether this library is accessible
         @objc dynamic var accessible: Bool = false
+        
+        /// Label color; if accessible, it's the normal label color, red otherwise.
+        @objc dynamic var labelColor: NSColor {
+            if self.accessible {
+                return NSColor.labelColor
+            } else {
+                return NSColor(named: "InaccessibleLibraryHistoryEntryTextColor")!
+            }
+        }
+        
+        /// Row tool tip; indicates if not accessible
+        @objc dynamic var rowToolTip: String! {
+            if !self.accessible {
+                return NSLocalizedString("This library is inaccessible. Ensure that it exists at this path, and that you have permission to access it.",
+                                         comment: "LibraryPickerController inaccessible library row tooltip")
+            }
+            
+            return nil
+        }
         
         /// Filename component of the URL
         @objc dynamic var filename: String! {
@@ -164,6 +198,8 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
      */
     @objc dynamic var historyArray = [HistoryEntry]()
     
+    /// Table view displaying history
+    @IBOutlet var historyTable: NSTableView!
     /// Array controller for history
     @IBOutlet var historyController: NSArrayController!
     
@@ -192,9 +228,75 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
             return
         }
         
+        DDLogDebug("Selected history entry: \(selected)")
+        
         // use it
         self.pickedUrl = selected.fullUrl
         NSApp.stopModal(withCode: .OK)
+    }
+    
+    /**
+     * Do not allow selection of an inaccessible library.
+     */
+    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+        return self.historyArray[row].accessible
+    }
+    
+    /**
+     * Attempts to reveal the selected history entry in Finder.
+     */
+    @IBAction func revealEntry(_ sender: Any) {
+        let entry = self.historyArray[self.historyTable.clickedRow]
+        NSWorkspace.shared.activateFileViewerSelecting([entry.fullUrl])
+    }
+    
+    /**
+     * Copies the path of the library to the pasteboard.
+     */
+    @IBAction func copyEntryPath(_ sender: Any) {
+        let entry = self.historyArray[self.historyTable.clickedRow]
+        let path = entry.fullUrl.path
+        
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(path, forType: .string)
+    }
+    
+    /**
+     * Removes the selected entry from the history list.
+     */
+    @IBAction func removeEntry(_ sender: Any) {
+        let entry = self.historyArray[self.historyTable.clickedRow]
+        
+        LibraryHistoryManager.removeLibrary(entry.fullUrl)
+        self.loadHistory()
+    }
+    
+    /**
+     * Allow validating user actions; this is primarily used for the history table context menu.
+     */
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        switch menuItem.action {
+            // these actions just require a valid selection
+            case #selector(removeEntry(_:)):
+                fallthrough
+            
+            case #selector(copyEntryPath(_:)):
+                return self.historyTable.clickedRow >= 0
+            
+            // all below actions require an accessible entry
+            case #selector(revealEntry(_:)):
+                if self.historyTable.clickedRow >= 0 {
+                    let entry = self.historyArray[self.historyTable.clickedRow]
+                    return entry.accessible
+                }
+                
+            // do not handle other menu items
+            default:
+                return false
+        }
+        
+        // we don't handle other menu items
+        return false
     }
     
     // MARK: - Browsing
@@ -257,11 +359,33 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate {
     }
     
     // MARK: - Errors
+    /// Error message/URL tuple to display info about
+    private var errorInfo: (URL, Error)! = nil
+    
     /**
      * If the reason this controller is to be presented was because of an error loading a library, provide the
      * relevant faulting URL and error information.
      */
-    func setErrorInfo(url: URL!, error: Error!) {
+    func setErrorInfo(url: URL, error: Error) {
+        self.errorInfo = (url, error)
+    }
+    
+    /**
+     * Presents an error sheet on the main window.
+     */
+    private func presentErrorInfo() {
+        // bail if we don't have any error info
+        guard let info = self.errorInfo else {
+            return
+        }
         
+        // build the alert
+        let alert = NSAlert(error: info.1)
+        
+        alert.informativeText = "\(alert.informativeText)\n\nLibrary path: \(info.0.path)"
+        
+        alert.addButton(withTitle: NSLocalizedString("OK", comment: "LibraryPickerController error info dismiss button"))
+        
+        alert.beginSheetModal(for: self.window!, completionHandler: nil)
     }
 }

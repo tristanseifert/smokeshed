@@ -10,6 +10,7 @@
                 <outlet property="detailsBox" destination="cQ4-u0-ARl" id="IMH-EO-pXn"/>
                 <outlet property="detailsHeightConstraint" destination="BjR-QC-7Mo" id="StS-ki-jmc"/>
                 <outlet property="historyController" destination="q82-E5-pdd" id="gmY-is-kaq"/>
+                <outlet property="historyTable" destination="aJO-fp-gjj" id="vNh-nN-WU7"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -18,7 +19,7 @@
         <window title="Choose Library" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="240" width="600" height="396"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1152"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1129"/>
             <value key="minSize" type="size" width="600" height="396"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="600" height="397"/>
@@ -44,8 +45,8 @@
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FWu-TK-ghS">
-                        <rect key="frame" x="55" y="13" width="166" height="32"/>
-                        <buttonCell key="cell" type="push" title="Create New Library…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3S-cK-vuV">
+                        <rect key="frame" x="47" y="13" width="121" height="32"/>
+                        <buttonCell key="cell" type="push" title="Create New…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3S-cK-vuV">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent">n</string>
@@ -165,6 +166,8 @@
                                                             </textFieldCell>
                                                             <connections>
                                                                 <binding destination="iAH-ia-ZaE" name="value" keyPath="objectValue.filename" id="ZIG-sR-Jbi"/>
+                                                                <binding destination="iAH-ia-ZaE" name="textColor" keyPath="objectValue.labelColor" id="oJI-n2-ddL"/>
+                                                                <binding destination="iAH-ia-ZaE" name="toolTip" keyPath="objectValue.rowToolTip" id="EyX-3e-U70"/>
                                                             </connections>
                                                         </textField>
                                                     </subviews>
@@ -204,6 +207,8 @@
                                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                             <connections>
+                                                                <binding destination="1aS-0f-Vrg" name="textColor" keyPath="objectValue.labelColor" id="NAY-CS-PPc"/>
+                                                                <binding destination="1aS-0f-Vrg" name="toolTip" keyPath="objectValue.rowToolTip" id="W4x-Y6-lrE"/>
                                                                 <binding destination="1aS-0f-Vrg" name="value" keyPath="objectValue.lastOpened" id="Iyt-um-IZT">
                                                                     <dictionary key="options">
                                                                         <string key="NSNullPlaceholder">Unknown</string>
@@ -227,6 +232,8 @@
                                     <connections>
                                         <binding destination="q82-E5-pdd" name="content" keyPath="arrangedObjects" id="nYt-XV-9hh"/>
                                         <binding destination="q82-E5-pdd" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="nYt-XV-9hh" id="yO3-24-APl"/>
+                                        <outlet property="delegate" destination="-2" id="Epc-KV-nZ1"/>
+                                        <outlet property="menu" destination="ZHe-y1-w7F" id="xi8-HI-fGI"/>
                                     </connections>
                                 </tableView>
                             </subviews>
@@ -259,6 +266,13 @@
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZmJ-G8-Ptz">
                         <rect key="frame" x="33" y="160" width="86" height="15"/>
+                        <gestureRecognizers>
+                            <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="nwv-Zh-GhI">
+                                <connections>
+                                    <action selector="performClick:" target="eNx-4C-N0m" id="Slf-eH-wxJ"/>
+                                </connections>
+                            </clickGestureRecognizer>
+                        </gestureRecognizers>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Library Details" id="2uH-dL-QmB">
                             <font key="font" metaFont="label" size="12"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -326,22 +340,18 @@
                                         <binding destination="q82-E5-pdd" name="value" keyPath="selection.filesize" id="cn5-H5-Mbt"/>
                                     </connections>
                                 </textField>
-                                <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nxw-Tn-0IQ">
-                                    <rect key="frame" x="65" y="70" width="258" height="20"/>
-                                    <pathCell key="cell" controlSize="small" selectable="YES" alignment="left" id="ktW-3I-KeI">
+                                <pathControl verticalHuggingPriority="749" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nxw-Tn-0IQ">
+                                    <rect key="frame" x="65" y="70" width="83" height="17"/>
+                                    <pathCell key="cell" controlSize="small" selectable="YES" alignment="left" placeholderString="No Selection" id="ktW-3I-KeI">
                                         <font key="font" metaFont="message" size="11"/>
-                                        <url key="url" string="file:///Users/tristan/Pictures/default.smokelib"/>
                                     </pathCell>
                                     <connections>
-                                        <binding destination="q82-E5-pdd" name="enabled" keyPath="selectedObjects.@count" id="rlh-jV-5ny">
+                                        <binding destination="q82-E5-pdd" name="value" keyPath="selection.fullUrl" id="HBa-IT-jHr">
                                             <dictionary key="options">
-                                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                                <integer key="NSNullPlaceholder" value="0"/>
+                                                <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                <bool key="NSConditionallySetsEnabled" value="NO"/>
                                             </dictionary>
                                         </binding>
-                                        <binding destination="q82-E5-pdd" name="value" keyPath="selection.fullUrl" id="3BE-UJ-YPF"/>
                                     </connections>
                                 </pathControl>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="662-Nh-V3q">
@@ -420,7 +430,7 @@
                     <constraint firstItem="Ft6-PW-hg1" firstAttribute="leading" secondItem="JLE-51-9Xc" secondAttribute="trailing" constant="12" id="mBa-P8-jiV"/>
                     <constraint firstItem="cQ4-u0-ARl" firstAttribute="leading" secondItem="PJa-M6-aLY" secondAttribute="leading" id="nOe-Wh-YXv"/>
                     <constraint firstItem="cQ4-u0-ARl" firstAttribute="top" secondItem="ZmJ-G8-Ptz" secondAttribute="bottom" constant="6" id="noD-2E-587"/>
-                    <constraint firstItem="FWu-TK-ghS" firstAttribute="leading" secondItem="3hd-56-OvQ" secondAttribute="trailing" constant="20" id="oc9-qm-gWs"/>
+                    <constraint firstItem="FWu-TK-ghS" firstAttribute="leading" secondItem="3hd-56-OvQ" secondAttribute="trailing" constant="12" id="oc9-qm-gWs"/>
                     <constraint firstItem="Ft6-PW-hg1" firstAttribute="top" secondItem="cQ4-u0-ARl" secondAttribute="bottom" constant="13" id="tfO-7c-Oiz"/>
                     <constraint firstItem="PJa-M6-aLY" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="wge-ht-8fL"/>
                 </constraints>
@@ -439,6 +449,30 @@
                 </binding>
             </connections>
         </arrayController>
+        <menu id="ZHe-y1-w7F" userLabel="History Context Menu">
+            <items>
+                <menuItem title="Reveal in Finder…" id="y5i-Oh-mSi">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="revealEntry:" target="-2" id="h1a-uc-AKS"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Copy Path" id="hg4-Iz-5F5">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="copyEntryPath:" target="-2" id="8gh-OW-d59"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="chw-rm-KbY"/>
+                <menuItem title="Remove from History" id="TK8-4O-sQr">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeEntry:" target="-2" id="KLR-0n-S4G"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="493" y="189"/>
+        </menu>
     </objects>
     <resources>
         <image name="NSFolder" width="32" height="32"/>

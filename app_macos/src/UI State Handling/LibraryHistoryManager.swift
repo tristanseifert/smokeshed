@@ -8,6 +8,8 @@
 import Foundation
 import Bowl
 
+import CocoaLumberjackSwift
+
 /**
  * Provides an interface to the library open history. This is maintained as an ordered set of URLs, where the
  * topmost (first) URL is the most recently opened one.
@@ -37,8 +39,7 @@ class LibraryHistoryManager {
                 self.writeHistory()
             }
         } catch {
-           // failed to read history in
-           // TODO: log this
+            DDLogError("Failed to read history from \(self.historyUrl!): \(error)")
        }
     }
     
@@ -52,8 +53,7 @@ class LibraryHistoryManager {
                                                         requiringSecureCoding: true)
             try data.write(to: self.historyUrl, options: .atomic)
         } catch {
-            // failed to write history out
-            // TODO: log this
+            DDLogError("Failed to write history to \(self.historyUrl!): \(error)")
         }
     }
     
@@ -71,6 +71,14 @@ class LibraryHistoryManager {
             self.urls.insert(url, at: 0)
         }
         
+        self.writeHistory()
+    }
+    
+    /**
+     * If the given URL is in the history, remove it.
+     */
+    static func removeLibrary(_ url: URL) {
+        self.urls.remove(url)
         self.writeHistory()
     }
     
