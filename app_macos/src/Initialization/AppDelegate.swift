@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func openLastLibrary() {
         // present the picker if option is held during startup
         if NSEvent.modifierFlags.contains(.option) {
-            if self.pickLibraryAndOpen(false) {
+            if self.pickLibraryAndOpen(true) {
                 return
             }
         }

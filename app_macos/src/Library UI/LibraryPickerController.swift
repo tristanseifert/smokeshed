@@ -33,6 +33,7 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
         super.windowDidLoad()
         
         self.loadHistory()
+        self.restoreDisclosureState()
     }
     
     // MARK: - General UI
@@ -76,7 +77,9 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
     func windowWillClose(_ notification: Notification) {
         NSApp.stopModal(withCode: .cancel)
     }
-    
+
+    /// Disclosure triangle button
+    @IBOutlet var detailsButton: NSButton! = nil
     /// Box containing detail info
     @IBOutlet var detailsBox: NSBox! = nil
     /// Layout constraint for box height
@@ -88,6 +91,7 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
     @IBAction func detailsDisclosure(_ sender: NSButton) {
         // show details view
         if sender.state == .on {
+            detailsBox.alphaValue = 0.0
             detailsBox.isHidden = false
             
             NSAnimationContext.runAnimationGroup({ (ctx) in
@@ -112,6 +116,31 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
                 self.detailsBox.isHidden = true
             })
         }
+
+        // save the disclosure state
+        self.saveDisclosureState()
+    }
+
+    /**
+     * Restores the state of the details disclosure button.
+     */
+    private func restoreDisclosureState() {
+        let shown = UserDefaults.standard.bool(forKey: "TSLibraryPickerControllerDetailsVisible")
+
+        if !shown {
+            detailsHeightConstraint.constant = 0
+            self.detailsBox.isHidden = true
+        }
+
+        self.detailsButton.state = (shown ? .on : .off)
+    }
+
+    /**
+     * Saves the state of the details disclosure button.
+     */
+    private func saveDisclosureState() {
+        UserDefaults.standard.set((self.detailsButton.state == .on),
+            forKey: "TSLibraryPickerControllerDetailsVisible")
     }
     
     /**
