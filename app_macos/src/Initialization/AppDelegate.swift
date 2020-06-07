@@ -104,6 +104,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             } catch {
                 // the error info will be displayed next
                 failureInfo = (url, error)
+
+                self.library = nil
+                self.store = nil
             }
         }
         
@@ -140,6 +143,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             } catch {
                 // present the proper error next time
                 failureInfo = (url, error)
+
+                self.library = nil
+                self.store = nil
             }
         }
     }
@@ -154,6 +160,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // load the library and its data store
         self.library = try LibraryBundle(url)
         self.store = try LibraryStore(self.library)
+
+        // migrate store if required
+        if self.store.migrationRequired {
+            DDLogVerbose("Migration required for library '\(url)'")
+            abort() // XXX: remove this when implemented :)
+        }
 
         // once everything loaded, add it to the history
         LibraryHistoryManager.openLibrary(url)

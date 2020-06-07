@@ -94,9 +94,14 @@ public class LibraryStore {
                 DDLogError("Failed to add persistent store '\(url)': \(error)")
 
                 // is migration required?
+                let nsErr = error as NSError
 
-                // otherwise, rethrow the error later
-                addError = error
+                if nsErr.domain == NSCocoaErrorDomain && nsErr.code == NSPersistentStoreIncompatibleVersionHashError {
+                    self.deferredMigrationNeeded = true
+                } else {
+                    // otherwise, rethrow the error later
+                    addError = error
+                }
             }
             // success! no migration required
             else {
