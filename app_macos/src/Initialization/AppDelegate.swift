@@ -6,7 +6,10 @@
 //
 
 import Cocoa
+
 import Bowl
+import Smokeshop
+import CocoaLumberjackSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -66,34 +69,74 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      * Implements the data store loading and info window logic.
      */
     func openLastLibrary() {
-        // short circuit if option was held
-        let flags = NSEvent.modifierFlags
-        if flags.contains(.option) {
-            // try to open the selected library
-            if let url = self.presentLibraryPicker() {
-                self.openLibrary(url)
+        // present the picker if option is held during startup
+        if NSEvent.modifierFlags.contains(.option) {
+            if self.pickLibraryAndOpen(false) {
                 return
             }
-            
-            // if that failed, we can go down the normal path
         }
         
-        // try the last container path
-        
-        // nothing was available. open a picker, quit if that fails
-        guard let url = self.presentLibraryPicker() else {
-            return NSApp.terminate(self)
+        // try the last opened library path
+        var failureInfo: (URL, Error)? = nil
+
+        if let url = LibraryHistoryManager.getMostRecentlyOpened() {
+            do {
+                return try self.openLibrary(url)
+            } catch {
+                // the error info will be displayed next
+                failureInfo = (url, error)
+            }
         }
-        self.openLibrary(url)
+        
+        // open a picker; quit if closed but loop on error
+        self.pickLibraryAndOpen(true, withErrorInfo: failureInfo)
+    }
+
+    /**
+     * Repeatedly presents a picker until a library is successfully opened. The function can either return or
+     * terminate the app if the picker is canceled.
+     *
+     * @return Whether a library was opened
+     */
+    @discardableResult func pickLibraryAndOpen(_ terminateOnClose: Bool = false, withErrorInfo errorInfo: (URL, Error)? = nil) -> Bool {
+        var failureInfo: (URL, Error)? = errorInfo
+        
+        while true {
+            // ask user to pick a library
+            guard let url = self.presentLibraryPicker(failureInfo) else {
+                // terminate or just return when done
+                if terminateOnClose {
+                    NSApp.terminate(self)
+                    return false
+                } else {
+                    return false
+                }
+            }
+
+            // attempt to actually open the library
+            do {
+                // if opening succeeds, return
+                try self.openLibrary(url)
+                return true
+            } catch {
+                // present the proper error next time
+                failureInfo = (url, error)
+            }
+        }
     }
     
     /**
      * Attempt to open a data store at the given URL. If opening fails, the library picker is opened again but
      * with an error message.
      */
-    func openLibrary(_ url: URL) {
-        // register it with the history manager
+    func openLibrary(_ url: URL) throws {
+        DDLogVerbose("Opening library from: \(url)")
+
         LibraryHistoryManager.openLibrary(url)
+
+        // create the library bundle and set up the app with it
+        let bundle = try LibraryBundle(url)
+        DDLogVerbose("Loaded library: \(bundle)")
     }
     
     /**
