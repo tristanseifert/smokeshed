@@ -45,7 +45,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      * they're busy with.
      */
     func applicationWillTerminate(_ aNotification: Notification) {
-        // TODO: do stuff
+        // save library bundle if one is open
+        if let library = self.library, let store = self.store {
+            do {
+                try store.save()
+                try library.write()
+            } catch {
+                DDLogError("Failed to save library '\(String(describing: self.library))' during shutdown: \(error)")
+
+                NSApp.presentError(error)
+            }
+        }
     }
 
     /**
@@ -65,6 +75,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     
     // MARK: - Data store handling
+    /// Currently loaded library
+    private var library: LibraryBundle! = nil
+    /// Data store for the loaded library
+    private var store: LibraryStore! = nil
+
     /**
      * Implements the data store loading and info window logic.
      */
@@ -81,6 +96,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if let url = LibraryHistoryManager.getMostRecentlyOpened() {
             do {
+                // this will raise if library doesn't exist
+                try FileManager.default.attributesOfItem(atPath: url.path)
+
+                // if it exists, try to open the library
                 return try self.openLibrary(url)
             } catch {
                 // the error info will be displayed next
@@ -132,11 +151,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func openLibrary(_ url: URL) throws {
         DDLogVerbose("Opening library from: \(url)")
 
-        LibraryHistoryManager.openLibrary(url)
+        // load the library and its data store
+        self.library = try LibraryBundle(url)
+        self.store = try LibraryStore(self.library)
 
-        // create the library bundle and set up the app with it
-        let bundle = try LibraryBundle(url)
-        DDLogVerbose("Loaded library: \(bundle)")
+        // once everything loaded, add it to the history
+        LibraryHistoryManager.openLibrary(url)
     }
     
     /**

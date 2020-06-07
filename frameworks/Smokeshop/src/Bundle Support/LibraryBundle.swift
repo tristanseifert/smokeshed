@@ -18,8 +18,13 @@ public class LibraryBundle {
     /// File wrapper around the library bundle
     private var wrapper: FileWrapper! = nil
 
+    /// Contents directory wrapper
+    private var contentsWrap: FileWrapper! = nil
+    /// URL to the contents directory
+    private var contentsUrl: URL! = nil
+
     /// URL to the data store
-    private var storeUrl: URL! = nil
+    var storeUrl: URL! = nil
 
     /// Library metdata
     private var meta: LibraryMeta = LibraryMeta()
@@ -45,26 +50,38 @@ public class LibraryBundle {
         // attempt to read the bundle and ensure it's a directory
         self.wrapper = try FileWrapper(url: url)
 
-        guard wrapper.isDirectory else {
+        guard self.wrapper.isDirectory else {
             let msg = NSLocalizedString("Not a directory", tableName: nil,
                         bundle: b, value: "",
                         comment: "library directory check failed")
             throw LibraryBundleError.invalidFormat(message: msg)
         }
 
+        // extract a reference to the Contents directory
+        guard let contents = self.getRootWrapper("Contents") else {
+            throw LibraryBundleError.missingContents
+        }
+        self.contentsWrap = contents
+
+        self.contentsUrl = self.url.appendingPathComponent("Contents",
+                                                      isDirectory: true)
+
         // load metadata and validate store
         try self.loadMetadata()
 
-        self.storeUrl = self.url.appendingPathComponent(self.meta.storePath,
+        self.storeUrl = self.contentsUrl.appendingPathComponent(self.meta.storePath,
                                                         isDirectory: false)
     }
 
     /**
      * Creates the basic structure of the library:
      *
+     * - Metadata.plist: Basic information about the library
      * - Contents: directory holding all data
-     *  ↳ Metadata.plist: Basic information about the library
      *  ↳ Store.sqlite: CoreData store
+     *  ↳ Media: Destination directory for imported images
+     *   ↳ Previews: Lower resolution previews of images (for editing/display)
+     *   ↳ Originals: Files as they were imported
      */
     private func createStructure() throws {
         // create metadata and encode it
@@ -76,13 +93,30 @@ public class LibraryBundle {
 
         let metaWrapper = FileWrapper(regularFileWithContents: data)
 
+        // media directory
+        let previews = FileWrapper(directoryWithFileWrappers: [:])
+        previews.preferredFilename = "Previews"
+
+        let originals = FileWrapper(directoryWithFileWrappers: [:])
+        originals.preferredFilename = "Originals"
+
+        let media = FileWrapper(directoryWithFileWrappers: [
+            "Previews": previews,
+            "Originals": originals
+        ])
+
+        // data store directory
+        let storeDir = FileWrapper(directoryWithFileWrappers: [:])
+
         // contents directory
         let contents = FileWrapper(directoryWithFileWrappers: [
-            "Metadata.plist": metaWrapper
+            "Media": media,
+            "Store": storeDir
         ])
 
         // create the main wrapper and write it
         let bundle = FileWrapper(directoryWithFileWrappers: [
+            "Metadata.plist": metaWrapper,
             "Contents": contents
         ])
 
@@ -94,21 +128,33 @@ public class LibraryBundle {
      * Forces the bundle to be written out to disk.
      */
     public func write() throws {
-        try self.wrapper.write(to: self.url, originalContentsURL: nil)
+        try self.writeMetadata()
+
+        // DO NOT write the entire wrapper. it will break shit
+//        try self.wrapper.write(to: self.url, originalContentsURL: self.url)
     }
 
     /**
      * Gets a reference to a file wrapper with the given name inside of the contents directory.
      */
     private func getWrapper(_ name: String) -> FileWrapper! {
-        // first, get the contents wrapper
-        guard let contents = self.wrapper.fileWrappers?["Contents"] else {
-            DDLogError("Failed to get Contents wrapper from \(self.wrapper!)")
-            return nil
+        // then, query it for the given wrapper
+        for entry in self.contentsWrap.fileWrappers! {
+            if entry.value.filename == name {
+                return entry.value
+            }
         }
 
+        // failed to find file
+        return nil
+    }
+
+    /**
+     * Gets a reference to a file wrapper with the given name inside of the root of the library.
+     */
+    private func getRootWrapper(_ name: String) -> FileWrapper! {
         // then, query it for the given wrapper
-        for entry in contents.fileWrappers! {
+        for entry in self.wrapper.fileWrappers! {
             if entry.value.filename == name {
                 return entry.value
             }
@@ -125,7 +171,7 @@ public class LibraryBundle {
     private func createMetadata() {
         // version and compatibility info
         self.meta.version = 1
-        self.meta.storePath = "Store.sqlite"
+        self.meta.storePath = "Store/Library.sqlite"
 
         // what app version created this
         if let appInfo = Bundle.main.infoDictionary {
@@ -149,7 +195,7 @@ public class LibraryBundle {
         let b = Bundle(for: LibraryBundle.self)
 
         // find the Metadata.plist file and read its contents
-        guard let metaWrapper = self.getWrapper("Metadata.plist") else {
+        guard let metaWrapper = self.getRootWrapper("Metadata.plist") else {
             let msg = NSLocalizedString("Failed to get metadata file",
                         tableName: nil, bundle: b, value: "",
                         comment: "library failed to get Metadata.plist wrapper")
@@ -167,8 +213,32 @@ public class LibraryBundle {
         let plist = PropertyListDecoder()
         let meta = try plist.decode(LibraryMeta.self, from: data)
 
+        // validate version and store it
+        if meta.version != 1 {
+            throw LibraryBundleError.invalidVersion(meta.version)
+        }
+
         self.meta = meta
         DDLogDebug("Loaded metadata for library \(self.url!): \(self.meta)")
+    }
+
+    /**
+     * Writes metadata to the appropriate file handle.
+     */
+    private func writeMetadata() throws {
+        // encode to a binary property list
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        let data = try encoder.encode(self.meta)
+
+        // create a new file wrapper with that data
+        let url = self.url.appendingPathComponent("Metadata.plist")
+
+        let wrapper = FileWrapper(regularFileWithContents: data)
+        wrapper.preferredFilename = "Metadata.plist"
+
+        // then, write it out
+        try wrapper.write(to: url, options: .atomic, originalContentsURL: url)
     }
 
     /**
