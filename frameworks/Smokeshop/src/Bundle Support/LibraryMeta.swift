@@ -33,6 +33,11 @@ public struct LibraryMeta: Codable {
     /// Cached info containing the number of items in the library
     public var numItems: UInt! = nil
 
+    /// Library name
+    public var displayName: String! = nil
+    /// User provided description for library
+    public var userDescription: String! = nil
+
     /// User metadata
     public var userInfo: [String: String]! = nil
 }

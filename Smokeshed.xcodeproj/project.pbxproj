@@ -33,6 +33,9 @@
 		6A2C5F5D248CB612009EA409 /* Camera+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F4F248CB5F7009EA409 /* Camera+CoreDataProperties.swift */; };
 		6A2C5F5E248CB612009EA409 /* GPSLocation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F50248CB5F7009EA409 /* GPSLocation+CoreDataClass.swift */; };
 		6A2C5F5F248CB612009EA409 /* GPSLocation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F51248CB5F7009EA409 /* GPSLocation+CoreDataProperties.swift */; };
+		6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F61248CC83E009EA409 /* MainWindowController.swift */; };
+		6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A2C5F62248CC83E009EA409 /* MainWindowController.xib */; };
+		6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */; };
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
@@ -142,6 +145,9 @@
 		6A2C5F4F248CB5F7009EA409 /* Camera+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Camera+CoreDataProperties.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/Camera+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		6A2C5F50248CB5F7009EA409 /* GPSLocation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GPSLocation+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/GPSLocation+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6A2C5F51248CB5F7009EA409 /* GPSLocation+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GPSLocation+CoreDataProperties.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/GPSLocation+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		6A2C5F61248CC83E009EA409 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowController.swift; path = "app_macos/src/Main Window/MainWindowController.swift"; sourceTree = "<group>"; };
+		6A2C5F62248CC83E009EA409 /* MainWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindowController.xib; path = "app_macos/src/Main Window/MainWindowController.xib"; sourceTree = "<group>"; };
+		6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityViewController.swift; path = "app_macos/src/Main Window/ActivityViewController.swift"; sourceTree = "<group>"; };
 		6A4CEE9A248B259500145E49 /* SmokeShed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmokeShed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEB6248B272300145E49 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Icons.xcassets; path = app_macos/assets/Icons.xcassets; sourceTree = "<group>"; };
 		6A4CEEBA248B273D00145E49 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenu.xib; path = app_macos/assets/UI/MainMenu.xib; sourceTree = "<group>"; };
@@ -273,6 +279,16 @@
 			name = "Model Subclasses";
 			sourceTree = "<group>";
 		};
+		6A2C5F60248CC59B009EA409 /* Main Window */ = {
+			isa = PBXGroup;
+			children = (
+				6A2C5F61248CC83E009EA409 /* MainWindowController.swift */,
+				6A2C5F62248CC83E009EA409 /* MainWindowController.xib */,
+				6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */,
+			);
+			name = "Main Window";
+			sourceTree = "<group>";
+		};
 		6A4CEE8F248B229F00145E49 = {
 			isa = PBXGroup;
 			children = (
@@ -296,6 +312,7 @@
 		6A4CEEAE248B263300145E49 /* macOS App */ = {
 			isa = PBXGroup;
 			children = (
+				6A2C5F60248CC59B009EA409 /* Main Window */,
 				6A903FC6248B8DF900BD1602 /* UI State Handling */,
 				6A0EE47D248B6C6B0044B433 /* Library UI */,
 				6A4CEEC0248B27AB00145E49 /* Initialization */,
@@ -702,6 +719,7 @@
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
+				6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -759,6 +777,8 @@
 			files = (
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
+				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
+				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
 				6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

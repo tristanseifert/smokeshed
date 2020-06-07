@@ -13,6 +13,9 @@ import CocoaLumberjackSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    /// Main window
+    var mainWindow: MainWindowController! = nil
+
     /**
      * Performs some initialization for the external components (such as logging, some XPC stuff) before
      * the actual app logic (and UI) is created.
@@ -36,8 +39,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      */
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         self.openLastLibrary()
-        
-        // TODO: do stuff
+
+        // load main window
+        self.mainWindow = MainWindowController(library: self.library,
+                                               andStore: self.store)
+        self.mainWindow.showWindow(self)
     }
 
     /**
@@ -56,6 +62,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 NSApp.presentError(error)
             }
         }
+    }
+
+    /**
+     * If the last window (the main window) is closed, the app should exit.
+     */
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
     }
 
     /**

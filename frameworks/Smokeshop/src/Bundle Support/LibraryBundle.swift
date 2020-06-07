@@ -164,6 +164,13 @@ public class LibraryBundle {
         return nil
     }
 
+    /**
+     * Returns the on-disk URL of the bundle.
+     */
+    public func getURL() -> URL {
+        return self.url!
+    }
+
     // MARK: - Metadata Handling
     /**
      * Fills the metadata dictionary with initial metadata.
