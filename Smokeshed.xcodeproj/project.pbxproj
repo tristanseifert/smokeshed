@@ -64,6 +64,14 @@
 		6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A903FD7248C66DD00BD1602 /* LibraryBundleError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */; };
 		6A903FD9248C6D5400BD1602 /* LibraryMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */; };
+		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
+		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
+		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
+		6AD8CFDD248E00B6009AF452 /* AppMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDC248E00B6009AF452 /* AppMode.swift */; };
+		6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDF248E064D009AF452 /* MapViewController.swift */; };
+		6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE0248E064D009AF452 /* MapViewController.xib */; };
+		6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE4248E0A79009AF452 /* EditViewController.swift */; };
+		6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE5248E0A79009AF452 /* EditViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -177,6 +185,14 @@
 		6A903FCE248C621200BD1602 /* LibraryBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundle.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundle.swift"; sourceTree = "<group>"; };
 		6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundleError.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundleError.swift"; sourceTree = "<group>"; };
 		6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryMeta.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryMeta.swift"; sourceTree = "<group>"; };
+		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
+		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
+		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
+		6AD8CFDC248E00B6009AF452 /* AppMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppMode.swift; path = "app_macos/src/Main Window/AppMode.swift"; sourceTree = "<group>"; };
+		6AD8CFDF248E064D009AF452 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = "app_macos/src/Map View/MapViewController.swift"; sourceTree = "<group>"; };
+		6AD8CFE0248E064D009AF452 /* MapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MapViewController.xib; path = "app_macos/src/Map View/MapViewController.xib"; sourceTree = "<group>"; };
+		6AD8CFE4248E0A79009AF452 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewController.swift; path = "app_macos/src/Edit View/EditViewController.swift"; sourceTree = "<group>"; };
+		6AD8CFE5248E0A79009AF452 /* EditViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = EditViewController.xib; path = "app_macos/src/Edit View/EditViewController.xib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +301,8 @@
 				6A2C5F61248CC83E009EA409 /* MainWindowController.swift */,
 				6A2C5F62248CC83E009EA409 /* MainWindowController.xib */,
 				6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */,
+				6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */,
+				6AD8CFDC248E00B6009AF452 /* AppMode.swift */,
 			);
 			name = "Main Window";
 			sourceTree = "<group>";
@@ -312,6 +330,9 @@
 		6A4CEEAE248B263300145E49 /* macOS App */ = {
 			isa = PBXGroup;
 			children = (
+				6AD8CFE3248E0A58009AF452 /* Edit View */,
+				6AD8CFDE248E0636009AF452 /* Map View */,
+				6AD8CFD5248DFAC7009AF452 /* Library View */,
 				6A2C5F60248CC59B009EA409 /* Main Window */,
 				6A903FC6248B8DF900BD1602 /* UI State Handling */,
 				6A0EE47D248B6C6B0044B433 /* Library UI */,
@@ -556,6 +577,33 @@
 			name = "Document Bundle Support";
 			sourceTree = "<group>";
 		};
+		6AD8CFD5248DFAC7009AF452 /* Library View */ = {
+			isa = PBXGroup;
+			children = (
+				6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */,
+				6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */,
+			);
+			name = "Library View";
+			sourceTree = "<group>";
+		};
+		6AD8CFDE248E0636009AF452 /* Map View */ = {
+			isa = PBXGroup;
+			children = (
+				6AD8CFDF248E064D009AF452 /* MapViewController.swift */,
+				6AD8CFE0248E064D009AF452 /* MapViewController.xib */,
+			);
+			name = "Map View";
+			sourceTree = "<group>";
+		};
+		6AD8CFE3248E0A58009AF452 /* Edit View */ = {
+			isa = PBXGroup;
+			children = (
+				6AD8CFE4248E0A79009AF452 /* EditViewController.swift */,
+				6AD8CFE5248E0A79009AF452 /* EditViewController.xib */,
+			);
+			name = "Edit View";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -718,7 +766,10 @@
 				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
+				6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */,
+				6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
+				6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */,
 				6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
 			);
@@ -775,11 +826,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
+				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,
+				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
 				6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */,
+				6AD8CFDD248E00B6009AF452 /* AppMode.swift in Sources */,
+				6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,7 +9,7 @@ import Cocoa
 
 import CocoaLumberjackSwift
 
-class ActivityViewController: NSViewController {
+class ActivityViewController: NSViewController, NSTableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -36,7 +36,7 @@ class ActivityViewController: NSViewController {
         DDLogVerbose("New activity list size: \(self.preferredContentSize)")
     }
 
-    // MARK: - Activity Array Controller
+    // MARK: - Table handling
     /**
      * Each activity currently ongoing is represented by one of these structs, which are in turn then
      * displayed in the user interface,

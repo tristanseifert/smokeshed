@@ -41,8 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.openLastLibrary()
 
         // load main window
-        self.mainWindow = MainWindowController(library: self.library,
-                                               andStore: self.store)
+        self.mainWindow = MainWindowController(self.library)
         self.mainWindow.showWindow(self)
     }
 
@@ -52,9 +51,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      */
     func applicationWillTerminate(_ aNotification: Notification) {
         // save library bundle if one is open
-        if let library = self.library, let store = self.store {
+        if let library = self.library {
             do {
-                try store.save()
+                try library.store!.save()
                 try library.write()
             } catch {
                 DDLogError("Failed to save library '\(String(describing: self.library))' during shutdown: \(error)")
@@ -90,8 +89,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Data store handling
     /// Currently loaded library
     private var library: LibraryBundle! = nil
-    /// Data store for the loaded library
-    private var store: LibraryStore! = nil
 
     /**
      * Implements the data store loading and info window logic.
@@ -119,7 +116,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 failureInfo = (url, error)
 
                 self.library = nil
-                self.store = nil
             }
         }
         
@@ -158,7 +154,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 failureInfo = (url, error)
 
                 self.library = nil
-                self.store = nil
             }
         }
     }
@@ -171,11 +166,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         DDLogVerbose("Opening library from: \(url)")
 
         // load the library and its data store
-        self.library = try LibraryBundle(url)
-        self.store = try LibraryStore(self.library)
+        self.library = try LibraryBundle(url, shouldOpenStore: true)
 
         // migrate store if required
-        if self.store.migrationRequired {
+        if self.library.store!.migrationRequired {
             DDLogVerbose("Migration required for library '\(url)'")
             abort() // XXX: remove this when implemented :)
         }

@@ -18,11 +18,11 @@
         <window title="SmokeShed" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" titleVisibility="hidden" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="240" width="640" height="480"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1152"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1129"/>
             <value key="minSize" type="size" width="640" height="480"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="220D8688-44EA-48AA-A2B5-8DB7F3146A46" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="sqY-f1-ArY">
                 <allowedToolbarItems>
@@ -109,13 +109,13 @@
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="dSB-uK-xTJ">
             <rect key="frame" x="0.0" y="0.0" width="420" height="154"/>
             <subviews>
-                <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="77" horizontalPageScroll="10" verticalLineScroll="77" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aIX-Ar-rP2">
+                <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="71" horizontalPageScroll="10" verticalLineScroll="71" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aIX-Ar-rP2">
                     <rect key="frame" x="0.0" y="0.0" width="420" height="154"/>
                     <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="UlF-PG-ZJA">
                         <rect key="frame" x="0.0" y="0.0" width="420" height="154"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="75" rowSizeStyle="automatic" viewBased="YES" id="iyi-dx-fAk">
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="69" rowSizeStyle="automatic" usesAutomaticRowHeights="YES" viewBased="YES" id="iyi-dx-fAk">
                                 <rect key="frame" x="0.0" y="0.0" width="420" height="154"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
@@ -135,11 +135,11 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="B4c-pL-hv4">
-                                                <rect key="frame" x="1" y="1" width="417" height="75"/>
+                                                <rect key="frame" x="1" y="1" width="417" height="69"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="GOX-21-mwe">
-                                                        <rect key="frame" x="8" y="54" width="84" height="16"/>
+                                                        <rect key="frame" x="8" y="48" width="84" height="16"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Activity Title" id="cWg-Ls-wla">
                                                             <font key="font" metaFont="systemSemibold" size="13"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -151,7 +151,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="ofN-0A-DBq">
-                                                        <rect key="frame" x="8" y="36" width="65" height="16"/>
+                                                        <rect key="frame" x="8" y="30" width="65" height="16"/>
                                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Detail info" id="skD-vl-2TQ">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -163,7 +163,7 @@
                                                         </connections>
                                                     </textField>
                                                     <button toolTip="Cancel this activity" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Rl-YX-EyB">
-                                                        <rect key="frame" x="390" y="15" width="17" height="18"/>
+                                                        <rect key="frame" x="390" y="7" width="17" height="18"/>
                                                         <buttonCell key="cell" type="inline" title="Cancel Activity" bezelStyle="inline" image="NSStopProgressFreestandingTemplate" imagePosition="only" alignment="center" inset="2" id="Xe4-Xj-1jd">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="smallSystemBold"/>
@@ -180,18 +180,18 @@
                                                         </connections>
                                                     </button>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="50" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="y83-XL-9zF">
-                                                        <rect key="frame" x="10" y="13" width="375" height="20"/>
+                                                        <rect key="frame" x="10" y="1" width="375" height="28"/>
                                                         <accessibility description="Activity progress"/>
                                                         <connections>
                                                             <binding destination="B4c-pL-hv4" name="animate" keyPath="objectValue.isActive" id="iE0-wT-QlH"/>
-                                                            <binding destination="B4c-pL-hv4" name="isIndeterminate" keyPath="objectValue.progress.isIndeterminate" previousBinding="iE0-wT-QlH" id="WkZ-LK-as3"/>
                                                             <binding destination="B4c-pL-hv4" name="value" keyPath="objectValue.progress.fractionCompleted" id="BSD-t2-h7T"/>
+                                                            <binding destination="B4c-pL-hv4" name="isIndeterminate" keyPath="objectValue.progress.isIndeterminate" previousBinding="iE0-wT-QlH" id="WkZ-LK-as3"/>
                                                         </connections>
                                                     </progressIndicator>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="0Rl-YX-EyB" firstAttribute="centerY" secondItem="y83-XL-9zF" secondAttribute="centerY" constant="-1" id="3O4-tM-5KS"/>
-                                                    <constraint firstItem="y83-XL-9zF" firstAttribute="top" secondItem="ofN-0A-DBq" secondAttribute="bottom" constant="4" id="BAa-KU-IZy"/>
+                                                    <constraint firstItem="y83-XL-9zF" firstAttribute="top" secondItem="ofN-0A-DBq" secondAttribute="bottom" constant="2" id="BAa-KU-IZy"/>
                                                     <constraint firstItem="ofN-0A-DBq" firstAttribute="top" secondItem="GOX-21-mwe" secondAttribute="bottom" constant="2" id="NfS-qx-oCW"/>
                                                     <constraint firstItem="y83-XL-9zF" firstAttribute="leading" secondItem="B4c-pL-hv4" secondAttribute="leading" constant="10" id="Nve-nS-PZT"/>
                                                     <constraint firstAttribute="trailing" secondItem="0Rl-YX-EyB" secondAttribute="trailing" constant="10" id="TZm-ws-Ixg"/>
@@ -200,8 +200,8 @@
                                                     <constraint firstItem="GOX-21-mwe" firstAttribute="top" secondItem="B4c-pL-hv4" secondAttribute="top" constant="5" id="Zwl-O8-b33"/>
                                                     <constraint firstItem="ofN-0A-DBq" firstAttribute="leading" secondItem="GOX-21-mwe" secondAttribute="leading" id="f92-Ez-6Ui"/>
                                                     <constraint firstItem="0Rl-YX-EyB" firstAttribute="leading" secondItem="y83-XL-9zF" secondAttribute="trailing" constant="5" id="iHC-XC-Lf6"/>
-                                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="y83-XL-9zF" secondAttribute="bottom" constant="2" id="ywd-zS-F3R"/>
-                                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ofN-0A-DBq" secondAttribute="trailing" constant="5" id="zTy-5t-SY7"/>
+                                                    <constraint firstAttribute="bottom" secondItem="y83-XL-9zF" secondAttribute="bottom" constant="2" id="ywd-zS-F3R"/>
+                                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ofN-0A-DBq" secondAttribute="trailing" constant="10" id="zTy-5t-SY7"/>
                                                 </constraints>
                                                 <connections>
                                                     <outlet property="textField" destination="GOX-21-mwe" id="hwb-bC-ieI"/>
@@ -213,6 +213,7 @@
                                 <connections>
                                     <binding destination="glm-Ke-g3r" name="content" keyPath="arrangedObjects" id="Dc9-Mm-5yR"/>
                                     <binding destination="glm-Ke-g3r" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="Dc9-Mm-5yR" id="pbs-S7-qbE"/>
+                                    <outlet property="delegate" destination="hnL-w0-Lvm" id="kMp-6m-TNm"/>
                                 </connections>
                             </tableView>
                         </subviews>

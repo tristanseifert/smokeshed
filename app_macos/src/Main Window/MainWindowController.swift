@@ -14,7 +14,12 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     /// Library file that was opened for this window
     private var library: LibraryBundle
     /// CoreData store in the library
-    private var store: LibraryStore
+    private var store: LibraryStore {
+        return self.library.store!
+    }
+
+    /// Content view controller
+    private var content: ContentViewController! = nil
 
     // MARK: - Initialization
     /**
@@ -27,9 +32,8 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     /**
      * Initializes a new main window controller with the given library bundle and data store.
      */
-    init(library: LibraryBundle, andStore store: LibraryStore) {
+    init(_ library: LibraryBundle) {
         self.library = library
-        self.store = store
         
         super.init(window: nil)
     }
@@ -48,6 +52,15 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
 
         // set represented file
         self.window?.representedURL = self.library.getURL()
+
+        // also, create the content view controller
+        self.content = ContentViewController(library)
+        self.window?.contentViewController = self.content
+
+        // if no app mode has been set, choose a default
+        if self.currentMode == nil {
+            self.currentMode = .Library
+        }
     }
 
     // MARK: - State restoration
@@ -78,23 +91,19 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     }
 
     // MARK: - View type switching
-    enum AppMode: Int {
-        /// Shows all images in the library in a grid-style interface.
-        case Library = 1
-        /// Displays images on a map instead of a grid.
-        case Map = 2
-        /// Allows editing of a single image at a time.
-        case Edit = 3
-    }
-
+    /// Is mode switching inhibited?
+    private var inhibitModeSwitch: Bool = false
     /// Currently active mode
-    private var currentMode: AppMode = .Library {
-        didSet(new) {
-            // update the tab switcher
-            self.modeSwitcher.selectSegment(withTag: new.rawValue)
+    private var currentMode: AppMode! = nil {
+        didSet {
+            if let mode = self.currentMode {
+                self.modeSwitcher.selectSegment(withTag: mode.rawValue)
 
-            // perform actual changing of content
-            self.updateContentView()
+                self.inhibitModeSwitch = true
+                self.content!.setContent(mode, completion: {
+                    self.inhibitModeSwitch = false
+                })
+            }
         }
     }
     /// Segmented control at the top of the window, used for switching app modes
@@ -105,6 +114,11 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
      */
     @IBAction func changeAppMode(_ sender: Any) {
         var newMode = 0
+
+        // ensure we're not inhibiting mode switching
+        guard !self.inhibitModeSwitch else {
+            return
+        }
 
         // was the sender the segmented control?
         if let segment = sender as? NSSegmentedControl {
@@ -126,14 +140,6 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
 
         DDLogVerbose("Switching app mode to \(mode)")
         self.currentMode = mode
-    }
-
-    /**
-     * Updates the content view of the window to match the current mode.
-     */
-    private func updateContentView() {
-        DDLogVerbose("updateContentView() mode = \(self.currentMode)")
-        // TODO: do stuff here
     }
 
 
@@ -171,7 +177,7 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         // is it the app mode item?
         if menuItem.action == #selector(changeAppMode(_:)) {
-            // it's on if its tag matches the current mode
+            // it's on if its tag matches the current mode raw value
             menuItem.state = (menuItem.tag == self.currentMode.rawValue) ? .on : .off
 
             return true

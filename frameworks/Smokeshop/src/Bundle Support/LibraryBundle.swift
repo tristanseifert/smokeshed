@@ -25,6 +25,8 @@ public class LibraryBundle {
 
     /// URL to the data store
     var storeUrl: URL! = nil
+    /// Data store
+    private var openedDataStore: LibraryStore! = nil
 
     /// Library metdata
     private var meta: LibraryMeta = LibraryMeta()
@@ -37,7 +39,7 @@ public class LibraryBundle {
      * If an error takes place during loading (invalid format, inaccessible) or creating (saving of data) an
      * exception is raised.
      */
-    public init(_ url: URL) throws {
+    public init(_ url: URL, shouldOpenStore openStore: Bool = false) throws {
         self.url = url
         
         let b = Bundle(for: LibraryBundle.self)
@@ -71,6 +73,11 @@ public class LibraryBundle {
 
         self.storeUrl = self.contentsUrl.appendingPathComponent(self.meta.storePath,
                                                         isDirectory: false)
+
+        // open data store if requested
+        if openStore {
+            try self.openStore()
+        }
     }
 
     /**
@@ -253,5 +260,27 @@ public class LibraryBundle {
      */
     public func getMetadata() -> LibraryMeta {
         return self.meta
+    }
+
+    // MARK: - Data store support
+    /**
+     * Attempts to open the data store, if not done already.
+     */
+    public func openStore() throws {
+        self.openedDataStore = try LibraryStore(self)
+    }
+
+    /**
+     * Sets the data store associated with this library.
+     */
+    public func setStore(_ store: LibraryStore) {
+        self.openedDataStore = store
+    }
+
+    /**
+     * Read-only reference to the data store.
+     */
+    public var store: LibraryStore! {
+        return self.openedDataStore
     }
 }
