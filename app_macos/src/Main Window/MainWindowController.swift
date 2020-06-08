@@ -19,7 +19,7 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     }
 
     /// Content view controller
-    private var content: ContentViewController! = nil
+    @objc dynamic private var content: ContentViewController! = nil
 
     // MARK: - Initialization
     /**
@@ -57,10 +57,8 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
         self.content = ContentViewController(library)
         self.window?.contentViewController = self.content
 
-        // if no app mode has been set, choose a default
-        if self.currentMode == nil {
-            self.currentMode = .Library
-        }
+        // open in the library mode
+        self.content!.setContent(.Library)
     }
 
     // MARK: - State restoration
@@ -69,12 +67,6 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
      */
     override func restoreState(with coder: NSCoder) {
         super.restoreState(with: coder)
-
-        // get app mode
-        if let mode = AppMode(rawValue: coder.decodeInteger(forKey: "AppMode")) {
-            DDLogVerbose("Restored app mode: \(mode)")
-            self.currentMode = mode
-        }
     }
 
     /**
@@ -85,64 +77,7 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
 
         // encode the URL of the library
         coder.encode(self.library.getURL(), forKey: "LibraryURL")
-
-        // save our app mode
-        coder.encode(self.currentMode, forKey: "AppMode")
     }
-
-    // MARK: - View type switching
-    /// Is mode switching inhibited?
-    private var inhibitModeSwitch: Bool = false
-    /// Currently active mode
-    private var currentMode: AppMode! = nil {
-        didSet {
-            if let mode = self.currentMode {
-                self.modeSwitcher.selectSegment(withTag: mode.rawValue)
-
-                self.inhibitModeSwitch = true
-                self.content!.setContent(mode, completion: {
-                    self.inhibitModeSwitch = false
-                })
-            }
-        }
-    }
-    /// Segmented control at the top of the window, used for switching app modes
-    @IBOutlet var modeSwitcher: NSSegmentedControl! = nil
-
-    /**
-     * Action method for the mode switcher.
-     */
-    @IBAction func changeAppMode(_ sender: Any) {
-        var newMode = 0
-
-        // ensure we're not inhibiting mode switching
-        guard !self.inhibitModeSwitch else {
-            return
-        }
-
-        // was the sender the segmented control?
-        if let segment = sender as? NSSegmentedControl {
-            newMode = segment.selectedTag()
-        }
-        // otherwise, was it a menu item?
-        else if let item = sender as? NSMenuItem {
-            newMode = item.tag
-        }
-        // unknown sender
-        else {
-            return DDLogError("Unknown sender type for changeAppMode: \(sender)")
-        }
-
-        // get the new mode
-        guard let mode = AppMode(rawValue: newMode) else {
-            return DDLogError("Unknown raw mode '\(newMode)'")
-        }
-
-        DDLogVerbose("Switching app mode to \(mode)")
-        self.currentMode = mode
-    }
-
-
 
     // MARK: - Activity Popover
     /// Popover controller for activity UI
@@ -169,21 +104,62 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
                                   preferredEdge: .maxY)
     }
 
-    // MARK: - Menu item support
+    // MARK: - Container support
     /**
-     * Validates a menu item's action. This is used to support checking the menu item corresponding to the
-     * current app mode.
+     * Claim that we can respond to a particular selector, if our content claims to. This is necessary to allow
+     * forwarding invocations (for first responder) to content windows.
      */
-    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        // is it the app mode item?
-        if menuItem.action == #selector(changeAppMode(_:)) {
-            // it's on if its tag matches the current mode raw value
-            menuItem.state = (menuItem.tag == self.currentMode.rawValue) ? .on : .off
-
+    override func responds(to aSelector: Selector!) -> Bool {
+        if super.responds(to: aSelector) {
+            return true
+        }
+        else if let content = self.content,
+            content.responds(to: aSelector) {
             return true
         }
 
-        // unhandled
+        // nobody supports this selector :(
+        return false
+    }
+    /**
+     * Returns the new target for the given selector. If the content controller implements the given action, we
+     * forward directly to it.
+     */
+    override func forwardingTarget(for aSelector: Selector!) -> Any? {
+        // can the content controller respond to this message?
+        if let content = self.content, content.responds(to: aSelector) {
+            return self.content
+        }
+
+        // nobody supports this selector :(
+        return nil
+    }
+    /**
+     * Returns the method implementation for the given selector. If we don't implement the method, provide
+     * the implementation provided by the content controller.
+     */
+    override func method(for aSelector: Selector!) -> IMP! {
+        let sig = super.method(for: aSelector)
+
+        // forward to content if not supported
+        if sig == nil, let newTarget = self.content,
+            newTarget.responds(to: aSelector) {
+            return newTarget.method(for: aSelector)
+        }
+
+        return sig
+    }
+
+    // MARK: - Menu item support
+    /**
+     * Validates a menu action. Anything we don't handle gets forwarded to the content controller.
+     */
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        // forward unhandled calls to the content controller
+        if self.content != nil {
+            return self.content!.validateMenuItem(menuItem)
+        }
+
         return false
     }
 }

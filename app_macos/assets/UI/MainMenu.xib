@@ -609,7 +609,7 @@
                         <items>
                             <menuItem title="Library" tag="1" keyEquivalent="1" id="ebR-PC-eCi">
                                 <connections>
-                                    <action selector="changeAppMode:" target="-1" id="GaI-Jc-A6F"/>
+                                    <action selector="changeAppMode:" target="-1" id="BbY-ay-k1R"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Map" tag="2" keyEquivalent="2" id="oTK-Dr-5Zz">

@@ -9,7 +9,6 @@
             <connections>
                 <outlet property="activityController" destination="hnL-w0-Lvm" id="4ys-p8-NIy"/>
                 <outlet property="activityPopover" destination="OIG-2q-2T5" id="OQl-b5-N9T"/>
-                <outlet property="modeSwitcher" destination="riF-ZS-6PD" id="jQ6-OP-bAT"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -42,7 +41,12 @@
                                 </segments>
                             </segmentedCell>
                             <connections>
-                                <action selector="changeAppMode:" target="-2" id="m4u-Uq-ci6"/>
+                                <action selector="changeAppMode:" target="-1" id="NXN-ah-Bz0"/>
+                                <binding destination="-2" name="selectedTag" keyPath="self.content.rawMode" id="iBh-b1-WY5">
+                                    <dictionary key="options">
+                                        <integer key="NSNullPlaceholder" value="1"/>
+                                    </dictionary>
+                                </binding>
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
