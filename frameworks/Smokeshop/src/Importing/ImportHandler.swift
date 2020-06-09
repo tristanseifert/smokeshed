@@ -21,6 +21,11 @@ public class ImportHandler {
 
     /// Background import queue
     private var queue: OperationQueue = OperationQueue()
+    /// Object context for background operations
+    private var context: NSManagedObjectContext! = nil
+
+    /// Date formatter for converting EXIF date strings to date
+    private var dateFormatter: DateFormatter
 
     // MARK: - Initialization
     /**
@@ -34,6 +39,15 @@ public class ImportHandler {
         self.queue.name = "ImportHandler"
         self.queue.qualityOfService = .default
         self.queue.maxConcurrentOperationCount = OperationQueue.defaultMaxConcurrentOperationCount
+
+        // create the background queue
+        self.context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        self.context.parent = self.library.store.mainContext
+
+        // set up the EXIF date parser
+        self.dateFormatter = DateFormatter()
+        self.dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        self.dateFormatter.dateFormat = "yyyy':'MM':'dd HH':'mm':'ss"
     }
 
     /**
@@ -66,7 +80,12 @@ public class ImportHandler {
                 // prepare an import job for each URL
                 flattened.forEach({ (url) in
                     self.queue.addOperation({
-                        self.importSingle(url)
+                        do {
+                            try self.importSingle(url)
+                        } catch {
+                            // TODO: signal this error somehow
+                            DDLogError("Failed to import '\(url)': \(error)")
+                        }
                     })
                 })
             } catch {
@@ -111,18 +130,24 @@ public class ImportHandler {
     }
 
     /**
-     * Enumerates the contents of a directory, returning all files therein.
+     * Enumerates the contents of a directory, returning all files therein. Note that hidden files are ignored by
+     * this function.
      */
     private func enumerateDirectory(_ directoryUrl: URL) throws -> [URL] {
         var outUrls = [URL]()
 
         // list the contents of the given directory
-        guard let e = FileManager.default.enumerator(at: directoryUrl, includingPropertiesForKeys: nil) else {
-                throw ImportError.failedToEnumerateDirectory(directoryUrl)
+        guard let e = FileManager.default.enumerator(at: directoryUrl, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+            throw ImportError.failedToEnumerateDirectory(directoryUrl)
         }
 
         for case let fileURL as URL in e {
-            outUrls.append(fileURL)
+            let resVals = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
+
+            // add only non-directory URLs
+            if resVals.isDirectory == false {
+                outUrls.append(fileURL)
+            }
         }
 
         return outUrls
@@ -134,8 +159,62 @@ public class ImportHandler {
      *
      * If the exact image (matching by path) already exists in the library, this step aborts.
      */
-    private func importSingle(_ url: URL) {
-        DDLogVerbose("Importing image: \(url)")
+    private func importSingle(_ url: URL) throws {
+        var meta: [String: AnyObject]! = nil
+
+        // get some info about the file and ensure it's actually an image
+        let resVals = try url.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
+
+        guard let uti = resVals.typeIdentifier else {
+            throw ImportError.unknownError(url)
+        }
+
+        guard UTTypeConformsTo(uti as CFString, kUTTypeImage) else {
+            throw ImportError.notAnImage(url, uti)
+        }
+
+        // extract some metadata
+        if let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+            let props = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: AnyObject] {
+            meta = props
+        }
+        else {
+            DDLogWarn("Failed to get exif info from '\(url)'")
+        }
+
+        // hop on the queue to create the object
+        self.context.performAndWait {
+            do {
+                // ensure no image with this URL exists
+                let req = NSFetchRequest<NSFetchRequestResult>(entityName: "Image")
+                req.predicate = NSPredicate(format: "%K = %@", argumentArray: ["originalUrl", url])
+
+                if try self.context.count(for: req) > 0 {
+                    throw ImportError.duplicate(url)
+                }
+
+                // create the new image
+                let image = Image(context: self.context)
+
+                image.dateImported = Date()
+                image.name = resVals.name
+                image.originalMetadata = meta as NSDictionary?
+                image.originalUrl = url
+
+                // get capture date from exif if avaialble (TODO: parse subseconds)
+                if let m = meta,
+                   let exif = m[kCGImagePropertyExifDictionary as String],
+                   let dateStr = exif[kCGImagePropertyExifDateTimeOriginal as String] as? String,
+                   let date = self.dateFormatter.date(from: dateStr) {
+                    image.dateCaptured = date
+                }
+
+                // save the context
+                try self.context.save()
+            } catch {
+                DDLogError("Failed to create image: \(error)")
+            }
+        }
     }
 
     // MARK: - Errors
@@ -143,7 +222,13 @@ public class ImportHandler {
      * Represents import errors.
      */
     enum ImportError: Error {
+        /// An unknown error took place while processing the given URL.
+        case unknownError(_ url: URL)
         /// Failed to get a directory enumerator.
         case failedToEnumerateDirectory(_ directoryUrl: URL)
+        /// The specified file is not an image file type.
+        case notAnImage(_ fileUrl: URL, _ uti: String!)
+        /// This image is a duplicate of an image already in the library.
+        case duplicate(_ fileUrl: URL)
     }
 }

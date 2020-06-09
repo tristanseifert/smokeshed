@@ -11,5 +11,10 @@ import CoreData
 
 @objc(Image)
 public class Image: NSManagedObject {
-
+    /**
+     * Sets a randomly generated identifier when the image is first created.
+     */
+    public override func awakeFromInsert() {
+        self.identifier = UUID()
+    }
 }
