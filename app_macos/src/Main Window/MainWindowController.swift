@@ -150,11 +150,29 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
         return sig
     }
 
+    // MARK: - Importing, Library UI
+    /// Library options controller, if allocated
+    private var libraryOptions: LibraryOptionsController! = nil
+    /**
+     * Opens the library options view controller. It is presented as a sheet on this window.
+     */
+    @IBAction func openLibraryOptions(_ sender: Any) {
+        if self.libraryOptions == nil {
+            self.libraryOptions = LibraryOptionsController(self.library)
+        }
+
+        self.libraryOptions!.present(self.window!)
+    }
+
     // MARK: - Menu item support
     /**
      * Validates a menu action. Anything we don't handle gets forwarded to the content controller.
      */
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(openLibraryOptions(_:)) {
+            return true
+        }
+
         // forward unhandled calls to the content controller
         if self.content != nil {
             return self.content!.validateMenuItem(menuItem)

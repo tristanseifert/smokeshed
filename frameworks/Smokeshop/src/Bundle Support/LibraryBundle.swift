@@ -261,6 +261,12 @@ public class LibraryBundle {
     public func getMetadata() -> LibraryMeta {
         return self.meta
     }
+    /**
+     * Sets metadata for the bundle. This replaces the existing metadata object.
+     */
+    public func setMetadata(_ metadata: LibraryMeta) {
+        self.meta = metadata
+    }
 
     // MARK: - Data store support
     /**
