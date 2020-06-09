@@ -153,6 +153,52 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     // MARK: - Importing, Library UI
     /// Library options controller, if allocated
     private var libraryOptions: LibraryOptionsController! = nil
+    /// Import controller
+    private var importer: ImportHandler! = nil
+
+    /**
+     * Opens the "import from device" view.
+     */
+    @IBAction func importFromDevice(_ sender: Any) {
+
+    }
+
+    /**
+     * Opens the "import directory" view.
+     */
+    @IBAction func importDirectory(_ sender: Any) {
+        // prepare an open panel
+        let panel = NSOpenPanel()
+
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = true
+        panel.prompt = NSLocalizedString("Import", comment: "import directory open panel title")
+
+        panel.allowedFileTypes = ["public.image"]
+
+        panel.beginSheetModal(for: self.window!, completionHandler: { (res) in
+            // ensure user clicked the "import" button
+            guard res == .OK else {
+                return
+            }
+
+            // pass the URLs to the importer
+            self.prepareImporter()
+
+            self.importer!.importFrom(panel.urls)
+        })
+    }
+
+    /**
+     * Sets up the importer to prepare for an import job.
+     */
+    private func prepareImporter() {
+        if self.importer == nil {
+            self.importer = ImportHandler(self.library)
+        }
+    }
+
     /**
      * Opens the library options view controller. It is presented as a sheet on this window.
      */
@@ -169,7 +215,10 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
      * Validates a menu action. Anything we don't handle gets forwarded to the content controller.
      */
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        if menuItem.action == #selector(openLibraryOptions(_:)) {
+        // always allow importing
+        if menuItem.action == #selector(importFromDevice(_:)) ||
+            menuItem.action == #selector(importDirectory(_:)) ||
+            menuItem.action == #selector(openLibraryOptions(_:)) {
             return true
         }
 

@@ -17,7 +17,7 @@
         <window title="SmokeShed" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="TSMainWindow" animationBehavior="default" titleVisibility="hidden" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="240" width="800" height="640"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1152"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1129"/>
             <value key="minSize" type="size" width="800" height="640"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="640"/>
@@ -30,7 +30,7 @@
                     <toolbarItem implicitItemIdentifier="6EDBA264-023B-40B3-BB70-740994F90230" label="Display Mode" paletteLabel="Display Mode" sizingBehavior="auto" id="54W-zj-8b7">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="riF-ZS-6PD">
-                            <rect key="frame" x="0.0" y="14" width="162" height="23"/>
+                            <rect key="frame" x="0.0" y="14" width="161" height="23"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="texturedRounded" trackingMode="selectOne" id="oEf-hF-oiA">
                                 <font key="font" metaFont="system"/>
@@ -61,6 +61,16 @@
                                 <menu key="menu" id="lWq-Lj-oys">
                                     <items>
                                         <menuItem state="on" image="NSActionTemplate" hidden="YES" id="COO-6k-ESK"/>
+                                        <menuItem title="Import…" keyEquivalent="o" id="ofg-jV-MkY">
+                                            <connections>
+                                                <action selector="importFromDevice:" target="-1" id="syc-48-kj2"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Import Folder…" keyEquivalent="O" id="qpE-aR-BM3">
+                                            <connections>
+                                                <action selector="importDirectory:" target="-1" id="pNZ-Mq-9GV"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </popUpButtonCell>
