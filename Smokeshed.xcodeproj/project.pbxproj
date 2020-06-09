@@ -64,6 +64,7 @@
 		6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A903FD7248C66DD00BD1602 /* LibraryBundleError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */; };
 		6A903FD9248C6D5400BD1602 /* LibraryMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */; };
+		6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C27248F191E0088E1DB /* Library View.xcassets */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -185,6 +186,7 @@
 		6A903FCE248C621200BD1602 /* LibraryBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundle.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundle.swift"; sourceTree = "<group>"; };
 		6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundleError.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundleError.swift"; sourceTree = "<group>"; };
 		6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryMeta.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryMeta.swift"; sourceTree = "<group>"; };
+		6A962C27248F191E0088E1DB /* Library View.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library View.xcassets"; path = "app_macos/src/Library View/Library View.xcassets"; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -582,6 +584,7 @@
 			children = (
 				6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */,
 				6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */,
+				6A962C27248F191E0088E1DB /* Library View.xcassets */,
 			);
 			name = "Library View";
 			sourceTree = "<group>";
@@ -770,6 +773,7 @@
 				6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
 				6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */,
+				6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */,
 				6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
 			);

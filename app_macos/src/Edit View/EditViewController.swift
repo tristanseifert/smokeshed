@@ -10,7 +10,7 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class EditViewController: NSViewController, ContentViewChild {
+class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChild {
     /// Library that is being browsed
     private var library: LibraryBundle
 
@@ -61,5 +61,13 @@ class EditViewController: NSViewController, ContentViewChild {
      */
     override func viewDidDisappear() {
         self.view.window?.appearance = nil
+    }
+
+    // MARK: - Menu item handling
+    /**
+     * Ensures menu items that affect our state are always up-to-date.
+     */
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return false
     }
 }

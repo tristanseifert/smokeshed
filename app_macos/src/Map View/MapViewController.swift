@@ -10,7 +10,7 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class MapViewController: NSViewController, ContentViewChild {
+class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChild {
     /// Library that is being browsed
     private var library: LibraryBundle
 
@@ -57,5 +57,13 @@ class MapViewController: NSViewController, ContentViewChild {
      */
     override func viewDidDisappear() {
 
+    }
+
+    // MARK: - Menu item handling
+    /**
+     * Ensures menu items that affect our state are always up-to-date.
+     */
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return false
     }
 }

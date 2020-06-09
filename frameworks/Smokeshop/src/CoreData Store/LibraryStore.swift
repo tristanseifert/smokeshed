@@ -169,4 +169,12 @@ public class LibraryStore {
     public var isDirty: Bool {
         return self.mainCtx.hasChanges
     }
+
+    // MARK: - Context handling
+    /**
+     * Returns a reference to the main thread context.
+     */
+    public var mainContext: NSManagedObjectContext! {
+        return self.mainCtx
+    }
 }
