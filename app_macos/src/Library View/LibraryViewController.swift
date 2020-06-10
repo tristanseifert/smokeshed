@@ -183,8 +183,8 @@ class LibraryViewController: NSViewController, NSMenuItemValidation, NSCollectio
                                  for: path) as! LibraryCollectionItem
 
         // update its object
-        cell.representedObject = self.fetchedData[idx]
         cell.sequenceNumber = (idx + 1)
+        cell.representedObject = self.fetchedData[idx]
 
         return cell
     }

@@ -7,10 +7,40 @@
 
 import Cocoa
 
+import Smokeshop
+import CocoaLumberjackSwift
+
 /**
  * Each image in the library is rendered by one of these bad boys.
  */
 class LibraryCollectionItem: NSCollectionViewItem {
+    /// Sequence number of this item, i.e. its index
+    public var sequenceNumber: Int = 0 {
+        didSet {
+            if let view = self.view as? LibraryCollectionItemView {
+                view.sequenceNumber = self.sequenceNumber
+            }
+        }
+    }
+
+    /// Image represented by this cell
+    override var representedObject: Any? {
+        /**
+         * When the represented object (the image) is changed, propagate that change to the view; this
+         * will cause it to redraw with new data.
+         */
+        didSet {
+            if let view = self.view as? LibraryCollectionItemView {
+                if let image = self.representedObject as? Image {
+                    view.image = image
+                } else {
+                    view.sequenceNumber = 0
+                    view.image = nil
+                }
+            }
+        }
+    }
+
     // MARK: - Initialization
     /**
      * Creates the content view.
@@ -35,4 +65,9 @@ class LibraryCollectionItem: NSCollectionViewItem {
     override func viewDidDisappear() {
 
     }
+}
+
+extension NSUserInterfaceItemIdentifier {
+    /// Name of the library light table collection item type
+    static let libraryCollectionItem = NSUserInterfaceItemIdentifier("LibraryCollectionItem")
 }
