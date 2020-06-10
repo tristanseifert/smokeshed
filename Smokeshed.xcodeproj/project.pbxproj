@@ -625,8 +625,8 @@
 				6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */,
 				6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */,
 				6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */,
-				6A9664632490652C00F757A1 /* Resources */,
 				6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */,
+				6A9664632490652C00F757A1 /* Resources */,
 			);
 			name = "Library View";
 			sourceTree = "<group>";

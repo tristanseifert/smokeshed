@@ -1,6 +1,6 @@
 //
 //  Image+CoreDataProperties.swift
-//  Smokeshop (macOS)
+//  Smokeshed
 //
 //  Created by Tristan Seifert on 20200609.
 //
@@ -22,7 +22,7 @@ extension Image {
     @NSManaged public var name: String?
     @NSManaged public var originalMetadata: NSDictionary?
     @NSManaged public var originalUrl: URL?
-    @NSManaged public var imageSize: NSValue?
+    @NSManaged public var pvtImageSize: NSDictionary?
     @NSManaged public var albums: NSSet?
     @NSManaged public var camera: Camera?
     @NSManaged public var keywords: NSOrderedSet?

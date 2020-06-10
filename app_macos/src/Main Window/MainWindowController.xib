@@ -23,14 +23,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="800" height="640"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="220D8688-44EA-48AA-A2B5-8DB7F3146A46" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="sqY-f1-ArY">
+            <toolbar key="toolbar" implicitIdentifier="220D8688-44EA-48AA-A2B5-8DB7F3146A46" centeredItem="54W-zj-8b7" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="sqY-f1-ArY">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="qWg-0z-I2l"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="4Kw-69-xuu"/>
                     <toolbarItem implicitItemIdentifier="6EDBA264-023B-40B3-BB70-740994F90230" label="Display Mode" paletteLabel="Display Mode" sizingBehavior="auto" id="54W-zj-8b7">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="riF-ZS-6PD">
-                            <rect key="frame" x="0.0" y="14" width="161" height="23"/>
+                            <rect key="frame" x="0.0" y="14" width="160" height="23"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="texturedRounded" trackingMode="selectOne" id="oEf-hF-oiA">
                                 <font key="font" metaFont="system"/>

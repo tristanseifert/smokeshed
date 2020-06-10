@@ -482,17 +482,15 @@
                                         <rect key="frame" x="0.0" y="0.0" width="662" height="392"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <collectionView id="lhQ-lK-XRg">
+                                            <collectionView selectable="YES" allowsMultipleSelection="YES" id="lhQ-lK-XRg">
                                                 <rect key="frame" x="0.0" y="0.0" width="662" height="158"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                                <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="d5S-5Z-xgd">
-                                                    <size key="itemSize" width="100" height="100"/>
+                                                <collectionViewFlowLayout key="collectionViewLayout" id="d5S-5Z-xgd">
+                                                    <size key="itemSize" width="100" height="125"/>
                                                 </collectionViewFlowLayout>
                                                 <color key="primaryBackgroundColor" name="LibraryViewPrimaryBackground"/>
-                                                <color key="secondaryBackgroundColor" name="LibraryViewSecondaryBackground"/>
                                                 <connections>
-                                                    <binding destination="T7R-Wb-0ZO" name="content" keyPath="arrangedObjects" id="7V6-9K-8BI"/>
-                                                    <binding destination="T7R-Wb-0ZO" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="7V6-9K-8BI" id="nx0-S2-rsS"/>
+                                                    <outlet property="dataSource" destination="-2" id="HZX-7v-o1w"/>
                                                 </connections>
                                             </collectionView>
                                         </subviews>
@@ -534,13 +532,6 @@
             </constraints>
             <point key="canvasLocation" x="232" y="73"/>
         </customView>
-        <arrayController mode="entity" entityName="Image" usesLazyFetching="YES" editable="NO" automaticallyPreparesContent="YES" id="T7R-Wb-0ZO" userLabel="Image Array Controller">
-            <connections>
-                <binding destination="-2" name="filterPredicate" keyPath="self.filterPredicate" id="co7-Uw-fXg"/>
-                <binding destination="-2" name="sortDescriptors" keyPath="self.sort" previousBinding="co7-Uw-fXg" id="1CA-rc-x1y"/>
-                <binding destination="-2" name="managedObjectContext" keyPath="self.viewContext" id="tG0-ef-ciQ"/>
-            </connections>
-        </arrayController>
         <menu id="hcj-9z-bZn" userLabel="Search menu template">
             <items>
                 <menuItem title="Recent Searches" tag="1000" enabled="NO" id="OR9-Ri-HzM">
@@ -569,9 +560,6 @@
         </namedColor>
         <namedColor name="LibraryViewPrimaryBackground">
             <color white="0.60000002384185791" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </namedColor>
-        <namedColor name="LibraryViewSecondaryBackground">
-            <color white="0.74000000953674316" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>
     </resources>
 </document>

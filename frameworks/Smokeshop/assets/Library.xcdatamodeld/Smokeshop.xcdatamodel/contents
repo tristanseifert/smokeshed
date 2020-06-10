@@ -32,10 +32,10 @@
         <attribute name="dateCaptured" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dateImported" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="imageSize" attributeType="Transformable" valueTransformerName="SizeTransformer" customClassName="CGSize"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="originalMetadata" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSDictionary"/>
         <attribute name="originalUrl" attributeType="URI"/>
+        <attribute name="pvtImageSize" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSDictionary"/>
         <relationship name="albums" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Album" inverseName="images" inverseEntity="Album"/>
         <relationship name="camera" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Camera" inverseName="images" inverseEntity="Camera"/>
         <relationship name="keywords" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Keyword" inverseName="images" inverseEntity="Keyword"/>

@@ -183,7 +183,7 @@ public class ImportHandler {
         }
 
         guard let width = meta[kCGImagePropertyPixelWidth as String] as? NSNumber,
-              let height = meta[kCGImagePropertyPixelWidth
+              let height = meta[kCGImagePropertyPixelHeight
                 as String] as? NSNumber else {
             throw ImportError.failedToSizeImage(url)
         }
@@ -207,7 +207,7 @@ public class ImportHandler {
                 image.name = resVals.name
                 image.originalMetadata = meta as NSDictionary?
                 image.originalUrl = url
-                image.imageSize = NSValue(size: size)
+                image.imageSize = size
 
                 // get capture date from exif if avaialble (TODO: parse subseconds)
                 if let m = meta,
