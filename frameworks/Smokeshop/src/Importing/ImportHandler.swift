@@ -173,14 +173,21 @@ public class ImportHandler {
             throw ImportError.notAnImage(url, uti)
         }
 
-        // extract some metadata
+        // extract some metadata from the image
         if let source = CGImageSourceCreateWithURL(url as CFURL, nil),
             let props = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: AnyObject] {
             meta = props
+        } else {
+            DDLogWarn("Failed to get metadata from '\(url)'")
+            throw ImportError.failedToGetImageProperties(url)
         }
-        else {
-            DDLogWarn("Failed to get exif info from '\(url)'")
+
+        guard let width = meta[kCGImagePropertyPixelWidth as String] as? NSNumber,
+              let height = meta[kCGImagePropertyPixelWidth
+                as String] as? NSNumber else {
+            throw ImportError.failedToSizeImage(url)
         }
+        let size = CGSize(width: width.doubleValue, height: height.doubleValue)
 
         // hop on the queue to create the object
         self.context.performAndWait {
@@ -200,6 +207,7 @@ public class ImportHandler {
                 image.name = resVals.name
                 image.originalMetadata = meta as NSDictionary?
                 image.originalUrl = url
+                image.imageSize = NSValue(size: size)
 
                 // get capture date from exif if avaialble (TODO: parse subseconds)
                 if let m = meta,
@@ -229,6 +237,10 @@ public class ImportHandler {
         /// The specified file is not an image file type.
         case notAnImage(_ fileUrl: URL, _ uti: String!)
         /// This image is a duplicate of an image already in the library.
-        case duplicate(_ fileUrl: URL)
+        case duplicate(_ imageUrl: URL)
+        /// Something went wrong getting information about an image.
+        case failedToGetImageProperties(_ imageUrl: URL)
+        /// Failed to size the image.
+        case failedToSizeImage(_ imageUrl: URL)
     }
 }

@@ -28,6 +28,9 @@ public class LibraryStore {
     public init(_ lib: LibraryBundle) throws {
         self.library = lib
 
+        // register value transformers for the first time
+        SizeTransformer.register()
+
         // initialize the pieces of the CoreData stack
         try self.initModelAndStoreCoordinator()
         try self.initPersistentStore()

@@ -1,8 +1,8 @@
 //
 //  Image+CoreDataProperties.swift
-//  Smokeshed
+//  Smokeshop (macOS)
 //
-//  Created by Tristan Seifert on 20200606.
+//  Created by Tristan Seifert on 20200609.
 //
 //
 
@@ -16,16 +16,17 @@ extension Image {
         return NSFetchRequest<Image>(entityName: "Image")
     }
 
+    @NSManaged public var dateCaptured: Date?
+    @NSManaged public var dateImported: Date?
     @NSManaged public var identifier: UUID?
-    @NSManaged public var originalUrl: URL?
     @NSManaged public var name: String?
     @NSManaged public var originalMetadata: NSDictionary?
-    @NSManaged public var dateImported: Date?
-    @NSManaged public var dateCaptured: Date?
+    @NSManaged public var originalUrl: URL?
+    @NSManaged public var imageSize: NSValue?
     @NSManaged public var albums: NSSet?
+    @NSManaged public var camera: Camera?
     @NSManaged public var keywords: NSOrderedSet?
     @NSManaged public var lens: Lens?
-    @NSManaged public var camera: Camera?
     @NSManaged public var location: GPSLocation?
 
 }

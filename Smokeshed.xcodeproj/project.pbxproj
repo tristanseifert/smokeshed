@@ -68,6 +68,9 @@
 		6A962C2B248F3ABC0088E1DB /* LibraryOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A962C29248F3ABC0088E1DB /* LibraryOptionsController.swift */; };
 		6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C2A248F3ABC0088E1DB /* LibraryOptionsController.xib */; };
 		6A962C2F248F4AA40088E1DB /* ImportHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A962C2E248F4AA40088E1DB /* ImportHandler.swift */; };
+		6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */; };
+		6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */; };
+		6A96646A2490833100F757A1 /* SizeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664692490833100F757A1 /* SizeTransformer.swift */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -193,6 +196,9 @@
 		6A962C29248F3ABC0088E1DB /* LibraryOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryOptionsController.swift; path = "app_macos/src/Library UI/LibraryOptionsController.swift"; sourceTree = "<group>"; };
 		6A962C2A248F3ABC0088E1DB /* LibraryOptionsController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryOptionsController.xib; path = "app_macos/src/Library UI/LibraryOptionsController.xib"; sourceTree = "<group>"; };
 		6A962C2E248F4AA40088E1DB /* ImportHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportHandler.swift; path = frameworks/Smokeshop/src/Importing/ImportHandler.swift; sourceTree = "<group>"; };
+		6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItem.swift; path = "app_macos/src/Library View/LibraryCollectionItem.swift"; sourceTree = "<group>"; };
+		6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItemView.swift; path = "app_macos/src/Library View/LibraryCollectionItemView.swift"; sourceTree = "<group>"; };
+		6A9664692490833100F757A1 /* SizeTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SizeTransformer.swift; path = "frameworks/Smokeshop/src/CoreData Store/Transformers/SizeTransformer.swift"; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -277,6 +283,7 @@
 		6A2C5EF2248C8B5A009EA409 /* CoreData Store */ = {
 			isa = PBXGroup;
 			children = (
+				6A9664682490830F00F757A1 /* Value Transformers */,
 				6A2C5EF7248CAFD0009EA409 /* Model Subclasses */,
 				6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */,
 				6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */,
@@ -596,12 +603,30 @@
 			name = Importing;
 			sourceTree = "<group>";
 		};
+		6A9664632490652C00F757A1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6A962C27248F191E0088E1DB /* Library View.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		6A9664682490830F00F757A1 /* Value Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				6A9664692490833100F757A1 /* SizeTransformer.swift */,
+			);
+			name = "Value Transformers";
+			sourceTree = "<group>";
+		};
 		6AD8CFD5248DFAC7009AF452 /* Library View */ = {
 			isa = PBXGroup;
 			children = (
 				6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */,
 				6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */,
-				6A962C27248F191E0088E1DB /* Library View.xcassets */,
+				6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */,
+				6A9664632490652C00F757A1 /* Resources */,
+				6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */,
 			);
 			name = "Library View";
 			sourceTree = "<group>";
@@ -850,6 +875,8 @@
 			files = (
 				6A962C2B248F3ABC0088E1DB /* LibraryOptionsController.swift in Sources */,
 				6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */,
+				6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */,
+				6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
@@ -866,6 +893,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A96646A2490833100F757A1 /* SizeTransformer.swift in Sources */,
 				6A2C5F52248CB611009EA409 /* AlbumContainer+CoreDataClass.swift in Sources */,
 				6A2C5F53248CB612009EA409 /* AlbumContainer+CoreDataProperties.swift in Sources */,
 				6A2C5F58248CB612009EA409 /* Lens+CoreDataClass.swift in Sources */,

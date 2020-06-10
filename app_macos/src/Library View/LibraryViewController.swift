@@ -47,6 +47,10 @@ class LibraryViewController: NSViewController, NSMenuItemValidation, ContentView
         // reset constraints to the initial state
         self.isFilterVisible = false
         self.filter.enclosingScrollView?.isHidden = true
+
+        // register the collection view class
+        self.collection.register(LibraryCollectionItem.self,
+                                 forItemWithIdentifier: .init("RegularImageItem"))
     }
 
     /**
@@ -62,6 +66,9 @@ class LibraryViewController: NSViewController, NSMenuItemValidation, ContentView
     override func viewDidDisappear() {
 
     }
+
+    // MARK: - Collection view
+    @IBOutlet private var collection: NSCollectionView! = nil
 
     // MARK: - Fetching
     /// Helper to get the view context
