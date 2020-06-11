@@ -63,7 +63,19 @@ class LibraryCollectionItem: NSCollectionViewItem {
      * Quiesces data store access when the view has disappeared.
      */
     override func viewDidDisappear() {
+        if let view = self.view as? LibraryCollectionItemView {
+            view.didDisappear()
+        }
+    }
 
+    // MARK: Selection
+    /// Whether the item is selected
+    override var isSelected: Bool {
+        didSet {
+            if let view = self.view as? LibraryCollectionItemView {
+                view.isSelected = self.isSelected
+            }
+        }
     }
 }
 

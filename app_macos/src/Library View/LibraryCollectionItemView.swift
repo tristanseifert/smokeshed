@@ -79,6 +79,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
         self.optimizeForLayer()
         self.setUpLayers()
+        self.setUpTrackingArea()
     }
     /// Decoding this view is not supported
     required init?(coder: NSCoder) {
@@ -510,6 +511,86 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         return true
     }
 
+    // MARK: - Selection
+    /// Is the cell selected? Set by collection view item.
+    var isSelected: Bool = false {
+        didSet {
+            self.updateColors()
+        }
+    }
+
+    /**
+     * Updates the colors used by the UI. This handles both the selection and mouseover (hover) states.
+     */
+    private func updateColors(_ display: Bool = true) {
+        // handle the selected cell state
+        if self.isSelected {
+            // selected and hovering over cell
+            if self.isHovering {
+                self.layer?.backgroundColor = NSColor(named: "LibraryItemHoverSelectedBackground")?.cgColor
+                self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemHoverSelectedSequence")?.cgColor
+            }
+            // selected, but not hovering over
+            else {
+                self.layer?.backgroundColor = NSColor(named: "LibraryItemSelectedBackground")?.cgColor
+                self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemSelectedSequence")?.cgColor
+            }
+        }
+        // handle the non-selected case
+        else {
+            // hovering over cell
+            if self.isHovering {
+                self.layer?.backgroundColor = NSColor(named: "LibraryItemHoverBackground")?.cgColor
+                self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemHoverSequence")?.cgColor
+            }
+            // not selected nor hovering over
+            else {
+                self.layer?.backgroundColor = NSColor(named: "LibraryItemBackground")?.cgColor
+                self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemSequence")?.cgColor
+            }
+        }
+
+        // force redisplay if needed
+        if display {
+            self.setNeedsDisplay(self.bounds)
+        }
+    }
+
+    // MARK: - Mouse Interaction
+    /// Mouseover tracking area
+    private var trackingArea: NSTrackingArea! = nil
+    /// Indicates whether the mouse is currently above this view. Only set on UI thread
+    private var isHovering: Bool = false {
+        didSet {
+            self.updateColors()
+        }
+    }
+
+    /**
+     * Sets up the tracking area for this view. It's used to get notified whenever we have the mouse enter or
+     * leave the view so we can highlight ourselves.
+     */
+    private func setUpTrackingArea() {
+        self.trackingArea = NSTrackingArea(rect: .zero,
+            options: [.mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
+              owner: self, userInfo: nil)
+
+        self.addTrackingArea(self.trackingArea)
+    }
+
+    /**
+     * Mouse entered the view.
+     */
+    override func mouseEntered(with event: NSEvent) {
+        self.isHovering = true
+    }
+    /**
+     * Mouse exited the view.
+     */
+    override func mouseExited(with event: NSEvent) {
+        self.isHovering = false
+    }
+
 
     // MARK: - State updating
     /**
@@ -521,6 +602,15 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             self.updateImageContainer()
             self.needsImageUpdate = false
         }
+
+        // reset hover state
+        self.isHovering = false
+    }
+    /**
+     * View has disappeared.
+     */
+    func didDisappear() {
+
     }
 
     /**
