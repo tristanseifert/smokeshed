@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+import Bowl
 import CocoaLumberjackSwift
 
 @objc(Image)
@@ -20,6 +21,19 @@ public class Image: NSManagedObject {
         super.awakeFromInsert()
 
         self.identifier = UUID()
+    }
+
+    /**
+     * Returns the date the image was captured, but with the time stripped. This allows grouping by capture
+     * date much more easily.
+     */
+    @objc dynamic public var dayCaptured: Date! {
+        // bail out if there's no date provided
+        guard let date = self.dateCaptured else {
+            return nil
+        }
+
+        return date.withoutTime()
     }
 
     // MARK: Image size syntactic sugar
@@ -44,14 +58,20 @@ public class Image: NSManagedObject {
         }
     }
 
+    // MARK: - KVO Support
     /**
-     * Allow image size to be properly dependent on the private backing storage property.
+     * Allow calculated properties to be properly dependent on the private backing storage property.
      */
     class override public func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
         var keyPaths = super.keyPathsForValuesAffectingValue(forKey: key)
 
+        // handle image size
         if key == "imageSize" {
             keyPaths = keyPaths.union(["pvtImageSize"])
+        }
+        // handle the day captured
+        else if key == "dayCaptured" {
+            keyPaths = keyPaths.union(["dateCaptured"])
         }
 
         return keyPaths

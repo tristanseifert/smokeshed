@@ -485,8 +485,9 @@
                                             <collectionView selectable="YES" allowsMultipleSelection="YES" id="lhQ-lK-XRg">
                                                 <rect key="frame" x="0.0" y="0.0" width="662" height="158"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                                <collectionViewFlowLayout key="collectionViewLayout" id="d5S-5Z-xgd">
+                                                <collectionViewFlowLayout key="collectionViewLayout" sectionHeadersPinToVisibleBounds="YES" id="d5S-5Z-xgd">
                                                     <size key="itemSize" width="100" height="125"/>
+                                                    <size key="headerReferenceSize" width="0.0" height="30"/>
                                                 </collectionViewFlowLayout>
                                                 <color key="primaryBackgroundColor" name="LibraryViewPrimaryBackground"/>
                                                 <connections>

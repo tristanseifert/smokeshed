@@ -80,6 +80,6 @@ class LibraryCollectionItem: NSCollectionViewItem {
 }
 
 extension NSUserInterfaceItemIdentifier {
-    /// Name of the library light table collection item type
+    /// Standard image collection view item
     static let libraryCollectionItem = NSUserInterfaceItemIdentifier("LibraryCollectionItem")
 }

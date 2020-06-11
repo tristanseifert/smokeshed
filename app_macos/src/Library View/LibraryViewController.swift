@@ -10,7 +10,10 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class LibraryViewController: NSViewController, NSMenuItemValidation, NSCollectionViewDataSource, ContentViewChild {
+class LibraryViewController: NSViewController, NSMenuItemValidation,
+                             NSCollectionViewDataSource,
+                             NSFetchedResultsControllerDelegate,
+                             ContentViewChild {
     /// Library that is being browsed
     private var library: LibraryBundle
     /// Convenience helper for accessing the view context of the library store
@@ -57,9 +60,13 @@ class LibraryViewController: NSViewController, NSMenuItemValidation, NSCollectio
         self.isFilterVisible = false
         self.filter.enclosingScrollView?.isHidden = true
 
-        // register the collection view class
+        // register the collection view classes
         self.collection.register(LibraryCollectionItem.self,
                                  forItemWithIdentifier: .libraryCollectionItem)
+
+        self.collection.register(LibraryCollectionHeaderView.self,
+                                 forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
+                                 withIdentifier: .libraryCollectionHeader)
     }
 
     /**
@@ -103,93 +110,210 @@ class LibraryViewController: NSViewController, NSMenuItemValidation, NSCollectio
                          object: self.collection!)
     }
 
-    /**
-     * Quiesces data store access when the view has disappeared.
-     */
-    override func viewDidDisappear() {
-
-    }
-
     // MARK: - Fetching
     /// Fetch request used to get data
-    private var fetchReq: NSFetchRequest<Image>! = NSFetchRequest()
-    /// Array of returned data
-    private var fetchedData: [Image]! = nil
+    private var fetchReq: NSFetchRequest<Image>! = NSFetchRequest(entityName: "Image")
+    /// Fetched results controller
+    private var fetchReqCtrl: NSFetchedResultsController<Image>! = nil
+    /// Has the fetch request been changed since the last time? (Used to invalidate cache)
+    private var fetchReqChanged: Bool = false
+
+    /// Filter predicate for what's being displayed
+    @objc dynamic private var filterPredicate: NSPredicate! = nil
+    /// Sort descriptors for the results
+    @objc dynamic private var sort: [NSSortDescriptor] = [NSSortDescriptor]()
 
     /**
      * Initializes the fetch request.
      */
     private func initFetchReq() {
-        // get full managed objects
-        self.fetchReq.entity = Image.entity()
-        self.fetchReq.resultType = .managedObjectResultType
+        // get dictionary representations of objects; only properties displayed
+//        self.fetchReq.resultType = .dictionaryResultType
+//        self.fetchReq.propertiesToFetch = ["name", "dateCaptured", "identifier", "pvtImageSize", "camera", "lens"]
+//        self.fetchReq.relationshipKeyPathsForPrefetching = ["camera", "lens"]
 
         // batch results for better performance; and also fetch subentities
-        self.fetchReq.fetchBatchSize = 50
+        self.fetchReq.fetchBatchSize = 25
         self.fetchReq.includesSubentities = true
-    }
 
-    /**
-     * On window resize, we may need to increase (or decrease) the batch size of the fetch request. We
-     * should try to keep it around twice the number of images per row.
-     */
-    private func updateFetchBatchSize() {
-        self.fetchReq.fetchBatchSize = Int(ceil(self.imagesPerRow * 2.0))
+        // sort by date captured
+        self.fetchReq.sortDescriptors = [
+            NSSortDescriptor(key: "dateCaptured", ascending: false)
+        ]
     }
 
     /**
      * Updates the fetch request with any filters. This prepares it to be executed.
      */
     private func updateFetchReq() {
+        // TODO: implement this :)
 
+        // set if the fetch request changed
+//        self.fetchReqChanged = true
     }
 
     /**
      * Performs the fetch.
      */
     private func fetch() {
+        // update the fetch request if needed
         self.updateFetchReq()
 
+        // if the fetch request changed, we need to allocate a new fetch ctrl
+        if self.fetchReqChanged || self.fetchReqCtrl == nil {
+            // it's important the cache is cleared in this case
+            NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: "LibraryViewCache")
+
+            self.fetchReqCtrl = NSFetchedResultsController(fetchRequest: self.fetchReq,
+                                   managedObjectContext: self.ctx,
+                                   sectionNameKeyPath: "dayCaptured",
+                                   cacheName: "LibraryViewCache")
+            self.fetchReqCtrl.delegate = self
+
+            // clear the flag
+            self.fetchReqChanged = false
+        }
+
+        // do the fetch (automagically updates view)
         do {
-            self.fetchedData = try self.ctx.fetch(self.fetchReq)
-            self.collection.reloadData()
+            try self.fetchReqCtrl.performFetch()
+            self.collection?.reloadData()
         } catch {
             DDLogError("Failed to execute fetch request: \(error)")
             self.presentError(error, modalFor: self.view.window!, delegate: nil, didPresent: nil, contextInfo: nil)
         }
     }
 
-    // MARK: - Collection view data source
+    // MARK: Fetch controller delegate
+    /**
+     * Handles section changes in the fetched results.
+     */
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
+                    didChange sectionInfo: NSFetchedResultsSectionInfo,
+                    atSectionIndex sectionIndex: Int,
+                    for type: NSFetchedResultsChangeType) {
+        switch type {
+            case .insert:
+                self.collection?.insertSections(IndexSet(integer: sectionIndex))
+
+            case .delete:
+                self.collection?.deleteSections(IndexSet(integer: sectionIndex))
+
+            default:
+                DDLogError("Unknown section change type: \(type)")
+        }
+    }
+
+    /**
+     * Handles changes to particular objects in a section.
+     */
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
+                    didChange anObject: Any,
+                    at indexPath: IndexPath?,
+                    for type: NSFetchedResultsChangeType,
+                    newIndexPath: IndexPath?) {
+        switch type {
+            case .insert:
+                self.collection?.insertItems(at: [newIndexPath!])
+
+            case .delete:
+                self.collection?.deleteItems(at: [indexPath!])
+
+            // on updates, grab the cell and update it ourselves
+            case .update:
+                guard let item = self.collection?.item(at: indexPath!),
+                 let i = item as? LibraryCollectionItem else {
+                    DDLogError("Failed to get item for object at \(indexPath!)")
+                    return
+                }
+
+                i.sequenceNumber = indexPath![1]
+                i.representedObject = controller.object(at: indexPath!)
+
+            // remove the old item and insert the new one
+            case .move:
+                self.collection?.deleteItems(at: [indexPath!])
+                self.collection?.insertItems(at: [newIndexPath!])
+
+            // unknown; for future compatibility
+            @unknown default:
+                DDLogError("Unhandled change type: \(type)")
+        }
+    }
+
+    // MARK: - Collection: images
+    /**
+     * Returns the number of sections in the grid. If the fetch controller has no sections provided, assume
+     * we just have one.
+     */
+    func numberOfSections(in collectionView: NSCollectionView) -> Int {
+        if let fq = self.fetchReqCtrl {
+            return fq.sections!.count
+        }
+
+        return 0
+    }
+
     /**
      * Returns the number of images in each group.
      */
     func collectionView(_ view: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        // if no fetched data exists, there's 0 items
-        guard let data = self.fetchedData else {
-            return 0
+        guard let sections = self.fetchReqCtrl?.sections else {
+            fatalError("Failed to get sections from fetched results controller")
         }
-        // otherwise, return exactly as many items as there is data
-        return data.count
+
+        return sections[section].numberOfObjects
     }
 
     /**
      * Instantiates a cell to display the image.
      */
     func collectionView(_ view: NSCollectionView, itemForRepresentedObjectAt path: IndexPath) -> NSCollectionViewItem {
-        let idx = path[1]
+        // get a copy of the dictionary for this image
+        guard let image = self.fetchReqCtrl?.object(at: path) else {
+            fatalError("Failed to get object at path \(path)")
+        }
 
         // get us a reuseable cell™
         let cell = view.makeItem(withIdentifier: .libraryCollectionItem,
                                  for: path) as! LibraryCollectionItem
 
         // update its object
-        cell.sequenceNumber = (idx + 1)
-        cell.representedObject = self.fetchedData[idx]
+        cell.sequenceNumber = (path[1] + 1)
+        cell.representedObject = image
 
         return cell
     }
 
-    // MARK: - Collection view UI
+    // MARK: Collection: Section headers
+    /**
+     * Gets a supplemental view. We only support headers.
+     */
+    func collectionView(_ collectionView: NSCollectionView,
+                        viewForSupplementaryElementOfKind
+        kind: NSCollectionView.SupplementaryElementKind,
+                        at indexPath: IndexPath) -> NSView {
+        switch kind {
+            case NSCollectionView.elementKindSectionHeader:
+                // create the header
+                let view = collectionView.makeSupplementaryView(ofKind: kind,
+                           withIdentifier: .libraryCollectionHeader,
+                           for: indexPath)
+
+                if let header = view as? LibraryCollectionHeaderView {
+                    header.collection = collectionView
+                    header.section = self.fetchReqCtrl.sections![indexPath[0]]
+                }
+
+                return view
+
+            default:
+                fatalError("Unsupported supplemental view type: \(kind)")
+        }
+        
+    }
+
+    // MARK: - Collection view: UI
     /// Number of columns of images to display. Fractional values supported.
     @objc dynamic private var imagesPerRow: CGFloat = 4 {
         didSet {
@@ -216,20 +340,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation, NSCollectio
         let height = ceil(width * 1.25)
 
         layout.itemSize = NSSize(width: width, height: height)
-
-        // at this time, update fetch request batch size for later
-        self.updateFetchBatchSize()
     }
-
-    // MARK: - Fetching
-    /// Helper to get the view context
-    @objc dynamic private var viewContext: NSManagedObjectContext {
-        return self.library.store.mainContext!
-    }
-    /// Filter predicate for what's being displayed
-    @objc dynamic private var filterPredicate: NSPredicate! = nil
-    /// Sort descriptors for the results
-    @objc dynamic private var sort: [NSSortDescriptor] = [NSSortDescriptor]()
 
     // MARK: - Filter bar UI
     /// Predicate editor for the filters
