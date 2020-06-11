@@ -36,9 +36,14 @@ class LibraryCollectionHeaderView: NSView, NSCollectionViewSectionHeaderView {
         didSet {
             // we got some sekshun
             if let sec = self.section {
+                // Section name may be empty string (null group value)
+                if sec.name.isEmpty {
+                    self.nameLabel.stringValue = NSLocalizedString("Unknown", comment: "Library collection header section name placeholder")
+                    return
+                }
+
                 // convert the name into a date
                 guard let date = LibraryCollectionHeaderView.inFormatter.date(from: sec.name) else {
-                    self.nameLabel.stringValue = NSLocalizedString("Unknown", comment: "Library collection header section name placeholder")
                     DDLogVerbose("Failed to parse date from sec name '\(sec.name)'")
                     return
                 }

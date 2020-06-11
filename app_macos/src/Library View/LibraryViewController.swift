@@ -11,7 +11,6 @@ import Smokeshop
 import CocoaLumberjackSwift
 
 class LibraryViewController: NSViewController, NSMenuItemValidation,
-                             NSCollectionViewDataSource,
                              NSFetchedResultsControllerDelegate,
                              ContentViewChild {
     /// Library that is being browsed
@@ -67,6 +66,9 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         self.collection.register(LibraryCollectionHeaderView.self,
                                  forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
                                  withIdentifier: .libraryCollectionHeader)
+
+        // set up the collection view data source
+        self.setUpDataSource()
     }
 
     /**
@@ -127,9 +129,8 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
      * Initializes the fetch request.
      */
     private func initFetchReq() {
-        // get dictionary representations of objects; only properties displayed
-//        self.fetchReq.resultType = .dictionaryResultType
-//        self.fetchReq.propertiesToFetch = ["name", "dateCaptured", "identifier", "pvtImageSize", "camera", "lens"]
+        // only fetch some properties now
+        self.fetchReq.propertiesToFetch = ["name", "dateCaptured", "identifier", "pvtImageSize", "camera", "lens"]
 //        self.fetchReq.relationshipKeyPathsForPrefetching = ["camera", "lens"]
 
         // batch results for better performance; and also fetch subentities
@@ -170,158 +171,89 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
                                    cacheName: "LibraryViewCache")
             self.fetchReqCtrl.delegate = self
 
+
+
             // clear the flag
             self.fetchReqChanged = false
         }
 
-        // do the fetch (automagically updates view)
+        // do the fetch and update our data source
         do {
             try self.fetchReqCtrl.performFetch()
-            self.collection?.reloadData()
         } catch {
             DDLogError("Failed to execute fetch request: \(error)")
             self.presentError(error, modalFor: self.view.window!, delegate: nil, didPresent: nil, contextInfo: nil)
         }
     }
 
-    // MARK: Fetch controller delegate
+    // MARK: - Collection data source
+    /// This is the collection view that holds the library images.
+    @IBOutlet private var collection: NSCollectionView! = nil
+    
+    /// Diffable data source for collection view
+    private var dataSource: NSCollectionViewDiffableDataSource<String, NSManagedObjectID>! = nil
     /**
-     * Handles section changes in the fetched results.
+     * Whether the data source update is animated or not. There seems to be a bug in the implementation
+     * such that the first refresh _must_ not be animated, as it doesn't reload the underlying data model; all
+     * subsequent refreshes will then be animated.
+     *
+     * This is reset when the data source is created, and set once the first update completed.
      */
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange sectionInfo: NSFetchedResultsSectionInfo,
-                    atSectionIndex sectionIndex: Int,
-                    for type: NSFetchedResultsChangeType) {
-        switch type {
-            case .insert:
-                self.collection?.insertSections(IndexSet(integer: sectionIndex))
+    private var animateDataSourceUpdates: Bool = false
 
-            case .delete:
-                self.collection?.deleteSections(IndexSet(integer: sectionIndex))
+    /**
+     * Initializes the diffable data source. This is done instead of a standard data source pattern so that
+     * we can mopre easily handle CoreData changes.
+     */
+    private func setUpDataSource() {
+        // create the data source with the item provider
+        self.dataSource = NSCollectionViewDiffableDataSource(collectionView: self.collection!, itemProvider: { (view, path, id) -> NSCollectionViewItem in
+            let cell = view.makeItem(withIdentifier: .libraryCollectionItem,
+                                     for: path) as! LibraryCollectionItem
+            cell.sequenceNumber = (path[1] + 1)
+            cell.representedObject = self.fetchReqCtrl.object(at: path)
 
-            default:
-                DDLogError("Unknown section change type: \(type)")
+            return cell
+        })
+
+        // give it its section header provider as well
+        self.dataSource.supplementaryViewProvider = { (view, kind, path) in
+            guard kind == NSCollectionView.elementKindSectionHeader else {
+                DDLogError("Unsupported supplementary item kind '\(kind)' for path \(path)")
+                return nil
+            }
+
+            let header = view.makeSupplementaryView(ofKind: kind,
+                                                    withIdentifier: .libraryCollectionHeader,
+                                                    for: path) as! LibraryCollectionHeaderView
+
+            header.collection = view
+            header.section = self.fetchReqCtrl.sections![path[0]]
+
+            return header
         }
+
+        // it's configured, so set it on the collection view
+        self.animateDataSourceUpdates = false
+        self.collection.dataSource = self.dataSource
     }
 
     /**
-     * Handles changes to particular objects in a section.
+     * Applies data source changes to the data source.
      */
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange anObject: Any,
-                    at indexPath: IndexPath?,
-                    for type: NSFetchedResultsChangeType,
-                    newIndexPath: IndexPath?) {
-        switch type {
-            case .insert:
-                self.collection?.insertItems(at: [newIndexPath!])
-
-            case .delete:
-                self.collection?.deleteItems(at: [indexPath!])
-
-            // on updates, grab the cell and update it ourselves
-            case .update:
-                guard let item = self.collection?.item(at: indexPath!),
-                 let i = item as? LibraryCollectionItem else {
-                    DDLogError("Failed to get item for object at \(indexPath!)")
-                    return
-                }
-
-                i.sequenceNumber = indexPath![1]
-                i.representedObject = controller.object(at: indexPath!)
-
-            // remove the old item and insert the new one
-            case .move:
-                self.collection?.deleteItems(at: [indexPath!])
-                self.collection?.insertItems(at: [newIndexPath!])
-
-            // unknown; for future compatibility
-            @unknown default:
-                DDLogError("Unhandled change type: \(type)")
-        }
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        self.dataSource.apply(snapshot, animatingDifferences: self.animateDataSourceUpdates)
+        self.animateDataSourceUpdates = true
     }
 
-    // MARK: - Collection: images
-    /**
-     * Returns the number of sections in the grid. If the fetch controller has no sections provided, assume
-     * we just have one.
-     */
-    func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        if let fq = self.fetchReqCtrl {
-            return fq.sections!.count
-        }
-
-        return 0
-    }
-
-    /**
-     * Returns the number of images in each group.
-     */
-    func collectionView(_ view: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let sections = self.fetchReqCtrl?.sections else {
-            fatalError("Failed to get sections from fetched results controller")
-        }
-
-        return sections[section].numberOfObjects
-    }
-
-    /**
-     * Instantiates a cell to display the image.
-     */
-    func collectionView(_ view: NSCollectionView, itemForRepresentedObjectAt path: IndexPath) -> NSCollectionViewItem {
-        // get a copy of the dictionary for this image
-        guard let image = self.fetchReqCtrl?.object(at: path) else {
-            fatalError("Failed to get object at path \(path)")
-        }
-
-        // get us a reuseable cell™
-        let cell = view.makeItem(withIdentifier: .libraryCollectionItem,
-                                 for: path) as! LibraryCollectionItem
-
-        // update its object
-        cell.sequenceNumber = (path[1] + 1)
-        cell.representedObject = image
-
-        return cell
-    }
-
-    // MARK: Collection: Section headers
-    /**
-     * Gets a supplemental view. We only support headers.
-     */
-    func collectionView(_ collectionView: NSCollectionView,
-                        viewForSupplementaryElementOfKind
-        kind: NSCollectionView.SupplementaryElementKind,
-                        at indexPath: IndexPath) -> NSView {
-        switch kind {
-            case NSCollectionView.elementKindSectionHeader:
-                // create the header
-                let view = collectionView.makeSupplementaryView(ofKind: kind,
-                           withIdentifier: .libraryCollectionHeader,
-                           for: indexPath)
-
-                if let header = view as? LibraryCollectionHeaderView {
-                    header.collection = collectionView
-                    header.section = self.fetchReqCtrl.sections![indexPath[0]]
-                }
-
-                return view
-
-            default:
-                fatalError("Unsupported supplemental view type: \(kind)")
-        }
-        
-    }
-
-    // MARK: - Collection view: UI
+    // MARK: Collection layout
     /// Number of columns of images to display. Fractional values supported.
     @objc dynamic private var imagesPerRow: CGFloat = 4 {
         didSet {
             self.reflowContent()
         }
     }
-    /// This is the collection view that holds the library images.
-    @IBOutlet private var collection: NSCollectionView! = nil
 
     /**
      * Updates the content size of the content view.
