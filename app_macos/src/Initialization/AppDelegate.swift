@@ -176,6 +176,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // once everything loaded, add it to the history
         LibraryHistoryManager.openLibrary(url)
+
+        // last minute setup of some internal components
+        ThumbHandler.shared.pushLibraryId(self.library.identifier)
     }
     
     /**

@@ -617,6 +617,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * Clears UI state and cancels any outstanding thumb requests.
      */
     override func prepareForReuse() {
+        ThumbHandler.shared.cancel(self.image)
+
         self.image = nil
     }
 
@@ -651,6 +653,28 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             // update the image
 //            self.needsImageUpdate = true
             self.updateImageContainer()
+
+            ThumbHandler.shared.get(image, { (imageId, result) in
+                // bail if image id doesn't match
+                if imageId != image.identifier! {
+                    DDLogWarn("Received thumbnail for \(imageId) in cell for \(image.identifier!)")
+                    return
+                }
+
+                // handle the result
+                switch result {
+                    // success! set the image
+                    case .success(let thumbImage):
+                        DispatchQueue.main.async {
+                            self.imageContainer.contents = thumbImage
+                    }
+
+                    // something went wrong getting the thumbnail
+                    case .failure(let error):
+                        DDLogError("Failed to get thumbnail for \(imageId): \(error)")
+                        self.imageContainer.contents = NSImage(named: NSImage.cautionName)
+                }
+            })
         }
         // Otherwise, clear info
         else {

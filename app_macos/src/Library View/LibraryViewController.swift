@@ -11,6 +11,7 @@ import Smokeshop
 import CocoaLumberjackSwift
 
 class LibraryViewController: NSViewController, NSMenuItemValidation,
+                             NSCollectionViewPrefetching,
                              NSFetchedResultsControllerDelegate,
                              ContentViewChild {
     /// Library that is being browsed
@@ -189,7 +190,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     // MARK: - Collection data source
     /// This is the collection view that holds the library images.
     @IBOutlet private var collection: NSCollectionView! = nil
-    
+
     /// Diffable data source for collection view
     private var dataSource: NSCollectionViewDiffableDataSource<String, NSManagedObjectID>! = nil
     /**
@@ -245,6 +246,30 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
         self.dataSource.apply(snapshot, animatingDifferences: self.animateDataSourceUpdates)
         self.animateDataSourceUpdates = true
+    }
+
+    // MARK: Collection prefetching
+    /**
+     * Prefetch data for the given rows. This kicks off a thumb request so that the image can be generated if
+     * it is not already available.
+     */
+    func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        DDLogVerbose("Prefetching: \(indexPaths)")
+
+        ThumbHandler.shared.generate(indexPaths.map({ (path) in
+            return self.fetchReqCtrl.object(at: path)
+        }))
+    }
+
+    /**
+     * Aborts prefetch of the given rows. Cancel any outstanding thumb requests for those images.
+     */
+    func collectionView(_ collectionView: NSCollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        DDLogVerbose("Canceling prefetch: \(indexPaths)")
+
+        ThumbHandler.shared.cancel(indexPaths.map({ (path) in
+            return self.fetchReqCtrl.object(at: path)
+        }))
     }
 
     // MARK: Collection layout

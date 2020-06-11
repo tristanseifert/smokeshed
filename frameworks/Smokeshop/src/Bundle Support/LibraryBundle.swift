@@ -185,6 +185,7 @@ public class LibraryBundle {
     private func createMetadata() {
         // version and compatibility info
         self.meta.version = 1
+        self.meta.uuid = UUID()
         self.meta.storePath = "Store/Library.sqlite"
 
         // what app version created this
@@ -266,6 +267,29 @@ public class LibraryBundle {
      */
     public func setMetadata(_ metadata: LibraryMeta) {
         self.meta = metadata
+    }
+
+    /**
+     * Gets the library unique identifier. If none exists, it is automatically generated.
+     */
+    public var identifier: UUID {
+        get {
+            if let uuid = self.meta.uuid {
+                return uuid
+            }
+
+            // we gotta generate one
+            self.meta.uuid = UUID()
+
+            // save it and swallow errors. we'll prob save later
+            do {
+                try self.writeMetadata()
+            } catch {
+                DDLogError("Failed to write metadata after UUID generation: \(error)")
+            }
+
+            return self.meta.uuid
+        }
     }
 
     // MARK: - Data store support

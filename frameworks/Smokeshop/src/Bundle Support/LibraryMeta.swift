@@ -14,6 +14,9 @@ public struct LibraryMeta: Codable {
     /// Library format version
     var version: Int = -1
 
+    /// Library identifier
+    var uuid: UUID! = nil
+
     /// Relative path to the data store file
     var storePath: String! = nil
 

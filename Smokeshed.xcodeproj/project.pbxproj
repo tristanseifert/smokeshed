@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6A020D2A2491EFB1006F5093 /* ThumbHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D292491EFB1006F5093 /* ThumbHandler.swift */; };
+		6A020D3A24920A6C006F5093 /* ThumbHandler.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 6A020D2F24920A6C006F5093 /* ThumbHandler.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6A020D4024920A8C006F5093 /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
+		6A020D4424920A8C006F5093 /* Waterpipe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF03248B348800145E49 /* Waterpipe.framework */; };
+		6A020D4924920AAF006F5093 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
+		6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5024920C15006F5093 /* XPCDelegate.swift */; };
+		6A020D5224920C97006F5093 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D4D24920B41006F5093 /* main.swift */; };
+		6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
+		6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
 		6A0EE470248B640D0044B433 /* ContainerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE46F248B640D0044B433 /* ContainerHelper.swift */; };
 		6A0EE472248B644C0044B433 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE471248B644C0044B433 /* Foundation.framework */; };
 		6A0EE473248B645C0044B433 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE471248B644C0044B433 /* Foundation.framework */; };
@@ -84,6 +93,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6A020D3824920A6C006F5093 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A020D2E24920A6C006F5093;
+			remoteInfo = ThumbHandler;
+		};
+		6A020D4224920A8C006F5093 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A4CEF1B248B59CE00145E49;
+			remoteInfo = "Bowl (macOS)";
+		};
+		6A020D4624920A8C006F5093 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A4CEF02248B348800145E49;
+			remoteInfo = "Waterpipe (macOS)";
+		};
 		6A2C5F42248CB555009EA409 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
@@ -122,6 +152,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6A020D3E24920A6C006F5093 /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				6A020D3A24920A6C006F5093 /* ThumbHandler.xpc in Embed XPC Services */,
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A4CEEE6248B2F8E00145E49 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -138,6 +179,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6A020D292491EFB1006F5093 /* ThumbHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbHandler.swift; path = "app_macos/src/Thumb Handling/ThumbHandler.swift"; sourceTree = "<group>"; };
+		6A020D2F24920A6C006F5093 /* ThumbHandler.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = ThumbHandler.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A020D4B24920B16006F5093 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "app_macos/src/Thumb Handling/XPC Service/Info.plist"; sourceTree = "<group>"; };
+		6A020D4D24920B41006F5093 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = "app_macos/src/Thumb Handling/XPC Service/main.swift"; sourceTree = "<group>"; };
+		6A020D5024920C15006F5093 /* XPCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XPCDelegate.swift; path = "app_macos/src/Thumb Handling/XPC Service/XPCDelegate.swift"; sourceTree = "<group>"; };
+		6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbXPCProtocol.swift; path = "app_macos/src/Thumb Handling/XPC Service/ThumbXPCProtocol.swift"; sourceTree = "<group>"; };
 		6A0EE46F248B640D0044B433 /* ContainerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerHelper.swift; sourceTree = "<group>"; };
 		6A0EE471248B644C0044B433 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6A0EE475248B64670044B433 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
@@ -214,6 +261,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6A020D2C24920A6C006F5093 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A020D4424920A8C006F5093 /* Waterpipe.framework in Frameworks */,
+				6A020D4024920A8C006F5093 /* Bowl.framework in Frameworks */,
+				6A020D4924920AAF006F5093 /* CocoaLumberjackSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A4CEE97248B259500145E49 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -263,6 +320,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6A020D282491EE3A006F5093 /* Thumbnail stuff */ = {
+			isa = PBXGroup;
+			children = (
+				6A020D292491EFB1006F5093 /* ThumbHandler.swift */,
+				6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */,
+				6A020D3F24920A76006F5093 /* XPC Service */,
+			);
+			name = "Thumbnail stuff";
+			sourceTree = "<group>";
+		};
+		6A020D3F24920A76006F5093 /* XPC Service */ = {
+			isa = PBXGroup;
+			children = (
+				6A020D5624920D80006F5093 /* Main */,
+				6A020D4C24920B1B006F5093 /* Resources */,
+			);
+			name = "XPC Service";
+			sourceTree = "<group>";
+		};
+		6A020D4C24920B1B006F5093 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6A020D4B24920B16006F5093 /* Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		6A020D5624920D80006F5093 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				6A020D5024920C15006F5093 /* XPCDelegate.swift */,
+				6A020D4D24920B41006F5093 /* main.swift */,
+			);
+			name = Main;
+			sourceTree = "<group>";
+		};
 		6A0EE46E248B63FE0044B433 /* Filesystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -344,6 +437,7 @@
 				6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */,
 				6A4CEF03248B348800145E49 /* Waterpipe.framework */,
 				6A4CEF26248B59CE00145E49 /* Bowl.framework */,
+				6A020D2F24920A6C006F5093 /* ThumbHandler.xpc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -351,6 +445,7 @@
 		6A4CEEAE248B263300145E49 /* macOS App */ = {
 			isa = PBXGroup;
 			children = (
+				6A020D282491EE3A006F5093 /* Thumbnail stuff */,
 				6AD8CFE3248E0A58009AF452 /* Edit View */,
 				6AD8CFDE248E0636009AF452 /* Map View */,
 				6AD8CFD5248DFAC7009AF452 /* Library View */,
@@ -693,6 +788,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		6A020D2E24920A6C006F5093 /* ThumbHandler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A020D3B24920A6C006F5093 /* Build configuration list for PBXNativeTarget "ThumbHandler" */;
+			buildPhases = (
+				6A020D2B24920A6C006F5093 /* Sources */,
+				6A020D2C24920A6C006F5093 /* Frameworks */,
+				6A020D2D24920A6C006F5093 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6A020D4324920A8C006F5093 /* PBXTargetDependency */,
+				6A020D4724920A8C006F5093 /* PBXTargetDependency */,
+			);
+			name = ThumbHandler;
+			productName = ThumbHandler;
+			productReference = 6A020D2F24920A6C006F5093 /* ThumbHandler.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 		6A4CEE99248B259500145E49 /* Smokeshed (macOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6A4CEEA8248B25B600145E49 /* Build configuration list for PBXNativeTarget "Smokeshed (macOS)" */;
@@ -702,6 +816,7 @@
 				6A4CEE98248B259500145E49 /* Resources */,
 				6A4CEECF248B288600145E49 /* Copy Carthage frameworks */,
 				6A4CEEE6248B2F8E00145E49 /* Embed Frameworks */,
+				6A020D3E24920A6C006F5093 /* Embed XPC Services */,
 			);
 			buildRules = (
 			);
@@ -710,6 +825,7 @@
 				6A4CEEE0248B2F8E00145E49 /* PBXTargetDependency */,
 				6A4CEF18248B352500145E49 /* PBXTargetDependency */,
 				6A4CEF31248B5A5600145E49 /* PBXTargetDependency */,
+				6A020D3924920A6C006F5093 /* PBXTargetDependency */,
 			);
 			name = "Smokeshed (macOS)";
 			productName = SmokeShed;
@@ -780,6 +896,10 @@
 				LastSwiftUpdateCheck = 1150;
 				LastUpgradeCheck = 1150;
 				TargetAttributes = {
+					6A020D2E24920A6C006F5093 = {
+						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
+					};
 					6A4CEE99248B259500145E49 = {
 						CreatedOnToolsVersion = 11.5;
 						LastSwiftMigration = 1150;
@@ -813,11 +933,19 @@
 				6A4CEED9248B2F8E00145E49 /* Smokeshop (macOS) */,
 				6A4CEF02248B348800145E49 /* Waterpipe (macOS) */,
 				6A4CEF1B248B59CE00145E49 /* Bowl (macOS) */,
+				6A020D2E24920A6C006F5093 /* ThumbHandler */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6A020D2D24920A6C006F5093 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A4CEE98248B259500145E49 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -883,6 +1011,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6A020D2B24920A6C006F5093 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */,
+				6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */,
+				6A020D5224920C97006F5093 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A4CEE96248B259500145E49 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -894,10 +1032,12 @@
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
+				6A020D2A2491EFB1006F5093 /* ThumbHandler.swift in Sources */,
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
 				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,
 				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
+				6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */,
 				6AD8CFDD248E00B6009AF452 /* AppMode.swift in Sources */,
 				6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */,
@@ -953,6 +1093,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6A020D3924920A6C006F5093 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A020D2E24920A6C006F5093 /* ThumbHandler */;
+			targetProxy = 6A020D3824920A6C006F5093 /* PBXContainerItemProxy */;
+		};
+		6A020D4324920A8C006F5093 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A4CEF1B248B59CE00145E49 /* Bowl (macOS) */;
+			targetProxy = 6A020D4224920A8C006F5093 /* PBXContainerItemProxy */;
+		};
+		6A020D4724920A8C006F5093 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A4CEF02248B348800145E49 /* Waterpipe (macOS) */;
+			targetProxy = 6A020D4624920A8C006F5093 /* PBXContainerItemProxy */;
+		};
 		6A2C5F43248CB555009EA409 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6A4CEED9248B2F8E00145E49 /* Smokeshop (macOS) */;
@@ -981,6 +1136,158 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		6A020D3C24920A6C006F5093 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8QDQ246B94;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "app_macos/src/Thumb Handling/XPC Service/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@loader_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.xpc.hand;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6A020D3D24920A6C006F5093 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8QDQ246B94;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "app_macos/src/Thumb Handling/XPC Service/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@loader_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.xpc.hand;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		6A4CEE94248B229F00145E49 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1640,6 +1947,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6A020D3B24920A6C006F5093 /* Build configuration list for PBXNativeTarget "ThumbHandler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A020D3C24920A6C006F5093 /* Debug */,
+				6A020D3D24920A6C006F5093 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6A4CEE93248B229F00145E49 /* Build configuration list for PBXProject "Smokeshed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
