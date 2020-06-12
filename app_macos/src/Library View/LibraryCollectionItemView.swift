@@ -651,10 +651,13 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             }
 
             // update the image
-//            self.needsImageUpdate = true
             self.updateImageContainer()
 
-            ThumbHandler.shared.get(image, { (imageId, result) in
+            var thumbSize = self.imageContainer.bounds.size
+            thumbSize.width = thumbSize.width * self.imageContainer.contentsScale
+            thumbSize.height = thumbSize.height * self.imageContainer.contentsScale
+
+            ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in
                 // bail if image id doesn't match
                 if imageId != image.identifier! {
                     DDLogWarn("Received thumbnail for \(imageId) in cell for \(image.identifier!)")

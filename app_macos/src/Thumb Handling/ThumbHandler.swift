@@ -64,8 +64,10 @@ class ThumbHandler {
         self.service = self.xpc.remoteObjectProxyWithErrorHandler { error in
             DDLogError("Failed to get remote object proxy: \(error)")
 
-            self.xpc.invalidate()
-            self.xpc = nil
+            if let xpc = self.xpc {
+                xpc.invalidate()
+                self.xpc = nil
+            }
         } as? ThumbXPCProtocol
 
         DDLogVerbose("Thumb service: \(String(describing: self.service))")
@@ -154,27 +156,46 @@ class ThumbHandler {
      * provided library id.
      */
     public func generate(_ libraryId: UUID, _ props: [[String: Any]]) {
-        DDLogDebug("Thumb req: libId=\(libraryId), info=\(props)")
+//        DDLogDebug("Thumb req: libId=\(libraryId), info=\(props)")
     }
 
     // MARK: Retrieval
     /**
      * Gets the "best fit" thumbnail image for the specified size.
      */
-    public func get(_ image: Image, _ handler: @escaping GetCallback) {
+    public func get(_ image: Image, _ size: CGSize, _ handler: @escaping GetCallback) {
         if self.libraryIdStack.isEmpty {
             fatalError("No library id has been set; use the long form of generate() or call pushLibraryId()")
         }
 
-        self.get(self.libraryIdStack.last!, self.imageToDict(image), handler)
+        self.get(self.libraryIdStack.last!, self.imageToDict(image), size, handler)
     }
 
     /**
      * Gets the "best fit" thumbnail image for the specified size. The image is identified by a parameter
      * dictionary and library id.
      */
-    public func get(_ libraryId: UUID, _ props: [String: Any], _ handler: @escaping GetCallback) {
-        handler(props["identifier"] as! UUID, .failure(ThumbError.notImplemented))
+    public func get(_ libraryId: UUID, _ props: [String: Any], _ size: CGSize, _ handler: @escaping GetCallback) {
+        // prepare a request
+        let req = ThumbRequest(libraryId: libraryId)
+
+        req.imageInfo = props
+        req.size = size
+
+        self.service!.get(req, withReply: { req, inImg, inErr in
+            // handle the error case first
+            if let error = inErr {
+                handler(props["identifier"] as! UUID, .failure(error))
+            }
+            // otherwise, handle success case
+            else if let image = inImg {
+                handler(props["identifier"] as! UUID, .success(image))
+            }
+            // something got seriously fucked
+            else {
+                handler(props["identifier"] as! UUID, .failure(ThumbError.unknownError))
+            }
+        })
     }
 
     // MARK: Cancelation

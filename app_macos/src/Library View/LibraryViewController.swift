@@ -265,11 +265,12 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
      * Aborts prefetch of the given rows. Cancel any outstanding thumb requests for those images.
      */
     func collectionView(_ collectionView: NSCollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        DDLogVerbose("Canceling prefetch: \(indexPaths)")
+//        DDLogVerbose("Canceling prefetch: \(indexPaths)")
 
-        ThumbHandler.shared.cancel(indexPaths.map({ (path) in
-            return self.fetchReqCtrl.object(at: path)
-        }))
+        // TODO: implement this better. this will crash during bulk updates
+//        ThumbHandler.shared.cancel(indexPaths.map({ (path) in
+//            return self.fetchReqCtrl.object(at: path)
+//        }))
     }
 
     // MARK: Collection layout
