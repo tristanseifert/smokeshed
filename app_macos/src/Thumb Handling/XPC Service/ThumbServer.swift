@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import CoreGraphics
 
-import Bowl
+import Waterpipe
 import CocoaLumberjackSwift
 
 /**
@@ -32,7 +33,7 @@ class ThumbServer: ThumbXPCProtocol {
      *
      * Right now, this is just a pretty shitty wrapper around ImageIO.
      */
-    func retrieve(_ request: ThumbRequest, _ callback: (Result<NSImage, Error>) -> Void) {
+    func retrieve(_ request: ThumbRequest, _ callback: (Result<CGImage, Error>) -> Void) {
         // get the original image
         guard let url = request.imageInfo["originalUrl"] as? URL else {
             return callback(.failure(RetrievalError.invalidRequest))
@@ -55,12 +56,11 @@ class ThumbServer: ThumbXPCProtocol {
             opt[kCGImageSourceThumbnailMaxPixelSize] = max(size.width, size.height)
         }
 
-        guard let cgImg = CGImageSourceCreateThumbnailAtIndex(src, 0, opt as CFDictionary) else {
+        guard let img = CGImageSourceCreateThumbnailAtIndex(src, 0, opt as CFDictionary) else {
             return callback(.failure(RetrievalError.generationFailed))
         }
 
-        // wrap it up in an image and run the callback
-        let img = NSImage(cgImage: cgImg, size: .zero)
+        // run callback
         callback(.success(img))
     }
 
@@ -88,14 +88,16 @@ class ThumbServer: ThumbXPCProtocol {
     /**
      * Gets the thumbnail for the provided image.
      */
-    func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, NSImage?, Error?) -> Void) {
+    func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, IOSurface?, Error?) -> Void) {
         // perform actual work on the background queue
         self.queue.addOperation {
             self.retrieve(request) { res in
                 switch res {
                     // pass the image forward to the reply
                     case .success(let image):
-                        reply(request, image, nil)
+                        // create a surface from the image
+                        let surface = IOSurface.fromImage(image)
+                        reply(request, surface, nil)
 
                     // some sort of error took place, pass that
                     case .failure(let error):

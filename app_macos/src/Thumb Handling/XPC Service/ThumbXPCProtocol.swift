@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreGraphics
 import Cocoa
 
 /**
@@ -42,7 +43,7 @@ import Cocoa
         coder.encode(self.libraryId, forKey: "libraryId")
         coder.encode(self.imageInfo, forKey: "info")
 
-        if let size = self.size {
+        if let size = self.size, size != .zero {
             coder.encode(true, forKey: "hasSize")
             coder.encode(size, forKey: "size")
         } else {
@@ -80,9 +81,9 @@ import Cocoa
 
     /**
      * Retrieves a thumbnail for an image. The image is identified by its library id and some other properties
-     * provided by the caller.
+     * provided by the caller. It's then provided as an IOSurface object.
      */
-    func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, NSImage?, Error?) -> Void)
+    func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, IOSurface?, Error?) -> Void)
 }
 
 /**
@@ -97,10 +98,12 @@ class ThumbXPCProtocolHelpers {
 
         // set up the get() request
         let thumbReqClass = NSSet(array: [
-            ThumbRequest.self, NSUUID.self, NSDictionary.self, CGSize.self,
-            NSURL.self, NSString.self, NSNumber.self, NSValue.self, NSArray.self
+            ThumbRequest.self, NSDictionary.self, NSArray.self,
+            NSUUID.self, NSURL.self, NSString.self, NSNumber.self,
         ]) as! Set<AnyHashable>
-        let imageClass = NSSet(object: NSImage.self) as! Set<AnyHashable>
+        let imageClass = NSSet(array: [
+            NSImage.self, IOSurface.self
+        ]) as! Set<AnyHashable>
 
         int.setClasses(thumbReqClass,
                        for: #selector(ThumbXPCProtocol.get(_:withReply:)),

@@ -48,6 +48,9 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     func getPreferredApperance() -> NSAppearance? {
         return nil
     }
+    func getBottomBorderThickness() -> CGFloat {
+        return 32
+    }
 
     // MARK: View Lifecycle
     /**
@@ -254,7 +257,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
      * it is not already available.
      */
     func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        DDLogVerbose("Prefetching: \(indexPaths)")
+//        DDLogVerbose("Prefetching: \(indexPaths)")
 
         ThumbHandler.shared.generate(indexPaths.map({ (path) in
             return self.fetchReqCtrl.object(at: path)

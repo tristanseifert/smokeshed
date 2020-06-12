@@ -36,6 +36,9 @@ class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChil
     func getPreferredApperance() -> NSAppearance? {
         return nil
     }
+    func getBottomBorderThickness() -> CGFloat {
+        return 0
+    }
 
     // MARK: View Lifecycle
     /**

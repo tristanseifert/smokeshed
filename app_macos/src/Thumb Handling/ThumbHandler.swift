@@ -32,7 +32,7 @@ class ThumbHandler {
      * Thumbnail retrieval callback type. The first argument is the image's identifier, followed by the
      * generated thumbnail image or an error.
      */
-    typealias GetCallback = (UUID, Result<NSImage, Error>) -> Void
+    typealias GetCallback = (UUID, Result<IOSurface, Error>) -> Void
 
     /// XPC connection to the thumbnail helper
     private var xpc: NSXPCConnection! = nil
@@ -188,8 +188,8 @@ class ThumbHandler {
                 handler(props["identifier"] as! UUID, .failure(error))
             }
             // otherwise, handle success case
-            else if let image = inImg {
-                handler(props["identifier"] as! UUID, .success(image))
+            else if let surface = inImg {
+                handler(props["identifier"] as! UUID, .success(surface))
             }
             // something got seriously fucked
             else {
@@ -223,7 +223,7 @@ class ThumbHandler {
      * Cancels all thumbnail operations for a particular image id.
      */
     public func cancel(_ libraryId: UUID, _ imageIds: [UUID]) {
-        DDLogDebug("Canceling thumb req: libId=\(libraryId), images=\(imageIds)")
+//        DDLogDebug("Canceling thumb req: libId=\(libraryId), images=\(imageIds)")
     }
 
     // MARK: - Errors

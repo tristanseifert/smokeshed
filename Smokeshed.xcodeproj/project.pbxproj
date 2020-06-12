@@ -17,17 +17,11 @@
 		6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
 		6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
 		6A0EE470248B640D0044B433 /* ContainerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE46F248B640D0044B433 /* ContainerHelper.swift */; };
-		6A0EE472248B644C0044B433 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE471248B644C0044B433 /* Foundation.framework */; };
-		6A0EE473248B645C0044B433 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE471248B644C0044B433 /* Foundation.framework */; };
-		6A0EE474248B64610044B433 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE471248B644C0044B433 /* Foundation.framework */; };
-		6A0EE476248B64670044B433 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE475248B64670044B433 /* ImageIO.framework */; };
-		6A0EE478248B646B0044B433 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0EE477248B646B0044B433 /* QuartzCore.framework */; };
 		6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47B248B696A0044B433 /* Defaults.plist */; };
 		6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */; };
 		6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */; };
 		6A2C5EF4248C8CAD009EA409 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */; };
 		6A2C5EF6248C8ECA009EA409 /* LibraryStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */; };
-		6A2C5F3F248CB4DF009EA409 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A2C5F3E248CB4DE009EA409 /* CoreLocation.framework */; };
 		6A2C5F52248CB611009EA409 /* AlbumContainer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F44248CB5F7009EA409 /* AlbumContainer+CoreDataClass.swift */; };
 		6A2C5F53248CB612009EA409 /* AlbumContainer+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F45248CB5F7009EA409 /* AlbumContainer+CoreDataProperties.swift */; };
 		6A2C5F54248CB612009EA409 /* Album+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F46248CB5F7009EA409 /* Album+CoreDataClass.swift */; };
@@ -54,9 +48,7 @@
 		6A4CEEE2248B2F8E00145E49 /* Smokeshop.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6A4CEEEE248B301600145E49 /* SmokeShop.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4CEEED248B301600145E49 /* SmokeShop.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A4CEEF3248B30C600145E49 /* Library.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEF0248B30B400145E49 /* Library.xcdatamodeld */; };
-		6A4CEEFB248B337900145E49 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEFA248B337900145E49 /* CoreData.framework */; };
 		6A4CEF10248B34EA00145E49 /* Waterpipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4CEF0F248B34EA00145E49 /* Waterpipe.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6A4CEF12248B34FE00145E49 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF11248B34FE00145E49 /* Metal.framework */; };
 		6A4CEF15248B352500145E49 /* Waterpipe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF03248B348800145E49 /* Waterpipe.framework */; };
 		6A4CEF16248B352500145E49 /* Waterpipe.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF03248B348800145E49 /* Waterpipe.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6A4CEF19248B357F00145E49 /* Smokeshop.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -75,6 +67,14 @@
 		6A903FD9248C6D5400BD1602 /* LibraryMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */; };
 		6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9315922493122F00A9F9B4 /* ThumbServer.swift */; };
 		6A9315992493150F00A9F9B4 /* NSXPCConnection+Hacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6A93159E2493437900A9F9B4 /* IOSurface+ImageSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A93159D2493437900A9F9B4 /* IOSurface+ImageSupport.swift */; };
+		6A9315A32493441700A9F9B4 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A1249343F500A9F9B4 /* IOSurface.framework */; };
+		6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A42493441B00A9F9B4 /* QuartzCore.framework */; };
+		6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
+		6A9315A92493442A00A9F9B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
+		6A9315AA2493443500A9F9B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
+		6A9315AB2493443800A9F9B4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEFC248B337C00145E49 /* CoreData.framework */; };
+		6A9315AD2493443E00A9F9B4 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315AC2493443D00A9F9B4 /* CoreLocation.framework */; };
 		6A94C8AE2491C134008FCE90 /* Date+BowlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */; };
 		6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */; };
 		6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C27248F191E0088E1DB /* Library View.xcassets */; };
@@ -188,15 +188,11 @@
 		6A020D5024920C15006F5093 /* XPCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XPCDelegate.swift; path = "app_macos/src/Thumb Handling/XPC Service/XPCDelegate.swift"; sourceTree = "<group>"; };
 		6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbXPCProtocol.swift; path = "app_macos/src/Thumb Handling/XPC Service/ThumbXPCProtocol.swift"; sourceTree = "<group>"; };
 		6A0EE46F248B640D0044B433 /* ContainerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerHelper.swift; sourceTree = "<group>"; };
-		6A0EE471248B644C0044B433 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		6A0EE475248B64670044B433 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		6A0EE477248B646B0044B433 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		6A0EE47B248B696A0044B433 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = app_macos/assets/Defaults.plist; sourceTree = "<group>"; };
 		6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryPickerController.swift; path = "app_macos/src/Library UI/LibraryPickerController.swift"; sourceTree = "<group>"; };
 		6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryPickerController.xib; path = "app_macos/src/Library UI/LibraryPickerController.xib"; sourceTree = "<group>"; };
 		6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryStore.swift; path = "frameworks/Smokeshop/src/CoreData Store/LibraryStore.swift"; sourceTree = "<group>"; };
 		6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryStoreError.swift; path = "frameworks/Smokeshop/src/CoreData Store/LibraryStoreError.swift"; sourceTree = "<group>"; };
-		6A2C5F3E248CB4DE009EA409 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		6A2C5F44248CB5F7009EA409 /* AlbumContainer+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AlbumContainer+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/AlbumContainer+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6A2C5F45248CB5F7009EA409 /* AlbumContainer+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AlbumContainer+CoreDataProperties.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/AlbumContainer+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		6A2C5F46248CB5F7009EA409 /* Album+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Album+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/Album+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -228,12 +224,10 @@
 		6A4CEEEB248B300B00145E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = frameworks/Smokeshop/assets/Info.plist; sourceTree = "<group>"; };
 		6A4CEEED248B301600145E49 /* SmokeShop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmokeShop.h; path = frameworks/Smokeshop/src/include/SmokeShop.h; sourceTree = "<group>"; };
 		6A4CEEF1248B30B400145E49 /* Smokeshop.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Smokeshop.xcdatamodel; sourceTree = "<group>"; };
-		6A4CEEFA248B337900145E49 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		6A4CEEFC248B337C00145E49 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		6A4CEF03248B348800145E49 /* Waterpipe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Waterpipe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEF0D248B34C000145E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = frameworks/Waterpipe/assets/Info.plist; sourceTree = "<group>"; };
 		6A4CEF0F248B34EA00145E49 /* Waterpipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Waterpipe.h; path = frameworks/Waterpipe/src/include/Waterpipe.h; sourceTree = "<group>"; };
-		6A4CEF11248B34FE00145E49 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		6A4CEF26248B59CE00145E49 /* Bowl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Bowl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEF2B248B59F000145E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = frameworks/Bowl/assets/Info.plist; sourceTree = "<group>"; };
 		6A4CEF2C248B59F900145E49 /* Bowl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bowl.h; path = frameworks/Bowl/src/include/Bowl.h; sourceTree = "<group>"; };
@@ -246,6 +240,12 @@
 		6A9315922493122F00A9F9B4 /* ThumbServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbServer.swift; path = "app_macos/src/Thumb Handling/XPC Service/ThumbServer.swift"; sourceTree = "<group>"; };
 		6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSXPCConnection+Hacks.h"; path = "frameworks/Bowl/src/Hacks/NSXPCConnection+Hacks.h"; sourceTree = "<group>"; };
 		6A93159B249315B200A9F9B4 /* ThumbHandler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ThumbHandler-Bridging-Header.h"; path = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler-Bridging-Header.h"; sourceTree = "<group>"; };
+		6A93159D2493437900A9F9B4 /* IOSurface+ImageSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "IOSurface+ImageSupport.swift"; path = "frameworks/Waterpipe/src/Helpers/IOSurface+ImageSupport.swift"; sourceTree = "<group>"; };
+		6A9315A1249343F500A9F9B4 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
+		6A9315A42493441B00A9F9B4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		6A9315A62493442000A9F9B4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		6A9315A82493442900A9F9B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6A9315AC2493443D00A9F9B4 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Date+BowlExtensions.swift"; path = "frameworks/Bowl/src/Date & Time/Date+BowlExtensions.swift"; sourceTree = "<group>"; };
 		6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionHeaderView.swift; path = "app_macos/src/Library View/LibraryCollectionHeaderView.swift"; sourceTree = "<group>"; };
 		6A962C27248F191E0088E1DB /* Library View.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library View.xcassets"; path = "app_macos/src/Library View/Library View.xcassets"; sourceTree = "<group>"; };
@@ -292,10 +292,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6A2C5F3F248CB4DF009EA409 /* CoreLocation.framework in Frameworks */,
-				6A4CEEFB248B337900145E49 /* CoreData.framework in Frameworks */,
-				6A0EE474248B64610044B433 /* Foundation.framework in Frameworks */,
+				6A9315AD2493443E00A9F9B4 /* CoreLocation.framework in Frameworks */,
 				6A903FD0248C623800BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
+				6A9315AB2493443800A9F9B4 /* CoreData.framework in Frameworks */,
+				6A9315AA2493443500A9F9B4 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,12 +303,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6A0EE478248B646B0044B433 /* QuartzCore.framework in Frameworks */,
-				6A0EE476248B64670044B433 /* ImageIO.framework in Frameworks */,
+				6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */,
+				6A9315A32493441700A9F9B4 /* IOSurface.framework in Frameworks */,
+				6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */,
 				6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A4CEF19248B357F00145E49 /* Smokeshop.framework in Frameworks */,
-				6A0EE473248B645C0044B433 /* Foundation.framework in Frameworks */,
-				6A4CEF12248B34FE00145E49 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,7 +316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A4CEF35248B62D400145E49 /* CocoaLumberjack.framework in Frameworks */,
-				6A0EE472248B644C0044B433 /* Foundation.framework in Frameworks */,
+				6A9315A92493442A00A9F9B4 /* Foundation.framework in Frameworks */,
 				6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -543,12 +542,10 @@
 				6A4CEF1A248B588F00145E49 /* Utilities (Bowl) */,
 				6A4CEEFD248B339E00145E49 /* Image Processing (Waterpipe) */,
 				6A4CEEE8248B2FC000145E49 /* Library Storage (Smokeshop) */,
-				6A0EE477248B646B0044B433 /* QuartzCore.framework */,
-				6A0EE475248B64670044B433 /* ImageIO.framework */,
-				6A0EE471248B644C0044B433 /* Foundation.framework */,
-				6A4CEF11248B34FE00145E49 /* Metal.framework */,
-				6A4CEEFA248B337900145E49 /* CoreData.framework */,
-				6A2C5F3E248CB4DE009EA409 /* CoreLocation.framework */,
+				6A9315AC2493443D00A9F9B4 /* CoreLocation.framework */,
+				6A9315A82493442900A9F9B4 /* Foundation.framework */,
+				6A9315A62493442000A9F9B4 /* Metal.framework */,
+				6A9315A42493441B00A9F9B4 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -556,6 +553,7 @@
 		6A4CEEE8248B2FC000145E49 /* Library Storage (Smokeshop) */ = {
 			isa = PBXGroup;
 			children = (
+				6A9315A1249343F500A9F9B4 /* IOSurface.framework */,
 				6A962C2D248F4A7A0088E1DB /* Importing */,
 				6A2C5EF2248C8B5A009EA409 /* CoreData Store */,
 				6A903FCD248C607C00BD1602 /* Document Bundle Support */,
@@ -610,6 +608,7 @@
 		6A4CEEFD248B339E00145E49 /* Image Processing (Waterpipe) */ = {
 			isa = PBXGroup;
 			children = (
+				6A93159C2493434400A9F9B4 /* Helpers */,
 				6A4CEF0B248B349200145E49 /* Headers */,
 				6A4CEF0C248B349600145E49 /* Resources */,
 			);
@@ -717,6 +716,14 @@
 				6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */,
 			);
 			name = Hacks;
+			sourceTree = "<group>";
+		};
+		6A93159C2493434400A9F9B4 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6A93159D2493437900A9F9B4 /* IOSurface+ImageSupport.swift */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 		6A94C8AC2491C10A008FCE90 /* Date & Time */ = {
@@ -935,6 +942,7 @@
 					};
 					6A4CEF02248B348800145E49 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					6A4CEF1B248B59CE00145E49 = {
 						LastSwiftMigration = 1150;
@@ -1103,6 +1111,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A93159E2493437900A9F9B4 /* IOSurface+ImageSupport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

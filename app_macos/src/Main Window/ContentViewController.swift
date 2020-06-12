@@ -12,6 +12,7 @@ import CocoaLumberjackSwift
 
 protocol ContentViewChild {
     func getPreferredApperance() -> NSAppearance?
+    func getBottomBorderThickness() -> CGFloat
 }
 
 /**
@@ -134,8 +135,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         if let c = next as? ContentViewChild, let window = self.view.window {
             if animate {
                 window.animator().appearance = c.getPreferredApperance()
+                window.animator().setContentBorderThickness(c.getBottomBorderThickness(), for: .minY)
             } else {
                 window.appearance = c.getPreferredApperance()
+                window.setContentBorderThickness(c.getBottomBorderThickness(), for: .minY)
             }
         }
 

@@ -40,6 +40,9 @@ class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChi
     func getPreferredApperance() -> NSAppearance? {
         return NSAppearance(named: .darkAqua)
     }
+    func getBottomBorderThickness() -> CGFloat {
+        return 0
+    }
 
     // MARK: View Lifecycle
     /**

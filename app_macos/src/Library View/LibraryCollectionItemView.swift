@@ -428,7 +428,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.imageShadow.shadowOffset = LibraryCollectionItemView.imageShadowOffset
         self.imageShadow.shadowOpacity = LibraryCollectionItemView.imageShadowOpacity
 
-        self.imageShadow.backgroundColor = NSColor.white.cgColor
+        self.imageShadow.backgroundColor = NSColor(named: "LibraryItemImageBackground")?.cgColor
 
         self.imageShadow.constraints = [
             // align horizontally to the image container
@@ -667,9 +667,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                 // handle the result
                 switch result {
                     // success! set the image
-                    case .success(let thumbImage):
+                    case .success(let surface):
                         DispatchQueue.main.async {
-                            self.imageContainer.contents = thumbImage
+                            self.imageContainer.contents = surface
                             self.setNeedsDisplay(self.bounds)
                     }
 
