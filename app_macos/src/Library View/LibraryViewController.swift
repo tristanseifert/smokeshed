@@ -59,9 +59,11 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // reset constraints to the initial state
+        // set up filter bar state
         self.isFilterVisible = false
         self.filter.enclosingScrollView?.isHidden = true
+
+        self.setUpFilterAreaHeightNotifications()
 
         // register the collection view classes
         self.collection.register(LibraryCollectionItem.self,
@@ -277,8 +279,14 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     }
 
     // MARK: Collection layout
+    /// Zoom factor
+    @objc dynamic private var gridZoom: CGFloat = 5 {
+        didSet {
+            self.imagesPerRow = 9 - gridZoom
+        }
+    }
     /// Number of columns of images to display. Fractional values supported.
-    @objc dynamic private var imagesPerRow: CGFloat = 4 {
+    private var imagesPerRow: CGFloat = 4 {
         didSet {
             self.reflowContent()
         }
@@ -297,13 +305,15 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         }
 
         // calculate the new size
-        let width = floor(size.width / self.imagesPerRow)
+        let width = min(floor(size.width / self.imagesPerRow), size.width)
         let height = ceil(width * 1.25)
 
         layout.itemSize = NSSize(width: width, height: height)
     }
 
     // MARK: - Filter bar UI
+    /// Container view that holds the filter bar and editor
+    @IBOutlet private var filterArea: NSStackView! = nil
     /// Predicate editor for the filters
     @IBOutlet private var filter: NSPredicateEditor! = nil
     /// Size constraint for the filter predicate editor
@@ -331,8 +341,49 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
                 } else {
                     self.filter.enclosingScrollView?.isHidden = true
                 }
+
+                // force grid view to recalculate layout
+                // TODO: improve this, animate headers?
+                self.collection.reloadItems(at: self.collection.indexPathsForVisibleItems())
             })
         }
+    }
+
+    /**
+     * Registers for filter area height update notifications.
+     */
+    private func setUpFilterAreaHeightNotifications() {
+        // register for frame change on filter area
+        let c = NotificationCenter.default
+
+        c.addObserver(forName: NSView.frameDidChangeNotification,
+                      object: self.filterArea, queue: nil, using: { _ in
+            self.filterAreaHeightUpdate()
+        })
+
+        // enable posting of the notification
+        self.filterArea.postsFrameChangedNotifications = true
+        // last, manually update to make sure UI is updated
+        self.filterAreaHeightUpdate()
+    }
+
+    /**
+     * Handles the height of the filter area changing. This adjusts the edge insets of the content view
+     * accordingly.
+     */
+    private func filterAreaHeightUpdate() {
+        guard let scroll = self.collection?.enclosingScrollView else {
+            DDLogError("Failed to get reference to collection scroll view")
+            return
+        }
+
+        // the height of the filter bounds is the top inset
+        let filterBounds = self.filterArea.bounds
+
+        var insets = NSEdgeInsets()
+        insets.top = filterBounds.size.height
+
+        scroll.contentInsets = insets
     }
 
     // MARK: - Lens/Camera Filters

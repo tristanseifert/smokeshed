@@ -12,7 +12,7 @@ import CocoaLumberjackSwift
 /**
  * These views are used to render the section headers in the library view. They display a date
  */
-class LibraryCollectionHeaderView: NSView, NSCollectionViewSectionHeaderView {
+class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHeaderView {
     /// Date formatter used to present the dates
     private static let formatter: DateFormatter = {
         let fmt = DateFormatter()
@@ -85,6 +85,10 @@ class LibraryCollectionHeaderView: NSView, NSCollectionViewSectionHeaderView {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
 
+        self.material = .headerView
+        self.blendingMode = .withinWindow
+
+        self.setUpBorderView()
         self.setUpSectionNameLabel()
 //        self.setUpCollapseButton()
     }
@@ -105,7 +109,7 @@ class LibraryCollectionHeaderView: NSView, NSCollectionViewSectionHeaderView {
         let size = NSFont.systemFontSize(for: .regular)
         self.nameLabel.font = NSFont.systemFont(ofSize: size, weight: .medium)
 
-        self.nameLabel.textColor = NSColor(named: "LibraryHeaderTitle")
+        self.nameLabel.textColor = NSColor.labelColor
 
         self.addSubview(self.nameLabel)
         
@@ -153,34 +157,60 @@ class LibraryCollectionHeaderView: NSView, NSCollectionViewSectionHeaderView {
         ])
     }
 
-    // MARK: - Drawing
+    // MARK: - Border View
     /**
-     * Draws the background and separator lines.
+     * Sets up the border view.
      */
-    override func draw(_ dirtyRect: NSRect) {
-        // draw the 1pt borders at the top and bottom
-        let borderColor = NSColor(named: "LibraryHeaderBorder")!
+    private func setUpBorderView() {
+        // set up the top border
+        let top = BorderView(frame: .zero)
+        top.translatesAutoresizingMaskIntoConstraints = false
 
-        let topBorder = NSRect(origin: CGPoint.zero, size: self.bounds.size)
-        let bottomBorder = NSRect(origin: CGPoint(x: 0, y: self.bounds.height-1), size: self.bounds.size)
+        self.addSubview(top)
 
-        if topBorder.intersects(dirtyRect) {
+        NSLayoutConstraint.activate([
+            // match the trailing/leading edges of superview
+            top.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            top.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+
+            // match the top edge of superview
+            top.topAnchor.constraint(equalTo: self.topAnchor),
+
+            // height is one pixel
+            top.heightAnchor.constraint(equalToConstant: 1)
+        ])
+
+        // set up the bottom border
+        let bottom = BorderView(frame: .zero)
+        bottom.translatesAutoresizingMaskIntoConstraints = false
+
+        self.addSubview(bottom)
+
+        NSLayoutConstraint.activate([
+            // match the trailing/leading edges of superview
+            bottom.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            bottom.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+
+            // match the bottom edge of superview
+            bottom.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -1),
+
+            // height is one pixel
+            bottom.heightAnchor.constraint(equalToConstant: 1)
+        ])
+    }
+
+    /**
+     * Simple view that draws the top/bottom borders of the header.
+     */
+    private class BorderView: NSView {
+        /**
+         * Draws the separator lines.
+         */
+        override func draw(_ dirtyRect: NSRect) {
+            let borderColor = NSColor.tertiaryLabelColor
+
             borderColor.setFill()
-            topBorder.fill(using: .copy)
-        }
-        if bottomBorder.intersects(dirtyRect) {
-            borderColor.setFill()
-            bottomBorder.fill(using: .copy)
-        }
-
-        // draw the background
-        let bgRect = self.bounds.insetBy(dx: 0, dy: 1)
-
-        if bgRect.intersects(dirtyRect) {
-            let color = NSColor(named: "LibraryHeaderBackground")!
-
-            color.setFill()
-            bgRect.intersection(dirtyRect).fill(using: .copy)
+            dirtyRect.fill(using: .copy)
         }
     }
 

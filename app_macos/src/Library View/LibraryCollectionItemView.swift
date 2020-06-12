@@ -87,24 +87,18 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     }
 
     // MARK: - Layer setup
-    /// New and spicy™ content layer
-    private lazy var content: CALayer = {
+    /**
+     * Create the view's backing layer.
+     */
+    override func makeBackingLayer() -> CALayer {
         let layer = CALayer()
 
         layer.delegate = self
         layer.layoutManager = CAConstraintLayoutManager()
         layer.backgroundColor = NSColor(named: "LibraryItemBackground")?.cgColor
 
-        // disable implicit animations for bounds and position
-        layer.actions = [
-            "onLayout": NSNull(),
-            "bounds": NSNull(),
-            "position": NSNull(),
-            "contents": NSNull(),
-        ]
-
         return layer
-    }()
+    }
 
     /**
      * Sets up the layers that make up the cell view.
@@ -117,9 +111,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // set up the top info area and the image area
         self.setUpTopInfoBox()
         self.setUpImageContainer()
-
-        // replace the previous NSView layer
-        self.layer = self.content
     }
 
     // MARK: Borders
@@ -131,6 +122,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
         // right border
         let right = CALayer()
+        right.delegate = self
         right.backgroundColor = color
         right.constraints = [
             // fill height of superlayer, 1 point wide
@@ -145,11 +137,12 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             CAConstraint(attribute: .maxX, relativeTo: "superlayer",
                          attribute: .maxX)
         ]
-        right.actions = self.content.actions
-        self.content.addSublayer(right)
+        right.actions = self.layer!.actions
+        self.layer!.addSublayer(right)
 
         // bottom border
         let bottom = CALayer()
+        bottom.delegate = self
         bottom.name = "bottomBorder"
         bottom.backgroundColor = color
         bottom.constraints = [
@@ -165,8 +158,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             CAConstraint(attribute: .maxX, relativeTo: "superlayer",
                          attribute: .maxX)
         ]
-        bottom.actions = self.content.actions
-        self.content.addSublayer(bottom)
+        bottom.actions = self.layer!.actions
+        self.layer!.addSublayer(bottom)
     }
     /**
      * Creates the light (left and top) borders
@@ -176,6 +169,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
         // left border
         let left = CALayer()
+        left.delegate = self
         left.backgroundColor = color
         left.constraints = [
             // fill height of superlayer, 1 point wide
@@ -190,11 +184,12 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             CAConstraint(attribute: .minX, relativeTo: "superlayer",
                          attribute: .minX)
         ]
-        left.actions = self.content.actions
-        self.content.addSublayer(left)
+        left.actions = self.layer!.actions
+        self.layer!.addSublayer(left)
 
         // top border
         let top = CALayer()
+        top.delegate = self
         top.backgroundColor = color
         top.constraints = [
             // fill height of 1, width of superlayer
@@ -209,8 +204,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             CAConstraint(attribute: .maxX, relativeTo: "superlayer",
                          attribute: .maxX)
         ]
-        top.actions = self.content.actions
-        self.content.addSublayer(top)
+        top.actions = self.layer!.actions
+        self.layer!.addSublayer(top)
     }
 
     // MARK: Top info area
@@ -269,7 +264,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                          attribute: .minX, offset: 1)
         ]
 
-        self.content.addSublayer(topBox)
+        self.layer!.addSublayer(topBox)
 
         // border at the bottom of the box
         let border = CALayer()
@@ -420,9 +415,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.imageContainer.masksToBounds = true
         self.imageContainer.contentsGravity = .resizeAspectFill
 
-        self.content.addSublayer(self.imageContainer)
+        self.layer!.addSublayer(self.imageContainer)
 
         // create the shadow that sits below the image
+        self.imageShadow.delegate = self
+
         self.imageShadow.shadowColor = NSColor(named: "LibraryItemImageShadow")?.cgColor
         self.imageShadow.shadowRadius = LibraryCollectionItemView.imageShadowRadius
         self.imageShadow.shadowOffset = LibraryCollectionItemView.imageShadowOffset
@@ -444,7 +441,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                          attribute: .maxY)
         ]
 
-        self.content.insertSublayer(self.imageShadow, below: self.imageContainer)
+        self.layer!.insertSublayer(self.imageShadow, below: self.imageContainer)
     }
 
     /**
@@ -509,6 +506,25 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      */
     func layer(_ layer: CALayer, shouldInheritContentsScale newScale: CGFloat, from window: NSWindow) -> Bool {
         return true
+    }
+
+    /**
+     * Gets the action the given layer should use to process a particular event. We always return nil, as to
+     * disable implicit animations.
+     */
+    func action(for layer: CALayer, forKey event: String) -> CAAction? {
+        // handle image layer content changes with crossfade
+/*        if layer.name == "imageContainer" && event == "contents" {
+            let trans = CATransition()
+            trans.duration = 0.1
+            trans.type = .fade
+
+            return trans
+        }
+*/
+
+        // otherwise, no animation
+        return NSNull()
     }
 
     // MARK: - Selection

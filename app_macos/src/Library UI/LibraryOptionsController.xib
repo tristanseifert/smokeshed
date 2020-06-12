@@ -69,7 +69,7 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     <buttonCell key="cell" type="push" title="Open Media Folder" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ls5-9V-Ky8">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="message" size="11"/>
+                                        <font key="font" metaFont="controlContent" size="11"/>
                                     </buttonCell>
                                 </button>
                             </subviews>
@@ -202,7 +202,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="79" y="93"/>
+            <point key="canvasLocation" x="-142" y="95"/>
         </window>
     </objects>
 </document>
