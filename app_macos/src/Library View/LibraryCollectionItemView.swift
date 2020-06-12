@@ -667,12 +667,17 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                     case .success(let thumbImage):
                         DispatchQueue.main.async {
                             self.imageContainer.contents = thumbImage
+                            self.setNeedsDisplay(self.bounds)
                     }
 
                     // something went wrong getting the thumbnail
                     case .failure(let error):
                         DDLogError("Failed to get thumbnail for \(imageId): \(error)")
-                        self.imageContainer.contents = NSImage(named: NSImage.cautionName)
+
+                        DispatchQueue.main.async {
+                            self.imageContainer.contents = NSImage(named: NSImage.cautionName)
+                            self.setNeedsDisplay(self.bounds)
+                        }
                 }
             })
         }

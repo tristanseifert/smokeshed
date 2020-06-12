@@ -73,6 +73,8 @@
 		6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A903FD7248C66DD00BD1602 /* LibraryBundleError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */; };
 		6A903FD9248C6D5400BD1602 /* LibraryMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */; };
+		6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9315922493122F00A9F9B4 /* ThumbServer.swift */; };
+		6A9315992493150F00A9F9B4 /* NSXPCConnection+Hacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A94C8AE2491C134008FCE90 /* Date+BowlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */; };
 		6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */; };
 		6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C27248F191E0088E1DB /* Library View.xcassets */; };
@@ -241,6 +243,9 @@
 		6A903FCE248C621200BD1602 /* LibraryBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundle.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundle.swift"; sourceTree = "<group>"; };
 		6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundleError.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundleError.swift"; sourceTree = "<group>"; };
 		6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryMeta.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryMeta.swift"; sourceTree = "<group>"; };
+		6A9315922493122F00A9F9B4 /* ThumbServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbServer.swift; path = "app_macos/src/Thumb Handling/XPC Service/ThumbServer.swift"; sourceTree = "<group>"; };
+		6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSXPCConnection+Hacks.h"; path = "frameworks/Bowl/src/Hacks/NSXPCConnection+Hacks.h"; sourceTree = "<group>"; };
+		6A93159B249315B200A9F9B4 /* ThumbHandler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ThumbHandler-Bridging-Header.h"; path = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler-Bridging-Header.h"; sourceTree = "<group>"; };
 		6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Date+BowlExtensions.swift"; path = "frameworks/Bowl/src/Date & Time/Date+BowlExtensions.swift"; sourceTree = "<group>"; };
 		6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionHeaderView.swift; path = "app_macos/src/Library View/LibraryCollectionHeaderView.swift"; sourceTree = "<group>"; };
 		6A962C27248F191E0088E1DB /* Library View.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library View.xcassets"; path = "app_macos/src/Library View/Library View.xcassets"; sourceTree = "<group>"; };
@@ -333,7 +338,8 @@
 		6A020D3F24920A76006F5093 /* XPC Service */ = {
 			isa = PBXGroup;
 			children = (
-				6A020D5624920D80006F5093 /* Main */,
+				6A9315912493116400A9F9B4 /* Thumbnail Handler */,
+				6A020D5624920D80006F5093 /* Initialization and Setup */,
 				6A020D4C24920B1B006F5093 /* Resources */,
 			);
 			name = "XPC Service";
@@ -342,18 +348,19 @@
 		6A020D4C24920B1B006F5093 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6A93159B249315B200A9F9B4 /* ThumbHandler-Bridging-Header.h */,
 				6A020D4B24920B16006F5093 /* Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		6A020D5624920D80006F5093 /* Main */ = {
+		6A020D5624920D80006F5093 /* Initialization and Setup */ = {
 			isa = PBXGroup;
 			children = (
 				6A020D5024920C15006F5093 /* XPCDelegate.swift */,
 				6A020D4D24920B41006F5093 /* main.swift */,
 			);
-			name = Main;
+			name = "Initialization and Setup";
 			sourceTree = "<group>";
 		};
 		6A0EE46E248B63FE0044B433 /* Filesystem */ = {
@@ -636,6 +643,7 @@
 		6A4CEF1A248B588F00145E49 /* Utilities (Bowl) */ = {
 			isa = PBXGroup;
 			children = (
+				6A931594249313E400A9F9B4 /* Hacks */,
 				6A94C8AC2491C10A008FCE90 /* Date & Time */,
 				6A0EE46E248B63FE0044B433 /* Filesystem */,
 				6A4CEF32248B5F3500145E49 /* Logging */,
@@ -693,6 +701,22 @@
 				6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */,
 			);
 			name = "Document Bundle Support";
+			sourceTree = "<group>";
+		};
+		6A9315912493116400A9F9B4 /* Thumbnail Handler */ = {
+			isa = PBXGroup;
+			children = (
+				6A9315922493122F00A9F9B4 /* ThumbServer.swift */,
+			);
+			name = "Thumbnail Handler";
+			sourceTree = "<group>";
+		};
+		6A931594249313E400A9F9B4 /* Hacks */ = {
+			isa = PBXGroup;
+			children = (
+				6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */,
+			);
+			name = Hacks;
 			sourceTree = "<group>";
 		};
 		6A94C8AC2491C10A008FCE90 /* Date & Time */ = {
@@ -781,6 +805,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A9315992493150F00A9F9B4 /* NSXPCConnection+Hacks.h in Headers */,
 				6A4CEF2D248B59F900145E49 /* Bowl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1018,6 +1043,7 @@
 				6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */,
 				6A020D5224920C97006F5093 /* main.swift in Sources */,
+				6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1209,7 +1235,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1282,7 +1310,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1291,6 +1321,7 @@
 		6A4CEE94248B229F00145E49 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 			};
 			name = Debug;
 		};

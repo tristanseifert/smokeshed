@@ -55,7 +55,7 @@ class ThumbHandler {
         // create the XPC connection
         self.xpc = NSXPCConnection(serviceName: "me.tseifert.smokeshed.xpc.hand")
 
-        self.xpc.remoteObjectInterface = NSXPCInterface(with: ThumbXPCProtocol.self)
+        self.xpc.remoteObjectInterface = ThumbXPCProtocolHelpers.make()
         self.xpc.resume()
 
         DDLogVerbose("Thumb handler XPC connection: \(String(describing: self.xpc))")
@@ -69,6 +69,30 @@ class ThumbHandler {
         } as? ThumbXPCProtocol
 
         DDLogVerbose("Thumb service: \(String(describing: self.service))")
+
+        // once connection is initialized, the XPC service itself must init
+        self.wakeXpcService()
+    }
+
+    /**
+     * Tells the XPC service to initialize itself.
+     */
+    private func wakeXpcService() {
+        self.service!.wakeUp(withReply: { error in
+            // handle errors… not much we can do but invalidate connection
+            guard error == nil else {
+                DDLogError("Failed to wake thumb service: \(error!)")
+
+                self.service = nil
+
+                self.xpc.invalidate()
+                self.xpc = nil
+                return
+            }
+
+            // cool, we're ready for service™
+            DDLogVerbose("Thumb handler has woken up")
+        })
     }
 
     // MARK: - Library stack
