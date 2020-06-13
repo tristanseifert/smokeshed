@@ -64,7 +64,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
 
     // MARK: - Child controller handling
     /// Previously displayed controller
-    private var transitionFromVc: NSViewController! = nil
+    @objc dynamic private var currentVc: NSViewController! = nil
     /// Currently displayed app mode
     private var mode: AppMode! = nil {
         didSet {
@@ -85,6 +85,9 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
     private var mapView: MapViewController! = nil
     /// Edit view controller, if allocated
     private var editView: EditViewController! = nil
+
+    /// KVO observers for each of the views' represented objects
+    private var kvos: [AppMode: NSKeyValueObservation] = [:]
 
 
     /**
@@ -111,6 +114,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
                 if self.libraryView == nil {
                     self.libraryView = LibraryViewController()
                     self.libraryView.library = self.library
+                    self.kvos[.Library] = self.libraryView.observe(\.representedObject, changeHandler: { object, _ in
+                        self.childRepresentedObjChanged(object)
+                    })
+
                     self.addChild(self.libraryView)
                 }
                 next = self.libraryView
@@ -119,6 +126,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
                 if self.editView == nil {
                     self.editView = EditViewController()
                     self.editView.library = self.library
+                    self.kvos[.Edit] = self.editView.observe(\.representedObject, changeHandler: { object, _ in
+                        self.childRepresentedObjChanged(object)
+                    })
+
                     self.addChild(self.editView)
                 }
                 next = self.editView
@@ -127,6 +138,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
                 if self.mapView == nil {
                     self.mapView = MapViewController()
                     self.mapView.library = self.library
+                    self.kvos[.Map] = self.mapView.observe(\.representedObject, changeHandler: { object, _ in
+                        self.childRepresentedObjChanged(object)
+                    })
+
                     self.addChild(self.mapView)
                 }
                 next = self.mapView
@@ -153,7 +168,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         }
 
         // either display the controler w/o transition if no previous
-        if self.transitionFromVc == nil {
+        if self.currentVc == nil {
             // just add the view (controller is already a child)
             self.view.addSubview(next.view)
 
@@ -180,7 +195,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
             }
 
             // perform transition
-            self.transition(from: self.transitionFromVc!, to: next,
+            self.transition(from: self.currentVc!, to: next,
                             options: options, completionHandler: {
                 // update post-transition state
                 self.isTransitioning = false
@@ -196,8 +211,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         NSAnimationContext.endGrouping()
 
         // store the app mode for later
-        self.transitionFromVc = next
+        self.currentVc = next
         self.mode = mode
+        
+        self.updateRepresentedObj()
     }
 
     // MARK: - Mode switching actions
@@ -252,7 +269,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         if super.responds(to: aSelector) {
             return true
         }
-        else if let content = self.transitionFromVc,
+        else if let content = self.currentVc,
             content.responds(to: aSelector) {
             return true
         }
@@ -266,8 +283,8 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
      */
     override func forwardingTarget(for aSelector: Selector!) -> Any? {
         // can the currently active controller respond to this message?
-        if let content = self.transitionFromVc, content.responds(to: aSelector) {
-            return self.transitionFromVc
+        if let content = self.currentVc, content.responds(to: aSelector) {
+            return self.currentVc
         }
 
         // nothing supports this message
@@ -281,7 +298,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         let sig = super.method(for: aSelector)
 
         // forward to content if not supported
-        if sig == nil, let newTarget = self.transitionFromVc,
+        if sig == nil, let newTarget = self.currentVc,
             newTarget.responds(to: aSelector) {
             return newTarget.method(for: aSelector)
         }
@@ -306,13 +323,41 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         }
 
         // does the currently visible controller support menu validation?
-        if let mv = self.transitionFromVc as? NSMenuItemValidation {
+        if let mv = self.currentVc as? NSMenuItemValidation {
             return mv.validateMenuItem(menuItem)
         }
 
         // unhandled
         return false
     }
+
+    // MARK: - Represented object bindings
+    /**
+     * Represented object change handler for children
+     */
+    private func childRepresentedObjChanged(_ child: Any?) {
+        self.updateRepresentedObj()
+    }
+
+    /**
+     * Updates the represented object of this view controller to match that of the active view controller.
+     */
+    private func updateRepresentedObj() {
+        guard let mode = self.mode else {
+            self.representedObject = nil
+            return
+        }
+
+        switch mode {
+            case .Library:
+                self.representedObject = self.libraryView.representedObject
+            case .Map:
+                self.representedObject = self.mapView.representedObject
+            case .Edit:
+                self.representedObject = self.editView.representedObject
+        }
+    }
+
 
     // MARK: - State restoration
     private struct StateKeys {
@@ -361,6 +406,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         if coder.decodeBool(forKey: StateKeys.hasLibraryState) {
             self.libraryView = LibraryViewController()
             self.libraryView.library = self.library
+            self.kvos[.Library] = self.libraryView.observe(\.representedObject, changeHandler: { object, _ in
+                self.childRepresentedObjChanged(object)
+            })
+
             self.addChild(self.libraryView)
 
             self.libraryView.restoreState(with: coder)
@@ -369,6 +418,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         if coder.decodeBool(forKey: StateKeys.hasMapState) {
             self.mapView = MapViewController()
             self.mapView.library = self.library
+            self.kvos[.Map] = self.mapView.observe(\.representedObject, changeHandler: { object, _ in
+                self.childRepresentedObjChanged(object)
+            })
+
             self.addChild(self.mapView)
 
             self.mapView.restoreState(with: coder)
@@ -377,6 +430,10 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         if coder.decodeBool(forKey: StateKeys.hasEditState) {
             self.editView = EditViewController()
             self.editView.library = self.library
+            self.kvos[.Edit] = self.editView.observe(\.representedObject, changeHandler: { object, _ in
+                self.childRepresentedObjChanged(object)
+            })
+
             self.addChild(self.editView)
 
             self.editView.restoreState(with: coder)
@@ -386,7 +443,6 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         let rawMode = coder.decodeInteger(forKey: StateKeys.mode)
         if let mode = AppMode(rawValue: rawMode) {
             self.setContent(mode, withAnimation: false)
-            DDLogDebug("Restored app mode: \(mode)")
         }
     }
 }

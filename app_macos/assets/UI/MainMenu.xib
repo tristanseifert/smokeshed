@@ -337,7 +337,8 @@
                                                 <action selector="addFontTrait:" target="YLy-65-1bz" id="hqk-hr-sYV"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Italic" tag="1" keyEquivalent="i" id="Vjx-xi-njq">
+                                        <menuItem title="Italic" tag="1" id="Vjx-xi-njq">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="addFontTrait:" target="YLy-65-1bz" id="IHV-OB-c03"/>
                                             </connections>
@@ -616,6 +617,18 @@
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="Tools" id="dic-Hb-Oej" userLabel="Tools">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Tools" id="ZTa-jP-yui">
+                        <items>
+                            <menuItem title="Toggle Inspector" keyEquivalent="i" id="Sl1-o5-tXI">
+                                <connections>
+                                    <action selector="toggleInspector:" target="-1" id="ij9-H9-Enn"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="Window" id="aUF-d1-5bR">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
@@ -654,7 +667,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="139" y="154"/>
+            <point key="canvasLocation" x="-105" y="138"/>
         </menu>
         <menuItem title="Import…" keyEquivalent="o" id="m2H-78-oUn"/>
     </objects>

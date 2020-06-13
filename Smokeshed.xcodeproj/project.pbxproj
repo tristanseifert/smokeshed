@@ -84,6 +84,8 @@
 		6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */; };
 		6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */; };
 		6A96646A2490833100F757A1 /* SizeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664692490833100F757A1 /* SizeTransformer.swift */; };
+		6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */; };
+		6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -255,6 +257,8 @@
 		6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItem.swift; path = "app_macos/src/Library View/LibraryCollectionItem.swift"; sourceTree = "<group>"; };
 		6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItemView.swift; path = "app_macos/src/Library View/LibraryCollectionItemView.swift"; sourceTree = "<group>"; };
 		6A9664692490833100F757A1 /* SizeTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SizeTransformer.swift; path = "frameworks/Smokeshop/src/CoreData Store/Transformers/SizeTransformer.swift"; sourceTree = "<group>"; };
+		6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InspectorWindowController.swift; path = app_macos/src/Inspectors/InspectorWindowController.swift; sourceTree = "<group>"; };
+		6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InspectorWindowController.xib; path = app_macos/src/Inspectors/InspectorWindowController.xib; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -451,6 +455,7 @@
 		6A4CEEAE248B263300145E49 /* macOS App */ = {
 			isa = PBXGroup;
 			children = (
+				6ABD367C2494C508005F80EE /* Inspectors */,
 				6A020D282491EE3A006F5093 /* Thumbnail stuff */,
 				6AD8CFE3248E0A58009AF452 /* Edit View */,
 				6AD8CFDE248E0636009AF452 /* Map View */,
@@ -758,6 +763,15 @@
 			name = "Value Transformers";
 			sourceTree = "<group>";
 		};
+		6ABD367C2494C508005F80EE /* Inspectors */ = {
+			isa = PBXGroup;
+			children = (
+				6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */,
+				6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */,
+			);
+			name = Inspectors;
+			sourceTree = "<group>";
+		};
 		6AD8CFD5248DFAC7009AF452 /* Library View */ = {
 			isa = PBXGroup;
 			children = (
@@ -984,6 +998,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
+				6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
 				6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */,
@@ -1069,6 +1084,7 @@
 				6A020D2A2491EFB1006F5093 /* ThumbHandler.swift in Sources */,
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
+				6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */,
 				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,
 				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
 				6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */,

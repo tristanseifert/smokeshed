@@ -32,7 +32,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     }
 
     /// Content view controller
-    @objc dynamic private var content = ContentViewController()
+    @objc dynamic public var content = ContentViewController()
 
     // MARK: - Initialization
     /**
@@ -70,14 +70,13 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
      * Displays the main window. This will also set up the UI's default state if no state restoration took place.
      */
     override func showWindow(_ sender: Any?) {
-        // set default state if no restoration took place
-        if self.didRestoreState == false {
-            // library view 😎
-            self.content.setContent(.Library)
-        }
-
         // show the window
         super.showWindow(sender)
+
+        // if inspector is already allocated, show it too (as it was restored)
+        if self.inspector != nil {
+            self.inspector!.showWindow(sender)
+        }
     }
 
     // MARK: - State restoration
@@ -89,6 +88,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         static let libraryBookmark = "MainWindowController.libraryBookmark"
         /// Absolute URL string for the currently loaded library
         static let libraryUrl = "MainWindowController.libraryURL"
+        /// Whether the inspector is open
+        static let inspectorVisible = "MainWindowController.inspectorVisible"
     }
 
     /**
@@ -107,6 +108,12 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         } catch {
             DDLogError("Failed to archive library url: \(error)")
         }
+
+        // store inspector state
+        if let inspector = self.inspector, let window = inspector.window {
+            inspector.encodeRestorableState(with: coder)
+            coder.encode(window.isVisible, forKey: StateKeys.inspectorVisible)
+        }
     }
 
     /**
@@ -114,6 +121,13 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
      */
     override func restoreState(with coder: NSCoder) {
         self.didRestoreState = true
+
+        // re-open inspector if it was open last time
+        if coder.decodeBool(forKey: StateKeys.inspectorVisible) {
+            self.setUpInspector()
+
+            self.inspector!.restoreState(with: coder)
+        }
 
         super.restoreState(with: coder)
     }
@@ -247,11 +261,67 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         self.libraryOptions!.present(self.window!)
     }
 
+    // MARK: - Inspector support
+    /// Inspector
+    @objc dynamic private var inspector: InspectorWindowController! = nil
+
+    /**
+     * Allocates the inspector, if needed.
+     */
+    private func setUpInspector() {
+        if self.inspector == nil {
+            self.inspector = InspectorWindowController()
+
+            self.inspector?.bind(NSBindingName(rawValue: "selection"),
+                                 to: self.content,
+                                 withKeyPath: #keyPath(ContentViewController.representedObject),
+                                 options: nil)
+        }
+    }
+
+    /**
+     * Toggles visibility of the inspector.
+     */
+    @IBAction func toggleInspector(_ sender: Any) {
+        self.setUpInspector()
+
+        // if window is visible, order it out
+        if self.inspector!.window!.isVisible {
+            self.inspector!.window?.orderOut(sender)
+        }
+        // it is not, so show it
+        else {
+            self.inspector!.showWindow(sender)
+        }
+
+        self.invalidateRestorableState()
+    }
+
+    /**
+     * Allocates the inspector, if needed.
+     */
+
     // MARK: - Menu item support
     /**
      * Validates a menu action. Anything we don't handle gets forwarded to the content controller.
      */
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        // handle inspector item
+        if menuItem.action == #selector(toggleInspector(_:)) {
+            if let inspector = self.inspector {
+                if inspector.window!.isVisible {
+                    menuItem.title = NSLocalizedString("Hide Inspector", comment: "tools > inspector menu item (inspector open)")
+                } else {
+                    menuItem.title = NSLocalizedString("Show Inspector", comment: "tools > inspector menu item (inspector closed)")
+                }
+            } else {
+                menuItem.title = NSLocalizedString("Show Inspector", comment: "tools > inspector menu item (inspector closed)")
+            }
+
+            return true
+        }
+
+
         // always allow importing
         if menuItem.action == #selector(importFromDevice(_:)) ||
             menuItem.action == #selector(importDirectory(_:)) ||

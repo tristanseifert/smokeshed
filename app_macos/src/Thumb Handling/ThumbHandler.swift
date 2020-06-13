@@ -58,8 +58,6 @@ class ThumbHandler {
         self.xpc.remoteObjectInterface = ThumbXPCProtocolHelpers.make()
         self.xpc.resume()
 
-        DDLogVerbose("Thumb handler XPC connection: \(String(describing: self.xpc))")
-
         // then, get the service object
         self.service = self.xpc.remoteObjectProxyWithErrorHandler { error in
             DDLogError("Failed to get remote object proxy: \(error)")
@@ -69,8 +67,6 @@ class ThumbHandler {
                 self.xpc = nil
             }
         } as? ThumbXPCProtocol
-
-        DDLogVerbose("Thumb service: \(String(describing: self.service))")
 
         // once connection is initialized, the XPC service itself must init
         self.wakeXpcService()

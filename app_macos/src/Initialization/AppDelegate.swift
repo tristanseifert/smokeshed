@@ -48,6 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
             // load main window
             self.mainWindow = MainWindowController()
             self.mainWindow.library = self.library
+            self.mainWindow.content.setContent(.Library)
         }
 
         // open the main window controller (it should be allocated by now)

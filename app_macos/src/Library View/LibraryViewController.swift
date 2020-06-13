@@ -227,7 +227,6 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
 
             // restore split position
             if shouldRestoreSplit {
-                DDLogVerbose("Restoring split pos: \(splitPos)")
                 self.splitter.setPosition(CGFloat(splitPos), ofDividerAt: 0)
             }
         }
@@ -240,6 +239,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
 
                 if !paths.isEmpty {
                     self.collection.selectionIndexPaths = Set(paths)
+                    self.updateRepresentedObj()
                 }
             }
 
@@ -485,6 +485,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
      * One or more items were selected.
      */
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        self.updateRepresentedObj()
         self.parent?.invalidateRestorableState()
     }
 
@@ -492,7 +493,16 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
      * One or more items were deselected.
      */
     func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
+        self.updateRepresentedObj()
         self.parent?.invalidateRestorableState()
+    }
+
+    /**
+     * Updates the represented object of the view controller; this is set to an array encompassing the
+     * selection of the collection view.
+     */
+    private func updateRepresentedObj() {
+        self.representedObject = self.collection.selectionIndexPaths.map(self.fetchReqCtrl.object)
     }
 
     // MARK: - Filter bar UI
