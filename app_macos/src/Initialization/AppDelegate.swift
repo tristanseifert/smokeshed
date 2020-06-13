@@ -12,10 +12,11 @@ import Smokeshop
 import CocoaLumberjackSwift
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
     /// Main window
     var mainWindow: MainWindowController! = nil
 
+    // MARK: - App startup
     /**
      * Performs some initialization for the external components (such as logging, some XPC stuff) before
      * the actual app logic (and UI) is created.
@@ -37,14 +38,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      * or the "open library" dialog is shown. This message is also shown if option is held down during
      * startup.
      */
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        self.openLastLibrary()
+    func applicationDidFinishLaunching(_ n: Notification) {
+        let isDefault = n.userInfo![NSApplication.launchIsDefaultUserInfoKey]! as! Bool
 
-        // load main window
-        self.mainWindow = MainWindowController(self.library)
+        // if no state is being restored, run through normal library opening
+        if isDefault || self.mainWindow == nil {
+            self.openLastLibrary()
+
+            // load main window
+            self.mainWindow = MainWindowController()
+            self.mainWindow.library = self.library
+        }
+
+        // open the main window controller (it should be allocated by now)
         self.mainWindow.showWindow(self)
     }
 
+    // MARK: App file handling
+    /**
+     * Open file request; this will be called when any files are dragged onto the dock icon, or a library is
+     * clicked in the Finder
+     */
+    func application(_ application: NSApplication, open urls: [URL]) {
+        DDLogInfo("Open urls: \(urls)")
+
+        // TODO: implement
+    }
+
+    // MARK: App teardown
     /**
      * Begins tearing down the app logic and UI, and notifies the external components to finish up whatever
      * they're busy with.
@@ -77,12 +98,91 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return .terminateNow
     }
 
+    // MARK: Misc notifications
     /**
      * Receive information when the screen's parameters change. This could indicate displays being
      * connected, resolution changes, or color space changes.
      */
     func applicationDidChangeScreenParameters(_ notification: Notification) {
         // TODO: do stuff
+    }
+
+    // MARK: State restoration
+    /**
+     * Restores the state of the main window controller. This will attempt to re-open the same library as was
+     * last opened.
+     */
+    static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier,
+                              state: NSCoder,
+                              completionHandler: @escaping (NSWindow?, Error?) -> Void) {
+        // get a handle to the app delegate class
+        guard let delegate = NSApp.delegate as? AppDelegate else {
+            return completionHandler(nil, RestorationError.invalidAppDelegate)
+        }
+
+        // is it the main window?
+        if identifier == .mainWindow {
+            // if option is being held, skip state restoration
+            if NSEvent.modifierFlags.contains(.option) {
+                return completionHandler(nil, RestorationError.userRequestsPicking)
+            }
+
+            // get the url bookmark
+            guard let bookmark = state.decodeObject(forKey: MainWindowController.StateKeys.libraryBookmark) as? Data else {
+                DDLogError("Failed to get library url bookmark")
+                return completionHandler(nil, RestorationError.invalidLibraryUrl)
+            }
+
+            // try to resolve it
+            var libraryUrl: URL
+
+            do {
+                var isStale = false
+                libraryUrl = try URL(resolvingBookmarkData: bookmark, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
+
+                DDLogDebug("Is library bookmark stale? \(isStale)")
+            } catch {
+                DDLogError("Failed to resolve library url bookmark: \(error)")
+                return completionHandler(nil, error)
+            }
+
+            DDLogDebug("Restoring main window with library \(libraryUrl)")
+
+            // open the library
+            do {
+                try delegate.openLibrary(libraryUrl)
+            } catch {
+                DDLogError("Failed to open library from \(libraryUrl): \(error)")
+                return completionHandler(nil, RestorationError.libraryLoadErr(error))
+            }
+
+            // create a window controller and set its library
+            delegate.mainWindow = MainWindowController()
+            delegate.mainWindow.library = delegate.library
+
+            // run completion handler
+            return completionHandler(delegate.mainWindow.window, nil)
+        }
+
+        // unknown window type. should not happen
+        DDLogError("Request to restore window with unknown identifier \(identifier)")
+        completionHandler(nil, RestorationError.unknown)
+    }
+
+    /**
+     * Errors that may take place during state restoration.
+     */
+    enum RestorationError: Error {
+        /// Failed to get a reference to the app delegate.
+        case invalidAppDelegate
+        /// Unable to retrieve the URL of the library that was opened.
+        case invalidLibraryUrl
+        /// The user requested to pick a library on startup by holding option.
+        case userRequestsPicking
+        /// Failed to load the library
+        case libraryLoadErr(_ underlying: Error)
+        /// Unknown error; should never get this
+        case unknown
     }
     
     

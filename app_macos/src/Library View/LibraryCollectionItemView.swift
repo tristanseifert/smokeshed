@@ -24,7 +24,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
          * since we earlier requested to only be redrawn when we demand it.
          */
         didSet {
-            self.updateLayer()
+            self.refreshThumb()
+            self.updateContents()
             self.setNeedsDisplay(self.bounds)
         }
     }
@@ -37,6 +38,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             self.setNeedsDisplay(self.bounds)
         }
     }
+
+    /// Surface object containing the thumbnail image.
+    private var surface: IOSurface! = nil
+    /// Identifier of the image for which this surface contains the thumbnail.
+    private var surfaceImageId: UUID! = nil
 
     // MARK: View render behaviors
     /// Ensure the layer is drawn as opaque so we get font smoothing.
@@ -385,9 +391,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     /// Image shadow
     private var imageShadow: CALayer = CALayer()
 
-    /// Whether we need to update the image the next time we're displayed
-    private var needsImageUpdate: Bool = false
-
     /// Width of the image border
     private static let imageBorderWidth: CGFloat = 1.0
     /// Spacing between edges of the cell and the thumbnail
@@ -445,9 +448,10 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     }
 
     /**
-     * Prepares the image container for rendering of the given image.
+     * Determines the orientation of the image container to use (landscape/portrait) and updates its
+     * constraints accordingly.
      */
-    private func updateImageContainer() {
+    private func resizeImageContainer() {
         guard let size = self.image?.imageSize else {
             return
         }
@@ -613,12 +617,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * View is about to appear; finalize the UI prior to display.
      */
     func prepareForDisplay() {
-        // update image if requested
-        if self.needsImageUpdate {
-            self.updateImageContainer()
-            self.needsImageUpdate = false
-        }
-
         // reset hover state
         self.isHovering = false
     }
@@ -634,14 +632,15 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      */
     override func prepareForReuse() {
         ThumbHandler.shared.cancel(self.image)
-
         self.image = nil
+
+        self.refreshThumb()
     }
 
     /**
      * Updates the information displayed on the layer.
      */
-    override func updateLayer() {
+    func updateContents() {
         // Populate with information from the image
         if let image = self.image {
             self.nameLabel.string = image.name
@@ -667,38 +666,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             }
 
             // update the image
-            self.updateImageContainer()
-
-            var thumbSize = self.imageContainer.bounds.size
-            thumbSize.width = thumbSize.width * self.imageContainer.contentsScale
-            thumbSize.height = thumbSize.height * self.imageContainer.contentsScale
-
-            ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in
-                // bail if image id doesn't match
-                if imageId != image.identifier! {
-                    DDLogWarn("Received thumbnail for \(imageId) in cell for \(image.identifier!)")
-                    return
-                }
-
-                // handle the result
-                switch result {
-                    // success! set the image
-                    case .success(let surface):
-                        DispatchQueue.main.async {
-                            self.imageContainer.contents = surface
-                            self.setNeedsDisplay(self.bounds)
-                    }
-
-                    // something went wrong getting the thumbnail
-                    case .failure(let error):
-                        DDLogError("Failed to get thumbnail for \(imageId): \(error)")
-
-                        DispatchQueue.main.async {
-                            self.imageContainer.contents = NSImage(named: NSImage.cautionName)
-                            self.setNeedsDisplay(self.bounds)
-                        }
-                }
-            })
+            self.resizeImageContainer()
         }
         // Otherwise, clear info
         else {
@@ -708,5 +676,91 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
             self.imageContainer.contents = nil
         }
+    }
+
+    // MARK: - Thumbnail support
+    /**
+     * Updates the thumbnail displayed in the cell. This tries to avoid thumbnail requests at all costs with
+     * some pretty simple logic:
+     *
+     * 1. If we already have a thumbnail surface, AND it is for the current image, exit.
+     * 2. If the existing thumbnail surface is larger, or up to 20% smaller, than the currently required thumb
+     * size, exit.
+     * 3. If no image is set, clear any existing surface.
+     */
+    private func refreshThumb() {
+        // release surface if image is nil
+        guard let image = self.image else {
+            if let surface = self.surface {
+                surface.decrementUseCount()
+
+                self.surfaceImageId = nil
+                self.surface = nil
+            }
+
+            return
+        }
+
+        // if no surface, request a thumb
+        if self.surface == nil {
+            return self.requestThumb(image)
+        }
+
+        // request a new thumb if image id changed
+        if let imageId = self.image.identifier, let surfaceId = self.surfaceImageId, imageId != surfaceId {
+            return self.requestThumb(image)
+        }
+    }
+
+    /**
+     * Actually performs the request for a new thumbnail image.
+     */
+    private func requestThumb(_ image: Image) {
+        // calculate the pixel size needed
+        var thumbSize = self.imageContainer.bounds.size
+        thumbSize.width = thumbSize.width * self.imageContainer.contentsScale
+        thumbSize.height = thumbSize.height * self.imageContainer.contentsScale
+
+        // request the image id
+        ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in
+            // bail if image id doesn't match
+            if imageId != image.identifier! {
+                DDLogWarn("Received thumbnail for \(imageId) in cell for \(image.identifier!)")
+                return
+            }
+
+            // handle the result
+            switch result {
+                // success! set the image
+                case .success(let surface):
+                    DispatchQueue.main.async {
+                        // release the old surface if we have one
+                        if let surface = self.surface {
+                            surface.decrementUseCount()
+                            self.surface = nil
+                        }
+
+                        // set our new surface
+                        self.surfaceImageId = imageId
+                        self.surface = surface
+                        self.surface.incrementUseCount()
+
+                        // lastly, actually display it
+                        self.imageContainer.contents = surface
+                        self.setNeedsDisplay(self.bounds)
+                    }
+
+                // something went wrong getting the thumbnail
+                case .failure(let error):
+                    DDLogError("Failed to get thumbnail for \(imageId): \(error)")
+
+                    // set a… caution icon ig
+                    DispatchQueue.main.async {
+                        self.imageContainer.contents = NSImage(named: NSImage.cautionName)
+                        self.setNeedsDisplay(self.bounds)
+                }
+            }
+        })
+
     }
 }

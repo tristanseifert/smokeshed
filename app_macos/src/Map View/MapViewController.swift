@@ -12,7 +12,11 @@ import CocoaLumberjackSwift
 
 class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChild {
     /// Library that is being browsed
-    private var library: LibraryBundle
+    public var library: LibraryBundle! {
+        didSet {
+
+        }
+    }
 
     // MARK: - Initialization
     /**
@@ -23,11 +27,11 @@ class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChil
     }
 
     /**
-     * Initializes a new map view controller, displaying the contents of the provided library.
+     * Initializes a new map view controller.
      */
-    init(_ library: LibraryBundle) {
-        self.library = library
+    init() {
         super.init(nibName: nil, bundle: nil)
+        self.identifier = .mapViewController
     }
     /// Decoding is not supported
     required init?(coder: NSCoder) {
@@ -69,4 +73,9 @@ class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChil
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return false
     }
+}
+
+extension NSUserInterfaceItemIdentifier {
+    /// Map view controller (restoration)
+    static let mapViewController = NSUserInterfaceItemIdentifier("mapViewController")
 }

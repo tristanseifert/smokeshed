@@ -12,7 +12,11 @@ import CocoaLumberjackSwift
 
 class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChild {
     /// Library that is being browsed
-    private var library: LibraryBundle
+    public var library: LibraryBundle! {
+        didSet {
+
+        }
+    }
 
     // MARK: - Initialization
     /**
@@ -23,12 +27,13 @@ class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChi
     }
 
     /**
-     * Initializes a new edit view controller, displaying the contents of the provided library.
+     * Initializes a new edit view controller.
      */
-    init(_ library: LibraryBundle) {
-        self.library = library
+    init() {
         super.init(nibName: nil, bundle: nil)
+        self.identifier = .editViewController
     }
+    
     /// Decoding is not supported
     required init?(coder: NSCoder) {
         return nil
@@ -73,4 +78,9 @@ class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChi
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return false
     }
+}
+
+extension NSUserInterfaceItemIdentifier {
+    /// Edit view controller (restoration)
+    static let editViewController = NSUserInterfaceItemIdentifier("editViewController")
 }

@@ -21,7 +21,14 @@ protocol ContentViewChild {
  */
 class ContentViewController: NSViewController, NSMenuItemValidation {
     /// Library that is being browsed
-    private var library: LibraryBundle
+    public var library: LibraryBundle! = nil {
+        didSet {
+            // update library for all content controllers
+            self.libraryView?.library = self.library
+            self.editView?.library = self.library
+            self.mapView?.library = self.library
+        }
+    }
 
     /**
      * Errors that may take place during transitioning or in transition actions.
@@ -37,12 +44,11 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
 
     // MARK: - Initialization
     /**
-     * Initializes a content view controller, using the given library to back all of the views' data.
+     * Initializes a content view controller.
      */
-    init(_ library: LibraryBundle) {
-        self.library = library
-
+    init() {
         super.init(nibName: nil, bundle: nil)
+        self.identifier = .contentViewController
     }
     /// Decoding is not supported
     required init?(coder: NSCoder) {
@@ -63,6 +69,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
     private var mode: AppMode! = nil {
         didSet {
             self.rawMode = self.mode.rawValue
+            self.invalidateRestorableState()
         }
     }
 
@@ -102,21 +109,24 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         switch mode {
             case .Library:
                 if self.libraryView == nil {
-                    self.libraryView = LibraryViewController(self.library)
+                    self.libraryView = LibraryViewController()
+                    self.libraryView.library = self.library
                     self.addChild(self.libraryView)
                 }
                 next = self.libraryView
 
             case .Edit:
                 if self.editView == nil {
-                    self.editView = EditViewController(self.library)
+                    self.editView = EditViewController()
+                    self.editView.library = self.library
                     self.addChild(self.editView)
                 }
                 next = self.editView
 
             case .Map:
                 if self.mapView == nil {
-                    self.mapView = MapViewController(self.library)
+                    self.mapView = MapViewController()
+                    self.mapView.library = self.library
                     self.addChild(self.mapView)
                 }
                 next = self.mapView
@@ -233,7 +243,7 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         }
     }
 
-    // MARK: - Message forwarding=
+    // MARK: - Message forwarding
     /**
      * Claim that we can respond to a particular selector, if the currently active view controller can. This way
      * we can forward messages to it.
@@ -288,7 +298,9 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         // is it the app mode item?
         if menuItem.action == #selector(changeAppMode(_:)) {
             // it's on if its tag matches the current mode raw value
-            menuItem.state = (menuItem.tag == self.mode.rawValue) ? .on : .off
+            if let mode = self.mode {
+                menuItem.state = (menuItem.tag == mode.rawValue) ? .on : .off
+            }
 
             return true
         }
@@ -301,4 +313,85 @@ class ContentViewController: NSViewController, NSMenuItemValidation {
         // unhandled
         return false
     }
+
+    // MARK: - State restoration
+    private struct StateKeys {
+        /// Current app mode (raw value)
+        static let mode = "ContentViewController.mode"
+
+        /// Did we encode state for the library view?
+        static let hasLibraryState = "ContentViewController.hasLibraryState"
+        /// Did we encode state for the map view?
+        static let hasMapState = "ContentViewController.hasMapState"
+        /// Did we encode state for the edit view?
+        static let hasEditState = "ContentViewController.hasEditState"
+    }
+
+    /**
+     * Encodes state needed to get back to the current UI state.
+     */
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+
+        // save the app mode
+        coder.encode(self.mode.rawValue, forKey: StateKeys.mode)
+
+        // save state of each child controller
+        if let library = self.libraryView {
+            library.encodeRestorableState(with: coder)
+            coder.encode(true, forKey: StateKeys.hasLibraryState)
+        }
+        if let map = self.mapView {
+            map.encodeRestorableState(with: coder)
+            coder.encode(true, forKey: StateKeys.hasMapState)
+        }
+        if let edit = self.editView {
+            edit.encodeRestorableState(with: coder)
+            coder.encode(true, forKey: StateKeys.hasEditState)
+        }
+    }
+
+    /**
+     * Decodes state that was previously archived.
+     */
+    override func restoreState(with coder: NSCoder) {
+        super.restoreState(with: coder)
+
+        // decode state for view controllers
+        if coder.decodeBool(forKey: StateKeys.hasLibraryState) {
+            self.libraryView = LibraryViewController()
+            self.libraryView.library = self.library
+            self.addChild(self.libraryView)
+
+            self.libraryView.restoreState(with: coder)
+        }
+
+        if coder.decodeBool(forKey: StateKeys.hasMapState) {
+            self.mapView = MapViewController()
+            self.mapView.library = self.library
+            self.addChild(self.mapView)
+
+            self.mapView.restoreState(with: coder)
+        }
+
+        if coder.decodeBool(forKey: StateKeys.hasEditState) {
+            self.editView = EditViewController()
+            self.editView.library = self.library
+            self.addChild(self.editView)
+
+            self.editView.restoreState(with: coder)
+        }
+
+        // restore the app mode
+        let rawMode = coder.decodeInteger(forKey: StateKeys.mode)
+        if let mode = AppMode(rawValue: rawMode) {
+            self.setContent(mode, withAnimation: false)
+            DDLogDebug("Restored app mode: \(mode)")
+        }
+    }
+}
+
+extension NSUserInterfaceItemIdentifier {
+    /// Content view controller (restoration)
+    static let contentViewController = NSUserInterfaceItemIdentifier("contentViewController")
 }

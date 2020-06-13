@@ -38,7 +38,7 @@ public class ImportHandler {
         // set up the queue. we allow some concurrency
         self.queue.name = "ImportHandler"
         self.queue.qualityOfService = .default
-        self.queue.maxConcurrentOperationCount = OperationQueue.defaultMaxConcurrentOperationCount
+        self.queue.maxConcurrentOperationCount = 8
 
         // create the background queue
         self.context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -55,6 +55,18 @@ public class ImportHandler {
      */
     deinit {
         self.queue.cancelAllOperations()
+    }
+
+    /**
+     * Maximum amount of concurrent operations. This shouldn't need to be accessed, really.
+     */
+    public var concurrency: Int {
+        get {
+            return self.queue.maxConcurrentOperationCount
+        }
+        set(newValue) {
+            self.queue.maxConcurrentOperationCount = newValue
+        }
     }
 
     // MARK: - Public interface

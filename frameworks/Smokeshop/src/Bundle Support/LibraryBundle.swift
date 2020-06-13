@@ -234,7 +234,6 @@ public class LibraryBundle {
         }
 
         self.meta = meta
-        DDLogDebug("Loaded metadata for library \(self.url!): \(self.meta)")
     }
 
     /**

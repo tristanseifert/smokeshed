@@ -12,10 +12,25 @@ import CocoaLumberjackSwift
 
 class LibraryViewController: NSViewController, NSMenuItemValidation,
                              NSCollectionViewPrefetching,
+                             NSCollectionViewDelegate,
                              NSFetchedResultsControllerDelegate,
+                             NSSplitViewDelegate,
                              ContentViewChild {
     /// Library that is being browsed
-    private var library: LibraryBundle
+    public var library: LibraryBundle! = nil {
+        didSet {
+            // if library was set, update the coredata stuff
+            if let _ = self.library {
+                self.initFetchReq()
+            }
+            // otherwise, destroy the fetch requests and whatnot
+            else {
+                self.dataSource = nil
+                self.fetchReqCtrl = nil
+                self.fetchReq = nil
+            }
+        }
+    }
     /// Convenience helper for accessing the view context of the library store
     private var ctx: NSManagedObjectContext {
         return library.store.mainContext!
@@ -30,17 +45,13 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     }
 
     /**
-     * Initializes a new library view controller, browsing the contents of the provided library.
+     * Initializes the library controller.
      */
-    init(_ library: LibraryBundle) {
-        // set up view controller and copy library reference
-        self.library = library
-
+    init() {
         super.init(nibName: nil, bundle: nil)
-
-        // initialize fetch request
-        self.initFetchReq()
+        self.identifier = .libraryViewController
     }
+
     /// Decoding is not supported
     required init?(coder: NSCoder) {
         return nil
@@ -53,6 +64,9 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     }
 
     // MARK: View Lifecycle
+    /// Whether animations should be run or not
+    private var shouldAnimate: Bool = false
+
     /**
      * Initiaizes CoreData contexts for displaying data once the view has loaded.
      */
@@ -81,6 +95,12 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
      * Prepare for the view being shown by refetching all visible objects.
      */
     override func viewWillAppear() {
+        // restore state if needed
+        if let restorer = self.restoreBlock {
+            restorer()
+            self.restoreBlock = nil
+        }
+
         // ensure the grid is updated properly
         self.reflowContent()
         self.fetch()
@@ -102,6 +122,9 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
             self.reflowContent()
         })
         self.collection.postsFrameChangedNotifications = true
+
+        // allow animations
+        self.shouldAnimate = true
     }
     /**
      * Removes the window resize observer as we're about to be disappeared.
@@ -116,6 +139,146 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         self.collection.postsFrameChangedNotifications = false
         c.removeObserver(self, name: NSView.boundsDidChangeNotification,
                          object: self.collection!)
+
+        // disallow animations
+        self.shouldAnimate = false
+    }
+
+    // MARK: - State restoration
+    private struct StateKeys {
+        /// Filter bar visibility state
+        static let filterVisibility = "LibraryViewController.isFilterVisible"
+        /// Grid zoom level
+        static let gridZoom = "LibraryViewController.gridZoom"
+        /// URL representation of the IDs of the selected objects
+        static let selectedObjectIds = "LibraryViewController.selectedObjectIds"
+        /// URL representation of the IDs of all currently visible objects
+        static let visibleObjectIds = "LibraryViewController.visibleObjectIds"
+        /// Position of the sidebar splitter
+        static let sidebarPosition = "LibraryViewController.sidebarPosition"
+    }
+
+    /// Block to execute when the view is made displayable to complete state restoration
+    private var restoreBlock: (() -> Void)? = nil
+    /// Block to execute after initial data fetch to restore selection, etc.
+    private var restoreAfterFetchBlock: (() -> Void)? = nil
+
+    /**
+     * Encodes the current view state.
+     */
+    override func encodeRestorableState(with coder: NSCoder) {
+        coder.encode(self.isFilterVisible, forKey: StateKeys.filterVisibility)
+        coder.encode(Double(self.gridZoom), forKey: StateKeys.gridZoom)
+
+        // store the IDs of visible objects
+        let visibleIds = self.collection.indexPathsForVisibleItems().compactMap({ path -> URL? in
+            // get the layout attributes of the item (for the frame)
+            guard let attribs = self.collection.layoutAttributesForItem(at: path) else {
+                return nil
+            }
+
+            // ensure it's actually visible
+            if attribs.frame.intersects(self.collection.visibleRect) {
+                return self.fetchReqCtrl.object(at: path).objectID.uriRepresentation()
+            }
+            // not visible
+            return nil
+        })
+        if !visibleIds.isEmpty {
+            coder.encode(visibleIds, forKey: StateKeys.visibleObjectIds)
+        }
+
+        // store the IDs of selected objects
+        let selectedIds = self.collection.selectionIndexPaths.map({ path in
+            return self.fetchReqCtrl.object(at: path).objectID.uriRepresentation()
+        })
+        if !selectedIds.isEmpty {
+            coder.encode(selectedIds, forKey: StateKeys.selectedObjectIds)
+        }
+
+        // save split view state
+        let splitPos = self.sidebarContainer.frame.width
+        coder.encode(Double(splitPos), forKey: StateKeys.sidebarPosition)
+    }
+
+    /**
+     * Restores the view state.
+     */
+    override func restoreState(with coder: NSCoder) {
+        // read values
+        let isVisible = coder.decodeBool(forKey: StateKeys.filterVisibility)
+        let zoom = coder.decodeDouble(forKey: StateKeys.gridZoom)
+
+        let visibleIds = coder.decodeObject(forKey: StateKeys.visibleObjectIds)
+        let selectedIds = coder.decodeObject(forKey: StateKeys.selectedObjectIds)
+
+        let shouldRestoreSplit = coder.containsValue(forKey: StateKeys.sidebarPosition)
+        let splitPos = coder.decodeDouble(forKey: StateKeys.sidebarPosition)
+
+        // set the restoration block
+        self.restoreBlock = {
+            self.isFilterVisible = isVisible
+
+            if zoom >= 1 && zoom <= 8 {
+                self.gridZoom = CGFloat(zoom)
+            } else {
+                DDLogWarn("Attempted to restore invalid grid zoom level: \(zoom)")
+            }
+
+            // restore split position
+            if shouldRestoreSplit {
+                DDLogVerbose("Restoring split pos: \(splitPos)")
+                self.splitter.setPosition(CGFloat(splitPos), ofDividerAt: 0)
+            }
+        }
+
+        // restore selection
+        self.restoreAfterFetchBlock = {
+            // get selection as an array of URL-represented object IDs at first
+            if let selected = selectedIds as? [URL] {
+                let paths = selected.compactMap(self.urlToImages)
+
+                if !paths.isEmpty {
+                    self.collection.selectionIndexPaths = Set(paths)
+                }
+            }
+
+            // scroll to the visible objects
+            if let visible = visibleIds as? [URL] {
+                let paths = visible.compactMap(self.urlToImages)
+
+                if !paths.isEmpty {
+                    self.collection.scrollToItems(at: Set(paths),
+                                                  scrollPosition: [.nearestHorizontalEdge, .nearestVerticalEdge])
+                }
+            }
+        }
+    }
+
+    /**
+     * Transforms an array of URL objects into an index path.
+     */
+    private func urlToImages(_ url: URL) -> IndexPath? {
+        // get persistent store coordinator
+        guard let psc = self.ctx.persistentStoreCoordinator else {
+            DDLogError("Persistent store coordinator is required")
+            return nil
+        }
+
+        // get an object id for it
+        guard let id = psc.managedObjectID(forURIRepresentation: url) else {
+            DDLogInfo("Failed to get object id from '\(url)'")
+            return nil
+        }
+
+        // get an object
+        guard let image = self.ctx.object(with: id) as? Image else {
+            DDLogInfo("Failed to get image for id \(id)")
+            return nil
+        }
+
+        // lastly, try to convert it to an index path
+        return self.fetchReqCtrl.indexPath(forObject: image)
     }
 
     // MARK: - Fetching
@@ -186,6 +349,11 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         // do the fetch and update our data source
         do {
             try self.fetchReqCtrl.performFetch()
+
+            if let restorer = self.restoreAfterFetchBlock {
+                restorer()
+                self.restoreAfterFetchBlock = nil
+            }
         } catch {
             DDLogError("Failed to execute fetch request: \(error)")
             self.presentError(error, modalFor: self.view.window!, delegate: nil, didPresent: nil, contextInfo: nil)
@@ -283,6 +451,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     @objc dynamic private var gridZoom: CGFloat = 5 {
         didSet {
             self.imagesPerRow = 9 - gridZoom
+            self.parent?.invalidateRestorableState()
         }
     }
     /// Number of columns of images to display. Fractional values supported.
@@ -311,6 +480,21 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         layout.itemSize = NSSize(width: width, height: height)
     }
 
+    // MARK: Collection delegate
+    /**
+     * One or more items were selected.
+     */
+    func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        self.parent?.invalidateRestorableState()
+    }
+
+    /**
+     * One or more items were deselected.
+     */
+    func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
+        self.parent?.invalidateRestorableState()
+    }
+
     // MARK: - Filter bar UI
     /// Container view that holds the filter bar and editor
     @IBOutlet private var filterArea: NSStackView! = nil
@@ -322,30 +506,46 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     @objc dynamic private var isFilterVisible: Bool = false {
         // update the UI if needed
         didSet {
-            NSAnimationContext.runAnimationGroup({ (ctx) in
-                ctx.duration = 0.125
-                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            if self.shouldAnimate {
+                NSAnimationContext.runAnimationGroup({ (ctx) in
+                    ctx.duration = 0.125
+                    ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
 
-                self.filter.enclosingScrollView?.isHidden = false
+                    self.filter.enclosingScrollView?.isHidden = false
 
+                    if self.isFilterVisible {
+                        self.filter.enclosingScrollView?.animator().alphaValue = 1
+                        self.filterHeightConstraint.animator().constant = 192
+                    } else {
+                        self.filter.enclosingScrollView?.animator().alphaValue = 0
+                        self.filterHeightConstraint.animator().constant = 0
+                    }
+                }, completionHandler: {
+                    if !self.isFilterVisible {
+                        self.filter.enclosingScrollView?.isHidden = true
+                    }
+
+                    // force grid view to recalculate layout
+                    // TODO: improve this, animate headers?
+                    self.collection.reloadItems(at: self.collection.indexPathsForVisibleItems())
+                })
+
+                self.parent?.invalidateRestorableState()
+            } else {
                 if self.isFilterVisible {
-                    self.filter.enclosingScrollView?.animator().alphaValue = 1
-                    self.filterHeightConstraint.animator().constant = 192
+                    self.filter.enclosingScrollView?.alphaValue = 1
+                    self.filterHeightConstraint.constant = 192
+                    self.filter.enclosingScrollView?.isHidden = false
                 } else {
-                    self.filter.enclosingScrollView?.animator().alphaValue = 0
-                    self.filterHeightConstraint.animator().constant = 0
-                }
-            }, completionHandler: {
-                if self.isFilterVisible {
-
-                } else {
+                    self.filter.enclosingScrollView?.alphaValue = 0
+                    self.filterHeightConstraint.constant = 0
                     self.filter.enclosingScrollView?.isHidden = true
                 }
 
                 // force grid view to recalculate layout
                 // TODO: improve this, animate headers?
                 self.collection.reloadItems(at: self.collection.indexPathsForVisibleItems())
-            })
+            }
         }
     }
 
@@ -386,6 +586,29 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
         scroll.contentInsets = insets
     }
 
+    // MARK: - Split view handling
+    /// Main split view
+    @IBOutlet private var splitter: NSSplitView! = nil
+    /// Sidebar view
+    @IBOutlet private var sidebarContainer: NSView! = nil
+
+    /**
+     * Ensure that the new split view state is saved when the split changes.
+     */
+    func splitViewDidResizeSubviews(_ notification: Notification) {
+        self.parent!.invalidateRestorableState()
+    }
+
+    /**
+     * Allow the split view to collapse the sidebar.
+     */
+    func splitView(_ splitView: NSSplitView, canCollapseSubview subview: NSView) -> Bool {
+        if subview == self.sidebarContainer {
+            return true
+        }
+        return false
+    }
+
     // MARK: - Lens/Camera Filters
     /// Lens filter pulldown
     @IBOutlet private var lensFilter: NSPopUpButton! = nil
@@ -405,4 +628,9 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return false
     }
+}
+
+extension NSUserInterfaceItemIdentifier {
+    /// Library view controller (restoration)
+    static let libraryViewController = NSUserInterfaceItemIdentifier("libraryViewController")
 }

@@ -10,16 +10,29 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class MainWindowController: NSWindowController, NSMenuItemValidation {
+class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemValidation {
     /// Library file that was opened for this window
-    private var library: LibraryBundle
-    /// CoreData store in the library
-    private var store: LibraryStore {
-        return self.library.store!
+    public var library: LibraryBundle! = nil {
+        didSet {
+            // update content library
+            self.content.library = self.library
+
+            // set the window's URL
+            if let window = self.window {
+                if let library = self.library {
+                    window.representedURL = library.getURL()
+                } else {
+                    window.representedURL = nil
+                }
+            }
+
+            // we need to persist the library url
+            self.invalidateRestorableState()
+        }
     }
 
     /// Content view controller
-    @objc dynamic private var content: ContentViewController! = nil
+    @objc dynamic private var content = ContentViewController()
 
     // MARK: - Initialization
     /**
@@ -30,43 +43,52 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     }
 
     /**
-     * Initializes a new main window controller with the given library bundle and data store.
-     */
-    init(_ library: LibraryBundle) {
-        self.library = library
-        
-        super.init(window: nil)
-    }
-    /**
-     * Decoding the controller is not supported
-     */
-    required init?(coder: NSCoder) {
-        return nil
-    }
-
-    /**
      * Once the window has loaded, add the child window controllers as needed.
      */
     override func windowDidLoad() {
         super.windowDidLoad()
 
-        // set represented file
-        self.window?.representedURL = self.library.getURL()
+        guard let window = self.window else {
+            fatalError()
+        }
 
-        // also, create the content view controller
-        self.content = ContentViewController(library)
-        self.window?.contentViewController = self.content
+        // restoration
+        window.isRestorable = true
+        window.restorationClass = AppDelegate.self
+        window.identifier = .mainWindow
 
-        // open in the library mode
-        self.content!.setContent(.Library)
+        // set represented file if we have a library
+        if let library = self.library {
+            window.representedURL = library.getURL()
+        }
+
+        // update the content
+        window.contentViewController = self.content
+    }
+
+    /**
+     * Displays the main window. This will also set up the UI's default state if no state restoration took place.
+     */
+    override func showWindow(_ sender: Any?) {
+        // set default state if no restoration took place
+        if self.didRestoreState == false {
+            // library view 😎
+            self.content.setContent(.Library)
+        }
+
+        // show the window
+        super.showWindow(sender)
     }
 
     // MARK: - State restoration
-    /**
-     * Restores previously encoded state.
-     */
-    override func restoreState(with coder: NSCoder) {
-        super.restoreState(with: coder)
+    /// Whether state was restored or not
+    private var didRestoreState = false
+
+    struct StateKeys {
+        /// Bookmark data representing the location of the library.
+        static let libraryBookmark = "MainWindowController.libraryBookmark"
+        /// Absolute URL string for the currently loaded library
+        static let libraryUrl = "MainWindowController.libraryURL"
     }
 
     /**
@@ -75,8 +97,25 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
 
-        // encode the URL of the library
-        coder.encode(self.library.getURL(), forKey: "LibraryURL")
+        // get a bookmark to the url
+        do {
+            let url = self.library.getURL()
+            let bookmark = try url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: [.nameKey], relativeTo: nil)
+
+            coder.encode(bookmark, forKey: StateKeys.libraryBookmark)
+            coder.encode(url.absoluteString, forKey: StateKeys.libraryUrl)
+        } catch {
+            DDLogError("Failed to archive library url: \(error)")
+        }
+    }
+
+    /**
+     * Restores previously encoded state.
+     */
+    override func restoreState(with coder: NSCoder) {
+        self.didRestoreState = true
+
+        super.restoreState(with: coder)
     }
 
     // MARK: - Activity Popover
@@ -113,8 +152,7 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
         if super.responds(to: aSelector) {
             return true
         }
-        else if let content = self.content,
-            content.responds(to: aSelector) {
+        else if self.content.responds(to: aSelector) {
             return true
         }
 
@@ -127,7 +165,7 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
      */
     override func forwardingTarget(for aSelector: Selector!) -> Any? {
         // can the content controller respond to this message?
-        if let content = self.content, content.responds(to: aSelector) {
+        if self.content.responds(to: aSelector) {
             return self.content
         }
 
@@ -142,9 +180,8 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
         let sig = super.method(for: aSelector)
 
         // forward to content if not supported
-        if sig == nil, let newTarget = self.content,
-            newTarget.responds(to: aSelector) {
-            return newTarget.method(for: aSelector)
+        if sig == nil, self.content.responds(to: aSelector) {
+            return self.content.method(for: aSelector)
         }
 
         return sig
@@ -223,10 +260,11 @@ class MainWindowController: NSWindowController, NSMenuItemValidation {
         }
 
         // forward unhandled calls to the content controller
-        if self.content != nil {
-            return self.content!.validateMenuItem(menuItem)
-        }
-
-        return false
+        return self.content.validateMenuItem(menuItem)
     }
+}
+
+extension NSUserInterfaceItemIdentifier {
+    /// App main window (restoration)
+    static let mainWindow = NSUserInterfaceItemIdentifier("mainWindow")
 }
