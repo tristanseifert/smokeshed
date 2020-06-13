@@ -723,9 +723,18 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
         // request the image id
         ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in
-            // bail if image id doesn't match
-            if imageId != image.identifier! {
-                DDLogWarn("Received thumbnail for \(imageId) in cell for \(image.identifier!)")
+            // bail if image id doesn't match or the image was clared out
+            if imageId != image.identifier! || self.image == nil || self.image?.identifier != imageId {
+                DDLogWarn("Received thumbnail for \(imageId) in cell for \(String(describing: self.image?.identifier!))")
+
+                // release the surface
+                do {
+                    let surface = try result.get()
+                    surface.decrementUseCount()
+                } catch {
+                    DDLogError("Failed to get thumbnail for \(imageId): \(error)")
+                }
+
                 return
             }
 

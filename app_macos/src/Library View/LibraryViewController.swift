@@ -249,7 +249,7 @@ class LibraryViewController: NSViewController, NSMenuItemValidation,
 
                 if !paths.isEmpty {
                     self.collection.scrollToItems(at: Set(paths),
-                                                  scrollPosition: [.nearestHorizontalEdge, .nearestVerticalEdge])
+                                                  scrollPosition: [.centeredVertically])
                 }
             }
         }
