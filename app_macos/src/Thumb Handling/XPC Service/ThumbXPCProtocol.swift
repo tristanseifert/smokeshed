@@ -9,17 +9,20 @@ import Foundation
 import CoreGraphics
 import Cocoa
 
+import Smokeshop
+
 /**
  * Represents a thumbnail request (either to generate or retrieve)
  */
 @objc(ThumbRequest_XPC) public class ThumbRequest: NSObject, NSSecureCoding {
     /// Identifier of the library this image is associated with
     public var libraryId: UUID
-    /**
-     * Information about the image for which the thumbnail is to be generated. This dictionary should have
-     * at least the `identifier` and `originalUrl` keys.
-     */
-    public var imageInfo = [String: Any]()
+    /// Identifier of the image
+    public var imageId: UUID
+    /// URL of the image on disk
+    public var imageUrl: URL
+    /// Image orientation
+    public var orientation: Image.ImageOrientation
 
     /// Size of the thumbnail that's desired
     public var size: CGSize? = nil
@@ -28,8 +31,20 @@ import Cocoa
     /**
      * Creates an unpopulated thumb request.
      */
-    public init(libraryId: UUID) {
+    public init?(libraryId: UUID, image: Image) {
         self.libraryId = libraryId
+
+        guard let imageId = image.identifier else {
+            return nil
+        }
+        self.imageId = imageId
+
+        guard let url = image.url else {
+            return nil
+        }
+        self.imageUrl = url
+
+        self.orientation = image.orientation
     }
 
     // MARK: Encoding
@@ -41,7 +56,9 @@ import Cocoa
      */
     public func encode(with coder: NSCoder) {
         coder.encode(self.libraryId, forKey: "libraryId")
-        coder.encode(self.imageInfo, forKey: "info")
+        coder.encode(self.imageId, forKey: "imageId")
+        coder.encode(self.imageUrl, forKey: "imageUrl")
+        coder.encode(Int(self.orientation.rawValue), forKey: "orientation")
 
         if let size = self.size, size != .zero {
             coder.encode(true, forKey: "hasSize")
@@ -54,15 +71,26 @@ import Cocoa
      * Decodes a thumb request.
      */
     public required init?(coder: NSCoder) {
-        guard let id = coder.decodeObject(forKey: "libraryId") as? UUID else {
+        guard let libraryId = coder.decodeObject(forKey: "libraryId") as? UUID else {
             return nil
         }
-        self.libraryId = id
+        self.libraryId = libraryId
 
-        guard let info = coder.decodeObject(forKey: "info") as? [String: Any] else {
+        guard let imageId = coder.decodeObject(forKey: "imageId") as? UUID else {
             return nil
         }
-        self.imageInfo = info
+        self.imageId = imageId
+
+        guard let url = coder.decodeObject(forKey: "imageUrl") as? URL else {
+            return nil
+        }
+        self.imageUrl = url
+
+        let rawOrientation = Int16(coder.decodeInteger(forKey: "orientation"))
+        guard let orientation = Image.ImageOrientation(rawValue: rawOrientation) else {
+            return nil
+        }
+        self.orientation = orientation
 
         if coder.decodeBool(forKey: "hasSize") {
             self.size = coder.decodeSize(forKey: "size")

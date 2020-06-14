@@ -64,15 +64,14 @@ public class Image: NSManagedObject {
                 }
 
                 return url
+            } else {
+                DDLogWarn("Failed to resolve bookmark data: \(bookmark)")
             }
         }
 
         // fall back to the original url
         if let url = self.originalUrl {
-            // check if it can be accessed
-//            if FileManager.default.isReadableFile(atPath: url.path) {
-                return url
-//            }
+            return url
         }
 
         // failed to get an url
@@ -84,7 +83,7 @@ public class Image: NSManagedObject {
      */
     func setUrlBookmark(_ url: URL) throws {
         self.urlBookmark = try url.bookmarkData(options: [.withSecurityScope],
-                                            includingResourceValuesForKeys: [.nameKey],
+                                            includingResourceValuesForKeys: nil,
                                             relativeTo: nil)
     }
 
@@ -97,7 +96,7 @@ public class Image: NSManagedObject {
         self.dayCaptured = self.dateCaptured?.withoutTime()
     }
 
-    // MARK: Image size syntactic sugar
+    // MARK: Image size, orientation
     /**
      * Image size
      */
@@ -119,6 +118,39 @@ public class Image: NSManagedObject {
         }
     }
 
+    /**
+     * Rotated image size
+     */
+    @objc dynamic public var rotatedImageSize: CGSize {
+        get {
+            let orientation = ImageOrientation(rawValue: self.rawOrientation)
+
+            if orientation == .ccw90 || orientation == .cw90 {
+                let size = self.imageSize
+                return CGSize(width: size.height, height: size.width)
+            } else {
+                return self.imageSize
+            }
+        }
+    }
+
+    @objc dynamic public var orientation: ImageOrientation {
+        get {
+            guard let o = ImageOrientation(rawValue: self.rawOrientation) else {
+                return .unknown
+            }
+            return o
+        }
+    }
+
+    @objc public enum ImageOrientation: Int16 {
+        case unknown = -1
+        case normal = 0
+        case cw90 = 1
+        case ccw90 = 2
+        case cw180 = 3
+    }
+
     // MARK: - KVO Support
     /**
      * Allow calculated properties to be properly dependent on the private backing storage property.
@@ -130,6 +162,9 @@ public class Image: NSManagedObject {
         if key == "imageSize" {
             keyPaths = keyPaths.union(["pvtImageSize"])
         }
+        else if key == "rotatedImageSize" {
+            keyPaths = keyPaths.union(["imageSize", "orientation"])
+        }
         // handle the day captured
         else if key == "dayCaptured" {
             keyPaths = keyPaths.union(["dateCaptured"])
@@ -137,6 +172,10 @@ public class Image: NSManagedObject {
         // irl url
         else if key == "url" {
             keyPaths = keyPaths.union(["originalUrl", "urlBookmark"])
+        }
+        // orientation
+        else if key == "orientation" {
+            keyPaths = keyPaths.union(["rawOrientation"])
         }
 
         return keyPaths

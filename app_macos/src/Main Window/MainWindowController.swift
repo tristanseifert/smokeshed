@@ -225,7 +225,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = true
-        panel.prompt = NSLocalizedString("Import", comment: "import directory open panel title")
+        panel.prompt = Bundle.main.localizedString(forKey: "import.dir.prompt", value: nil, table: "MainWindowController")
 
         panel.allowedFileTypes = ["public.image"]
 
@@ -287,9 +287,28 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         self.invalidateRestorableState()
     }
 
+    // MARK: - Autosaving
     /**
-     * Allocates the inspector, if needed.
+     * Saves the context if needed.
      */
+    private func saveIfNeeded() {
+        if let ctx = self.library.store.mainContext {
+            if ctx.hasChanges {
+                do {
+                    try ctx.save()
+                } catch {
+                    DDLogError("Failed to save context: \(error)")
+                }
+            }
+        }
+    }
+
+    /**
+     * When the window loses focus, save changes.
+     */
+    func windowDidResignMain(_ notification: Notification) {
+        self.saveIfNeeded()
+    }
 
     // MARK: - Menu item support
     /**
@@ -298,19 +317,14 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         // handle inspector item
         if menuItem.action == #selector(toggleInspector(_:)) {
-            if let inspector = self.inspector {
-                if inspector.window!.isVisible {
-                    menuItem.title = NSLocalizedString("Hide Inspector", comment: "tools > inspector menu item (inspector open)")
-                } else {
-                    menuItem.title = NSLocalizedString("Show Inspector", comment: "tools > inspector menu item (inspector closed)")
-                }
+            if let inspector = self.inspector, inspector.window!.isVisible {
+                menuItem.title = Bundle.main.localizedString(forKey: "menu.inspector.hide", value: nil, table: "MainWindowController")
             } else {
-                menuItem.title = NSLocalizedString("Show Inspector", comment: "tools > inspector menu item (inspector closed)")
+                menuItem.title = Bundle.main.localizedString(forKey: "menu.inspector.show", value: nil, table: "MainWindowController")
             }
 
             return true
         }
-
 
         // always allow importing
         if menuItem.action == #selector(importFromDevice(_:)) ||

@@ -38,7 +38,7 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
             if let sec = self.section {
                 // Section name may be empty string (null group value)
                 if sec.name.isEmpty {
-                    self.nameLabel.stringValue = NSLocalizedString("Unknown", comment: "Library collection header section name placeholder")
+                    self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "header.title.nullPlaceholder", value: nil, table: "LibraryCollectionItems")
                     return
                 }
 
@@ -129,8 +129,8 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
         self.collapse.translatesAutoresizingMaskIntoConstraints = false
         self.collapse.controlSize = .regular
 
-        self.collapse.title = NSLocalizedString("Show Less", comment: "Library collection header section collapse button title")
-        self.collapse.alternateTitle = NSLocalizedString("Show More", comment: "Library collection header section collapse button title (alterante)")
+        self.collapse.title = Bundle.main.localizedString(forKey: "header.collapse.less", value: nil, table: "LibraryCollectionItems")
+        self.collapse.alternateTitle = Bundle.main.localizedString(forKey: "header.collapse.more", value: nil, table: "LibraryCollectionItems")
 
         self.collapse.setButtonType(.pushOnPushOff)
         self.collapse.bezelStyle = .recessed

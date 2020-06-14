@@ -25,6 +25,7 @@ extension Image {
     @NSManaged public var originalUrl: URL?
     @NSManaged public var pvtImageSize: NSDictionary?
     @NSManaged public var rating: Int16
+    @NSManaged public var rawOrientation: Int16
     @NSManaged public var urlBookmark: Data?
     @NSManaged public var albums: NSSet?
     @NSManaged public var camera: Camera?

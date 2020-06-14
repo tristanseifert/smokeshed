@@ -100,7 +100,9 @@ public class ImportHandler {
                 flattened.forEach({ (url) in
                     self.queue.addOperation({
                         do {
+                            _ = url.startAccessingSecurityScopedResource()
                             try self.importSingle(url)
+                            url.stopAccessingSecurityScopedResource()
                         } catch {
                             // TODO: signal this error somehow
                             DDLogError("Failed to import '\(url)': \(error)")
@@ -130,13 +132,10 @@ public class ImportHandler {
             let m = FileManager.default
 
             urls.forEach {
-                if !$0.startAccessingSecurityScopedResource() {
-                    DDLogInfo("Failed to start accessing security scoped resource at '\($0)'")
-                }
+                _ = $0.startAccessingSecurityScopedResource()
 
                 do {
-                    try m.removeItem(at: $0)
-//                    try m.trashItem(at: $0, resultingItemURL: nil)
+                    try m.trashItem(at: $0, resultingItemURL: nil)
                 } catch {
                     DDLogError("Failed to delete image '\($0)' from disk: \(error)")
                 }
@@ -306,6 +305,33 @@ public class ImportHandler {
 
                 image.imageSize = size
 
+                // get orientation
+                if let orientation = meta[kCGImagePropertyOrientation as String] as? NSNumber {
+                    let val = CGImagePropertyOrientation(rawValue: orientation.uint32Value)
+
+                    switch val {
+                        case .down, .downMirrored:
+                            image.rawOrientation = Image.ImageOrientation.cw180.rawValue
+
+                        case .right, .rightMirrored:
+                            image.rawOrientation = Image.ImageOrientation.cw90.rawValue
+
+                        case .left, .leftMirrored:
+                            image.rawOrientation = Image.ImageOrientation.ccw90.rawValue
+
+                        case .up, .upMirrored:
+                            image.rawOrientation = Image.ImageOrientation.normal.rawValue
+
+                        // TODO: should this be a special value?
+                        case .none:
+                            image.rawOrientation = Image.ImageOrientation.normal.rawValue
+
+                        default:
+                            DDLogError("Unknown image orientation: \(String(describing: val))")
+                            image.rawOrientation = Image.ImageOrientation.unknown.rawValue
+                    }
+                }
+
                 // get capture date from exif if avaialble (TODO: parse subseconds)
                 if let m = meta,
                    let exif = m[kCGImagePropertyExifDictionary as String],
@@ -316,7 +342,7 @@ public class ImportHandler {
 
                 // save the context
                 try self.context.save()
-                try self.context.parent?.save()
+//                try self.context.parent?.save()
             } catch {
                 DDLogError("Failed to create image: \(error)")
             }

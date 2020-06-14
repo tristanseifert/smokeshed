@@ -143,7 +143,7 @@ class ThumbHandler {
             fatalError("No library id has been set; use the long form of generate() or call pushLibraryId()")
         }
 
-        self.generate(self.libraryIdStack.last!, images.map(self.imageToDict))
+        self.generate(self.libraryIdStack.last!, images)
     }
 
     /**
@@ -151,7 +151,7 @@ class ThumbHandler {
      * `identifier` and `originalUrl` fields must exist. The thumbnails are tagged with the
      * provided library id.
      */
-    public func generate(_ libraryId: UUID, _ props: [[String: Any]]) {
+    public func generate(_ libraryId: UUID, _ images: [Image]) {
 //        DDLogDebug("Thumb req: libId=\(libraryId), info=\(props)")
     }
 
@@ -159,37 +159,39 @@ class ThumbHandler {
     /**
      * Gets the "best fit" thumbnail image for the specified size.
      */
-    public func get(_ image: Image, _ size: CGSize, _ handler: @escaping GetCallback) {
+    public func get(_ image: Image, _ size: CGSize = .zero, _ handler: @escaping GetCallback) {
         if self.libraryIdStack.isEmpty {
             fatalError("No library id has been set; use the long form of generate() or call pushLibraryId()")
         }
 
-        self.get(self.libraryIdStack.last!, self.imageToDict(image), size, handler)
+        self.get(self.libraryIdStack.last!, image, size, handler)
     }
 
     /**
      * Gets the "best fit" thumbnail image for the specified size. The image is identified by a parameter
      * dictionary and library id.
      */
-    public func get(_ libraryId: UUID, _ props: [String: Any], _ size: CGSize, _ handler: @escaping GetCallback) {
+    public func get(_ libraryId: UUID, _ image: Image, _ size: CGSize, _ handler: @escaping GetCallback) {
         // prepare a request
-        let req = ThumbRequest(libraryId: libraryId)
+        guard let req = ThumbRequest(libraryId: libraryId, image: image) else {
+            handler(image.identifier!, .failure(ThumbError.failedToCreateRequest))
+            return
+        }
 
-        req.imageInfo = props
         req.size = size
 
         self.service!.get(req, withReply: { req, inImg, inErr in
             // handle the error case first
             if let error = inErr {
-                handler(props["identifier"] as! UUID, .failure(error))
+                handler(req.imageId, .failure(error))
             }
             // otherwise, handle success case
             else if let surface = inImg {
-                handler(props["identifier"] as! UUID, .success(surface))
+                handler(req.imageId, .success(surface))
             }
             // something got seriously fucked
             else {
-                handler(props["identifier"] as! UUID, .failure(ThumbError.unknownError))
+                handler(req.imageId, .failure(ThumbError.unknownError))
             }
         })
     }
@@ -231,5 +233,7 @@ class ThumbHandler {
         case unknownError
         /// The specified functionality is not implemented.
         case notImplemented
+        /// Failed to create a thumbnail request
+        case failedToCreateRequest
     }
 }

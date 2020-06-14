@@ -1,0 +1,14 @@
+/* 
+  LibraryCollectionItems.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200613.
+  
+*/
+
+// Header collapse button
+"header.collapse.less" = "Show Less";
+"header.collapse.more" = "Show More";
+
+// Header title placeholders
+"header.title.nullPlaceholder" = "Unknown";

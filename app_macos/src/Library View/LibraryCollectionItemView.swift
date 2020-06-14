@@ -452,7 +452,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * constraints accordingly.
      */
     private func resizeImageContainer() {
-        guard let size = self.image?.imageSize else {
+        guard let size = self.image?.rotatedImageSize else {
             return
         }
 
@@ -674,7 +674,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             if let date = image.dateCaptured {
                 let format = NSLocalizedString("%.0f × %.0f\n%@", comment: "Library collection view item subtitle format (1 = width, 2 = height, 3 = date)")
 
-                let size = image.imageSize
+                let size = image.rotatedImageSize
                 let dateStr = LibraryCollectionItemView.dateFormatter.string(from: date)
 
                 self.detailLabel.string = String(format: format, size.width, size.height, dateStr)
@@ -683,7 +683,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             else {
                 let format = NSLocalizedString("%.0f × %.0f", comment: "Library collection view item subtitle format without date (1 = width, 2 = height)")
 
-                let size = image.imageSize
+                let size = image.rotatedImageSize
 
                 self.detailLabel.string = String(format: format, size.width, size.height)
             }

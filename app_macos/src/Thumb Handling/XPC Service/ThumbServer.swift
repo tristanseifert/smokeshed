@@ -35,9 +35,7 @@ class ThumbServer: ThumbXPCProtocol {
      */
     func retrieve(_ request: ThumbRequest, _ callback: (Result<CGImage, Error>) -> Void) {
         // get the original image
-        guard let url = request.imageInfo["originalUrl"] as? URL else {
-            return callback(.failure(RetrievalError.invalidRequest))
-        }
+        let url = request.imageUrl
 
         // create an image source
         guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
@@ -48,8 +46,8 @@ class ThumbServer: ThumbXPCProtocol {
         var opt: [CFString: Any] = [
             // let ImageIO cache the thumbnail
             kCGImageSourceShouldCache: true,
-            // create the thumbnail if needed
-            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+            // create the thumbnail always
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
         ]
 
         if let size = request.size, size != .zero {
@@ -98,6 +96,7 @@ class ThumbServer: ThumbXPCProtocol {
                         // create a surface from the image
                         let surface = IOSurface.fromImage(image)
                         reply(request, surface, nil)
+                        surface?.decrementUseCount()
 
                     // some sort of error took place, pass that
                     case .failure(let error):
