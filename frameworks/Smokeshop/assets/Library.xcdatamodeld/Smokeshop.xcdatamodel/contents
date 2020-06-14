@@ -54,10 +54,9 @@
     </entity>
     <entity name="Lens" representedClassName="Lens" syncable="YES">
         <attribute name="detail" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSAttributedString"/>
+        <attribute name="exifLensId" optional="YES" attributeType="Integer 32" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="exifLensModel" optional="YES" attributeType="String"/>
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="make" optional="YES" attributeType="String"/>
-        <attribute name="model" optional="YES" attributeType="String"/>
-        <attribute name="mount" optional="YES" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Image" inverseName="lens" inverseEntity="Image"/>
     </entity>
@@ -68,6 +67,6 @@
         <element name="GPSLocation" positionX="-18" positionY="135" width="128" height="118"/>
         <element name="Image" positionX="0" positionY="90" width="128" height="28"/>
         <element name="Keyword" positionX="-27" positionY="54" width="128" height="103"/>
-        <element name="Lens" positionX="9" positionY="153" width="128" height="148"/>
+        <element name="Lens" positionX="9" positionY="153" width="128" height="133"/>
     </elements>
 </model>

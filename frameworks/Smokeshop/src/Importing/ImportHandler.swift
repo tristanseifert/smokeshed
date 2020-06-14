@@ -254,6 +254,7 @@ public class ImportHandler {
      */
     private func importSingle(_ url: URL, importDate: Date) throws {
         var meta: [String: AnyObject]! = nil
+        var insertRes: Result<Image, Error>? = nil
 
         // get some info about the file and ensure it's actually an image
         let resVals = try url.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
@@ -275,12 +276,10 @@ public class ImportHandler {
             throw ImportError.failedToGetImageProperties(url)
         }
 
-        guard let width = meta[kCGImagePropertyPixelWidth as String] as? NSNumber,
-              let height = meta[kCGImagePropertyPixelHeight
-                as String] as? NSNumber else {
-            throw ImportError.failedToSizeImage(url)
-        }
-        let size = CGSize(width: width.doubleValue, height: height.doubleValue)
+        let size = try self.sizeForMeta(meta)
+        let orientation = try self.orientationForMeta(meta)
+        let lens = try self.lensForMeta(meta)
+        let captureDate = try self.captureDateForMeta(meta)
 
         // hop on the queue to create the object
         self.context.performAndWait {
@@ -300,53 +299,159 @@ public class ImportHandler {
                 image.name = resVals.name
                 image.originalMetadata = meta as NSDictionary?
 
+                // save image url and a bookmark to it
                 image.originalUrl = url
                 try image.setUrlBookmark(url)
 
+                // store other precomputed properties
+                image.dateCaptured = captureDate
                 image.imageSize = size
-
-                // get orientation
-                if let orientation = meta[kCGImagePropertyOrientation as String] as? NSNumber {
-                    let val = CGImagePropertyOrientation(rawValue: orientation.uint32Value)
-
-                    switch val {
-                        case .down, .downMirrored:
-                            image.rawOrientation = Image.ImageOrientation.cw180.rawValue
-
-                        case .right, .rightMirrored:
-                            image.rawOrientation = Image.ImageOrientation.cw90.rawValue
-
-                        case .left, .leftMirrored:
-                            image.rawOrientation = Image.ImageOrientation.ccw90.rawValue
-
-                        case .up, .upMirrored:
-                            image.rawOrientation = Image.ImageOrientation.normal.rawValue
-
-                        // TODO: should this be a special value?
-                        case .none:
-                            image.rawOrientation = Image.ImageOrientation.normal.rawValue
-
-                        default:
-                            DDLogError("Unknown image orientation: \(String(describing: val))")
-                            image.rawOrientation = Image.ImageOrientation.unknown.rawValue
-                    }
-                }
-
-                // get capture date from exif if avaialble (TODO: parse subseconds)
-                if let m = meta,
-                   let exif = m[kCGImagePropertyExifDictionary as String],
-                   let dateStr = exif[kCGImagePropertyExifDateTimeOriginal as String] as? String,
-                   let date = self.dateFormatter.date(from: dateStr) {
-                    image.dateCaptured = date
-                }
+                image.rawOrientation = orientation.rawValue
+                image.lens = lens
 
                 // save the context
                 try self.context.save()
-//                try self.context.parent?.save()
+                insertRes = .success(image)
             } catch {
-                DDLogError("Failed to create image: \(error)")
+                insertRes = .failure(error)
             }
         }
+
+        // rethrow errors if we got any
+        _ = try insertRes!.get()
+    }
+
+    /**
+     * Gets the image size (in pixels) from the given metadata.
+     */
+    private func sizeForMeta(_ meta: [String: AnyObject]) throws -> CGSize {
+        guard let width = meta[kCGImagePropertyPixelWidth as String] as? NSNumber,
+              let height = meta[kCGImagePropertyPixelHeight as String] as? NSNumber else {
+            throw ImportError.failedToSizeImage
+        }
+
+        return CGSize(width: width.doubleValue, height: height.doubleValue)
+    }
+
+    /**
+     * Extracts the capture date of the iamge from the exif data.
+     */
+    private func captureDateForMeta(_ meta: [String: AnyObject]) throws -> Date? {
+        if let exif = meta[kCGImagePropertyExifDictionary as String],
+           let dateStr = exif[kCGImagePropertyExifDateTimeOriginal as String] as? String,
+           let date = self.dateFormatter.date(from: dateStr) {
+            return date
+        }
+
+        // failed to get date :(
+        return nil
+    }
+
+    /**
+     * Extracts the orientation from the given image metadata.
+     */
+    private func orientationForMeta(_ meta: [String: AnyObject]) throws -> Image.ImageOrientation {
+        if let orientation = meta[kCGImagePropertyOrientation as String] as? NSNumber {
+            let val = CGImagePropertyOrientation(rawValue: orientation.uint32Value)
+
+            switch val {
+                case .down, .downMirrored:
+                    return Image.ImageOrientation.cw180
+
+                case .right, .rightMirrored:
+                    return Image.ImageOrientation.cw90
+
+                case .left, .leftMirrored:
+                    return Image.ImageOrientation.ccw90
+
+                case .up, .upMirrored:
+                    return Image.ImageOrientation.normal
+
+                // TODO: should this be a special value?
+                case .none:
+                    return Image.ImageOrientation.normal
+
+                default:
+                    DDLogError("Unknown image orientation: \(String(describing: val))")
+                    return Image.ImageOrientation.unknown
+            }
+        }
+
+        // failed to get orientation
+        return Image.ImageOrientation.unknown
+    }
+
+    /**
+     * Tries to find a lens that best matches what is laid out in the given metadata. If we could identify the
+     * lens but none exists in the library, it's created.
+     */
+    private func lensForMeta(_ meta: [String: AnyObject]) throws -> Lens? {
+        var fetchRes: Result<[Lens], Error>? = nil
+
+        // read the model string and lens id
+        guard let exif = meta[kCGImagePropertyExifDictionary as String],
+            let model = exif[kCGImagePropertyExifLensModel] as? String else {
+            DDLogWarn("Failed to get lens model from metadata: \(meta)")
+            return nil
+        }
+
+        var lensId: Int? = nil
+        if let aux = meta[kCGImagePropertyExifAuxDictionary as String],
+            let id = aux[kCGImagePropertyExifAuxLensID] as? NSNumber {
+            lensId = id.intValue
+        }
+
+        // try to find an existing lens matching BOTH criteria
+        let req = NSFetchRequest<Lens>(entityName: "Lens")
+
+        var predicates = [
+            NSPredicate(format: "exifLensModel == %@", model)
+        ]
+        if let id = lensId {
+            predicates.append(NSPredicate(format: "exifLensId == %i", id))
+        }
+
+        req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+
+        self.context.performAndWait {
+            do {
+                let res = try self.context.fetch(req)
+                fetchRes = .success(res)
+            } catch {
+                fetchRes = .failure(error)
+            }
+        }
+
+        let results = try fetchRes!.get()
+        if !results.isEmpty {
+            return results.first
+        }
+
+        // we need to create a lens
+        return try self.createLens(meta, model, lensId)
+    }
+    /**
+     * Creates a lens object for the given metadata.
+     * The context is not saved after creation; the assumption is that pretty much immediately after this call,
+     * an image is imported, where we'll save the context anyhow.
+     */
+    private func createLens(_ meta: [String: AnyObject], _ model: String, _ id: Int?) throws -> Lens? {
+        var res: Result<Lens, Error>? = nil
+
+        // run a block to create it
+        self.context.performAndWait {
+            let lens = Lens(context: self.context)
+
+            lens.exifLensModel = model
+            lens.name = model
+
+            lens.exifLensId = Int32(id ?? -1)
+
+            res = .success(lens)
+        }
+
+        // return the lens or throw error
+        return try res!.get()
     }
 
     // MARK: - Errors
@@ -365,6 +470,6 @@ public class ImportHandler {
         /// Something went wrong getting information about an image.
         case failedToGetImageProperties(_ imageUrl: URL)
         /// Failed to size the image.
-        case failedToSizeImage(_ imageUrl: URL)
+        case failedToSizeImage
     }
 }

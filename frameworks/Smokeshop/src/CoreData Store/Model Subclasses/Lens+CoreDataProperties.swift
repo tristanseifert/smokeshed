@@ -2,7 +2,7 @@
 //  Lens+CoreDataProperties.swift
 //  Smokeshed
 //
-//  Created by Tristan Seifert on 20200606.
+//  Created by Tristan Seifert on 20200614.
 //
 //
 
@@ -16,12 +16,11 @@ extension Lens {
         return NSFetchRequest<Lens>(entityName: "Lens")
     }
 
-    @NSManaged public var name: String?
     @NSManaged public var detail: NSAttributedString?
     @NSManaged public var identifier: UUID?
-    @NSManaged public var mount: String?
-    @NSManaged public var model: String?
-    @NSManaged public var make: String?
+    @NSManaged public var exifLensModel: String?
+    @NSManaged public var name: String?
+    @NSManaged public var exifLensId: Int32
     @NSManaged public var images: NSSet?
 
 }

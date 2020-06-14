@@ -140,14 +140,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
             do {
                 var isStale = false
                 libraryUrl = try URL(resolvingBookmarkData: bookmark, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
-
-                DDLogDebug("Is library bookmark stale? \(isStale)")
             } catch {
                 DDLogError("Failed to resolve library url bookmark: \(error)")
                 return completionHandler(nil, error)
             }
-
-            DDLogDebug("Restoring main window with library \(libraryUrl)")
 
             // open the library
             do {

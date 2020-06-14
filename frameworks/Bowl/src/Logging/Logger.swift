@@ -22,8 +22,5 @@ public class Logger {
         DDLog.add(DDOSLogger.sharedInstance)
         
         // log to files
-        
-        // hehe
-        DDLogInfo("Logging set up")
     }
 }
