@@ -290,6 +290,41 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
         return false
     }
 
+    // MARK: Sort, grouping filters
+    /// Display string for the bottom bar "Sort By" menu
+    @objc dynamic private var sortMenuTitle: String {
+        get {
+            let order = (self.sortByOrder == .ascending) ? "↑" : "↓"
+            let fmt = Bundle.main.localizedString(forKey: "sort.title", value: nil, table: "LibraryBrowserBase")
+
+            return String.localizedStringWithFormat(fmt,
+                    self.sortByKey.localizedName, order)
+
+        }
+    }
+    @objc public class func keyPathsForValuesAffectingSortMenuTitle() -> Set<String> {
+        return [
+            #keyPath(LibraryBrowserBase.sortByKey),
+            #keyPath(LibraryBrowserBase.sortByOrder)
+        ]
+    }
+
+    /// Display string for the bottom bar "Group By" menu
+    @objc dynamic private var groupMenuTitle: String {
+        get {
+            let order = (self.groupOrder == .ascending) ? "↑" : "↓"
+            let fmt = Bundle.main.localizedString(forKey: "group.title", value: nil, table: "LibraryBrowserBase")
+            return String.localizedStringWithFormat(fmt,
+                    self.groupBy.localizedName, order)
+        }
+    }
+    @objc public class func keyPathsForValuesAffectingGroupMenuTitle() -> Set<String> {
+        return [
+            #keyPath(LibraryBrowserBase.groupBy),
+            #keyPath(LibraryBrowserBase.groupOrder)
+        ]
+    }
+
     // MARK: - Lens/Camera Filters
     /// Lens filter pulldown
     @IBOutlet private var lensFilter: NSPopUpButton! = nil

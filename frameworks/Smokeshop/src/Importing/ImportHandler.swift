@@ -83,7 +83,7 @@ public class ImportHandler {
      * image.
      */
     public func importFrom(_ urls: [URL]) {
-        DDLogDebug("Importing from: \(urls)")
+        let importDate = Date()
 
         // perform flattening on background queue
         let op = BlockOperation(block: {
@@ -101,7 +101,7 @@ public class ImportHandler {
                     self.queue.addOperation({
                         do {
                             _ = url.startAccessingSecurityScopedResource()
-                            try self.importSingle(url)
+                            try self.importSingle(url, importDate: importDate)
                             url.stopAccessingSecurityScopedResource()
                         } catch {
                             // TODO: signal this error somehow
@@ -252,7 +252,7 @@ public class ImportHandler {
      *
      * If the exact image (matching by path) already exists in the library, this step aborts.
      */
-    private func importSingle(_ url: URL) throws {
+    private func importSingle(_ url: URL, importDate: Date) throws {
         var meta: [String: AnyObject]! = nil
 
         // get some info about the file and ensure it's actually an image
@@ -296,7 +296,7 @@ public class ImportHandler {
                 // create the new image
                 let image = Image(context: self.context)
 
-                image.dateImported = Date()
+                image.dateImported = importDate
                 image.name = resVals.name
                 image.originalMetadata = meta as NSDictionary?
 

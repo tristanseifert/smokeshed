@@ -57,11 +57,11 @@
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
                                                             <tableCellView identifier="HeaderCell" id="Znf-TM-Kez">
-                                                                <rect key="frame" x="1" y="1" width="228" height="17"/>
+                                                                <rect key="frame" x="1" y="1" width="187" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DGX-Qc-G8T">
-                                                                        <rect key="frame" x="0.0" y="1" width="228" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="1" width="187" height="14"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="HEADER CELL" id="3dY-t5-wvC">
                                                                             <font key="font" metaFont="smallSystemBold"/>
@@ -75,7 +75,7 @@
                                                                 </connections>
                                                             </tableCellView>
                                                             <tableCellView identifier="DataCell" id="u1x-DZ-vzc">
-                                                                <rect key="frame" x="1" y="20" width="228" height="17"/>
+                                                                <rect key="frame" x="1" y="20" width="187" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xau-Ld-5jF">
@@ -84,7 +84,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyDown" image="NSActionTemplate" id="Emy-L0-Up1"/>
                                                                     </imageView>
                                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="55n-IS-tab">
-                                                                        <rect key="frame" x="25" y="0.0" width="203" height="17"/>
+                                                                        <rect key="frame" x="25" y="0.0" width="162" height="17"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="vA0-se-e27">
                                                                             <font key="font" metaFont="system"/>
@@ -106,7 +106,7 @@
                                         <nil key="backgroundColor"/>
                                     </clipView>
                                     <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="qTj-3a-xpj">
-                                        <rect key="frame" x="0.0" y="600" width="231" height="16"/>
+                                        <rect key="frame" x="0.0" y="600" width="190" height="16"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </scroller>
                                     <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="iQk-cx-3xN">
@@ -232,6 +232,7 @@
                                                 <constraint firstItem="6fn-do-jn3" firstAttribute="leading" secondItem="pqR-c3-UCq" secondAttribute="trailing" constant="5" id="a2j-eV-1hP"/>
                                                 <constraint firstItem="6fn-do-jn3" firstAttribute="height" secondItem="Fe4-uL-4el" secondAttribute="height" multiplier="1.3125" id="aEc-NH-9Cr"/>
                                                 <constraint firstItem="pqR-c3-UCq" firstAttribute="leading" secondItem="GEX-AR-PUg" secondAttribute="leading" constant="10" id="c0C-vN-BNB"/>
+                                                <constraint firstItem="1Cn-aS-PgR" firstAttribute="width" secondItem="6fn-do-jn3" secondAttribute="width" multiplier="1.32727" id="h7h-OL-qbZ"/>
                                                 <constraint firstItem="6fn-do-jn3" firstAttribute="centerY" secondItem="GEX-AR-PUg" secondAttribute="centerY" id="hA8-az-Kdo"/>
                                                 <constraint firstItem="1Cn-aS-PgR" firstAttribute="top" secondItem="6fn-do-jn3" secondAttribute="top" id="kbT-0b-feZ"/>
                                                 <constraint firstItem="Fe4-uL-4el" firstAttribute="centerY" secondItem="GEX-AR-PUg" secondAttribute="centerY" id="pYZ-zV-fhv"/>
@@ -239,13 +240,13 @@
                                             </constraints>
                                         </visualEffectView>
                                         <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64l-Qb-oSo" userLabel="Filters">
-                                            <rect key="frame" x="0.0" y="0.0" width="661" height="192"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="681" height="192"/>
                                             <clipView key="contentView" id="X0F-Mc-pdc">
-                                                <rect key="frame" x="0.0" y="0.0" width="661" height="192"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="681" height="192"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <predicateEditor verticalHuggingPriority="750" nestingMode="compound" canRemoveAllRows="YES" rowHeight="32" id="Inb-dV-AiB">
-                                                        <rect key="frame" x="0.0" y="0.0" width="661" height="192"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="681" height="192"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                         <rowTemplates>
                                                             <predicateEditorRowTemplate rowType="compound" id="DCL-ar-sA0" userLabel="Compound">
@@ -502,6 +503,10 @@
                                             </scroller>
                                         </scrollView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="64l-Qb-oSo" firstAttribute="trailing" secondItem="GEX-AR-PUg" secondAttribute="trailing" id="S00-RT-MtH"/>
+                                        <constraint firstItem="64l-Qb-oSo" firstAttribute="leading" secondItem="GEX-AR-PUg" secondAttribute="leading" id="lxl-RJ-b6A"/>
+                                    </constraints>
                                     <visibilityPriorities>
                                         <integer value="1000"/>
                                         <integer value="1000"/>
@@ -514,8 +519,114 @@
                                 <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iG3-XC-ckn" userLabel="Bottom Bar">
                                     <rect key="frame" x="0.0" y="0.0" width="681" height="32"/>
                                     <subviews>
+                                        <customView horizontalHuggingPriority="500" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="ArZ-Kh-1o2" userLabel="Sort/Group">
+                                            <rect key="frame" x="0.0" y="0.0" width="194" height="32"/>
+                                            <subviews>
+                                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CbT-Nt-Bn8">
+                                                    <rect key="frame" x="10" y="6" width="82" height="19"/>
+                                                    <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="JY4-ZQ-Sfa" id="IDv-2Q-jqu">
+                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                        <font key="font" metaFont="systemBold" size="12"/>
+                                                        <menu key="menu" id="1c7-KE-NqV">
+                                                            <items>
+                                                                <menuItem title="Sort" state="on" tag="-1" hidden="YES" id="JY4-ZQ-Sfa">
+                                                                    <connections>
+                                                                        <binding destination="-2" name="title" keyPath="self.sortMenuTitle" id="Cfp-W0-Ebx"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Date Captured" tag="1" id="AqT-5w-sge">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibrarySortKey:" target="-1" id="IdV-Lf-YoG"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Date Imported" tag="2" id="7cC-Fy-2sG">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibrarySortKey:" target="-1" id="no6-fG-2wc"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Rating" tag="3" id="FDo-Bj-nWB">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibrarySortKey:" target="-1" id="ITi-jB-rbO"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem isSeparatorItem="YES" id="0aO-9F-93L"/>
+                                                                <menuItem title="Ascending" tag="1" id="Zjx-Ge-TXA">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibrarySortOrder:" target="-1" id="Zfm-ws-kKm"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Descending" tag="2" id="HTQ-RH-nIB">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibrarySortOrder:" target="-1" id="Vcv-2c-Tbc"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                            </items>
+                                                        </menu>
+                                                    </popUpButtonCell>
+                                                </popUpButton>
+                                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iEr-gS-Gez" userLabel="Group">
+                                                    <rect key="frame" x="102" y="6" width="82" height="19"/>
+                                                    <popUpButtonCell key="cell" type="recessed" title="Group By" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" id="trK-ts-squ">
+                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                        <font key="font" metaFont="systemBold" size="12"/>
+                                                        <menu key="menu" id="85x-ds-61n">
+                                                            <items>
+                                                                <menuItem title="Group By" state="on" tag="-1" hidden="YES" id="X7K-CI-CBv">
+                                                                    <connections>
+                                                                        <binding destination="-2" name="title" keyPath="self.groupMenuTitle" id="riP-mH-zQv"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Date Captured" tag="1" id="yt5-W2-0lf">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibraryGroupKey:" target="-1" id="eEW-Py-sq8"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Date Imported" tag="2" id="t2h-3L-gQB">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibraryGroupKey:" target="-1" id="e3g-rO-0Em"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Rating" tag="3" id="IWk-Ui-0Wx">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibraryGroupKey:" target="-1" id="I7P-qz-Nac"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem isSeparatorItem="YES" id="6xo-6v-HZC"/>
+                                                                <menuItem title="Ascending" tag="1" id="1vs-xc-s8u">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibraryGroupOrder:" target="-1" id="PPE-Xw-4yq"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Descending" tag="2" id="ZG8-oW-RPr">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="setLibraryGroupOrder:" target="-1" id="Pfc-1H-7GF"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                            </items>
+                                                        </menu>
+                                                    </popUpButtonCell>
+                                                </popUpButton>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="CbT-Nt-Bn8" firstAttribute="leading" secondItem="ArZ-Kh-1o2" secondAttribute="leading" constant="10" id="8mj-62-hrz"/>
+                                                <constraint firstItem="iEr-gS-Gez" firstAttribute="top" secondItem="CbT-Nt-Bn8" secondAttribute="top" id="dfq-ke-eGe"/>
+                                                <constraint firstItem="CbT-Nt-Bn8" firstAttribute="centerY" secondItem="ArZ-Kh-1o2" secondAttribute="centerY" id="jYX-3X-vRY"/>
+                                                <constraint firstAttribute="trailing" secondItem="iEr-gS-Gez" secondAttribute="trailing" constant="10" id="qnh-lD-XH7"/>
+                                                <constraint firstItem="iEr-gS-Gez" firstAttribute="leading" secondItem="CbT-Nt-Bn8" secondAttribute="trailing" constant="10" id="xRQ-jd-9nT"/>
+                                            </constraints>
+                                        </customView>
                                         <customView horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="XnP-Na-H3R" userLabel="Spacer">
-                                            <rect key="frame" x="0.0" y="0.0" width="534" height="32"/>
+                                            <rect key="frame" x="196" y="0.0" width="338" height="32"/>
                                         </customView>
                                         <slider toolTip="Change how many images are shown per row." horizontalHuggingPriority="500" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FRB-ER-4rT">
                                             <rect key="frame" x="536" y="7" width="125" height="18"/>
@@ -536,8 +647,10 @@
                                     <visibilityPriorities>
                                         <integer value="1000"/>
                                         <integer value="1000"/>
+                                        <integer value="1000"/>
                                     </visibilityPriorities>
                                     <customSpacing>
+                                        <real value="3.4028234663852886e+38"/>
                                         <real value="3.4028234663852886e+38"/>
                                         <real value="3.4028234663852886e+38"/>
                                     </customSpacing>
@@ -574,7 +687,7 @@
                 <constraint firstItem="V3x-53-6s6" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Eno-5A-06T"/>
                 <constraint firstAttribute="trailing" secondItem="V3x-53-6s6" secondAttribute="trailing" id="lCo-sV-ZnX"/>
             </constraints>
-            <point key="canvasLocation" x="-151" y="14"/>
+            <point key="canvasLocation" x="47" y="-33"/>
         </customView>
         <menu id="hcj-9z-bZn" userLabel="Search menu template">
             <items>

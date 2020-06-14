@@ -59,6 +59,8 @@ NSFetchedResultsControllerDelegate {
     internal var restoreViewport = true
     /// Should the selected objects be encoded?
     internal var restoreSelection = true
+    /// Should the sort/group state be restored?
+    internal var restoreSort = true
 
     private struct StateKeys {
         /// Grid zoom level
@@ -67,6 +69,14 @@ NSFetchedResultsControllerDelegate {
         static let selectedObjectIds = "LibraryBrowserBase.selectedObjectIds"
         /// URL representation of the IDs of all currently visible objects
         static let visibleObjectIds = "LibraryBrowserBase.visibleObjectIds"
+        /// Key by which images are sorted
+        static let sortKey = "LibraryBrowserBase.sortKey"
+        /// Order in which images are sorted
+        static let sortOrder = "LibraryBrowserBase.sortOrder"
+        /// Key by which images are grouped
+        static let groupKey = "LibraryBrowserBase.groupKey"
+        /// Order in which the grouping key is ordered
+        static let groupOrder = "LibraryBrowserBase.groupOrder"
     }
 
     /// Blocks to execute when the view is made displayable to complete state restoration
@@ -112,6 +122,14 @@ NSFetchedResultsControllerDelegate {
                 coder.encode(selectedIds, forKey: StateKeys.selectedObjectIds)
             }
         }
+
+        // store sort properties
+        if self.restoreSort {
+            coder.encode(self.sortByKey.rawValue, forKey: StateKeys.sortKey)
+            coder.encode(self.sortByOrder.rawValue, forKey: StateKeys.sortOrder)
+            coder.encode(self.groupBy.rawValue, forKey: StateKeys.groupKey)
+            coder.encode(self.groupOrder.rawValue, forKey: StateKeys.groupOrder)
+        }
     }
 
     /**
@@ -133,7 +151,7 @@ NSFetchedResultsControllerDelegate {
             }
         })
 
-        // restore selection
+        // restore selection and visible objects
         self.restoreAfterFetchBlock.append({
             // get selection as an array of URL-represented object IDs at first
             if let selected = selectedIds as? [URL] {
@@ -155,6 +173,23 @@ NSFetchedResultsControllerDelegate {
                 }
             }
         })
+
+        // restore sort properties
+        if let key = SortKey(rawValue: coder.decodeInteger(forKey: StateKeys.sortKey)) {
+            self.sortByKey = key
+        }
+        if let order = SortOrder(rawValue: coder.decodeInteger(forKey: StateKeys.sortOrder)) {
+            self.sortByOrder = order
+        }
+
+        if let key = GroupByKey(rawValue: coder.decodeInteger(forKey: StateKeys.groupKey)) {
+            self.groupBy = key
+        }
+        if let order = SortOrder(rawValue: coder.decodeInteger(forKey: StateKeys.groupOrder)) {
+            self.groupOrder = order
+        }
+
+        self.updateSortDescriptors()
     }
 
     /**
@@ -198,8 +233,6 @@ NSFetchedResultsControllerDelegate {
 
     /// Filter predicate for what's being displayed
     @objc dynamic private var filterPredicate: NSPredicate! = nil
-    /// Sort descriptors for the results
-    @objc dynamic private var sort: [NSSortDescriptor] = [NSSortDescriptor]()
 
     /**
      * Initializes the fetch request.
@@ -213,41 +246,24 @@ NSFetchedResultsControllerDelegate {
         self.fetchReq.fetchBatchSize = 25
         self.fetchReq.includesSubentities = true
 
-        // sort by date captured
-        self.fetchReq.sortDescriptors = [
-            NSSortDescriptor(key: "dateCaptured", ascending: false)
-        ]
-    }
-
-    /**
-     * Updates the fetch request with any filters. This prepares it to be executed.
-     */
-    private func updateFetchReq() {
-        // TODO: implement this :)
-
-        // set if the fetch request changed
-        //        self.fetchReqChanged = true
+        // update sorting
+        self.updateSortDescriptors()
     }
 
     /**
      * Performs the fetch.
      */
     internal func fetch() {
-        // update the fetch request if needed
-        self.updateFetchReq()
-
         // if the fetch request changed, we need to allocate a new fetch ctrl
         if self.fetchReqChanged || self.fetchReqCtrl == nil {
             // it's important the cache is cleared in this case
             NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: self.fetchCacheName)
 
             self.fetchReqCtrl = NSFetchedResultsController(fetchRequest: self.fetchReq,
-                                                           managedObjectContext: self.ctx,
-                                                           sectionNameKeyPath: "dayCaptured",
-                                                           cacheName: self.fetchCacheName)
+                                   managedObjectContext: self.ctx,
+                                   sectionNameKeyPath: self.groupBy.keyPath,
+                                   cacheName: self.fetchCacheName)
             self.fetchReqCtrl.delegate = self
-
-
 
             // clear the flag
             self.fetchReqChanged = false
@@ -265,6 +281,238 @@ NSFetchedResultsControllerDelegate {
             DDLogError("Failed to execute fetch request: \(error)")
             self.presentError(error, modalFor: self.view.window!, delegate: nil, didPresent: nil, contextInfo: nil)
         }
+    }
+
+    // MARK: Sorting and grouping
+    @objc internal enum SortKey: Int {
+        case dateCaptured = 1
+        case dateImported = 2
+        case rating = 3
+
+        var keyPath: String {
+            get {
+                switch self {
+                    case .dateCaptured:
+                        return #keyPath(Image.dateCaptured)
+                    case .dateImported:
+                        return #keyPath(Image.dateImported)
+                    case .rating:
+                        return #keyPath(Image.rating)
+                }
+            }
+        }
+
+        /// Localized display string
+        var localizedName: String {
+            return Bundle.main.localizedString(forKey: "sort.key.\(self.rawValue)", value: nil, table: "LibraryBrowserBase")
+        }
+    }
+
+    @objc internal enum SortOrder: Int {
+        case ascending = 1
+        case descending = 2
+
+        /// Localized display string
+        var localizedName: String {
+            return Bundle.main.localizedString(forKey: "sort.order.\(self.rawValue)", value: nil, table: "LibraryBrowserBase")
+        }
+    }
+
+    @objc internal enum GroupByKey: Int {
+        case dateCaptured = 1
+        case dateImported = 2
+        case rating = 3
+
+        /// Key path to use for grouping
+        var keyPath: String {
+            get {
+                switch self {
+                    case .dateCaptured:
+                        return #keyPath(Image.dayCaptured)
+                    case .dateImported:
+                        return #keyPath(Image.dateImported)
+                    case .rating:
+                        return #keyPath(Image.rating)
+                }
+            }
+        }
+
+        /// Key path to use for sorting
+        var sortKeyPath: String {
+            get {
+                switch self {
+                    case .dateCaptured:
+                        return #keyPath(Image.dateCaptured)
+                    case .dateImported:
+                        return #keyPath(Image.dateImported)
+                    case .rating:
+                        return #keyPath(Image.rating)
+                }
+            }
+        }
+
+        /// Localized display string
+        var localizedName: String {
+            return Bundle.main.localizedString(forKey: "group.key.\(self.rawValue)", value: nil, table: "LibraryBrowserBase")
+        }
+    }
+
+    /// If side effects should be suppressed for sort/order key sets
+    private var suppressOrderKeySet = false
+
+    /// What key to sort by
+    @objc dynamic internal var sortByKey: SortKey = .dateCaptured {
+        didSet {
+            // if sort and group keys are the same, sync sort orders
+            if self.sortByKey.rawValue == self.groupBy.rawValue {
+                self.suppressOrderKeySet = true
+                self.groupOrder = self.sortByOrder
+                self.suppressOrderKeySet = false
+            }
+        }
+    }
+    /// Sort order
+    @objc dynamic internal var sortByOrder: SortOrder = .descending {
+        didSet {
+            // bail if suppressing order changes
+            if self.suppressOrderKeySet {
+                return
+            }
+            // if sort and group keys are the same, sync sort orders
+            if self.sortByKey.rawValue == self.groupBy.rawValue {
+                self.suppressOrderKeySet = true
+                self.groupOrder = self.sortByOrder
+                self.suppressOrderKeySet = false
+            }
+        }
+    }
+
+    /// What results are grouped by
+    @objc dynamic internal var groupBy: GroupByKey = .dateCaptured {
+        didSet {
+            // if sort and group keys are the same, sync sort orders
+            if self.sortByKey.rawValue == self.groupBy.rawValue {
+                self.suppressOrderKeySet = true
+                self.sortByOrder = self.groupOrder
+                self.suppressOrderKeySet = false
+            }
+        }
+    }
+    /// Grouping order
+    @objc dynamic internal var groupOrder: SortOrder = .descending {
+        didSet {
+            // bail if suppressing order changes
+            if self.suppressOrderKeySet {
+                return
+            }
+            // if sort and group keys are the same, sync sort orders
+            if self.sortByKey.rawValue == self.groupBy.rawValue {
+                self.suppressOrderKeySet = true
+                self.sortByOrder = self.groupOrder
+                self.suppressOrderKeySet = false
+            }
+        }
+    }
+
+    /**
+     * Updates the sort descriptors based on the sort properties and grouping keys.
+     */
+    private func updateSortDescriptors() {
+        if self.groupBy.rawValue == self.sortByKey.rawValue {
+            self.fetchReq.sortDescriptors = [
+                NSSortDescriptor(key: self.groupBy.sortKeyPath,
+                                 ascending: (self.groupOrder == .ascending)),
+            ]
+        } else {
+            self.fetchReq.sortDescriptors = [
+                NSSortDescriptor(key: self.groupBy.sortKeyPath,
+                                 ascending: (self.groupOrder == .ascending)),
+                NSSortDescriptor(key: self.sortByKey.keyPath,
+                                 ascending: (self.sortByOrder == .ascending))
+            ]
+
+        }
+
+        // ensure fetch controller is updated
+        self.fetchReqChanged = true
+    }
+    /**
+     * Sets the sorting key based on the tag of the given view/menu item.
+     */
+    @IBAction func setLibrarySortKey(_ sender: Any?) {
+        // get the tag of the sender
+        var tag: Int = -1
+        if let menu = sender as? NSMenuItem {
+            tag = menu.tag
+        }
+        guard let key = SortKey(rawValue: tag) else {
+            fatalError("Failed to get sort key from tag \(tag)")
+        }
+
+        // update sort descriptor
+        self.sortByKey = key
+
+        self.updateSortDescriptors()
+        self.fetch()
+    }
+    /**
+     * Sets the sort order based on the tag of the sender.
+     */
+    @IBAction func setLibrarySortOrder(_ sender: Any?) {
+        // get the tag of the sender
+        var tag: Int = -1
+        if let menu = sender as? NSMenuItem {
+            tag = menu.tag
+        }
+        guard let order = SortOrder(rawValue: tag) else {
+            fatalError("Failed to get sort order from tag \(tag)")
+        }
+
+        // update sort descriptor
+        self.sortByOrder = order
+
+        self.updateSortDescriptors()
+        self.fetch()
+    }
+
+    /**
+     * Sets the field by which results are grouped based on the tag of the sender.
+     */
+    @IBAction func setLibraryGroupKey(_ sender: Any?) {
+        // get the tag of the sender
+        var tag: Int = -1
+        if let menu = sender as? NSMenuItem {
+            tag = menu.tag
+        }
+        guard let key = GroupByKey(rawValue: tag) else {
+            fatalError("Failed to get grouping key from tag \(tag)")
+        }
+
+        // update sort descriptor
+        self.groupBy = key
+
+        self.updateSortDescriptors()
+        self.setUpDataSource()
+        self.fetch()
+    }
+    /**
+     * Sets the sort order for the result grouping..
+     */
+    @IBAction func setLibraryGroupOrder(_ sender: Any?) {
+        // get the tag of the sender
+        var tag: Int = -1
+        if let menu = sender as? NSMenuItem {
+            tag = menu.tag
+        }
+        guard let order = SortOrder(rawValue: tag) else {
+            fatalError("Failed to get group order from tag \(tag)")
+        }
+
+        // update sort descriptor
+        self.groupOrder = order
+
+        self.updateSortDescriptors()
+        self.fetch()
     }
 
     // MARK: - Collection data source
@@ -308,6 +556,7 @@ NSFetchedResultsControllerDelegate {
                                                     withIdentifier: .libraryCollectionHeader,
                                                     for: path) as! LibraryCollectionHeaderView
 
+            header.owner = self
             header.collection = view
             header.section = self.fetchReqCtrl.sections![path[0]]
 
@@ -416,8 +665,25 @@ NSFetchedResultsControllerDelegate {
      */
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         // sort order
-
+        if menuItem.action == #selector(setLibrarySortOrder(_:)) {
+            menuItem.state = (menuItem.tag == self.sortByOrder.rawValue) ? .on : .off
+            return true
+        }
         // sort key
+        if menuItem.action == #selector(setLibrarySortKey(_:)) {
+            menuItem.state = (menuItem.tag == self.sortByKey.rawValue) ? .on : .off
+            return true
+        }
+        // group sort order
+        if menuItem.action == #selector(setLibraryGroupOrder(_:)) {
+            menuItem.state = (menuItem.tag == self.groupOrder.rawValue) ? .on : .off
+            return true
+        }
+        // group by key
+        if menuItem.action == #selector(setLibraryGroupKey(_:)) {
+            menuItem.state = (menuItem.tag == self.groupBy.rawValue) ? .on : .off
+            return true
+        }
 
         // we do not handle it
         return false

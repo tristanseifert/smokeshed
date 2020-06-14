@@ -13,12 +13,24 @@ import CocoaLumberjackSwift
  * These views are used to render the section headers in the library view. They display a date
  */
 class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHeaderView {
-    /// Date formatter used to present the dates
-    private static let formatter: DateFormatter = {
+    /// Reference to the collection view; used to determine how to interpret header value
+    internal weak var owner: LibraryBrowserBase! = nil
+
+    /// Date formatter used to present capture dates
+    private static let captureDateFormatter: DateFormatter = {
         let fmt = DateFormatter()
 
         fmt.dateStyle = .long
         fmt.timeStyle = .none
+
+        return fmt
+    }()
+    /// Date formatter used to present import dates
+    private static let importDateFormatter: DateFormatter = {
+        let fmt = DateFormatter()
+
+        fmt.dateStyle = .long
+        fmt.timeStyle = .medium
 
         return fmt
     }()
@@ -42,17 +54,33 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
                     return
                 }
 
-                // convert the name into a date
-                guard let date = LibraryCollectionHeaderView.inFormatter.date(from: sec.name) else {
-                    DDLogVerbose("Failed to parse date from sec name '\(sec.name)'")
-                    return
+                // handle ratings
+                if self.owner.groupBy == .rating {
+                    guard let number = Int(sec.name, radix: 10) else {
+                        DDLogVerbose("Failed to parse number from sec name '\(sec.name)'")
+                        return
+                    }
+
+                    if number == -1 {
+                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "header.title.unrated", value: nil, table: "LibraryCollectionItems")
+                    } else {
+                        // yeah this is kind of a hack
+                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "header.title.rating.\(number)", value: nil, table: "LibraryCollectionItems")
+
+                    }
+                } else {
+                    // convert the name into a date
+                    guard let date = LibraryCollectionHeaderView.inFormatter.date(from: sec.name) else {
+                        DDLogVerbose("Failed to parse date from sec name '\(sec.name)'")
+                        return
+                    }
+
+                    if self.owner.groupBy == .dateCaptured {
+                        self.nameLabel.stringValue = LibraryCollectionHeaderView.captureDateFormatter.string(from: date)
+                    } else if self.owner.groupBy == .dateImported {
+                        self.nameLabel.stringValue = LibraryCollectionHeaderView.importDateFormatter.string(from: date)
+                    }
                 }
-
-                self.nameLabel.stringValue = LibraryCollectionHeaderView.formatter.string(from: date)
-            }
-            // no section info to display
-            else {
-
             }
         }
     }

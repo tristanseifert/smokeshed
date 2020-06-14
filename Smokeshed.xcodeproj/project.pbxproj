@@ -93,6 +93,7 @@
 		6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36912495AEEA005F80EE /* LibraryViewController.strings */; };
 		6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36972495C9EB005F80EE /* MainWindowController.strings */; };
 		6ABD369A2495CACE005F80EE /* LibraryCollectionItems.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */; };
+		6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -274,6 +275,7 @@
 		6ABD36932495B404005F80EE /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		6ABD36972495C9EB005F80EE /* MainWindowController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MainWindowController.strings; path = "app_macos/src/Main Window/MainWindowController.strings"; sourceTree = "<group>"; };
 		6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionItems.strings; path = "app_macos/src/Library View/LibraryCollectionItems.strings"; sourceTree = "<group>"; };
+		6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryBrowserBase.strings; path = "app_macos/src/Library View/LibraryBrowserBase.strings"; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -768,6 +770,7 @@
 				6A962C27248F191E0088E1DB /* Library View.xcassets */,
 				6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */,
 				6ABD36912495AEEA005F80EE /* LibraryViewController.strings */,
+				6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1049,6 +1052,7 @@
 				6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
+				6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */,
 				6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */,
 				6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */,
 				6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */,

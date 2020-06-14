@@ -356,21 +356,74 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Order By" id="sot-ET-PKz">
                                     <items>
-                                        <menuItem title="Date Captured" id="NqL-LZ-DNb">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Date Captured" tag="1" keyEquivalent="1" id="NqL-LZ-DNb">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibrarySortKey:" target="-1" id="6T9-rm-CPg"/>
+                                            </connections>
                                         </menuItem>
-                                        <menuItem title="Date Imported" tag="1" id="mXb-Cp-qdq">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Date Imported" tag="2" keyEquivalent="2" id="mXb-Cp-qdq">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibrarySortKey:" target="-1" id="DRO-PH-Peb"/>
+                                            </connections>
                                         </menuItem>
-                                        <menuItem title="Rating" tag="2" id="c5x-wI-dh5">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Rating" tag="3" keyEquivalent="3" id="c5x-wI-dh5">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibrarySortKey:" target="-1" id="Vww-lh-6yH"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="hmi-D5-Hm8"/>
-                                        <menuItem title="Ascending" id="2kN-rF-dwT">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Ascending" tag="1" keyEquivalent="=" id="2kN-rF-dwT">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibrarySortOrder:" target="-1" id="7JE-5Y-hUY"/>
+                                            </connections>
                                         </menuItem>
-                                        <menuItem title="Descending" tag="1" id="L7H-Re-Jv9">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Descending" tag="2" keyEquivalent="-" id="L7H-Re-Jv9">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibrarySortOrder:" target="-1" id="7le-uX-aE0"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Group By" id="NXP-1x-wlc">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Group By" id="TBG-WS-80h">
+                                    <items>
+                                        <menuItem title="Date Captured" tag="1" keyEquivalent="1" id="NdI-kr-rr8">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibraryGroupKey:" target="-1" id="vh6-2r-nqQ"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Date Imported" tag="2" keyEquivalent="2" id="cmX-EW-ztL">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibraryGroupKey:" target="-1" id="155-AF-aBv"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Rating" tag="3" keyEquivalent="3" id="kEt-KK-IUK">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibraryGroupKey:" target="-1" id="GhY-C9-2Iz"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="hm3-JV-aVL"/>
+                                        <menuItem title="Ascending" tag="1" keyEquivalent="=" id="y2W-OW-BqY">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibraryGroupOrder:" target="-1" id="aGC-ZX-TcD"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Descending" tag="2" keyEquivalent="-" id="93l-WB-deQ">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibraryGroupOrder:" target="-1" id="Xqa-jr-YgG"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                 </menu>

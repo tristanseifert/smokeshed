@@ -12,3 +12,12 @@
 
 // Header title placeholders
 "header.title.nullPlaceholder" = "Unknown";
+"header.title.unrated" = "Not Rated";
+
+// rating titles
+"header.title.rating.0" = "☆☆☆☆☆";
+"header.title.rating.1" = "★☆☆☆☆";
+"header.title.rating.2" = "★★☆☆☆";
+"header.title.rating.3" = "★★★☆☆";
+"header.title.rating.4" = "★★★★☆";
+"header.title.rating.5" = "★★★★★";

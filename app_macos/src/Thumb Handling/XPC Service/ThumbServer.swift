@@ -45,9 +45,9 @@ class ThumbServer: ThumbXPCProtocol {
         // get a thumbnail
         var opt: [CFString: Any] = [
             // let ImageIO cache the thumbnail
-            kCGImageSourceShouldCache: true,
+            kCGImageSourceShouldCache: false,
             // create the thumbnail always
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
         ]
 
         if let size = request.size, size != .zero {
