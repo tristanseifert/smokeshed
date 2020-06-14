@@ -328,7 +328,66 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
      * images should be removed only from the library, or also deleted from disk.
      */
     func removeImagesWithConfirmation(_ images: [Image]) {
+        let alert = NSAlert()
 
+        alert.showsHelp = true
+
+        // format the alert title
+        let fmt = Bundle.main.localizedString(forKey: "delete.title", value: nil, table: "LibraryViewController")
+        alert.messageText = String.localizedStringWithFormat(fmt, images.count)
+
+        // format the subtitle
+        alert.informativeText = Bundle.main.localizedString(forKey: "delete.informative", value: nil, table: "LibraryViewController")
+
+        // keep files is the first option
+        alert.addButton(withTitle: Bundle.main.localizedString(forKey: "delete.leave_files", value: nil, table: "LibraryViewController"))
+
+        // add the cancel button
+        alert.addButton(withTitle: Bundle.main.localizedString(forKey: "delete.cancel", value: nil, table: "LibraryViewController"))
+
+        // lastly, add the "remove files" button
+        alert.addButton(withTitle: Bundle.main.localizedString(forKey: "delete.remove_files", value: nil, table: "LibraryViewController"))
+
+        // show it
+        alert.beginSheetModal(for: self.view.window!, completionHandler: { r in
+            self.removeAlertCompletion(result: r, images: images)
+        })
+    }
+    /**
+     * Completion handler for the deletion alert.
+     */
+    private func removeAlertCompletion(result: NSApplication.ModalResponse, images: [Image]) {
+        // bail out if it was the cancel option
+        guard result != .alertSecondButtonReturn else {
+            return
+        }
+
+        let trashFiles = (result == .alertThirdButtonReturn)
+
+        // run the deletion
+        guard let wc = self.view.window?.windowController as? MainWindowController else {
+            DDLogError("Failed to get window controller")
+            return
+        }
+
+        wc.importer.deleteImages(images, shouldDelete: trashFiles, self.removeCompletionHandler)
+    }
+    /**
+     * Remove action completion handler
+     */
+    private func removeCompletionHandler(_ result: Result<Void, Error>) {
+        switch result {
+            // Deletion completed
+            case .success():
+                DDLogInfo("Finished removing images")
+
+            // Something went wrong
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!, completionHandler: nil)
+                }
+        }
     }
 
     /**

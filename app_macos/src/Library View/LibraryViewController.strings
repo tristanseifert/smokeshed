@@ -1,0 +1,12 @@
+/* 
+  LibraryViewController.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200613.
+
+  Contains localizations for the library view controller.
+*/
+"delete.informative" = "Choose whether Smokeshed should remove image files on disk as well. You can't undo this action.";
+"delete.cancel" = "Cancel";
+"delete.remove_files" = "Trash Files";
+"delete.leave_files" = "Leave Files";

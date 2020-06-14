@@ -14,8 +14,9 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     /// Library file that was opened for this window
     public var library: LibraryBundle! = nil {
         didSet {
-            // update content library
+            // update libraries of all components
             self.content.library = self.library
+            self.importer.library = self.library
 
             // set the window's URL
             if let window = self.window {
@@ -205,7 +206,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     /// Library options controller, if allocated
     private var libraryOptions: LibraryOptionsController! = nil
     /// Import controller
-    private var importer: ImportHandler! = nil
+    internal var importer = ImportHandler()
 
     /**
      * Opens the "import from device" view.
@@ -235,19 +236,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
             }
 
             // pass the URLs to the importer
-            self.prepareImporter()
-
-            self.importer!.importFrom(panel.urls)
+            self.importer.importFrom(panel.urls)
         })
-    }
-
-    /**
-     * Sets up the importer to prepare for an import job.
-     */
-    private func prepareImporter() {
-        if self.importer == nil {
-            self.importer = ImportHandler(self.library)
-        }
     }
 
     /**

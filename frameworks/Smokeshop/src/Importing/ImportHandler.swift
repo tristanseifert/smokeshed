@@ -17,7 +17,21 @@ import CocoaLumberjackSwift
  */
 public class ImportHandler {
     /// Library into which images are to be imported
-    private var library: LibraryBundle
+    public var library: LibraryBundle? {
+        didSet {
+            // destroy old context
+            if self.context != nil {
+                self.context = nil
+            }
+
+            if let lib = self.library {
+                // create the background queue
+                self.context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                self.context.parent = lib.store.mainContext
+                self.context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+            }
+        }
+    }
 
     /// Background import queue
     private var queue: OperationQueue = OperationQueue()
@@ -25,27 +39,20 @@ public class ImportHandler {
     private var context: NSManagedObjectContext! = nil
 
     /// Date formatter for converting EXIF date strings to date
-    private var dateFormatter: DateFormatter
+    private var dateFormatter = DateFormatter()
 
     // MARK: - Initialization
     /**
      * Initializes a new import handler. All images will be associated with the given library, optionally being
      * copied into it.
      */
-    public init(_ library: LibraryBundle) {
-        self.library = library
-
+    public init() {
         // set up the queue. we allow some concurrency
         self.queue.name = "ImportHandler"
         self.queue.qualityOfService = .default
         self.queue.maxConcurrentOperationCount = 8
 
-        // create the background queue
-        self.context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        self.context.parent = self.library.store.mainContext
-
         // set up the EXIF date parser
-        self.dateFormatter = DateFormatter()
         self.dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         self.dateFormatter.dateFormat = "yyyy':'MM':'dd HH':'mm':'ss"
     }
@@ -69,7 +76,7 @@ public class ImportHandler {
         }
     }
 
-    // MARK: - Public interface
+    // MARK: - Public Interface
     /**
      * Imports all suitable image files at the provided URLs. These URLs may be of directories, in which case
      * we enumerate their contents for image files (and further subdirectories,) but also point directly to an
@@ -108,6 +115,81 @@ public class ImportHandler {
         op.name = "FlattenURLs"
 
         self.queue.addOperation(op)
+    }
+
+    /**
+     * Deletes the given images from the library. The files on disk can be deleted as well.
+     */
+    public func deleteImages(_ images: [Image], shouldDelete: Bool = false, _ completion: ((Result<Void, Error>) -> Void)? = nil) {
+        // get IDs and URLs on calling thread
+        let ids = images.map({$0.objectID})
+        let urls = images.compactMap({$0.url})
+
+        // create the "remove files" operation
+        let removeFiles = BlockOperation(block: {
+            let m = FileManager.default
+
+            urls.forEach {
+                if !$0.startAccessingSecurityScopedResource() {
+                    DDLogInfo("Failed to start accessing security scoped resource at '\($0)'")
+                }
+
+                do {
+                    try m.removeItem(at: $0)
+//                    try m.trashItem(at: $0, resultingItemURL: nil)
+                } catch {
+                    DDLogError("Failed to delete image '\($0)' from disk: \(error)")
+                }
+
+                $0.stopAccessingSecurityScopedResource()
+            }
+
+            if let handler = completion {
+                return handler(.success(Void()))
+            }
+        })
+        removeFiles.name = "RemoveFromDisk"
+
+        // create the "remove from library" operation
+        let removeFromLib = BlockOperation(block: {
+            // set up batch delete request
+            let delete = NSBatchDeleteRequest(objectIDs: ids)
+            delete.resultType = .resultTypeObjectIDs
+
+            self.context.performAndWait {
+                do {
+                    let result = try self.context.execute(delete) as! NSBatchDeleteResult
+                    let idArray = result.result! as! [NSManagedObjectID]
+                    let changes = [NSDeletedObjectsKey: idArray]
+
+                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self.context, self.context.parent!])
+
+                    // if this succeeded, run the file deletion
+                    if shouldDelete {
+                        self.queue.addOperation(removeFiles)
+                    }
+                    // if no deletion requested, run callback
+                    else {
+                        if let handler = completion {
+                            return handler(.success(Void()))
+                        }
+                    }
+                } catch {
+                    DDLogError("Failed to remove images from library: \(error)")
+                    removeFiles.cancel()
+
+                    if let handler = completion {
+                        return handler(.failure(error))
+                    }
+                }
+            }
+        })
+        removeFromLib.name = "RemoveFromLibrary"
+
+        removeFiles.addDependency(removeFromLib)
+
+        // start the operation
+        self.queue.addOperation(removeFromLib)
     }
 
     // MARK: - Enumeration
@@ -218,7 +300,10 @@ public class ImportHandler {
                 image.dateImported = Date()
                 image.name = resVals.name
                 image.originalMetadata = meta as NSDictionary?
+
                 image.originalUrl = url
+                try image.setUrlBookmark(url)
+
                 image.imageSize = size
 
                 // get capture date from exif if avaialble (TODO: parse subseconds)
@@ -231,6 +316,7 @@ public class ImportHandler {
 
                 // save the context
                 try self.context.save()
+                try self.context.parent?.save()
             } catch {
                 DDLogError("Failed to create image: \(error)")
             }

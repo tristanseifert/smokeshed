@@ -410,14 +410,6 @@ NSFetchedResultsControllerDelegate {
         self.representedObject = self.collection.selectionIndexPaths.map(self.fetchReqCtrl.object)
     }
 
-    // MARK: - Convenience
-    /**
-     * Deletes all of the given images from the library, optionally removing the files from disk as well.
-     */
-    internal func deleteImages(_ images: [Image], deleteFiles: Bool = false) throws {
-        // TODO: implement
-    }
-
     // MARK: - Menu item handling
     /**
      * Ensures menu items that affect our state are always up-to-date.

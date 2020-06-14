@@ -123,7 +123,7 @@ class ThumbHandler {
         return [
             "mocId": image.objectID.uriRepresentation(),
             "identifier": image.identifier!,
-            "originalUrl": image.originalUrl!
+            "originalUrl": image.url!
         ]
     }
 

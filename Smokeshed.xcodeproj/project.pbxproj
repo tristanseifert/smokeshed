@@ -68,7 +68,6 @@
 		6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9315922493122F00A9F9B4 /* ThumbServer.swift */; };
 		6A9315992493150F00A9F9B4 /* NSXPCConnection+Hacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A93159E2493437900A9F9B4 /* IOSurface+ImageSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A93159D2493437900A9F9B4 /* IOSurface+ImageSupport.swift */; };
-		6A9315A32493441700A9F9B4 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A1249343F500A9F9B4 /* IOSurface.framework */; };
 		6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A42493441B00A9F9B4 /* QuartzCore.framework */; };
 		6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
 		6A9315A92493442A00A9F9B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
@@ -90,6 +89,8 @@
 		6ABD3689249572D2005F80EE /* LibraryViewMenuProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD3688249572D2005F80EE /* LibraryViewMenuProvider.swift */; };
 		6ABD368B24957633005F80EE /* LibraryViewMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD368A24957633005F80EE /* LibraryViewMenu.xib */; };
 		6ABD368E24958E15005F80EE /* LibraryBrowserBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD368D24958E15005F80EE /* LibraryBrowserBase.swift */; };
+		6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */; };
+		6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36912495AEEA005F80EE /* LibraryViewController.strings */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -247,7 +248,6 @@
 		6A9315972493150F00A9F9B4 /* NSXPCConnection+Hacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSXPCConnection+Hacks.h"; path = "frameworks/Bowl/src/Hacks/NSXPCConnection+Hacks.h"; sourceTree = "<group>"; };
 		6A93159B249315B200A9F9B4 /* ThumbHandler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ThumbHandler-Bridging-Header.h"; path = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler-Bridging-Header.h"; sourceTree = "<group>"; };
 		6A93159D2493437900A9F9B4 /* IOSurface+ImageSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "IOSurface+ImageSupport.swift"; path = "frameworks/Waterpipe/src/Helpers/IOSurface+ImageSupport.swift"; sourceTree = "<group>"; };
-		6A9315A1249343F500A9F9B4 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		6A9315A42493441B00A9F9B4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		6A9315A62493442000A9F9B4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		6A9315A82493442900A9F9B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -267,6 +267,9 @@
 		6ABD3688249572D2005F80EE /* LibraryViewMenuProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewMenuProvider.swift; path = "app_macos/src/Library View/LibraryViewMenuProvider.swift"; sourceTree = "<group>"; };
 		6ABD368A24957633005F80EE /* LibraryViewMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewMenu.xib; path = "app_macos/src/Library View/LibraryViewMenu.xib"; sourceTree = "<group>"; };
 		6ABD368D24958E15005F80EE /* LibraryBrowserBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBrowserBase.swift; path = "app_macos/src/Library View/LibraryBrowserBase.swift"; sourceTree = "<group>"; };
+		6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = LibraryViewController.stringsdict; path = "app_macos/src/Library View/LibraryViewController.stringsdict"; sourceTree = "<group>"; };
+		6ABD36912495AEEA005F80EE /* LibraryViewController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryViewController.strings; path = "app_macos/src/Library View/LibraryViewController.strings"; sourceTree = "<group>"; };
+		6ABD36932495B404005F80EE /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -316,7 +319,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */,
-				6A9315A32493441700A9F9B4 /* IOSurface.framework in Frameworks */,
 				6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */,
 				6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A4CEF19248B357F00145E49 /* Smokeshop.framework in Frameworks */,
@@ -556,6 +558,7 @@
 				6A4CEEFD248B339E00145E49 /* Image Processing (Waterpipe) */,
 				6A4CEEE8248B2FC000145E49 /* Library Storage (Smokeshop) */,
 				6A9315AC2493443D00A9F9B4 /* CoreLocation.framework */,
+				6ABD36932495B404005F80EE /* IOSurface.framework */,
 				6A9315A82493442900A9F9B4 /* Foundation.framework */,
 				6A9315A62493442000A9F9B4 /* Metal.framework */,
 				6A9315A42493441B00A9F9B4 /* QuartzCore.framework */,
@@ -566,7 +569,6 @@
 		6A4CEEE8248B2FC000145E49 /* Library Storage (Smokeshop) */ = {
 			isa = PBXGroup;
 			children = (
-				6A9315A1249343F500A9F9B4 /* IOSurface.framework */,
 				6A962C2D248F4A7A0088E1DB /* Importing */,
 				6A2C5EF2248C8B5A009EA409 /* CoreData Store */,
 				6A903FCD248C607C00BD1602 /* Document Bundle Support */,
@@ -759,6 +761,8 @@
 			isa = PBXGroup;
 			children = (
 				6A962C27248F191E0088E1DB /* Library View.xcassets */,
+				6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */,
+				6ABD36912495AEEA005F80EE /* LibraryViewController.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1041,9 +1045,11 @@
 				6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */,
 				6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */,
 				6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */,
+				6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
 				6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */,
 				6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */,
+				6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */,
 				6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
 			);

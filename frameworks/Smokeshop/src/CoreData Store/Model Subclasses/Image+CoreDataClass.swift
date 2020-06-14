@@ -47,6 +47,47 @@ public class Image: NSManagedObject {
         }
     }
 
+    // MARK: URL bookmark support
+    /**
+     * Returns the actual URL to use in accessing the file. If it's currently inaccessible, nil is returned.
+     */
+    @objc dynamic public var url: URL? {
+        // resolve bookmark
+        if let bookmark = self.urlBookmark {
+            var isStale = false
+            let resolved = try? URL(resolvingBookmarkData: bookmark, bookmarkDataIsStale: &isStale)
+
+            if let url = resolved {
+                // update if stale
+                if isStale {
+                    try? self.setUrlBookmark(url)
+                }
+
+                return url
+            }
+        }
+
+        // fall back to the original url
+        if let url = self.originalUrl {
+            // check if it can be accessed
+//            if FileManager.default.isReadableFile(atPath: url.path) {
+                return url
+//            }
+        }
+
+        // failed to get an url
+        return nil
+    }
+
+    /**
+     * Generates and sets the bookmark data field with the given URL.
+     */
+    func setUrlBookmark(_ url: URL) throws {
+        self.urlBookmark = try url.bookmarkData(options: [.withSecurityScope],
+                                            includingResourceValuesForKeys: [.nameKey],
+                                            relativeTo: nil)
+    }
+
     // MARK: Transient variables
     /**
      * Updates all transient variables.
@@ -92,6 +133,10 @@ public class Image: NSManagedObject {
         // handle the day captured
         else if key == "dayCaptured" {
             keyPaths = keyPaths.union(["dateCaptured"])
+        }
+        // irl url
+        else if key == "url" {
+            keyPaths = keyPaths.union(["originalUrl", "urlBookmark"])
         }
 
         return keyPaths
