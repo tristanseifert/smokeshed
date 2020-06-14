@@ -1,0 +1,36 @@
+/* 
+  MetadataKeyDisplayNameTransformer.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200614.
+  
+*/
+
+// Names of top level dictionaries
+"dicts.exif" = "EXIF";
+"dicts.exifaux" = "EXIF Auxiliary";
+"dicts.tiff" = "TIFF";
+"dicts.gps" = "Location";
+"dicts.iptc" = "IPTC";
+
+// Top level keys
+"keys.width.pixels" = "Width";
+"keys.height.pixels" = "Height";
+"keys.width.dpi" = "X Resolution";
+"keys.height.dpi" = "Y Resolution";
+"keys.depth" = "Bit Depth";
+"keys.color.profile" = "Color Profile";
+"keys.color.model" = "Color Model";
+
+// EXIF keys
+"keys.exif.fstop" = "F-Stop";
+"keys.exif.iso" = "ISO";
+"keys.exif.exposureTime" = "Exposure Time";
+"keys.exif.exposureCompensation" = "Exposure Compensation";
+
+"keys.exif.lens.make" = "Lens Make";
+"keys.exif.lens.model" = "Lens Model";
+"keys.exif.lens.serial" = "Lens Serial";
+
+"keys.exif.focalLength" = "Focal Length";
+"keys.exif.focalLength.35mm" = "35mm Equiv. Focal Length";

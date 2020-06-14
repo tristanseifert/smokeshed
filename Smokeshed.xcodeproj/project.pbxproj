@@ -94,6 +94,9 @@
 		6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36972495C9EB005F80EE /* MainWindowController.strings */; };
 		6ABD369A2495CACE005F80EE /* LibraryCollectionItems.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */; };
 		6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */; };
+		6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD369D2495FE9C005F80EE /* MetadataOutlineDataSource.swift */; };
+		6ABD36A0249610A6005F80EE /* MetadataKeyDisplayNameTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD369F249610A6005F80EE /* MetadataKeyDisplayNameTransformer.swift */; };
+		6ABD36A22496115F005F80EE /* MetadataKeyDisplayNameTransformer.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36A12496115F005F80EE /* MetadataKeyDisplayNameTransformer.strings */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -276,6 +279,9 @@
 		6ABD36972495C9EB005F80EE /* MainWindowController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MainWindowController.strings; path = "app_macos/src/Main Window/MainWindowController.strings"; sourceTree = "<group>"; };
 		6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionItems.strings; path = "app_macos/src/Library View/LibraryCollectionItems.strings"; sourceTree = "<group>"; };
 		6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryBrowserBase.strings; path = "app_macos/src/Library View/LibraryBrowserBase.strings"; sourceTree = "<group>"; };
+		6ABD369D2495FE9C005F80EE /* MetadataOutlineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetadataOutlineDataSource.swift; path = app_macos/src/Inspectors/MetadataOutlineDataSource.swift; sourceTree = "<group>"; };
+		6ABD369F249610A6005F80EE /* MetadataKeyDisplayNameTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetadataKeyDisplayNameTransformer.swift; path = app_macos/src/Inspectors/MetadataKeyDisplayNameTransformer.swift; sourceTree = "<group>"; };
+		6ABD36A12496115F005F80EE /* MetadataKeyDisplayNameTransformer.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MetadataKeyDisplayNameTransformer.strings; path = app_macos/src/Inspectors/MetadataKeyDisplayNameTransformer.strings; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -788,6 +794,9 @@
 			children = (
 				6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */,
 				6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */,
+				6ABD369D2495FE9C005F80EE /* MetadataOutlineDataSource.swift */,
+				6ABD369F249610A6005F80EE /* MetadataKeyDisplayNameTransformer.swift */,
+				6ABD36A12496115F005F80EE /* MetadataKeyDisplayNameTransformer.strings */,
 			);
 			name = Inspectors;
 			sourceTree = "<group>";
@@ -1060,6 +1069,7 @@
 				6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
 				6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */,
+				6ABD36A22496115F005F80EE /* MetadataKeyDisplayNameTransformer.strings in Resources */,
 				6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */,
 				6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */,
 				6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */,
@@ -1136,6 +1146,8 @@
 				6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */,
 				6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
+				6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */,
+				6ABD36A0249610A6005F80EE /* MetadataKeyDisplayNameTransformer.swift in Sources */,
 				6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
 				6A020D2A2491EFB1006F5093 /* ThumbHandler.swift in Sources */,

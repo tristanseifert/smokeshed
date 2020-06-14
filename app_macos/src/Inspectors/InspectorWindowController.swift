@@ -15,7 +15,21 @@ import CocoaLumberjackSwift
  */
 class InspectorWindowController: NSWindowController {
     /// Selected object of the active controller
-    @objc dynamic public var selection: Any? = nil
+    @objc dynamic public var selection: Any? = nil {
+        didSet{
+            // update metadata data source
+            if let array = selection as? [Image] {
+                self.metadataSource.image = array.first
+            } else {
+                self.metadataSource.image = nil
+            }
+        }
+    }
+
+    /// Metadata data source for outline view
+    private var metadataSource = MetadataOutlineDataSource()
+    /// Outline view to show raw image metadata
+    @IBOutlet private var metadataOutline: NSOutlineView! = nil
 
     // MARK: - Initialization
     override var windowNibName: NSNib.Name? {
@@ -27,6 +41,11 @@ class InspectorWindowController: NSWindowController {
      */
     override func windowDidLoad() {
         super.windowDidLoad()
+
+        // set up metadata source
+        self.metadataSource.view = self.metadataOutline
+        self.metadataOutline.dataSource = self.metadataSource
+        self.metadataOutline.delegate = self.metadataSource
     }
 
     // MARK: - State restoration
