@@ -36,10 +36,19 @@ public class ImportHandler {
     /// Background import queue
     private var queue: OperationQueue = OperationQueue()
     /// Object context for background operations
-    private var context: NSManagedObjectContext! = nil
+    private var context: NSManagedObjectContext! = nil {
+        didSet {
+            self.lensFinder.context = self.context
+            self.cameraFinder.context = self.context
+        }
+    }
 
-    /// Date formatter for converting EXIF date strings to date
-    private var dateFormatter = DateFormatter()
+    /// General metadata helpers
+    private var metaHelper = MetaHelper()
+    /// Lens matching
+    private var lensFinder = LensFinder()
+    /// Camera matching
+    private var cameraFinder = CameraFinder()
 
     // MARK: - Initialization
     /**
@@ -51,10 +60,6 @@ public class ImportHandler {
         self.queue.name = "ImportHandler"
         self.queue.qualityOfService = .default
         self.queue.maxConcurrentOperationCount = 8
-
-        // set up the EXIF date parser
-        self.dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        self.dateFormatter.dateFormat = "yyyy':'MM':'dd HH':'mm':'ss"
     }
 
     /**
@@ -253,8 +258,7 @@ public class ImportHandler {
      * If the exact image (matching by path) already exists in the library, this step aborts.
      */
     private func importSingle(_ url: URL, importDate: Date) throws {
-        var meta: [String: AnyObject]! = nil
-        var insertRes: Result<Image, Error>? = nil
+        var insertRes: Result<NSManagedObjectID, Error>? = nil
 
         // get some info about the file and ensure it's actually an image
         let resVals = try url.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
@@ -268,18 +272,13 @@ public class ImportHandler {
         }
 
         // extract some metadata from the image
-        if let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-            let props = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: AnyObject] {
-            meta = props
-        } else {
-            DDLogWarn("Failed to get metadata from '\(url)'")
-            throw ImportError.failedToGetImageProperties(url)
-        }
+        let meta = try self.metaHelper.getMeta(url)
 
-        let size = try self.sizeForMeta(meta)
-        let orientation = try self.orientationForMeta(meta)
-        let lens = try self.lensForMeta(meta)
-        let captureDate = try self.captureDateForMeta(meta)
+        let size = try self.metaHelper.size(meta)
+        let orientation = try self.metaHelper.orientation(meta)
+        let captureDate = try self.metaHelper.captureDate(meta)
+        let lens = try self.lensFinder.find(meta)
+        let cam = try self.cameraFinder.find(meta)
 
         // hop on the queue to create the object
         self.context.performAndWait {
@@ -308,10 +307,11 @@ public class ImportHandler {
                 image.imageSize = size
                 image.rawOrientation = orientation.rawValue
                 image.lens = lens
+                image.camera = cam
 
                 // save the context
                 try self.context.save()
-                insertRes = .success(image)
+                insertRes = .success(image.objectID)
             } catch {
                 insertRes = .failure(error)
             }
@@ -319,139 +319,6 @@ public class ImportHandler {
 
         // rethrow errors if we got any
         _ = try insertRes!.get()
-    }
-
-    /**
-     * Gets the image size (in pixels) from the given metadata.
-     */
-    private func sizeForMeta(_ meta: [String: AnyObject]) throws -> CGSize {
-        guard let width = meta[kCGImagePropertyPixelWidth as String] as? NSNumber,
-              let height = meta[kCGImagePropertyPixelHeight as String] as? NSNumber else {
-            throw ImportError.failedToSizeImage
-        }
-
-        return CGSize(width: width.doubleValue, height: height.doubleValue)
-    }
-
-    /**
-     * Extracts the capture date of the iamge from the exif data.
-     */
-    private func captureDateForMeta(_ meta: [String: AnyObject]) throws -> Date? {
-        if let exif = meta[kCGImagePropertyExifDictionary as String],
-           let dateStr = exif[kCGImagePropertyExifDateTimeOriginal as String] as? String,
-           let date = self.dateFormatter.date(from: dateStr) {
-            return date
-        }
-
-        // failed to get date :(
-        return nil
-    }
-
-    /**
-     * Extracts the orientation from the given image metadata.
-     */
-    private func orientationForMeta(_ meta: [String: AnyObject]) throws -> Image.ImageOrientation {
-        if let orientation = meta[kCGImagePropertyOrientation as String] as? NSNumber {
-            let val = CGImagePropertyOrientation(rawValue: orientation.uint32Value)
-
-            switch val {
-                case .down, .downMirrored:
-                    return Image.ImageOrientation.cw180
-
-                case .right, .rightMirrored:
-                    return Image.ImageOrientation.cw90
-
-                case .left, .leftMirrored:
-                    return Image.ImageOrientation.ccw90
-
-                case .up, .upMirrored:
-                    return Image.ImageOrientation.normal
-
-                // TODO: should this be a special value?
-                case .none:
-                    return Image.ImageOrientation.normal
-
-                default:
-                    DDLogError("Unknown image orientation: \(String(describing: val))")
-                    return Image.ImageOrientation.unknown
-            }
-        }
-
-        // failed to get orientation
-        return Image.ImageOrientation.unknown
-    }
-
-    /**
-     * Tries to find a lens that best matches what is laid out in the given metadata. If we could identify the
-     * lens but none exists in the library, it's created.
-     */
-    private func lensForMeta(_ meta: [String: AnyObject]) throws -> Lens? {
-        var fetchRes: Result<[Lens], Error>? = nil
-
-        // read the model string and lens id
-        guard let exif = meta[kCGImagePropertyExifDictionary as String],
-            let model = exif[kCGImagePropertyExifLensModel] as? String else {
-            DDLogWarn("Failed to get lens model from metadata: \(meta)")
-            return nil
-        }
-
-        var lensId: Int? = nil
-        if let aux = meta[kCGImagePropertyExifAuxDictionary as String],
-            let id = aux[kCGImagePropertyExifAuxLensID] as? NSNumber {
-            lensId = id.intValue
-        }
-
-        // try to find an existing lens matching BOTH criteria
-        let req = NSFetchRequest<Lens>(entityName: "Lens")
-
-        var predicates = [
-            NSPredicate(format: "exifLensModel == %@", model)
-        ]
-        if let id = lensId {
-            predicates.append(NSPredicate(format: "exifLensId == %i", id))
-        }
-
-        req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-
-        self.context.performAndWait {
-            do {
-                let res = try self.context.fetch(req)
-                fetchRes = .success(res)
-            } catch {
-                fetchRes = .failure(error)
-            }
-        }
-
-        let results = try fetchRes!.get()
-        if !results.isEmpty {
-            return results.first
-        }
-
-        // we need to create a lens
-        return try self.createLens(meta, model, lensId)
-    }
-    /**
-     * Creates a lens object for the given metadata.
-     * The context is not saved after creation; the assumption is that pretty much immediately after this call,
-     * an image is imported, where we'll save the context anyhow.
-     */
-    private func createLens(_ meta: [String: AnyObject], _ model: String, _ id: Int?) throws -> Lens? {
-        var res: Result<Lens, Error>? = nil
-
-        // run a block to create it
-        self.context.performAndWait {
-            let lens = Lens(context: self.context)
-
-            lens.exifLensModel = model
-            lens.name = model
-
-            lens.exifLensId = Int32(id ?? -1)
-
-            res = .success(lens)
-        }
-
-        // return the lens or throw error
-        return try res!.get()
     }
 
     // MARK: - Errors

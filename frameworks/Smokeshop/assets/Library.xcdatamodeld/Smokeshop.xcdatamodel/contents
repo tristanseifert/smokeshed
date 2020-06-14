@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Album" representedClassName="Album" syncable="YES">
+    <entity name="Album" representedClassName="Album" syncable="YES" codeGenerationType="category">
         <attribute name="detail" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSAttributedString"/>
         <attribute name="name" attributeType="String"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Image" inverseName="albums" inverseEntity="Image"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AlbumContainer" inverseName="albums" inverseEntity="AlbumContainer"/>
     </entity>
-    <entity name="AlbumContainer" representedClassName="AlbumContainer" syncable="YES">
+    <entity name="AlbumContainer" representedClassName="AlbumContainer" syncable="YES" codeGenerationType="category">
         <attribute name="detail" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSAttributedString"/>
         <attribute name="name" attributeType="String"/>
         <relationship name="albums" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Album" inverseName="parent" inverseEntity="Album"/>
     </entity>
-    <entity name="Camera" representedClassName="Camera" syncable="YES">
+    <entity name="Camera" representedClassName="Camera" syncable="YES" codeGenerationType="category">
         <attribute name="detail" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSAttributedString"/>
-        <attribute name="exifName" attributeType="String"/>
+        <attribute name="exifMake" attributeType="String"/>
+        <attribute name="exifModel" attributeType="String"/>
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="localizedModel" optional="YES" attributeType="String"/>
-        <attribute name="make" optional="YES" attributeType="String"/>
-        <attribute name="mount" optional="YES" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Image" inverseName="camera" inverseEntity="Image"/>
     </entity>
@@ -28,7 +27,7 @@
         <attribute name="rawLocation" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="CLLocation"/>
         <relationship name="images" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Image" inverseName="location" inverseEntity="Image"/>
     </entity>
-    <entity name="Image" representedClassName="Image" syncable="YES">
+    <entity name="Image" representedClassName="Image" syncable="YES" codeGenerationType="category">
         <attribute name="dateCaptured" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dateImported" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dayCaptured" optional="YES" transient="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -46,13 +45,13 @@
         <relationship name="lens" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lens" inverseName="images" inverseEntity="Lens"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GPSLocation" inverseName="images" inverseEntity="GPSLocation"/>
     </entity>
-    <entity name="Keyword" representedClassName="Keyword" syncable="YES">
+    <entity name="Keyword" representedClassName="Keyword" syncable="YES" codeGenerationType="category">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Image" inverseName="keywords" inverseEntity="Image"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Keyword" inverseName="synonyms" inverseEntity="Keyword"/>
         <relationship name="synonyms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Keyword" inverseName="parent" inverseEntity="Keyword"/>
     </entity>
-    <entity name="Lens" representedClassName="Lens" syncable="YES">
+    <entity name="Lens" representedClassName="Lens" syncable="YES" codeGenerationType="category">
         <attribute name="detail" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSAttributedString"/>
         <attribute name="exifLensId" optional="YES" attributeType="Integer 32" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="exifLensModel" optional="YES" attributeType="String"/>
@@ -63,9 +62,9 @@
     <elements>
         <element name="Album" positionX="-63" positionY="-18" width="128" height="103"/>
         <element name="AlbumContainer" positionX="-45" positionY="27" width="128" height="88"/>
-        <element name="Camera" positionX="27" positionY="180" width="128" height="163"/>
+        <element name="Camera" positionX="27" positionY="180" width="128" height="148"/>
         <element name="GPSLocation" positionX="-18" positionY="135" width="128" height="118"/>
-        <element name="Image" positionX="0" positionY="90" width="128" height="28"/>
+        <element name="Image" positionX="0" positionY="90" width="128" height="283"/>
         <element name="Keyword" positionX="-27" positionY="54" width="128" height="103"/>
         <element name="Lens" positionX="9" positionY="153" width="128" height="133"/>
     </elements>

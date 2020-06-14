@@ -45,6 +45,13 @@ NSFetchedResultsControllerDelegate {
     }
 
     /**
+     * Updates the size of cells when the view is about to appear.
+     */
+    override func viewWillAppear() {
+        self.reflowContent()
+    }
+
+    /**
      * When the view has appeared, perform state restoration.
      */
     override func viewDidAppear() {
@@ -56,7 +63,7 @@ NSFetchedResultsControllerDelegate {
 
     // MARK: - State restoration
     /// Should the viewport of the collection be encoded?
-    internal var restoreViewport = true
+    internal var restoreViewport = false
     /// Should the selected objects be encoded?
     internal var restoreSelection = true
     /// Should the sort/group state be restored?
@@ -139,17 +146,15 @@ NSFetchedResultsControllerDelegate {
         super.restoreState(with: coder)
 
         // read values
-        let zoom = coder.decodeDouble(forKey: StateKeys.gridZoom)
-
         let visibleIds = coder.decodeObject(forKey: StateKeys.visibleObjectIds)
         let selectedIds = coder.decodeObject(forKey: StateKeys.selectedObjectIds)
 
-        // set the restoration block
-        self.restoreBlock.append({
-            if zoom >= 1 && zoom <= 8 {
-                self.gridZoom = CGFloat(zoom)
-            }
-        })
+        // restore zoom level
+        let zoom = coder.decodeDouble(forKey: StateKeys.gridZoom)
+
+        if zoom >= 1 && zoom <= 8 {
+            self.gridZoom = CGFloat(zoom)
+        }
 
         // restore selection and visible objects
         self.restoreAfterFetchBlock.append({
@@ -158,9 +163,12 @@ NSFetchedResultsControllerDelegate {
                 let paths = selected.compactMap(self.urlToImages)
 
                 if !paths.isEmpty {
-                    self.collection.selectionIndexPaths = Set(paths)
+                    let pathSet = Set(paths)
+                    self.collection.selectItems(at: pathSet, scrollPosition: [.centeredVertically])
+
                     self.updateRepresentedObj()
                 }
+
             }
 
             // scroll to the visible objects
@@ -611,7 +619,9 @@ NSFetchedResultsControllerDelegate {
     /// Number of columns of images to display.
     internal var imagesPerRow: CGFloat = 4 {
         didSet {
-            self.reflowContent()
+            if (self.collection != nil) {
+                self.reflowContent()
+            }
         }
     }
 
