@@ -2,7 +2,7 @@
 //  Image+CoreDataProperties.swift
 //  Smokeshed
 //
-//  Created by Tristan Seifert on 20200609.
+//  Created by Tristan Seifert on 20200613.
 //
 //
 
@@ -18,11 +18,13 @@ extension Image {
 
     @NSManaged public var dateCaptured: Date?
     @NSManaged public var dateImported: Date?
+    @NSManaged public var dayCaptured: Date?
     @NSManaged public var identifier: UUID?
     @NSManaged public var name: String?
     @NSManaged public var originalMetadata: NSDictionary?
     @NSManaged public var originalUrl: URL?
     @NSManaged public var pvtImageSize: NSDictionary?
+    @NSManaged public var rating: Int16
     @NSManaged public var albums: NSSet?
     @NSManaged public var camera: Camera?
     @NSManaged public var keywords: NSOrderedSet?

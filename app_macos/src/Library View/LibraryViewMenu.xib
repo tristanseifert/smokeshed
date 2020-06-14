@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="LibraryViewMenuProvider" customModule="SmokeShed" customModuleProvider="target">
+            <connections>
+                <outlet property="template" destination="0Ll-Nj-gNC" id="6bh-vt-udW"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <menu id="0Ll-Nj-gNC">
+            <items>
+                <menuItem title="Open in Edit…" keyEquivalent="e" id="e70-EI-3CP">
+                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                    <connections>
+                        <action selector="editImage:" target="-2" id="Szp-h4-hZX"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="r0M-5u-3VC"/>
+                <menuItem title="Rating" enabled="NO" id="1Pf-Qi-Foo">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Not Set" tag="-1" indentationLevel="1" id="Lhb-a3-0TC">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="lrl-VT-nb6"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="☆☆☆☆☆" keyEquivalent="0" indentationLevel="1" id="TJ9-aG-JEW">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="ar4-WH-foV"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="★☆☆☆☆" tag="1" keyEquivalent="1" indentationLevel="1" id="j9w-hr-KbC">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="qSs-Kv-6ME"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="★★☆☆☆" tag="2" keyEquivalent="2" indentationLevel="1" id="WSs-zu-6w0">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="ovM-9w-eOw"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="★★★☆☆" tag="3" keyEquivalent="3" indentationLevel="1" id="yN7-Kh-gRD">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="uvf-1h-o6w"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="★★★★☆" tag="4" keyEquivalent="4" indentationLevel="1" id="QiQ-T8-hin">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="2et-t1-t2l"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="★★★★★" tag="5" keyEquivalent="5" indentationLevel="1" id="qwK-FM-VTj">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="setRating:" target="-2" id="6n0-gu-Syt"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="FCW-7l-L7h"/>
+                <menuItem title="Remove…" id="how-D2-mwQ">
+                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                    <connections>
+                        <action selector="removeImage:" target="-2" id="RnY-ua-yF1"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <connections>
+                <outlet property="delegate" destination="-2" id="tQw-bP-tHe"/>
+            </connections>
+            <point key="canvasLocation" x="-112" y="14"/>
+        </menu>
+    </objects>
+</document>

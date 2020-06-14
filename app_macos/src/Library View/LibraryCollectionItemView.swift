@@ -576,6 +576,29 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         }
     }
 
+    // MARK: - Context menu
+    /// Whether the context menu outline should be shown
+    var drawContextOutline: Bool = false {
+        didSet {
+            self.updateContextOutline()
+        }
+    }
+
+    /**
+     * Updates whether the context menu outline is drawn.
+     */
+    private func updateContextOutline() {
+        if self.drawContextOutline {
+            self.layer?.borderColor = NSColor.selectedControlColor.cgColor
+            self.layer?.borderWidth = 4
+        } else {
+            self.layer?.borderWidth = 0
+        }
+
+        // force redraw
+        self.setNeedsDisplay(self.bounds)
+    }
+
     // MARK: - Mouse Interaction
     /// Mouseover tracking area
     private var trackingArea: NSTrackingArea! = nil

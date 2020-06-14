@@ -41,6 +41,15 @@ class LibraryCollectionItem: NSCollectionViewItem {
         }
     }
 
+    /// Whether the context menu outline is drawn on the cell
+    public var drawContextOutline: Bool = false {
+        didSet {
+            if let view = self.view as? LibraryCollectionItemView {
+                view.drawContextOutline = self.drawContextOutline
+            }
+        }
+    }
+
     // MARK: - Initialization
     /**
      * Creates the content view.

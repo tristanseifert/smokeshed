@@ -133,7 +133,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="681" height="584"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <collectionView selectable="YES" allowsMultipleSelection="YES" id="lhQ-lK-XRg">
+                                            <collectionView selectable="YES" allowsMultipleSelection="YES" id="lhQ-lK-XRg" customClass="LibraryCollectionView" customModule="SmokeShed" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="681" height="584"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                                 <collectionViewFlowLayout key="collectionViewLayout" sectionHeadersPinToVisibleBounds="YES" id="d5S-5Z-xgd">
@@ -574,7 +574,7 @@
                 <constraint firstItem="V3x-53-6s6" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Eno-5A-06T"/>
                 <constraint firstAttribute="trailing" secondItem="V3x-53-6s6" secondAttribute="trailing" id="lCo-sV-ZnX"/>
             </constraints>
-            <point key="canvasLocation" x="13" y="3"/>
+            <point key="canvasLocation" x="-151" y="14"/>
         </customView>
         <menu id="hcj-9z-bZn" userLabel="Search menu template">
             <items>

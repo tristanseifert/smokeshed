@@ -14,26 +14,46 @@ import CocoaLumberjackSwift
 
 @objc(Image)
 public class Image: NSManagedObject {
+    // MARK: Object lifecycle
     /**
-     * Sets a randomly generated identifier when the image is first created.
+     * Sets a randomly generated identifier when the image is first created, and sets up default values for
+     * transient properties.
      */
     public override func awakeFromInsert() {
         super.awakeFromInsert()
 
         self.identifier = UUID()
+        self.updateTransients()
     }
 
     /**
-     * Returns the date the image was captured, but with the time stripped. This allows grouping by capture
-     * date much more easily.
+     * Calculates transient properties when the object is loaded.
      */
-    @objc dynamic public var dayCaptured: Date! {
-        // bail out if there's no date provided
-        guard let date = self.dateCaptured else {
-            return nil
-        }
+    public override func awakeFromFetch() {
+        super.awakeFromFetch()
 
-        return date.withoutTime()
+        self.updateTransients()
+    }
+
+    /**
+     * Updates computed properties as needed.
+     */
+    public override func didChangeValue(forKey key: String) {
+        super.didChangeValue(forKey: key)
+
+        // update the day captured
+        if key == #keyPath(Image.dateCaptured) {
+            self.dayCaptured = self.dateCaptured?.withoutTime()
+        }
+    }
+
+    // MARK: Transient variables
+    /**
+     * Updates all transient variables.
+     */
+    private func updateTransients() {
+        // update capture day
+        self.dayCaptured = self.dateCaptured?.withoutTime()
     }
 
     // MARK: Image size syntactic sugar
