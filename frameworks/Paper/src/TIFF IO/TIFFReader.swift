@@ -14,6 +14,8 @@ import CocoaLumberjackSwift
  * Provides an event-driven TIFF format parser.
  */
 public class TIFFReader {
+    /// Reader configuration
+    private(set) internal var config: TIFFReaderConfig
     /// Data containing file contents
     private var data: Data
 
@@ -26,9 +28,10 @@ public class TIFFReader {
 
     // MARK: - Initialization
     /**
-     * Initializes a TIFF reader with the provided image data.
+     * Initializes a TIFF reader with the provided image data and configuration.
      */
-    public init(withData data: Data) throws {
+    public init(withData data: Data, _ config: TIFFReaderConfig) throws {
+        self.config = config
         self.data = data
 
         // create publishers
@@ -40,11 +43,19 @@ public class TIFFReader {
 
     /**
      * Initializes a TIFF reader for reading from the provided URL. The contents are loaded (using memory
+     * mapped IO if available) automatically, and parsed with the specified configuration.
+     */
+    public convenience init(fromUrl url: URL, _ config: TIFFReaderConfig) throws {
+        let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+        try self.init(withData: data, config)
+    }
+
+    /**
+     * Initializes a TIFF reader for reading from the provided URL. The contents are loaded (using memory
      * mapped IO if available) automatically.
      */
     public convenience init(fromUrl url: URL) throws {
-        let data = try Data(contentsOf: url, options: [.mappedIfSafe])
-        try self.init(withData: data)
+        try self.init(fromUrl: url, TIFFReaderConfig.standard)
     }
 
     // MARK: External API
@@ -189,10 +200,12 @@ public class TIFFReader {
 }
 
 /// Provide initializers for converting from big/little endian types
-protocol EndianConvertible: ExpressibleByIntegerLiteral {
+public protocol EndianConvertible: ExpressibleByIntegerLiteral {
     init(littleEndian: Self)
     init(bigEndian: Self)
 }
 
+extension Int16: EndianConvertible {}
 extension UInt16: EndianConvertible {}
+extension Int32: EndianConvertible {}
 extension UInt32: EndianConvertible {}

@@ -36,7 +36,6 @@ class TIFFReaderTests: XCTestCase {
                                                   withExtension: "tif")!
         let reader = try TIFFReader(fromUrl: url)
 
-        // add a meeper
         let cancelable = reader.publisher.sink(receiveCompletion: { completion in
             switch completion {
                 case .finished:
@@ -48,6 +47,8 @@ class TIFFReaderTests: XCTestCase {
 
             expect.fulfill()
         }, receiveValue: { ifd in
+            DDLogInfo("Decoded IFD: \(ifd)")
+
             XCTAssertEqual(ifd.tags.count, 18, "Unexpected number of tags for \(ifd)")
         })
 
@@ -60,4 +61,43 @@ class TIFFReaderTests: XCTestCase {
         wait(for: [expect], timeout: 2)
     }
 
+    /**
+     * Reads the example Canon RAW file.
+     */
+    func testCanonRaw() throws {
+        let expect = XCTestExpectation(description: "TIFF CR2 decoding")
+
+        // TIFF reader config
+        var cfg = TIFFReaderConfig()
+
+        cfg.subIfdTypeOverrides.append(contentsOf: [0x8769, 0x927c])
+
+        // create a TIFF reader
+        let url = Bundle(for: type(of: self)).url(forResource: "birb",
+                                                  withExtension: "cr2")!
+        let reader = try TIFFReader(fromUrl: url, cfg)
+
+        // add a meeper
+        let cancelable = reader.publisher.sink(receiveCompletion: { completion in
+            switch completion {
+                case .finished:
+                    expect.fulfill()
+
+                case .failure(let error):
+                    XCTFail("Decoding failed: \(error)")
+            }
+
+            expect.fulfill()
+        }, receiveValue: { ifd in
+            DDLogInfo("Decoded IFD: \(ifd)")
+        })
+
+        // decode it in the background
+        DispatchQueue.global().async {
+            reader.decode()
+        }
+
+        // wait for decoding to complete
+        wait(for: [expect], timeout: 2)
+    }
 }

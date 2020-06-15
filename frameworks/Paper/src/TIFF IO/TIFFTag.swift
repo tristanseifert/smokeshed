@@ -58,7 +58,10 @@ extension TIFFReader {
          * Creates the appropriate tag type at the given file offset.
          */
         internal class func make(_ ifd: IFD, fileOffset off: Int) throws -> BaseTag {
+            let cfg = ifd.file!.config
+
             // read the data type
+            let id: UInt16 = ifd.file!.readEndian(off+Self.idOffset)
             let rawType: UInt16 = ifd.file!.readEndian(off+Self.typeOffset)
             let count: UInt32 = ifd.file!.readEndian(off+Self.countOffset)
 
@@ -70,7 +73,12 @@ extension TIFFReader {
                     case .byte, .short, .long:
                         // single count
                         if count == 1 {
-                            return try TagUnsigned(ifd, fileOffset: off)
+                            // check for the sub-IFD override
+                            if type == .long && cfg.subIfdTypeOverrides.contains(id) {
+                                return try TagSubIfd(ifd, fileOffset: off)
+                            } else {
+                                return try TagUnsigned(ifd, fileOffset: off)
+                            }
                         }
                         // multiple entries
                         else {
@@ -80,6 +88,21 @@ extension TIFFReader {
                     // string
                     case .string:
                         return try TagString(ifd, fileOffset: off)
+
+                    // rational (fraction)
+                    case .rational:
+                        // single rational value
+                        if count == 1 {
+                            return try TagRational(ifd, fileOffset: off)
+                        }
+                        // array of rational values
+                        else {
+                            return try TagRationalArray(ifd, fileOffset: off)
+                        }
+
+                    // pointer to sub-IFDs
+                    case .subIfd:
+                        return try TagSubIfd(ifd, fileOffset: off)
 
                     // known, but unimplemented types
                     default:
@@ -236,9 +259,15 @@ extension TIFFReader {
 
         /// Debug description
         public override var description: String {
-            return String(format: "Tag %04x <field width: %d, unsigned array: [%@]>",
-                          self.id, self.originalFieldWidth.rawValue,
-                          self.value.map(String.init).joined(separator: ", "))
+            if self.value.count < 50 {
+                return String(format: "Tag %04x <field width: %d, unsigned array: [%@]>",
+                              self.id, self.originalFieldWidth.rawValue,
+                              self.value.map(String.init).joined(separator: ", "))
+            } else {
+                return String(format: "Tag %04x <field width: %d, unsigned array: %d items]>",
+                              self.id, self.originalFieldWidth.rawValue,
+                              self.value.count)
+            }
         }
 
         /**
@@ -261,6 +290,196 @@ extension TIFFReader {
                 let value = self.readUnsigned(from: offset)
                 self.value.append(value)
             }
+        }
+    }
+
+    // MARK: - Rational
+    /**
+     * Base type for rational tags
+     */
+    public class BaseTagRational: BaseTag {
+        /**
+         * Rational value representation
+         */
+        public struct Fraction<T>: CustomStringConvertible where T: FractionType {
+            /// Debug string representation
+            public var description: String {
+                return String(format: "%d/%d (%f)", Int(self.numerator),
+                              Int(self.denominator), self.value)
+            }
+
+            /// Numerator
+            fileprivate(set) public var numerator: T = 0
+            /// Denominator
+            fileprivate(set) public var denominator: T = 0
+
+            /// Calculated double value
+            public var value: Double {
+                return Double(numerator) / Double(denominator)
+            }
+        }
+
+        /**
+         * Reads a rational value from the given file offset.
+         */
+        fileprivate func readRational<T>(_ offset: Int) throws -> Fraction<T> {
+            var frac = Fraction<T>()
+
+            let f = self.directory.file!
+
+            frac.numerator = f.readEndian(offset + Self.numeratorOffset)
+            frac.denominator = f.readEndian(offset + Self.denominatorOffset)
+
+            return frac
+        }
+
+
+        /// Location of the numerator relative to the tag data chunk
+        fileprivate static let numeratorOffset: Int = 0
+        /// Location of the denominator relative to the tag data chunk
+        fileprivate static let denominatorOffset: Int = 4
+
+        /// Size of a single rational value
+        fileprivate static let rationalSize: Int = 8
+    }
+
+    /**
+     * TIFF tag representing a rational value, defined by a numerator and denominator. A convenience for
+     * getting the value as a double is provided.
+     */
+    public final class TagRational: BaseTagRational {
+        /// Rational value
+        private(set) public var rational = Fraction<UInt32>()
+
+        /// Numerator
+        public var numerator: UInt32 {
+            return rational.numerator
+        }
+        /// Denominator
+        public var denominator: UInt32 {
+            return rational.denominator
+        }
+
+        /// Calculated double value
+        public var value: Double {
+            return rational.value
+        }
+
+        /// Debug description
+        public override var description: String {
+            return String(format: "Tag %04x <rational: %@>", self.id,
+                          String(describing: self.rational))
+        }
+
+        /**
+         * Creates a rational value tag.
+         */
+        internal override init(_ ifd: IFD, fileOffset off: Int) throws {
+            try super.init(ifd, fileOffset: off)
+
+            // read numerator/denominator
+            let start = Int(self.offsetField)
+            self.rational = try self.readRational(start)
+        }
+    }
+
+    /**
+     * A TIFF tag containing an array of rational values.
+     */
+    public final class TagRationalArray: BaseTagRational {
+        /// Array of fraction values
+        private(set) public var value: [Fraction<UInt32>] = []
+
+        /// Debug description
+        public override var description: String {
+            if self.value.count < 50 {
+                return String(format: "Tag %04x <rational array: [%@]>",
+                              self.id,
+                              self.value.map(String.init).joined(separator: ", "))
+            } else {
+                return String(format: "Tag %04x <rational array: %d items]>",
+                              self.id, self.value.count)
+            }
+        }
+
+        /**
+         * Creates the unsigned integer array tag.
+         */
+        internal override init(_ ifd: IFD, fileOffset off: Int) throws {
+            try super.init(ifd, fileOffset: off)
+            try self.readValue()
+        }
+
+        /**
+         * Reads `count` unsigned integer values from the location pointed to by the offset field.
+         */
+        private func readValue() throws {
+            let dataStart = Int(self.offsetField)
+
+            for i in 0..<Int(self.count) {
+                // read a single entry from the offset
+                let offset = dataStart + (i * Self.size)
+                self.value.append(try self.readRational(offset))
+            }
+        }
+    }
+
+    // MARK: - Sub-IFD
+    /**
+     * TIFF tag pointing to a linked list of IFDs, similarly to how the TIFF header points to an IFD. This allows
+     * images to contain arbitrary sub-IFDs.
+     */
+    public final class TagSubIfd: BaseTag {
+        /// IFDs pointed to by thie value
+        private(set) public var value: [IFD] = []
+
+        /// Debug description
+        public override var description: String {
+            return String(format: "Tag %04x <ifds: %@>", self.id, self.value)
+        }
+
+
+        /**
+         * Creates a sub-IFD value tag. The offset pointer contains the file offset to the first IFD object; the
+         * remaining IFDs are discovered by following the "next IFD" pointer in this first object. The count
+         * value must match the actual number of IFDs discovered.
+         */
+        internal override init(_ ifd: IFD, fileOffset off: Int) throws {
+            try super.init(ifd, fileOffset: off)
+
+            // decode all IFDs, starting with the first one
+            var offset: Int? = Int(self.offsetField)
+
+            while let i = offset {
+                offset = try self.readIfd(ifd, from: i)
+            }
+
+            // ensure count matches
+            if ifd.file!.config.subIfdEnforceCount {
+                if self.value.count != Int(self.count) {
+                    throw TagError.countMismatch(expected: Int(self.count),
+                                                 actual: self.value.count)
+                }
+            }
+        }
+
+        /**
+         * Decodes a single IFD at the given address, and appends it to our values array.
+         */
+        private func readIfd(_ parent: IFD, from: Int) throws -> Int? {
+            // create the IFD
+            let ifd = try IFD(inFile: parent.file!, from)
+            try ifd.decode()
+
+            self.value.append(ifd)
+
+            // return the file offset of the next one
+            return ifd.nextOff
+        }
+
+        enum TagError: Error {
+            /// The number of actually decoded IFDs did not match the count field.
+            case countMismatch(expected: Int, actual: Int)
         }
     }
 
@@ -309,5 +528,17 @@ extension TIFFReader {
         case short = 3
         /// Unsigned 32-bit integer
         case long = 4
+
+        /// Rational number (two 32-bit values representing a fraction's numerator and denominator)
+        case rational = 5
+
+        /// Sub-IFD
+        case subIfd = 13
     }
 }
+
+/// Type for a rational IFD tag's fraction value
+public protocol FractionType: EndianConvertible, BinaryInteger {}
+
+extension UInt16: FractionType {}
+extension UInt32: FractionType {}
