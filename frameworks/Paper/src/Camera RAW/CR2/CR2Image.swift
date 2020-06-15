@@ -19,6 +19,10 @@ public class CR2Image {
     /// An array of thumbnail images. The highest resolution is first.
     internal(set) public var thumbs: [CGImage] = []
 
+    // MARK: - Raw image
+    /// Size of the raw image
+    internal(set) public var rawSize: CGSize = .zero
+
     // MARK: - Initialization
     internal init() {}
 }

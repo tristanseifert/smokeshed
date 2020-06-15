@@ -225,7 +225,47 @@ public class CR2Reader {
      * Extracts the raw pixel data from the image file.
      */
     private func extractRawData(_ ifd: TIFFReader.IFD) throws {
+        // compression type must be "old JPEG" (6)
+        guard let compression = ifd.getTag(byId: 0x0103) as? TIFFReader.TagUnsigned else {
+            throw RawError.missingTag(0x0103)
+        }
+        if compression.value != 6 {
+            throw RawError.unsupportedCompression(compression.value)
+        }
 
+        // read the raw image size
+        guard let width = ifd.getTag(byId: 0x0100) as? TIFFReader.TagUnsigned else {
+            throw RawError.missingTag(0x0100)
+        }
+        guard let height = ifd.getTag(byId: 0x0101) as? TIFFReader.TagUnsigned else {
+            throw RawError.missingTag(0x0101)
+        }
+
+        self.image.rawSize = CGSize(width: Int(width.value),
+                                    height: Int(height.value))
+
+        // extract the raw image data
+        guard let offset = ifd.getTag(byId: 0x0111) as? TIFFReader.TagUnsigned else {
+            throw RawError.missingTag(0x0111)
+        }
+        guard let length = ifd.getTag(byId: 0x0117) as? TIFFReader.TagUnsigned else {
+            throw RawError.missingTag(0x0117)
+        }
+
+        let range = Int(offset.value)..<Int(offset.value + length.value)
+        let data = self.tiff.readRange(range)
+
+        // try to decompress it
+        try self.decompressRawData(data)
+    }
+
+    /**
+     * Decompresses raw data.
+     *
+     * In the CR2 file, raw pixel data is compressed using the JPEG lossless (ITU-T81) algorithm.
+     */
+    private func decompressRawData(_ data: Data) throws {
+        // TODO: implement
     }
 
     // MARK: - Errors
@@ -243,6 +283,13 @@ public class CR2Reader {
         case failedToCreateProvider
         /// Couldn't decode JPEG data
         case failedToDecodeJPEG
+    }
+
+    enum RawError: Error {
+        /// Required tags were missing; most likely incompatible file
+        case missingTag(_ requiredTagId: UInt16)
+        /// Raw data is compressed with an unsupported algorithm
+        case unsupportedCompression(_ method: UInt32)
     }
 
     // MARK: - File offsets

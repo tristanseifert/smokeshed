@@ -14,6 +14,8 @@ import Paper
 import CocoaLumberjackSwift
 
 class CanonRAWTests: XCTestCase {
+    private var cancelable: AnyCancellable? = nil
+
     /**
      * Set up logging before tests run.
      */
@@ -21,6 +23,15 @@ class CanonRAWTests: XCTestCase {
         Bowl.Logger.setup()
     }
 
+    /**
+     * After each run, ensure the cancelable is cleared out. Setting it to nil is enough to cancel it if not
+     * already done since the destructor does this.
+     */
+    override func tearDownWithError() throws {
+        self.cancelable = nil
+    }
+
+    // MARK: - Reading tests
     /**
      * Reads in the `birb.cr2` RAW file.
      */
@@ -32,7 +43,7 @@ class CanonRAWTests: XCTestCase {
                                                   withExtension: "cr2")!
         let reader = try CR2Reader(fromUrl: url)
 
-        let cancelable = reader.publisher.sink(receiveCompletion: { completion in
+        self.cancelable = reader.publisher.sink(receiveCompletion: { completion in
             switch completion {
                 case .finished:
                     expect.fulfill()
