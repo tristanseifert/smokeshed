@@ -93,12 +93,20 @@ extension TIFFReader {
                     case .rational:
                         // single rational value
                         if count == 1 {
-                            return try TagRational(ifd, fileOffset: off)
+                            return try TagRational<UInt32>(ifd, fileOffset: off)
                         }
                         // array of rational values
                         else {
-                            return try TagRationalArray(ifd, fileOffset: off)
+                            return try TagRationalArray<UInt32>(ifd, fileOffset: off)
+                    }
+                    // signed rational (fraction)
+                    case .signedRational:
+                        if count == 1 {
+                            return try TagRational<Int32>(ifd, fileOffset: off)
                         }
+                        else {
+                            return try TagRationalArray<Int32>(ifd, fileOffset: off)
+                    }
 
                     // pointer to sub-IFDs
                     case .subIfd:
@@ -305,11 +313,11 @@ extension TIFFReader {
     /**
      * Base type for rational tags
      */
-    public class BaseTagRational: BaseTag {
+    public class BaseTagRational<T>: BaseTag where T: FractionType {
         /**
          * Rational value representation
          */
-        public struct Fraction<T>: CustomStringConvertible where T: FractionType {
+        public struct Fraction: CustomStringConvertible {
             /// Debug string representation
             public var description: String {
                 return String(format: "%d/%d (%f)", Int(self.numerator),
@@ -330,41 +338,41 @@ extension TIFFReader {
         /**
          * Reads a rational value from the given file offset.
          */
-        fileprivate func readRational<T>(_ offset: Int) throws -> Fraction<T> {
-            var frac = Fraction<T>()
+        fileprivate func readRational(_ offset: Int) throws -> Fraction {
+            var frac = Fraction()
 
             let f = self.directory.file!
 
-            frac.numerator = f.readEndian(offset + Self.numeratorOffset)
-            frac.denominator = f.readEndian(offset + Self.denominatorOffset)
+            frac.numerator = f.readEndian(offset + self.numeratorOffset)
+            frac.denominator = f.readEndian(offset + self.denominatorOffset)
 
             return frac
         }
 
 
         /// Location of the numerator relative to the tag data chunk
-        fileprivate static let numeratorOffset: Int = 0
+        fileprivate let numeratorOffset: Int = 0
         /// Location of the denominator relative to the tag data chunk
-        fileprivate static let denominatorOffset: Int = 4
+        fileprivate let denominatorOffset: Int = 4
 
         /// Size of a single rational value
-        fileprivate static let rationalSize: Int = 8
+        fileprivate  let rationalSize: Int = 8
     }
 
     /**
      * TIFF tag representing a rational value, defined by a numerator and denominator. A convenience for
      * getting the value as a double is provided.
      */
-    public final class TagRational: BaseTagRational {
+    public final class TagRational<T>: BaseTagRational<T> where T: FractionType {
         /// Rational value
-        private(set) public var rational = Fraction<UInt32>()
+        private(set) public var rational = Fraction()
 
         /// Numerator
-        public var numerator: UInt32 {
+        public var numerator: T {
             return rational.numerator
         }
         /// Denominator
-        public var denominator: UInt32 {
+        public var denominator: T {
             return rational.denominator
         }
 
@@ -394,9 +402,9 @@ extension TIFFReader {
     /**
      * A TIFF tag containing an array of rational values.
      */
-    public final class TagRationalArray: BaseTagRational {
+    public final class TagRationalArray<T>: BaseTagRational<T> where T: FractionType {
         /// Array of fraction values
-        private(set) public var value: [Fraction<UInt32>] = []
+        private(set) public var value: [Fraction] = []
 
         /// Debug description
         public override var description: String {
@@ -480,7 +488,7 @@ extension TIFFReader {
          */
         private func readIfd(_ parent: IFD, from: Int) throws -> Int? {
             // create the IFD
-            let ifd = try IFD(inFile: parent.file!, from)
+            let ifd = try IFD(inFile: parent.file!, from, index: self.value.count)
             try ifd.decode()
 
             self.value.append(ifd)
@@ -578,6 +586,8 @@ extension TIFFReader {
 
         /// Rational number (two 32-bit values representing a fraction's numerator and denominator)
         case rational = 5
+        /// Signed rational number
+        case signedRational = 10
 
         /// Untyped byte sequence
         case byteSeq = 7
@@ -591,4 +601,6 @@ extension TIFFReader {
 public protocol FractionType: EndianConvertible, BinaryInteger {}
 
 extension UInt16: FractionType {}
+extension Int16: FractionType {}
 extension UInt32: FractionType {}
+extension Int32: FractionType {}

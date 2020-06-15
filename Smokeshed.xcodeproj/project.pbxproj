@@ -112,6 +112,9 @@
 		6ABD36F724971EF3005F80EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36F624971EEF005F80EE /* Cocoa.framework */; };
 		6ABD36FA24972316005F80EE /* birb.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36F924972315005F80EE /* birb.cr2 */; };
 		6ABD36FC24972A79005F80EE /* TIFFReaderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36FB24972A79005F80EE /* TIFFReaderConfig.swift */; };
+		6ABD36FE24973EC2005F80EE /* CanonRAWTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36FD24973EC2005F80EE /* CanonRAWTests.swift */; };
+		6ABD370124974362005F80EE /* CR2Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD370024974362005F80EE /* CR2Reader.swift */; };
+		6ABD3703249745A2005F80EE /* CR2Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD3702249745A2005F80EE /* CR2Image.swift */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
 		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
 		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
@@ -324,6 +327,9 @@
 		6ABD36F624971EEF005F80EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6ABD36F924972315005F80EE /* birb.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = birb.cr2; path = tests/data/birb.cr2; sourceTree = SOURCE_ROOT; };
 		6ABD36FB24972A79005F80EE /* TIFFReaderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFReaderConfig.swift; path = "frameworks/Paper/src/TIFF IO/TIFFReaderConfig.swift"; sourceTree = "<group>"; };
+		6ABD36FD24973EC2005F80EE /* CanonRAWTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CanonRAWTests.swift; path = "tests/paper/Camera RAW Reading/CanonRAWTests.swift"; sourceTree = SOURCE_ROOT; };
+		6ABD370024974362005F80EE /* CR2Reader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2Reader.swift; path = "frameworks/Paper/src/Camera RAW/CR2/CR2Reader.swift"; sourceTree = "<group>"; };
+		6ABD3702249745A2005F80EE /* CR2Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2Image.swift; path = "frameworks/Paper/src/Camera RAW/CR2/CR2Image.swift"; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
@@ -911,6 +917,7 @@
 		6ABD36AE2496D1E0005F80EE /* Raw file IO (Paper) */ = {
 			isa = PBXGroup;
 			children = (
+				6ABD36FF249741E5005F80EE /* Canon RAW */,
 				6ABD36C62496D3D3005F80EE /* TIFF Reader */,
 				6ABD36AF2496D1F2005F80EE /* Resources */,
 			);
@@ -964,6 +971,7 @@
 			isa = PBXGroup;
 			children = (
 				6ABD36F424971C74005F80EE /* TIFFReaderTests.swift */,
+				6ABD36FD24973EC2005F80EE /* CanonRAWTests.swift */,
 				6ABD36EB2496F77B005F80EE /* Data */,
 			);
 			path = "TIFF Reading";
@@ -978,6 +986,15 @@
 				6ABD36EC2496F793005F80EE /* leaves.tif */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		6ABD36FF249741E5005F80EE /* Canon RAW */ = {
+			isa = PBXGroup;
+			children = (
+				6ABD370024974362005F80EE /* CR2Reader.swift */,
+				6ABD3702249745A2005F80EE /* CR2Image.swift */,
+			);
+			name = "Canon RAW";
 			sourceTree = "<group>";
 		};
 		6AD8CFD5248DFAC7009AF452 /* Library View */ = {
@@ -1431,10 +1448,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ABD370124974362005F80EE /* CR2Reader.swift in Sources */,
 				6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */,
 				6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */,
 				6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */,
 				6ABD36FC24972A79005F80EE /* TIFFReaderConfig.swift in Sources */,
+				6ABD3703249745A2005F80EE /* CR2Image.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1442,6 +1461,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ABD36FE24973EC2005F80EE /* CanonRAWTests.swift in Sources */,
 				6ABD36F524971C74005F80EE /* TIFFReaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

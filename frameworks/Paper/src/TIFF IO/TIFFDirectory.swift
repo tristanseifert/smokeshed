@@ -16,13 +16,15 @@ extension TIFFReader {
         /// File that owns us
         internal weak var file: TIFFReader?
         /// File offset of the first byte of this IFD
-        private var headerOff: Int
+        internal var headerOff: Int
         /// Number of tags, according to the header
         private var numTags: UInt16 = 0
 
         /// File offset of the next IFD, if any.
         internal var nextOff: Int? = nil
 
+        /// Index of this IFD relative to its parent collection (file or sub-IFD tag)
+        private(set) public var index: Int = 0
         /// All tags in this IFD
         private(set) public var tags: [BaseTag] = []
 
@@ -37,8 +39,9 @@ extension TIFFReader {
          * Creates a new IFD starting at the provided index in the TIFF file. Errors will be thrown if the
          * IFD could not be read.
          */
-        internal init(inFile: TIFFReader, _ offset: Int) throws {
+        internal init(inFile: TIFFReader, _ offset: Int, index: Int) throws {
             // store the file and offset
+            self.index = index
             self.file = inFile
             self.headerOff = offset
 
@@ -86,6 +89,24 @@ extension TIFFReader {
 
                 self.tags.append(tag)
             }
+        }
+
+        /**
+         * Whether a tag with the given type exists.
+         */
+        public func hasTag(withId id: UInt16) -> Bool {
+            return self.tags.contains(where: {
+                return ($0.id == id)
+            })
+        }
+
+        /**
+         * Gets a reference to the tag with the specified id.
+         */
+        public func getTag(byId id: UInt16) -> BaseTag? {
+            return self.tags.first(where: {
+                return ($0.id == id)
+            })
         }
 
         // MARK: - Errors

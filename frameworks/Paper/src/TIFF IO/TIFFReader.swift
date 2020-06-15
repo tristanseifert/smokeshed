@@ -34,9 +34,6 @@ public class TIFFReader {
         self.config = config
         self.data = data
 
-        // create publishers
-        self.publisher = PassthroughSubject()
-
         // validate the image is TIFF
         try self.readHeader()
     }
@@ -86,7 +83,7 @@ public class TIFFReader {
 
     // MARK: - Decoding
     /// Publisher for decoded image directories
-    private(set) public var publisher: PassthroughSubject<IFD, Error>
+    private(set) public var publisher = PassthroughSubject<IFD, Error>()
 
     // MARK: Header
     /**
@@ -127,7 +124,7 @@ public class TIFFReader {
      */
     private func readIfd(from offset: Int) throws -> Int? {
         // attempt to create the IFD
-        let ifd = try IFD(inFile: self, offset)
+        let ifd = try IFD(inFile: self, offset, index: self.ifds.count)
         try ifd.decode()
 
         self.ifds.append(ifd)

@@ -54,7 +54,9 @@ class TIFFReaderTests: XCTestCase {
 
         // decode it in the background
         DispatchQueue.global().async {
-            reader.decode()
+            self.measure {
+                reader.decode()
+            }
         }
 
         // wait for decoding to complete
