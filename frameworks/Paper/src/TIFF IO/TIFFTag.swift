@@ -74,7 +74,7 @@ extension TIFFReader {
                         // single count
                         if count == 1 {
                             // check for the sub-IFD override
-                            if type == .long && cfg.subIfdTypeOverrides.contains(id) {
+                            if type == .long && cfg.subIfdUnsignedOverrides.contains(id) {
                                 return try TagSubIfd(ifd, fileOffset: off)
                             } else {
                                 return try TagUnsigned(ifd, fileOffset: off)
@@ -103,6 +103,14 @@ extension TIFFReader {
                     // pointer to sub-IFDs
                     case .subIfd:
                         return try TagSubIfd(ifd, fileOffset: off)
+
+                    // untyped byte array
+                    case .byteSeq:
+                        if cfg.subIfdByteSeqOverrides.contains(id) {
+                            return try TagSubIfd(ifd, fileOffset: off, false)
+                        } else {
+                            return try TagByteSeq(ifd, fileOffset: off)
+                        }
 
                     // known, but unimplemented types
                     default:
@@ -444,7 +452,7 @@ extension TIFFReader {
          * remaining IFDs are discovered by following the "next IFD" pointer in this first object. The count
          * value must match the actual number of IFDs discovered.
          */
-        internal override init(_ ifd: IFD, fileOffset off: Int) throws {
+        internal init(_ ifd: IFD, fileOffset off: Int, _ validate: Bool) throws {
             try super.init(ifd, fileOffset: off)
 
             // decode all IFDs, starting with the first one
@@ -455,12 +463,16 @@ extension TIFFReader {
             }
 
             // ensure count matches
-            if ifd.file!.config.subIfdEnforceCount {
+            if validate && ifd.file!.config.subIfdEnforceCount {
                 if self.value.count != Int(self.count) {
                     throw TagError.countMismatch(expected: Int(self.count),
                                                  actual: self.value.count)
                 }
             }
+        }
+
+        override convenience init(_ ifd: TIFFReader.IFD, fileOffset off: Int) throws {
+            try self.init(ifd, fileOffset: off, true)
         }
 
         /**
@@ -480,6 +492,41 @@ extension TIFFReader {
         enum TagError: Error {
             /// The number of actually decoded IFDs did not match the count field.
             case countMismatch(expected: Int, actual: Int)
+        }
+    }
+
+    // MARK: - Byte sequence
+    /**
+     * TIFF tag pointing to untyped byte data.
+     */
+    public final class TagByteSeq: BaseTag {
+        /// Data pointed to by this tag
+        private(set) public var value: Data = Data()
+
+        /// Debug description
+        public override var description: String {
+            return String(format: "Tag %04x <bytes: %@>", self.id,
+                          String(describing: self.value))
+        }
+
+        /**
+         * Initializes a byte sequence tag.
+         */
+        internal override init(_ ifd: IFD, fileOffset off: Int) throws {
+            try super.init(ifd, fileOffset: off)
+
+            // more than four bytes, the value is a data pointer
+            if self.count > 4 {
+                let start = Int(self.offsetField)
+                let end = start + Int(self.count)
+                self.value = self.directory.file!.readRange(start..<end)
+            }
+            // four or less bytes, read directly from the data offset field
+            else {
+                let start = Int(self.fileOffset + Self.dataOffset)
+                let end = start + Int(self.count)
+                self.value = self.directory.file!.readRange(start..<end)
+            }
         }
     }
 
@@ -531,6 +578,9 @@ extension TIFFReader {
 
         /// Rational number (two 32-bit values representing a fraction's numerator and denominator)
         case rational = 5
+
+        /// Untyped byte sequence
+        case byteSeq = 7
 
         /// Sub-IFD
         case subIfd = 13

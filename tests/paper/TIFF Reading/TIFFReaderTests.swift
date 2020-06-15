@@ -70,7 +70,14 @@ class TIFFReaderTests: XCTestCase {
         // TIFF reader config
         var cfg = TIFFReaderConfig()
 
-        cfg.subIfdTypeOverrides.append(contentsOf: [0x8769, 0x927c])
+        cfg.subIfdUnsignedOverrides.append(contentsOf: [
+            // EXIF
+            0x8769
+        ])
+        cfg.subIfdByteSeqOverrides.append(contentsOf: [
+            // MakerNotes
+            0x927c
+        ])
 
         // create a TIFF reader
         let url = Bundle(for: type(of: self)).url(forResource: "birb",
