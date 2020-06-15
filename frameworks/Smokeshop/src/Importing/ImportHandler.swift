@@ -272,7 +272,7 @@ public class ImportHandler {
         }
 
         // extract some metadata from the image
-        let meta = try self.metaHelper.getMeta(url)
+        let meta = try self.metaHelper.getMeta(url, type: uti)
 
         let size = try self.metaHelper.size(meta)
         let orientation = try self.metaHelper.orientation(meta)

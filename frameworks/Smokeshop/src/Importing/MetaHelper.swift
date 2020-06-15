@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreServices
+import ImageIO
 import CoreGraphics
 
 import CocoaLumberjackSwift
@@ -29,7 +31,22 @@ internal class MetaHelper {
     /**
      * Extracts image metadata from the image at the given URL.
      */
-    internal func getMeta(_ image: URL) throws -> [String: AnyObject] {
+    internal func getMeta(_ image: URL, type uti: String) throws -> [String: AnyObject] {
+        // generic image type
+        if UTTypeConformsTo(uti as CFString, kUTTypeImage) {
+            return try self.metaFromImageIo(image)
+        }
+
+        // if we get here, no compatible metadata reader was found
+        throw MetaError.unsupportedFormat
+    }
+
+    // MARK: - Metadata readers
+    /**
+     * Uses ImageIO to read the metadata from the provided file. This is supported for most image types on
+     * the system.
+     */
+    private func metaFromImageIo(_ image: URL) throws -> [String: AnyObject] {
         // create an image source
         guard let src = CGImageSourceCreateWithURL(image as CFURL, nil) else {
             throw MetaError.sourceCreateFailed
@@ -37,14 +54,14 @@ internal class MetaHelper {
 
         // get the properties
         guard let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil),
-              let meta = props as? [String: AnyObject] else {
-            throw MetaError.copyPropertiesFailed
+            let meta = props as? [String: AnyObject] else {
+                throw MetaError.copyPropertiesFailed
         }
 
-        // done!
         return meta
     }
 
+    // MARK: - Helpers
     /**
      * Gets the image size (in pixels) from the given metadata.
      */
@@ -109,6 +126,8 @@ internal class MetaHelper {
      * Errors that can take place during metadata processing
      */
     enum MetaError: Error {
+        /// The image format is not currently supported
+        case unsupportedFormat
         /// The image could not be opened for metadata reading
         case sourceCreateFailed
         /// Metadata could not be retrieved for the image
