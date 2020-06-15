@@ -6,47 +6,78 @@
 //
 
 import Foundation
+import Combine
 
 import CocoaLumberjackSwift
 
 /**
  * Provides an event-driven TIFF format parser.
  */
-internal class TIFFReader {
+public class TIFFReader {
     /// Data containing file contents
     private var data: Data
+
+    /// Total number of TIFF file bytes read
+    internal var length: Int {
+        get {
+            return data.count
+        }
+    }
 
     // MARK: - Initialization
     /**
      * Initializes a TIFF reader with the provided image data.
      */
-    init(withData data: Data) {
+    public init(withData data: Data) throws {
         self.data = data
+
+        // create publishers
+        self.publisher = PassthroughSubject()
+
+        // validate the image is TIFF
+        try self.readHeader()
     }
 
     /**
      * Initializes a TIFF reader for reading from the provided URL. The contents are loaded (using memory
      * mapped IO if available) automatically.
      */
-    convenience init(fromUrl url: URL) throws {
+    public convenience init(fromUrl url: URL) throws {
         let data = try Data(contentsOf: url, options: [.mappedIfSafe])
-        self.init(withData: data)
+        try self.init(withData: data)
     }
 
     // MARK: External API
     /**
-     *
+     * Reads the file, following the chain of IFDs to the end. Each discovered IFD is published to the
+     * publisher. Once this call returns, all IFDs will have been discovered.
      */
+    public func decode() {
+        // guard against no IFDs existing
+        guard self.firstDir != 0 else {
+            return
+        }
 
-    // MARK: Reading
-    enum ByteOrder {
-        case little
-        case big
+        // decode each IFD
+        do {
+            var offset: Int? = Int(self.firstDir)
+
+            while let i = offset {
+                offset = try self.readIfd(from: i)
+            }
+        } catch {
+            return self.publisher.send(completion: .failure(error))
+        }
+
+        // if we get here, we completed successfully
+        self.publisher.send(completion: .finished)
     }
 
-    /// Byte order of the loaded file
-    private var order: ByteOrder = .little
+    // MARK: - Decoding
+    /// Publisher for decoded image directories
+    private(set) public var publisher: PassthroughSubject<IFD, Error>
 
+    // MARK: Header
     /**
      * Decodes the header of the file to read endianness and version. This also provides the offset to the
      * first IFD.
@@ -71,12 +102,43 @@ internal class TIFFReader {
         }
 
         // offset of first IFD
-        let off: UInt32 = self.readEndian(4)
+        self.firstDir = self.readEndian(4)
 
-        DDLogVerbose("First IFD offset: \(off)")
+        if self.firstDir > self.data.count {
+            throw HeaderError.invalidIfdOffset(self.firstDir)
+        }
     }
 
-    // MARK: Data reading
+    // MARK: IFDs
+    /**
+     * Decodes the IFD at the given byte offset; the decoded object is published. The offset of the next IFD
+     * is returned.
+     */
+    private func readIfd(from offset: Int) throws -> Int? {
+        // attempt to create the IFD
+        let ifd = try IFD(inFile: self, offset)
+        try ifd.decode()
+
+        self.ifds.append(ifd)
+        self.publisher.send(ifd)
+
+        return ifd.nextOff
+    }
+
+    // MARK: - Reading
+    enum ByteOrder {
+        case little
+        case big
+    }
+
+    /// Byte order of the loaded file
+    private var order: ByteOrder = .little
+    /// File offset of the first IFD
+    private var firstDir: UInt32 = 0
+
+    /// All IFDs in this file
+    private var ifds: [IFD] = []
+
     /**
      * Reads a given type from the internal buffer taking into account endianness.
      */
@@ -105,7 +167,14 @@ internal class TIFFReader {
         return v
     }
 
-    // MARK: Errors
+    /**
+     * Returns a subset of the file's data.
+     */
+    internal func readRange(_ range: Range<Data.Index>) -> Data {
+        return self.data.subdata(in: range)
+    }
+
+    // MARK: - Errors
     /**
      * Header errors
      */
@@ -114,9 +183,12 @@ internal class TIFFReader {
         case unsupportedEndian(_ read: UInt16)
         /// Unknown version
         case unknownVersion(_ read: UInt16)
+        /// The offset to the first IFD is invalid
+        case invalidIfdOffset(_ read: UInt32)
     }
 }
 
+/// Provide initializers for converting from big/little endian types
 protocol EndianConvertible: ExpressibleByIntegerLiteral {
     init(littleEndian: Self)
     init(bigEndian: Self)
