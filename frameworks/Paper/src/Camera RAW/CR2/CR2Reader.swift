@@ -26,6 +26,9 @@ public class CR2Reader {
     /// Result of reading from the TIFF reader
     private var tiffRead: AnyCancellable!
 
+    /// JPEG decoder for the RAW data
+    private var jpeg: JPEGDecoder!
+
     /// Publisher for decoded image
     private(set) public var publisher = PassthroughSubject<CR2Image, Error>()
 
@@ -265,7 +268,9 @@ public class CR2Reader {
      * In the CR2 file, raw pixel data is compressed using the JPEG lossless (ITU-T81) algorithm.
      */
     private func decompressRawData(_ data: Data) throws {
-        // TODO: implement
+        // create a decoder and perform decoding
+        self.jpeg = try JPEGDecoder(withData: data)
+        try self.jpeg.decode()
     }
 
     // MARK: - Errors

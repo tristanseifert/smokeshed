@@ -134,13 +134,8 @@ public class TIFFReader {
     }
 
     // MARK: - Reading
-    enum ByteOrder {
-        case little
-        case big
-    }
-
     /// Byte order of the loaded file
-    private var order: ByteOrder = .little
+    private var order: Data.ByteOrder = .little
     /// File offset of the first IFD
     private var firstDir: UInt32 = 0
 
@@ -151,35 +146,21 @@ public class TIFFReader {
      * Reads a given type from the internal buffer taking into account endianness.
      */
     internal func readEndian<T>(_ offset: Int) -> T where T: EndianConvertible {
-        let v: T = self.read(offset)
-
-        switch self.order {
-            case .little:
-                return T(littleEndian: v)
-            case .big:
-                return T(bigEndian: v)
-        }
+        return self.data.readEndian(offset, self.order)
     }
 
     /**
      * Reads the given type from the internal data buffer at the provided offset.
      */
     internal func read<T>(_ offset: Int) -> T where T: ExpressibleByIntegerLiteral {
-        var v: T = 0
-        let len = MemoryLayout<T>.size
-
-        _ = Swift.withUnsafeMutableBytes(of: &v, {
-            self.data.copyBytes(to: $0, from: offset..<(offset+len))
-        })
-
-        return v
+        return self.data.read(offset)
     }
 
     /**
      * Returns a subset of the file's data.
      */
     internal func readRange(_ range: Range<Data.Index>) -> Data {
-        return self.data.subdata(in: range)
+        return self.data.readRange(range)
     }
 
     // MARK: - Errors
@@ -195,14 +176,3 @@ public class TIFFReader {
         case invalidIfdOffset(_ read: UInt32)
     }
 }
-
-/// Provide initializers for converting from big/little endian types
-public protocol EndianConvertible: ExpressibleByIntegerLiteral {
-    init(littleEndian: Self)
-    init(bigEndian: Self)
-}
-
-extension Int16: EndianConvertible {}
-extension UInt16: EndianConvertible {}
-extension Int32: EndianConvertible {}
-extension UInt32: EndianConvertible {}
