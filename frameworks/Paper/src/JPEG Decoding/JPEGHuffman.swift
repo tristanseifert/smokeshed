@@ -23,7 +23,7 @@ class JPEGHuffman {
         self.jpeg = decoder
     }
 
-    // MARK: - Marker support
+    // MARK: - Marker
     /**
      * Reads Huffman tables out of a DHT marker.
      *
@@ -32,35 +32,63 @@ class JPEGHuffman {
      * after the first table, try reading another.
      */
     internal func readTable(atOffset off: Int) throws -> Int? {
-        // marker word + length word
-        var bytesRead: Int = 4
-
         // read the length of the payload and extract it
         let length: UInt16 = self.jpeg!.readEndian(off + Self.offsetLength)
-        var tableBytes = Int(length) - 2
+        let tableBytes = Int(length) - 2
 
         let tableOffset = off + Self.offsetTableStart
         let tableRange = tableOffset..<(tableOffset+tableBytes)
-        var chunk = self.jpeg!.readRange(tableRange)
+        let chunk = self.jpeg!.readRange(tableRange)
+
+        // decode tables
+        let tables = try self.tablesFrom(chunk: chunk)
+        self.tables.merge(tables, uniquingKeysWith: { (_, new) in new })
+
+        DDLogVerbose("Decoded tables: \(tables)")
+
+        return (off + 2 + Int(length))
+    }
+
+    // MARK: Table parsing
+    /**
+     * Reads all tables out of the given data payload chunk.
+     *
+     * This chunk contains all bytes immediately following the length value, up to the number of bytes of
+     * payload indicated.
+     */
+    internal func tablesFrom(chunk inChunk: Data) throws -> [TableSlot: Table] {
+        var chunk = inChunk
+        var tableBytes = chunk.count
+
+        var tables: [TableSlot: Table] = [:]
 
         // read all tables until no more data remains
         while tableBytes > 0 {
-            let read = try self.readTableChunk(chunk)
+            let ret = try self.readTableChunk(chunk)
+            tables[ret.1] = ret.2
 
-            if (tableBytes - read) > 0 {
-                chunk = chunk.advanced(by: read)
+            // get the next chunk
+            let bytesRead = ret.0
+            if (tableBytes - bytesRead) > 0 {
+                chunk = chunk.advanced(by: bytesRead)
             }
-            bytesRead += read
-            tableBytes -= read
+            tableBytes -= bytesRead
         }
 
-        return (off + bytesRead)
+        // all data _should_ have been consumed
+        guard tableBytes == 0 else {
+            throw ReadError.invalidLength(read: (chunk.count - tableBytes),
+                                          actual: chunk.count)
+        }
+
+        return tables
     }
 
     /**
-     * Reads a single table out the provided data chunk. The total number of bytes consumed is returned.
+     * Reads a single table out the provided data chunk. The total number of bytes consumed is returned as
+     * well as a reference to the table.
      */
-    private func readTableChunk(_ chunk: Data) throws -> Int {
+    private func readTableChunk(_ chunk: Data) throws -> (Int, TableSlot, Table) {
         // read table class and destination slot
         let T: UInt8 = chunk.read(Self.offsetT)
 
@@ -104,10 +132,8 @@ class JPEGHuffman {
             code = code << 1
         }
 
-        DDLogVerbose("Table \(slot): \(String(describing: table))")
-
         // bytes read: T + Li[0..15] + mt
-        return huffBytesRead + 16 + 1
+        return ((huffBytesRead + 16 + 1), slot, table)
     }
 
     // MARK: Offsets
@@ -127,7 +153,7 @@ class JPEGHuffman {
     /**
      * Represents a Huffman table.
      */
-    fileprivate class Table: CustomStringConvertible {
+    internal class Table: CustomStringConvertible {
         private struct TableKey: Hashable {
             private(set) internal var length: Int
             private(set) internal var code: UInt16
@@ -150,7 +176,7 @@ class JPEGHuffman {
         /**
          * Adds a new value to the table.
          */
-        func addValue(length: Int, code: UInt16, _ value: UInt8) {
+        internal func addValue(length: Int, code: UInt16, _ value: UInt8) {
             self.data[TableKey(length, code)] = value
         }
 
@@ -165,8 +191,7 @@ class JPEGHuffman {
 
             for key in sortedKeys {
                 let codeStr = String(key.code, radix: 2)
-                let padded = codeStr.padding(toLength: 16, withPad: "0",
-                                             startingAt: 0)
+                let padded = codeStr.leftPadding(toLength: 16, withPad: "0")
                 values = values.appendingFormat("%@ (len %3u) -> %02x\n",
                                                 padded, key.length,
                                                 self.data[key]!)
@@ -197,6 +222,20 @@ class JPEGHuffman {
         case illegalTc(_ actual: UInt8)
         /// Invalid Th (table destination slot) value; must be 0-3
         case illegalTh(_ actual: UInt8)
-        /// Something weird is going on reading the HUFFVAL data, too many bytes were read
+        /// Something weird is going on reading the tables; DHT marker had too much/too little data
+        case invalidLength(read: Int, actual: Int)
+    }
+}
+
+
+
+extension String {
+    func leftPadding(toLength: Int, withPad character: Character) -> String {
+        let newLength = self.count
+        if newLength < toLength {
+            return String(repeatElement(character, count: toLength - newLength)) + self
+        } else {
+            return self.substring(from: index(self.startIndex, offsetBy: newLength - toLength))
+        }
     }
 }

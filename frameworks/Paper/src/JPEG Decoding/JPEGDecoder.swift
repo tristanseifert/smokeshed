@@ -69,6 +69,9 @@ internal class JPEGDecoder {
     /// Whether we reached the end of the JPEG stream (encountered EOI marker)
     private var reachedEnd = false
 
+    /// Currently processign frame
+    private var currentFrame: JPEGFrame? = nil
+
     /**
      * Attempts to identify the marker at the given file index, if possible. The offset past the end of this
      * marker is returned, if known.
@@ -101,6 +104,13 @@ internal class JPEGDecoder {
             // read a Huffman table
             case .defineHuffmanTable:
                 return try self.huffman.readTable(atOffset: inOff)
+
+            // start of frame marker
+            case .frameStartLossless:
+                let frame = JPEGFrame(self)
+                let offset = try frame.readMarker(atOffset: inOff)
+                self.currentFrame = frame
+                return offset
 
             // uhhhhhhhhh we should NOT get here
             default:
