@@ -111,6 +111,13 @@ internal class JPEGFrame: CustomStringConvertible {
         c.xFactor = Int((factors & 0xF0) >> 4)
         c.yFactor = Int((factors & 0x0F))
 
+        // ensure quantatization field is zero
+        let quantatization: UInt8 = data.read(Self.offsetQuantatization)
+
+        guard quantatization == 0 else {
+            throw ReadError.invalidQuantatization(quantatization)
+        }
+
         return c
     }
 
@@ -121,7 +128,7 @@ internal class JPEGFrame: CustomStringConvertible {
     internal struct Component: CustomStringConvertible {
         /// Pretty description string
         var description: String {
-            return String(format: "<component %02x: x sampling: %d, y sampling: %d>", self.id, self.xFactor, self.yFactor)
+            return String(format: "<component: %02x, x sampling: %d, y sampling: %d>", self.id, self.xFactor, self.yFactor)
         }
 
         /// Unique component identifier
@@ -157,6 +164,8 @@ internal class JPEGFrame: CustomStringConvertible {
     static let offsetIdent: Int = 0
     /// Sampling factors
     static let offsetFactors: Int = 1
+    /// Quantatization factors to use (must be 0)
+    static let offsetQuantatization: Int = 2
 
     /// Length of a component descriptor
     static let componentSize: Int = 3
@@ -168,5 +177,7 @@ internal class JPEGFrame: CustomStringConvertible {
     private enum ReadError: Error {
         /// Invalid precision value (must be 2-16)
         case invalidPrecision(_ actual: UInt8)
+        /// Invalid quantatization factors (must be 0 on lossless images)
+        case invalidQuantatization(_ actual: UInt8)
     }
 }

@@ -69,8 +69,10 @@ internal class JPEGDecoder {
     /// Whether we reached the end of the JPEG stream (encountered EOI marker)
     private var reachedEnd = false
 
-    /// Currently processign frame
+    /// Currently processing frame
     private var currentFrame: JPEGFrame? = nil
+    /// Scan descriptor that's currently being used
+    private var currentScan: JPEGScan? = nil
 
     /**
      * Attempts to identify the marker at the given file index, if possible. The offset past the end of this
@@ -110,6 +112,13 @@ internal class JPEGDecoder {
                 let frame = JPEGFrame(self)
                 let offset = try frame.readMarker(atOffset: inOff)
                 self.currentFrame = frame
+                return offset
+
+            // start of scan marker
+            case .scanStart:
+                let scan = JPEGScan(self)
+                let offset = try scan.readMarker(atOffset: inOff)
+                self.currentScan = scan
                 return offset
 
             // uhhhhhhhhh we should NOT get here

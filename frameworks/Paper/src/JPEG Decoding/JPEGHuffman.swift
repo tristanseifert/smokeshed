@@ -192,7 +192,7 @@ class JPEGHuffman {
             for key in sortedKeys {
                 let codeStr = String(key.code, radix: 2)
                 let padded = codeStr.leftPadding(toLength: 16, withPad: "0")
-                values = values.appendingFormat("%@ (len %3u) -> %02x\n",
+                values = values.appendingFormat("%@ (len %2u) -> %02x\n",
                                                 padded, key.length,
                                                 self.data[key]!)
             }
