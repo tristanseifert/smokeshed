@@ -59,6 +59,7 @@
 		6A7614C42499A57A0043392E /* BitstreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C32499A57A0043392E /* BitstreamTests.swift */; };
 		6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C52499AE590043392E /* JPEGBitstream.swift */; settings = {COMPILER_FLAGS = "-Ounchecked"; }; };
 		6A7614C82499B53A0043392E /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
+		6A7614C92499DDFD0043392E /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
 		6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */; };
 		6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */; };
 		6A903FCF248C621200BD1602 /* LibraryBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FCE248C621200BD1602 /* LibraryBundle.swift */; };
@@ -1533,6 +1534,7 @@
 				6A7614C42499A57A0043392E /* BitstreamTests.swift in Sources */,
 				6A7614C02499A5340043392E /* Bitstream.swift in Sources */,
 				6ABD36F524971C74005F80EE /* TIFFReaderTests.swift in Sources */,
+				6A7614C92499DDFD0043392E /* BitHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

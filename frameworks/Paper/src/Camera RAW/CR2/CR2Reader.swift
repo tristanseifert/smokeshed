@@ -236,6 +236,11 @@ public class CR2Reader {
             throw RawError.unsupportedCompression(compression.value)
         }
 
+        // read the de-slicing information for later
+        guard let slices = ifd.getTag(byId: 0xc640) as? TIFFReader.TagUnsignedArray else {
+            throw RawError.missingTag(0xc640)
+        }
+
         // read the raw image size
         guard let width = ifd.getTag(byId: 0x0100) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0100)
@@ -260,6 +265,11 @@ public class CR2Reader {
 
         // try to decompress it
         try self.decompressRawData(data)
+
+        // de-slice if needed
+        if slices.value[0] != 0 {
+            // TODO: de-slicing
+        }
     }
 
     /**

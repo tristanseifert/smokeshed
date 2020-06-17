@@ -145,7 +145,7 @@ internal class JPEGDecoder {
         return outOffset
     }
 
-    // MARK: - Image decoding
+    // MARK: - Image decompression
     /// Output bit planes for each component
     private var planes: [UInt8: [UInt16]] = [:]
 
@@ -154,6 +154,9 @@ internal class JPEGDecoder {
     /// Column being decompressed
     private var currentSample: Int = 0
 
+    /// Default value for predictor (1/2 full scale)
+    private var predictDefault: UInt16 = 0
+
     /**
      * Prepares to decode pixel data.
      *
@@ -161,15 +164,20 @@ internal class JPEGDecoder {
      * are allocated for each of the components output values.
      */
     private func prepareForDecompression() throws {
-        guard let frame = self.currentFrame else {
+        guard let frame = self.currentFrame, let scan = self.currentScan else {
             throw DecompressError.invalidState
         }
 
         // each component must have x/y sampling of 1
         for component in frame.components {
             guard component.xFactor == 1 && component.yFactor == 1 else {
-                throw DecompressError.invalidSampling(component)
+                throw DecompressError.unsupportedSampling(component)
             }
+        }
+
+        // ensure the predictor is type 1
+        guard scan.predictor == 1 else {
+            throw DecompressError.unsupportedPredictor(scan.predictor)
         }
 
         // great, allocate the output bit planes
@@ -183,6 +191,10 @@ internal class JPEGDecoder {
         // clear the row/line counters
         self.currentLine = 0
         self.currentSample = 0
+
+        // default prediction result
+        self.predictDefault = UInt16(1 << (Int(frame.precision) - 1))
+        DDLogVerbose("Default predictor value: \(self.predictDefault)")
     }
 
     /**
@@ -200,7 +212,10 @@ internal class JPEGDecoder {
         // failed to read a Huffman code; probably found a marker
         catch HuffmanTree<UInt8>.TreeErrors.bitReadFailed {
             self.isDecoding = false
-            return (startingAt + stream.rdOffset)
+        }
+        // found a marker
+        catch DecompressError.encounteredMarker {
+            self.isDecoding = false
         }
 
         // return input offset plus the number of bytes read
@@ -215,7 +230,7 @@ internal class JPEGDecoder {
             throw DecompressError.invalidState
         }
 
-        // read all line
+        // read all lines
         while self.currentLine < frame.numLines {
             // offset into the current row in the plane
             let rowOff = self.currentLine * Int(frame.samplesPerLine)
@@ -228,18 +243,32 @@ internal class JPEGDecoder {
                 // read data for each component
                 for c in scan.components {
                     // read the Huffman encoded bit length
-                    let bits = try self.huffman.decodeValue(fromTable: c.dcTable, stream)
+                    let bits = Int(try self.huffman.decodeValue(fromTable: c.dcTable, stream))
 
-                    // then, read that amount of data
-                    guard let value = stream.readString(Int(bits)) else {
-                        throw HuffmanTree<UInt8>.TreeErrors.bitReadFailed
+                    // then, read that amount of data and convert to signed int
+                    guard let rawDiff = stream.readString(bits) else {
+                        throw DecompressError.encounteredMarker
+                    }
+
+                    var delta = 0
+
+                    if (Int(rawDiff) & (1 << (bits - 1))) != 0 {
+                        delta = Int(rawDiff)
+                    } else {
+                        // negative value is the bitwise inverse
+                        var inverse = ~UInt16(rawDiff)
+                        inverse = inverse & Self.deltaMask[bits]
+                        delta = -Int(inverse)
                     }
 
                     // shove it into the Predictor™
-                    let delta = UInt16(value)
+                    let predicted = self.predict(plane: c.inComponent,
+                                                 withDelta: delta,
+                                                 deltaBits: bits,
+                                                 currentOffset: off)
 
                     // store the value
-                    self.planes[c.inComponent]![off] = delta
+                    self.planes[c.inComponent]![off] = predicted
                 }
 
                 // move on to the next sample
@@ -247,14 +276,33 @@ internal class JPEGDecoder {
             }
 
             // end of column
-            DDLogVerbose("Finished line \(self.currentLine)")
-
             self.currentSample = 0
             self.currentLine += 1
         }
 
         // finished decoding
         self.isDecoding = false
+    }
+
+    /**
+     * Given a delta value read from the image, predicts the actual output value for the sample at the current
+     * location.
+     *
+     * Currently, this just implements predictor algorithm 1
+     */
+    private func predict(plane: UInt8, withDelta delta: Int, deltaBits bits: Int, currentOffset off: Int) -> UInt16 {
+        var last: UInt16
+
+        // if col = 0, use default value for last sample
+        if self.currentSample == 0 {
+            last = self.predictDefault
+        }
+        // otherwise, read one sample to the left
+        else {
+            last = self.planes[plane]![(off - 1)]
+        }
+
+        return UInt16(Int(last) + delta)
     }
 
     // MARK: - Accessing
@@ -292,6 +340,18 @@ internal class JPEGDecoder {
     internal func readRange(_ range: Range<Data.Index>) -> Data {
         return self.data.readRange(range)
     }
+
+    // MARK: - Constants
+    /**
+     * Look up table containing a mask for a 16-bit value where the lowest n bits are kept.
+     */
+    private static let deltaMask: [UInt16] = [
+        0x0000,
+        0x0001, 0x0003, 0x0007, 0x000F,
+        0x001F, 0x003F, 0x007F, 0x00FF,
+        0x01FF, 0x03FF, 0x07FF, 0x0FFF,
+        0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
+    ]
 
     // MARK: - Types
     /**
@@ -335,6 +395,10 @@ internal class JPEGDecoder {
         /// The decompressor is in an invalid state
         case invalidState
         /// Invalid sampling factor for the provided component
-        case invalidSampling(_ component: JPEGFrame.Component)
+        case unsupportedSampling(_ component: JPEGFrame.Component)
+        /// Unsupported predictor configuration
+        case unsupportedPredictor(_ predictor: Int)
+        /// A marker was encountered
+        case encounteredMarker
     }
 }

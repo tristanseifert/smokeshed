@@ -98,9 +98,14 @@ internal class HuffmanTree<T>: CustomStringConvertible {
             }
 
             bitsRead += 1
-            codeRead = ((codeRead << 1) | UInt16(bit))
+            codeRead <<= 1
 
-            next = node.getChild(bit: (bit == 0x01))
+            if bit != 0 {
+                codeRead |= 1
+                next = node.getChild(bit: true)
+            } else {
+                next = node.getChild(bit: false)
+            }
         }
 
         // if we get here, we failed to find a matching code

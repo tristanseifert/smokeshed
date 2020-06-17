@@ -59,7 +59,7 @@ class CanonRAWTests: XCTestCase {
         })
 
         // decode it in the background and wait
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInitiated).async {
             self.measure {
                 reader.decode()
             }
