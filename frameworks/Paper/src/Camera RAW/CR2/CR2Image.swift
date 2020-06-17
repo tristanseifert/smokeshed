@@ -22,6 +22,8 @@ public class CR2Image {
     // MARK: - Raw image
     /// Size of the raw image
     internal(set) public var rawSize: CGSize = .zero
+    /// Raw bitplanes
+    internal(set) public var rawPlanes: [[UInt16]] = []
 
     // MARK: - Initialization
     internal init() {}

@@ -13,7 +13,7 @@ class JPEGHuffman {
     /// Decoder that is using the decoder
     private weak var jpeg: JPEGDecoder?
     /// Huffman table slots 0-3
-    private var tables: [TableSlot: Table] = [:]
+    private var tables: [JPEGDecoder.TableId: Table] = [:]
 
     // MARK: - Initialization
     /**
@@ -21,6 +21,21 @@ class JPEGHuffman {
      */
     init(_ decoder: JPEGDecoder) {
         self.jpeg = decoder
+    }
+
+    // MARK: - Reading
+    /**
+     * Reads a Huffman-encoded value from the bit stream.
+     */
+    internal func decodeValue(fromTable: JPEGDecoder.TableId, _ stream: JPEGBitstream) throws -> UInt8 {
+        // get table
+        guard let table = tables[fromTable] else {
+            throw DecodeError.uninitializedtable(fromTable)
+        }
+
+        // try to decode the value
+        let node = try table.tree.readCode(from: stream)
+        return node.value!
     }
 
     // MARK: - Marker
@@ -44,8 +59,6 @@ class JPEGHuffman {
         let tables = try self.tablesFrom(chunk: chunk)
         self.tables.merge(tables, uniquingKeysWith: { (_, new) in new })
 
-        DDLogVerbose("Decoded tables: \(tables)")
-
         return (off + 2 + Int(length))
     }
 
@@ -56,11 +69,11 @@ class JPEGHuffman {
      * This chunk contains all bytes immediately following the length value, up to the number of bytes of
      * payload indicated.
      */
-    internal func tablesFrom(chunk inChunk: Data) throws -> [TableSlot: Table] {
+    internal func tablesFrom(chunk inChunk: Data) throws -> [JPEGDecoder.TableId: Table] {
         var chunk = inChunk
         var tableBytes = chunk.count
 
-        var tables: [TableSlot: Table] = [:]
+        var tables: [JPEGDecoder.TableId: Table] = [:]
 
         // read all tables until no more data remains
         while tableBytes > 0 {
@@ -88,14 +101,14 @@ class JPEGHuffman {
      * Reads a single table out the provided data chunk. The total number of bytes consumed is returned as
      * well as a reference to the table.
      */
-    private func readTableChunk(_ chunk: Data) throws -> (Int, TableSlot, Table) {
+    private func readTableChunk(_ chunk: Data) throws -> (Int, JPEGDecoder.TableId, Table) {
         // read table class and destination slot
         let T: UInt8 = chunk.read(Self.offsetT)
 
         guard (T & 0xF0) == 0x00 else {
             throw ReadError.illegalTc((T & 0xF0) >> 4)
         }
-        guard let slot = TableSlot(rawValue: Int(T & 0x0F)) else {
+        guard let slot = JPEGDecoder.TableId(rawValue: UInt8(T & 0x0F)) else {
             throw ReadError.illegalTh(T & 0x0F)
         }
 
@@ -154,18 +167,8 @@ class JPEGHuffman {
      * Represents a Huffman table.
      */
     internal class Table: CustomStringConvertible {
-        private struct TableKey: Hashable {
-            private(set) internal var length: Int
-            private(set) internal var code: UInt16
-
-            init(_ length: Int, _ code: UInt16) {
-                self.length = length
-                self.code = code
-            }
-        }
-
-        /// Mapping of (length, code) -> value
-        private var data: [TableKey: UInt8] = [:]
+        /// Huffman tree
+        private(set) internal var tree = HuffmanTree<UInt8>()
 
         /**
          * Creates an uninitialized table. You must call `addValue(length:code:_:)` to populate
@@ -177,40 +180,14 @@ class JPEGHuffman {
          * Adds a new value to the table.
          */
         internal func addValue(length: Int, code: UInt16, _ value: UInt8) {
-            self.data[TableKey(length, code)] = value
+            self.tree.add(code: code, bits: length, value)
         }
 
         /// Pretty debug print the table
         var description: String {
-            var values: String = ""
-
-            // sort keys in ascending order by key
-            let sortedKeys = self.data.keys.sorted(by: {
-                return ($0.code < $1.code)
-            })
-
-            for key in sortedKeys {
-                let codeStr = String(key.code, radix: 2)
-                let padded = codeStr.leftPadding(toLength: 16, withPad: "0")
-                values = values.appendingFormat("%@ (len %2u) -> %02x\n",
-                                                padded, key.length,
-                                                self.data[key]!)
-            }
-
-            values.removeLast()
-            return String(format: "<Huffman table: %@>", values)
+            return String(format: "<Huffman table: %@>",
+                          String(describing: self.tree))
         }
-    }
-
-    // MARK: - Types
-    /**
-     * A Huffman table slot
-     */
-    internal enum TableSlot: Int {
-        case table0 = 0
-        case table1 = 1
-        case table2 = 2
-        case table3 = 3
     }
 
     // MARK: - Errors
@@ -225,17 +202,12 @@ class JPEGHuffman {
         /// Something weird is going on reading the tables; DHT marker had too much/too little data
         case invalidLength(read: Int, actual: Int)
     }
-}
 
-
-
-extension String {
-    func leftPadding(toLength: Int, withPad character: Character) -> String {
-        let newLength = self.count
-        if newLength < toLength {
-            return String(repeatElement(character, count: toLength - newLength)) + self
-        } else {
-            return self.substring(from: index(self.startIndex, offsetBy: newLength - toLength))
-        }
+    /**
+     * Decoding errors
+     */
+    internal enum DecodeError: Error {
+        /// Attempted to decode a codeword with a table that has not been loaded
+        case uninitializedtable(_ table: JPEGDecoder.TableId)
     }
 }

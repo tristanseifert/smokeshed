@@ -121,20 +121,19 @@ internal class JPEGScan: CustomStringConvertible {
         // read the table identifier
         let tables: UInt8 = data.read(Self.offsetTableIds)
 
-        let Tdj = Int((tables & 0xF0) >> 4)
-        let Taj = Int(tables & 0x0F)
+        let Tdj = ((tables & 0xF0) >> 4)
+        let Taj = (tables & 0x0F)
 
         // dc coding table must be 0-3
-        guard Tdj >= 0 && Tdj <= 3 else {
-            throw ReadError.invalidDcTable(Tdj)
+        guard let dcTable = JPEGDecoder.TableId(rawValue: Tdj) else {
+            throw ReadError.invalidDcTable(Int(Tdj))
         }
-        c.dcTable = Tdj
+        c.dcTable = dcTable
 
         // ac coding table must be 0 for lossless
         guard Taj == 0 else {
-            throw ReadError.invalidAcTable(Tdj)
+            throw ReadError.invalidAcTable(Int(Taj))
         }
-        c.acTable = Taj
 
         return c
     }
@@ -147,15 +146,16 @@ internal class JPEGScan: CustomStringConvertible {
         /// Pretty description string
         var description: String {
             return String(format: "<input component: %02x, dc table: %d, ac table: %d>",
-                          self.inComponent, self.dcTable, self.acTable)
+                          self.inComponent, self.dcTable.rawValue,
+                          self.acTable.rawValue)
         }
 
         /// Unique component identifier from which to read
         fileprivate(set) internal var inComponent: UInt8 = 0
         /// Table to use for DC entropy coding
-        fileprivate(set) internal var dcTable: Int = 0
+        fileprivate(set) internal var dcTable: JPEGDecoder.TableId = .table0
         /// Table to use for AC entropy coding
-        fileprivate(set) internal var acTable: Int = 0
+        fileprivate(set) internal var acTable: JPEGDecoder.TableId = .table0
     }
 
     // MARK: - Offsets

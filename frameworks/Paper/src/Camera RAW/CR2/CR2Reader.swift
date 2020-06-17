@@ -271,6 +271,14 @@ public class CR2Reader {
         // create a decoder and perform decoding
         self.jpeg = try JPEGDecoder(withData: data)
         try self.jpeg.decode()
+
+        // process the JPEG decoded planes
+        for i in 0...3 {
+            if let plane = self.jpeg.getPlane(i) {
+                DDLogVerbose("Plane \(i): \(plane.count)")
+                self.image.rawPlanes.append(plane)
+            }
+        }
     }
 
     // MARK: - Errors

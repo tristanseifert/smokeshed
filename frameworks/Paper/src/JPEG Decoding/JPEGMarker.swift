@@ -45,6 +45,9 @@ extension JPEGDecoder {
      * Markers that we understand how to parse
      */
     internal enum MarkerType: UInt16 {
+        /// Escape code (0xFF in input)
+        case ffEscape = 0xFF00
+
         /// Start of the image
         case imageStart = 0xFFD8
         /// End of the image

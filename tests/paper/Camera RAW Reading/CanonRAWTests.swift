@@ -65,7 +65,7 @@ class CanonRAWTests: XCTestCase {
             }
         }
 
-        wait(for: [expect], timeout: 5)
+        wait(for: [expect], timeout: 600)
     }
 
     // MARK: - Test Artifacts
@@ -80,6 +80,22 @@ class CanonRAWTests: XCTestCase {
             let attach = XCTAttachment(image: nsimg)
             attach.lifetime = .keepAlways
             self.add(attach)
+        }
+
+        // also, save each plane
+        var planeIdx = 0
+
+        for plane in image.rawPlanes {
+            let data = plane.withUnsafeBytes({ ptr -> Data in
+                return Data(ptr)
+            })
+
+            let attach = XCTAttachment(data: data)
+            attach.name = String(format: "raw_plane\(planeIdx)")
+            attach.lifetime = .keepAlways
+            self.add(attach)
+
+            planeIdx += 1
         }
     }
 }

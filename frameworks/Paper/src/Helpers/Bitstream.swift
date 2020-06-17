@@ -12,7 +12,7 @@ import Foundation
  */
 internal class Bitstream {
     /// Data backing the stream
-    private var data: Data
+    internal var data: Data
 
     // MARK: - Initialization
     /**
@@ -24,11 +24,11 @@ internal class Bitstream {
 
     // MARK: - Reading
     /// Index into the backing store we're reading from
-    private var rdOffset: Int = 0
+    internal var rdOffset: Int = 0
     /// Number of bits yet to be read out of the read buffer
-    private var rdBufLeft: Int = 0
+    internal var rdBufLeft: Int = 0
     /// Read buffer of one byte
-    private var rdBuf: UInt8 = 0
+    internal var rdBuf: UInt8 = 0
 
     /**
      * Reads the next byte from the backing store into the bit read buffer.
