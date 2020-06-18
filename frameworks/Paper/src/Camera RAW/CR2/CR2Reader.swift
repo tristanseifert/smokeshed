@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 import CoreGraphics
 
 import CocoaLumberjackSwift
@@ -23,14 +22,9 @@ public class CR2Reader {
 
     /// TIFF reader used to access the raw file
     private var tiff: TIFFReader
-    /// Result of reading from the TIFF reader
-    private var tiffRead: AnyCancellable!
 
     /// JPEG decoder for the RAW data
     private var jpeg: JPEGDecoder!
-
-    /// Publisher for decoded image
-    private(set) public var publisher = PassthroughSubject<CR2Image, Error>()
 
     // MARK: - Initialization
     /**
@@ -55,28 +49,8 @@ public class CR2Reader {
         ])
 
         // set up TIFF reader and validate CR2 header
-        self.tiff = try TIFFReader(withData: self.data, cfg)
+        self.tiff = try TIFFReader(withData: &self.data, cfg)
         try self.readHeader()
-
-        // configure publishing
-        self.tiffRead = self.tiff.publisher.sink(receiveCompletion: { completion in
-            switch completion {
-                // successfully decoded TIFF file, finalize our decoding
-                case .finished:
-                    self.finalizeDecoding()
-
-                // failed to decode TIFF
-                case .failure(let error):
-                    self.publisher.send(completion: .failure(error))
-            }
-        }, receiveValue: { ifd in
-            do {
-                try self.handleIfd(ifd)
-            } catch {
-                self.publisher.send(completion: .failure(error))
-                self.tiffRead.cancel()
-            }
-        })
     }
 
     /**
@@ -96,9 +70,14 @@ public class CR2Reader {
     /**
      * Decodes the RAW image.
      */
-    public func decode() {
-        // just kick off the TIFF decode :)
-        self.tiff.decode()
+    public func decode() throws -> CR2Image {
+        // read tiff blocks until no more come back
+        while let ifd = try self.tiff.decode() {
+            try self.handleIfd(ifd)
+        }
+
+        // return the image (fully decoded by now)
+        return self.image
     }
 
     /**
@@ -106,9 +85,9 @@ public class CR2Reader {
      */
     private func readHeader() throws {
         // read the 'CR' signature
-        let sig = self.tiff.readRange(Self.signatureOffset..<Self.signatureOffset+2)
+        let sig: UInt16 = self.tiff.read(Self.signatureOffset)
 
-        if sig != Data([0x43, 0x52]) {
+        if sig != 0x5243 {
             throw HeaderError.invalidHeader(fileHeader: sig)
         }
 
@@ -156,15 +135,6 @@ public class CR2Reader {
         }
     }
 
-    /**
-     * TIFF decoder has finished reading the file; complete our decoding.
-     */
-    private func finalizeDecoding() {
-        // publish the finished image
-        self.publisher.send(self.image)
-        self.publisher.send(completion: .finished)
-    }
-
     // MARK: - Metadata
     /**
      * Extracts EXIF metadata from the given IFD.
@@ -188,15 +158,15 @@ public class CR2Reader {
         if let offset = ifd.getTag(byId: 0x0111) as? TIFFReader.TagUnsigned,
            let length = ifd.getTag(byId: 0x0117) as? TIFFReader.TagUnsigned {
             let range = Int(offset.value)..<Int(offset.value + length.value)
-            let data = self.tiff.readRange(range)
-            try self.decodeJpegThumb(withJpegData: data)
+            var data = self.tiff.readRange(range)
+            try self.decodeJpegThumb(withJpegData: &data)
         }
         // IFD1 has the `thumbnailOffset` and `thumbnailLength` tags
         else if let offset = ifd.getTag(byId: 0x0201) as? TIFFReader.TagUnsigned,
                 let length = ifd.getTag(byId: 0x0202) as? TIFFReader.TagUnsigned {
             let range = Int(offset.value)..<Int(offset.value + length.value)
-            let data = self.tiff.readRange(range)
-            try self.decodeJpegThumb(withJpegData: data)
+            var data = self.tiff.readRange(range)
+            try self.decodeJpegThumb(withJpegData: &data)
         }
         // unknown JPEG thumbnail
         else {
@@ -207,7 +177,7 @@ public class CR2Reader {
     /**
      * Decodes a JPEG thumbnail from the specified data.
      */
-    private func decodeJpegThumb(withJpegData data: Data) throws {
+    private func decodeJpegThumb(withJpegData data: inout Data) throws {
         // attempt to create an image data provider
         guard let provider = CGDataProvider(data: data as CFData) else {
             throw ThumbError.failedToCreateProvider
@@ -260,11 +230,9 @@ public class CR2Reader {
             throw RawError.missingTag(0x0117)
         }
 
-        let range = Int(offset.value)..<Int(offset.value + length.value)
-        let data = self.tiff.readRange(range)
-
         // try to decompress it
-        try self.decompressRawData(data)
+        try self.decompressRawData(Int(offset.value),
+                                   length: Int(length.value))
 
         // de-slice if needed
         if slices.value[0] != 0 {
@@ -277,15 +245,14 @@ public class CR2Reader {
      *
      * In the CR2 file, raw pixel data is compressed using the JPEG lossless (ITU-T81) algorithm.
      */
-    private func decompressRawData(_ data: Data) throws {
+    private func decompressRawData(_ offset: Int, length: Int) throws {
         // create a decoder and perform decoding
-        self.jpeg = try JPEGDecoder(withData: data)
+        self.jpeg = try JPEGDecoder(withData: &self.data, offset: offset)
         try self.jpeg.decode()
 
         // process the JPEG decoded planes
         for i in 0...3 {
             if let plane = self.jpeg.getPlane(i) {
-                DDLogVerbose("Plane \(i): \(plane.count)")
                 self.image.rawPlanes.append(plane)
             }
         }
@@ -294,7 +261,7 @@ public class CR2Reader {
     // MARK: - Errors
     enum HeaderError: Error {
         /// The Canon RAW header is invalid. ('CR' signature missing)
-        case invalidHeader(fileHeader: Data)
+        case invalidHeader(fileHeader: UInt16)
         /// File version is not supported
         case unsupportedVersion(fileMajor: UInt8, fileMinor: UInt8)
     }

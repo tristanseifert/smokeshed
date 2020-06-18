@@ -33,39 +33,40 @@ class CanonRAWTests: XCTestCase {
 
     // MARK: - Reading tests
     /**
-     * Reads in the `birb.cr2` RAW file.
+     * Reads in the `birb.cr2` RAW file once and ensures the read data matches what we expect.
      */
     func testCr2Birb() throws {
-        let expect = XCTestExpectation(description: "birb.cr2 decoding")
-
-        // create a CR2 decoder
         let url = Bundle(for: type(of: self)).url(forResource: "birb",
                                                   withExtension: "cr2")!
+
         let reader = try CR2Reader(fromUrl: url)
+        let image = try reader.decode()
 
-        self.cancelable = reader.publisher.sink(receiveCompletion: { completion in
-            switch completion {
-                case .finished:
-                    expect.fulfill()
+        DDLogInfo("CR2 image: \(image)")
+        self.saveResults(image)
+    }
 
-                case .failure(let error):
-                    XCTFail("Decoding failed: \(error)")
-            }
+    /**
+     * Reads in the `birb.cr2` RAW file multiple times, gathering timing information.
+     */
+    func testCr2BirbTiming() throws {
+        // decode it
+        measure {
+            var reader: CR2Reader!
 
-            expect.fulfill()
-        }, receiveValue: { image in
-            DDLogInfo("CR2 image: \(image)")
-            self.saveResults(image)
-        })
-
-        // decode it in the background and wait
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.measure {
-                reader.decode()
+            // create a CR2 decoder
+            let url = Bundle(for: type(of: self)).url(forResource: "birb",
+                                                      withExtension: "cr2")!
+            do {
+                reader = try CR2Reader(fromUrl: url)
+                let image = try reader.decode()
+                self.stopMeasuring()
+                DDLogInfo("CR2 image: \(image)")
+//                self.saveResults(image)
+            } catch {
+                XCTAssertNotNil(error, "Failed to decode CR2")
             }
         }
-
-        wait(for: [expect], timeout: 15)
     }
 
     // MARK: - Test Artifacts

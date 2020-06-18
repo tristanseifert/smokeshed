@@ -93,7 +93,6 @@ internal class JPEGFrame: CustomStringConvertible {
         }
 
         // TODO: checking if we read the right amount of data
-        DDLogVerbose("Decoded SoF: \(String(describing: self))")
     }
 
     /**

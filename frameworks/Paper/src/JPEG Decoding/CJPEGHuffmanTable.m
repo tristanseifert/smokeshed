@@ -22,7 +22,6 @@
     self = [super init];
     if (self) {
         self.huff = JPEGHuffmanNew();
-        DDLogVerbose(@"Huffman: %p", self.huff);
         DDAssert(self.huff, @"Failed to allocate Huffman table");
     }
     return self;

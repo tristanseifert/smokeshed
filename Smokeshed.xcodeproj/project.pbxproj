@@ -125,7 +125,6 @@
 		6ABD36F02496F794005F80EE /* forest.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36ED2496F793005F80EE /* forest.tif */; };
 		6ABD36F12496F794005F80EE /* f14.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36EE2496F793005F80EE /* f14.tif */; };
 		6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36F224970644005F80EE /* TIFFTag.swift */; };
-		6ABD36F524971C74005F80EE /* TIFFReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36F424971C74005F80EE /* TIFFReaderTests.swift */; };
 		6ABD36F724971EF3005F80EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36F624971EEF005F80EE /* Cocoa.framework */; };
 		6ABD36FA24972316005F80EE /* birb.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36F924972315005F80EE /* birb.cr2 */; };
 		6ABD36FC24972A79005F80EE /* TIFFReaderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36FB24972A79005F80EE /* TIFFReaderConfig.swift */; };
@@ -1577,7 +1576,6 @@
 				6ABD36FE24973EC2005F80EE /* CanonRAWTests.swift in Sources */,
 				6A7614C42499A57A0043392E /* BitstreamTests.swift in Sources */,
 				6A7614C02499A5340043392E /* Bitstream.swift in Sources */,
-				6ABD36F524971C74005F80EE /* TIFFReaderTests.swift in Sources */,
 				6A7614C92499DDFD0043392E /* BitHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

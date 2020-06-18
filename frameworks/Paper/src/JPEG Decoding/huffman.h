@@ -25,6 +25,8 @@ typedef struct jpeg_huffman_node {
  * Huffman decoding table; this is a thin wrapper around a tree of code words.
  */
 typedef struct jpeg_huffman {
+    /// Reference count
+    size_t refCount;
     /// Root node
     jpeg_huffman_node_t root;
 } jpeg_huffman_t;
@@ -40,6 +42,11 @@ jpeg_huffman_t *JPEGHuffmanNew(void);
  * Releases a previously allocated Huffman table.
  */
 void JPEGHuffmanRelease(jpeg_huffman_t *huff);
+
+/**
+ * Increments the reference count of the table.
+ */
+void JPEGHuffmanRetain(jpeg_huffman_t *huff);
 
 /**
  * Adds a codeword to the Huffman table.

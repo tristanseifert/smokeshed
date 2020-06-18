@@ -22,6 +22,8 @@ extension TIFFReader {
 
         /// File offset of the next IFD, if any.
         internal var nextOff: Int? = nil
+        /// Whether the IFD is a single IFD, e.g. we don't follow the list of IFDs
+        private var isSingle: Bool = false
 
         /// Index of this IFD relative to its parent collection (file or sub-IFD tag)
         private(set) public var index: Int = 0
@@ -39,11 +41,12 @@ extension TIFFReader {
          * Creates a new IFD starting at the provided index in the TIFF file. Errors will be thrown if the
          * IFD could not be read.
          */
-        internal init(inFile: TIFFReader, _ offset: Int, index: Int) throws {
+        internal init(inFile: TIFFReader, _ offset: Int, index: Int, single: Bool) throws {
             // store the file and offset
             self.index = index
             self.file = inFile
             self.headerOff = offset
+            self.isSingle = single
 
             // read the header tags
             try self.readHeader()
@@ -65,14 +68,16 @@ extension TIFFReader {
             self.numTags = self.file!.readEndian(self.headerOff)
 
             // each header is 12 bytes; skip and read next ifd off
-            let toSkip = 12 * Int(self.numTags)
-            let next: UInt32 = self.file!.readEndian(self.headerOff+2+toSkip)
+            if !self.isSingle {
+                let toSkip = 12 * Int(self.numTags)
+                let next: UInt32 = self.file!.readEndian(self.headerOff+2+toSkip)
 
-            if next > self.file!.length {
-                throw DecodeError.invalidNextOff(next)
-            }
-            if next != 0 {
-                self.nextOff = Int(next)
+                if next > self.file!.length {
+                    throw DecodeError.invalidNextOff(next)
+                }
+                if next != 0 {
+                    self.nextOff = Int(next)
+                }
             }
         }
 

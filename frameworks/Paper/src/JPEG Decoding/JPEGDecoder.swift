@@ -18,6 +18,8 @@ import CocoaLumberjackSwift
 internal class JPEGDecoder {
     /// Data object containing the JPEG file data
     private var data: Data
+    /// Start offset
+    private var startOffset: Int = 0
 
     /// Huffman coding
     private var huffman: JPEGHuffman!
@@ -29,14 +31,15 @@ internal class JPEGDecoder {
      * This will validate that the first two bytes of the blob contain the SOI marker, but performs absolutely
      * zero verification beyond that.
      */
-    init(withData data: Data) throws {
+    init(withData data: inout Data, offset: Int) throws {
         self.data = data
+        self.startOffset = offset
 
         // create subcomponents of the decoder
         self.huffman = JPEGHuffman(self)
 
         // try to find the SOI marker
-        let head: UInt16 = self.data.readEndian(0, .big)
+        let head: UInt16 = self.data.readEndian(offset, .big)
         if head != MarkerType.imageStart.rawValue {
             throw FormatError.missingSOI(head)
         }
@@ -49,7 +52,7 @@ internal class JPEGDecoder {
      */
     internal func decode() throws {
         // try to decode each marker
-        var offset: Int? = 0
+        var offset: Int? = self.startOffset
 
         while let i = offset {
             // decode markers by default
@@ -66,8 +69,6 @@ internal class JPEGDecoder {
         guard self.reachedEnd else {
             throw DecodeError.noEndOfImage
         }
-
-        // image was decoded, the bitmap will be stored in the decoder
     }
 
     // MARK: - Markers
@@ -101,8 +102,6 @@ internal class JPEGDecoder {
         guard let type = MarkerType(rawValue: rawMarker) else {
             throw DecodeError.unknownMarker(rawMarker)
         }
-
-        DDLogVerbose("Marker at \(inOff): \(type)")
 
         // decode the marker
         switch type {
@@ -148,8 +147,6 @@ internal class JPEGDecoder {
     // MARK: - Image decompression
     /// Decompressor instance
     private var decompressor: CJPEGDecompressor! = nil
-    /// Output bit planes for each component
-    private var planes: [UInt8: NSData] = [:]
 
     /**
      * Prepares to decode pixel data.
@@ -210,7 +207,6 @@ internal class JPEGDecoder {
             self.isDecoding = false
         }
         if self.decompressor.isDone {
-            DDLogVerbose("Decoding finished at: \(doneOff)")
             self.isDecoding = false
         }
 

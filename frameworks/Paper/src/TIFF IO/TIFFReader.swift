@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 import CocoaLumberjackSwift
 
@@ -30,7 +29,7 @@ public class TIFFReader {
     /**
      * Initializes a TIFF reader with the provided image data and configuration.
      */
-    public init(withData data: Data, _ config: TIFFReaderConfig) throws {
+    public init(withData data: inout Data, _ config: TIFFReaderConfig) throws {
         self.config = config
         self.data = data
 
@@ -38,53 +37,27 @@ public class TIFFReader {
         try self.readHeader()
     }
 
-    /**
-     * Initializes a TIFF reader for reading from the provided URL. The contents are loaded (using memory
-     * mapped IO if available) automatically, and parsed with the specified configuration.
-     */
-    public convenience init(fromUrl url: URL, _ config: TIFFReaderConfig) throws {
-        let data = try Data(contentsOf: url, options: [.mappedIfSafe])
-        try self.init(withData: data, config)
-    }
-
-    /**
-     * Initializes a TIFF reader for reading from the provided URL. The contents are loaded (using memory
-     * mapped IO if available) automatically.
-     */
-    public convenience init(fromUrl url: URL) throws {
-        try self.init(fromUrl: url, TIFFReaderConfig.standard)
-    }
-
     // MARK: External API
     /**
-     * Reads the file, following the chain of IFDs to the end. Each discovered IFD is published to the
-     * publisher. Once this call returns, all IFDs will have been discovered.
+     * Decodes the next IFD. If nil is returned, all IFDs were decoded.
      */
-    public func decode() {
+    public func decode() throws -> IFD? {
         // guard against no IFDs existing
         guard self.firstDir != 0 else {
-            return
+            return nil
         }
 
-        // decode each IFD
-        do {
-            var offset: Int? = Int(self.firstDir)
-
-            while let i = offset {
-                offset = try self.readIfd(from: i)
-            }
-        } catch {
-            return self.publisher.send(completion: .failure(error))
+        // try the next offset
+        guard let offset = self.currentOffset else {
+            return nil
         }
 
-        // if we get here, we completed successfully
-        self.publisher.send(completion: .finished)
+        let next = try self.readIfd(from: offset)
+        self.currentOffset = next.nextOff
+        return next
     }
 
     // MARK: - Decoding
-    /// Publisher for decoded image directories
-    private(set) public var publisher = PassthroughSubject<IFD, Error>()
-
     // MARK: Header
     /**
      * Decodes the header of the file to read endianness and version. This also provides the offset to the
@@ -112,6 +85,10 @@ public class TIFFReader {
         // offset of first IFD
         self.firstDir = self.readEndian(4)
 
+        if self.firstDir != 0 {
+            self.currentOffset = Int(self.firstDir)
+        }
+
         if self.firstDir > self.data.count {
             throw HeaderError.invalidIfdOffset(self.firstDir)
         }
@@ -122,15 +99,14 @@ public class TIFFReader {
      * Decodes the IFD at the given byte offset; the decoded object is published. The offset of the next IFD
      * is returned.
      */
-    private func readIfd(from offset: Int) throws -> Int? {
+    private func readIfd(from offset: Int) throws -> IFD{
         // attempt to create the IFD
-        let ifd = try IFD(inFile: self, offset, index: self.ifds.count)
+        let ifd = try IFD(inFile: self, offset, index: self.ifdIndex, single: false)
         try ifd.decode()
 
-        self.ifds.append(ifd)
-        self.publisher.send(ifd)
+        self.ifdIndex += 1
 
-        return ifd.nextOff
+        return ifd
     }
 
     // MARK: - Reading
@@ -138,9 +114,10 @@ public class TIFFReader {
     private var order: Data.ByteOrder = .little
     /// File offset of the first IFD
     private var firstDir: UInt32 = 0
-
-    /// All IFDs in this file
-    private var ifds: [IFD] = []
+    /// Index of the current IFD
+    private var ifdIndex: Int = 0
+    /// Current decoding offset
+    private var currentOffset: Int? = nil
 
     /**
      * Reads a given type from the internal buffer taking into account endianness.

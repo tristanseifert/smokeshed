@@ -106,7 +106,6 @@ internal class JPEGScan: CustomStringConvertible {
         self.ptTransform = Int((Ahl & 0x0F))
 
         // TODO: checking if we read the right amount of data
-        DDLogVerbose("Decoded SoS: \(String(describing: self))")
     }
 
     /**

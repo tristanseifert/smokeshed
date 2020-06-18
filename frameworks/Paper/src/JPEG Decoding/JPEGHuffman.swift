@@ -23,21 +23,6 @@ class JPEGHuffman {
         self.jpeg = decoder
     }
 
-    // MARK: - Reading
-    /**
-     * Reads a Huffman-encoded value from the bit stream.
-     */
-    internal func decodeValue(fromTable: JPEGDecoder.TableId, _ stream: JPEGBitstream) throws -> UInt8 {
-        // get table
-        guard let table = tables[fromTable] else {
-            throw DecodeError.uninitializedtable(fromTable)
-        }
-
-        // try to decode the value
-        let node = try table.tree.readCode(from: stream)
-        return node.value!
-    }
-
     // MARK: - Marker
     /**
      * Reads Huffman tables out of a DHT marker.
@@ -53,10 +38,10 @@ class JPEGHuffman {
 
         let tableOffset = off + Self.offsetTableStart
         let tableRange = tableOffset..<(tableOffset+tableBytes)
-        let chunk = self.jpeg!.readRange(tableRange)
+        var chunk = self.jpeg!.readRange(tableRange)
 
         // decode tables
-        let tables = try self.tablesFrom(chunk: chunk)
+        let tables = try self.tablesFrom(chunk: &chunk)
         self.tables.merge(tables, uniquingKeysWith: { (_, new) in new })
 
         return (off + 2 + Int(length))
@@ -69,7 +54,7 @@ class JPEGHuffman {
      * This chunk contains all bytes immediately following the length value, up to the number of bytes of
      * payload indicated.
      */
-    internal func tablesFrom(chunk inChunk: Data) throws -> [JPEGDecoder.TableId: Table] {
+    internal func tablesFrom(chunk inChunk: inout Data) throws -> [JPEGDecoder.TableId: Table] {
         var chunk = inChunk
         var tableBytes = chunk.count
 
@@ -77,7 +62,7 @@ class JPEGHuffman {
 
         // read all tables until no more data remains
         while tableBytes > 0 {
-            let ret = try self.readTableChunk(chunk)
+            let ret = try self.readTableChunk(&chunk)
             tables[ret.1] = ret.2
 
             // get the next chunk
@@ -101,7 +86,7 @@ class JPEGHuffman {
      * Reads a single table out the provided data chunk. The total number of bytes consumed is returned as
      * well as a reference to the table.
      */
-    private func readTableChunk(_ chunk: Data) throws -> (Int, JPEGDecoder.TableId, Table) {
+    private func readTableChunk(_ chunk: inout Data) throws -> (Int, JPEGDecoder.TableId, Table) {
         // read table class and destination slot
         let T: UInt8 = chunk.read(Self.offsetT)
 
@@ -167,8 +152,6 @@ class JPEGHuffman {
      * Represents a Huffman table.
      */
     internal class Table: CustomStringConvertible {
-        /// Huffman tree
-        private(set) internal var tree = HuffmanTree<UInt8>()
         /// Huffman tree for C decoder
         private(set) internal var cTree: CJPEGHuffmanTable!
 
@@ -184,14 +167,13 @@ class JPEGHuffman {
          * Adds a new value to the table.
          */
         internal func addValue(length: Int, code: UInt16, _ value: UInt8) {
-            self.tree.add(code: code, bits: length, value)
             self.cTree.addCode(code, length: length, andValue: value)
         }
 
         /// Pretty debug print the table
         var description: String {
             return String(format: "<Huffman table: %@>",
-                          String(describing: self.tree))
+                          String(describing: self.cTree))
         }
     }
 

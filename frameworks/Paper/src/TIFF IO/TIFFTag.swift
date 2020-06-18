@@ -31,7 +31,7 @@ extension TIFFReader {
         private(set) fileprivate var type: TagDataType? = nil
 
         /// Directory containing this tag
-        private(set) internal var directory: TIFFReader.IFD
+        private(set) weak internal var directory: TIFFReader.IFD?
 
         /// Debug description
         public var description: String {
@@ -115,7 +115,7 @@ extension TIFFReader {
                     // untyped byte array
                     case .byteSeq:
                         if cfg.subIfdByteSeqOverrides.contains(id) {
-                            return try TagSubIfd(ifd, fileOffset: off, false)
+                            return try TagSubIfd(ifd, fileOffset: off, false, single: true)
                         } else {
                             return try TagByteSeq(ifd, fileOffset: off)
                         }
@@ -191,7 +191,7 @@ extension TIFFReader {
             // reads the raw bytes
             let start = Int(self.offsetField)
             let end = start + Int(self.count)
-            let bytes = self.directory.file!.readRange(start..<end)
+            let bytes = self.directory!.file!.readRange(start..<end)
 
             // create an ASCII string
             guard let str = String(bytes: bytes, encoding: .ascii) else {
@@ -223,13 +223,13 @@ extension TIFFReader {
         fileprivate func readUnsigned(from offset: Int) -> UInt32 {
             switch self.originalFieldWidth {
                 case .byte:
-                    let v: UInt8 = self.directory.file!.read(offset)
+                    let v: UInt8 = self.directory!.file!.read(offset)
                     return UInt32(v)
                 case .short:
-                    let v: UInt16 = self.directory.file!.readEndian(offset)
+                    let v: UInt16 = self.directory!.file!.readEndian(offset)
                     return UInt32(v)
                 case .long:
-                    let v: UInt32 = self.directory.file!.readEndian(offset)
+                    let v: UInt32 = self.directory!.file!.readEndian(offset)
                     return v
             }
         }
@@ -341,7 +341,7 @@ extension TIFFReader {
         fileprivate func readRational(_ offset: Int) throws -> Fraction {
             var frac = Fraction()
 
-            let f = self.directory.file!
+            let f = self.directory!.file!
 
             frac.numerator = f.readEndian(offset + self.numeratorOffset)
             frac.denominator = f.readEndian(offset + self.denominatorOffset)
@@ -460,14 +460,14 @@ extension TIFFReader {
          * remaining IFDs are discovered by following the "next IFD" pointer in this first object. The count
          * value must match the actual number of IFDs discovered.
          */
-        internal init(_ ifd: IFD, fileOffset off: Int, _ validate: Bool) throws {
+        internal init(_ ifd: IFD, fileOffset off: Int, _ validate: Bool, single: Bool) throws {
             try super.init(ifd, fileOffset: off)
 
             // decode all IFDs, starting with the first one
             var offset: Int? = Int(self.offsetField)
 
             while let i = offset {
-                offset = try self.readIfd(ifd, from: i)
+                offset = try self.readIfd(ifd, from: i, isSingle: single)
             }
 
             // ensure count matches
@@ -480,15 +480,15 @@ extension TIFFReader {
         }
 
         override convenience init(_ ifd: TIFFReader.IFD, fileOffset off: Int) throws {
-            try self.init(ifd, fileOffset: off, true)
+            try self.init(ifd, fileOffset: off, true, single: false)
         }
 
         /**
          * Decodes a single IFD at the given address, and appends it to our values array.
          */
-        private func readIfd(_ parent: IFD, from: Int) throws -> Int? {
+        private func readIfd(_ parent: IFD, from: Int, isSingle: Bool) throws -> Int? {
             // create the IFD
-            let ifd = try IFD(inFile: parent.file!, from, index: self.value.count)
+            let ifd = try IFD(inFile: parent.file!, from, index: self.value.count, single: isSingle)
             try ifd.decode()
 
             self.value.append(ifd)
@@ -527,13 +527,13 @@ extension TIFFReader {
             if self.count > 4 {
                 let start = Int(self.offsetField)
                 let end = start + Int(self.count)
-                self.value = self.directory.file!.readRange(start..<end)
+                self.value = self.directory!.file!.readRange(start..<end)
             }
             // four or less bytes, read directly from the data offset field
             else {
                 let start = Int(self.fileOffset + Self.dataOffset)
                 let end = start + Int(self.count)
-                self.value = self.directory.file!.readRange(start..<end)
+                self.value = self.directory!.file!.readRange(start..<end)
             }
         }
     }

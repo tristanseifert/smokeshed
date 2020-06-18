@@ -38,6 +38,8 @@ jpeg_huffman_t *JPEGHuffmanNew(void) {
 
     memset((void*) out, 0, sizeof(jpeg_huffman_t));
 
+    out->refCount = 1;
+
     // done!
     return out;
 }
@@ -49,13 +51,24 @@ void JPEGHuffmanRelease(jpeg_huffman_t *huff) {
     assert(huff);
 
     // release children
-    for(int i = 0; i < 2; i++) {
-        if(huff->root.children[i]) {
-            ReleaseChildren(huff->root.children[i]);
+    if(--huff->refCount == 0) {
+        for(int i = 0; i < 2; i++) {
+            if(huff->root.children[i]) {
+                ReleaseChildren(huff->root.children[i]);
+            }
         }
-    }
 
-    free(huff);
+        free(huff);
+    }
+}
+
+/**
+ * Increments the reference count of the table.
+ */
+void JPEGHuffmanRetain(jpeg_huffman_t *huff) {
+    assert(huff);
+
+    huff->refCount++;
 }
 
 /**

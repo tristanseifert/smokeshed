@@ -202,6 +202,11 @@ int JPEGDecompressorAddTable(decompressor_t *dec, size_t slot, jpeg_huffman_t *t
     assert(dec);
     assert(slot <= 3);
 
+    if(dec->tables[slot]) {
+        JPEGHuffmanRelease(dec->tables[slot]);
+    }
+    JPEGHuffmanRetain(table);
+
     dec->tables[slot] = table;
 
     return 0;

@@ -34,7 +34,9 @@ class TIFFReaderTests: XCTestCase {
         // create a TIFF reader
         let url = Bundle(for: type(of: self)).url(forResource: "f14",
                                                   withExtension: "tif")!
-        let reader = try TIFFReader(fromUrl: url)
+        let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+
+        let reader = try TIFFReader(withData: data, TIFFReaderConfig.standard)
 
         let cancelable = reader.publisher.sink(receiveCompletion: { completion in
             switch completion {
