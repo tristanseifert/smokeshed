@@ -85,6 +85,14 @@
 		6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */; };
 		6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */; };
 		6A96646A2490833100F757A1 /* SizeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664692490833100F757A1 /* SizeTransformer.swift */; };
+		6A9E827A249AE833004BE66A /* decompress.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8278249AE833004BE66A /* decompress.h */; };
+		6A9E827B249AE833004BE66A /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8279249AE833004BE66A /* decompress.c */; };
+		6A9E827D249AED35004BE66A /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E827C249AED21004BE66A /* huffman.h */; };
+		6A9E827F249AEE52004BE66A /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E827E249AEE52004BE66A /* huffman.c */; };
+		6A9E8283249AF9FB004BE66A /* CJPEGDecompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8281249AF9FB004BE66A /* CJPEGDecompressor.h */; };
+		6A9E8284249AF9FB004BE66A /* CJPEGDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8282249AF9FB004BE66A /* CJPEGDecompressor.m */; };
+		6A9E8287249AFED4004BE66A /* CJPEGHuffmanTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8285249AFED4004BE66A /* CJPEGHuffmanTable.h */; };
+		6A9E8288249AFED4004BE66A /* CJPEGHuffmanTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8286249AFED4004BE66A /* CJPEGHuffmanTable.m */; };
 		6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */; };
 		6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */; };
 		6ABD368224956DA9005F80EE /* LibraryCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */; };
@@ -313,6 +321,16 @@
 		6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItem.swift; path = "app_macos/src/Library View/LibraryCollectionItem.swift"; sourceTree = "<group>"; };
 		6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItemView.swift; path = "app_macos/src/Library View/LibraryCollectionItemView.swift"; sourceTree = "<group>"; };
 		6A9664692490833100F757A1 /* SizeTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SizeTransformer.swift; path = "frameworks/Smokeshop/src/CoreData Store/Transformers/SizeTransformer.swift"; sourceTree = "<group>"; };
+		6A9E8278249AE833004BE66A /* decompress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = decompress.h; path = "frameworks/Paper/src/JPEG Decoding/decompress.h"; sourceTree = "<group>"; };
+		6A9E8279249AE833004BE66A /* decompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = decompress.c; path = "frameworks/Paper/src/JPEG Decoding/decompress.c"; sourceTree = "<group>"; };
+		6A9E827C249AED21004BE66A /* huffman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "frameworks/Paper/src/JPEG Decoding/huffman.h"; sourceTree = "<group>"; };
+		6A9E827E249AEE52004BE66A /* huffman.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; name = huffman.c; path = "frameworks/Paper/src/JPEG Decoding/huffman.c"; sourceTree = "<group>"; };
+		6A9E8280249AF1E9004BE66A /* SwiftBridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SwiftBridging.h; path = frameworks/Paper/src/SwiftBridging.h; sourceTree = "<group>"; };
+		6A9E8281249AF9FB004BE66A /* CJPEGDecompressor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CJPEGDecompressor.h; path = "frameworks/Paper/src/JPEG Decoding/CJPEGDecompressor.h"; sourceTree = "<group>"; };
+		6A9E8282249AF9FB004BE66A /* CJPEGDecompressor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CJPEGDecompressor.m; path = "frameworks/Paper/src/JPEG Decoding/CJPEGDecompressor.m"; sourceTree = "<group>"; };
+		6A9E8285249AFED4004BE66A /* CJPEGHuffmanTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CJPEGHuffmanTable.h; path = "frameworks/Paper/src/JPEG Decoding/CJPEGHuffmanTable.h"; sourceTree = "<group>"; };
+		6A9E8286249AFED4004BE66A /* CJPEGHuffmanTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CJPEGHuffmanTable.m; path = "frameworks/Paper/src/JPEG Decoding/CJPEGHuffmanTable.m"; sourceTree = "<group>"; };
+		6A9E828A249B0018004BE66A /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = frameworks/Paper/src/Logging.h; sourceTree = "<group>"; };
 		6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InspectorWindowController.swift; path = app_macos/src/Inspectors/InspectorWindowController.swift; sourceTree = "<group>"; };
 		6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InspectorWindowController.xib; path = app_macos/src/Inspectors/InspectorWindowController.xib; sourceTree = "<group>"; };
 		6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionView.swift; path = "app_macos/src/Library View/LibraryCollectionView.swift"; sourceTree = "<group>"; };
@@ -895,6 +913,22 @@
 			name = "Value Transformers";
 			sourceTree = "<group>";
 		};
+		6A9E8277249AE7EF004BE66A /* C Decompressor */ = {
+			isa = PBXGroup;
+			children = (
+				6A9E8278249AE833004BE66A /* decompress.h */,
+				6A9E8279249AE833004BE66A /* decompress.c */,
+				6A9E827C249AED21004BE66A /* huffman.h */,
+				6A9E827E249AEE52004BE66A /* huffman.c */,
+				6A9E8281249AF9FB004BE66A /* CJPEGDecompressor.h */,
+				6A9E8282249AF9FB004BE66A /* CJPEGDecompressor.m */,
+				6A9E8285249AFED4004BE66A /* CJPEGHuffmanTable.h */,
+				6A9E8286249AFED4004BE66A /* CJPEGHuffmanTable.m */,
+				6A9E828A249B0018004BE66A /* Logging.h */,
+			);
+			name = "C Decompressor";
+			sourceTree = "<group>";
+		};
 		6ABD367C2494C508005F80EE /* Inspectors */ = {
 			isa = PBXGroup;
 			children = (
@@ -962,6 +996,7 @@
 			isa = PBXGroup;
 			children = (
 				6ABD36C22496D251005F80EE /* Info.plist */,
+				6A9E8280249AF1E9004BE66A /* SwiftBridging.h */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1041,6 +1076,7 @@
 				6A6FB4682498A3830007E450 /* JPEGFrame.swift */,
 				6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */,
 				6A7614C52499AE590043392E /* JPEGBitstream.swift */,
+				6A9E8277249AE7EF004BE66A /* C Decompressor */,
 			);
 			name = "JPEG Decoding";
 			sourceTree = "<group>";
@@ -1117,6 +1153,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A9E8283249AF9FB004BE66A /* CJPEGDecompressor.h in Headers */,
+				6A9E827D249AED35004BE66A /* huffman.h in Headers */,
+				6A9E827A249AE833004BE66A /* decompress.h in Headers */,
+				6A9E8287249AFED4004BE66A /* CJPEGHuffmanTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1508,16 +1548,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				6ABD370124974362005F80EE /* CR2Reader.swift in Sources */,
+				6A9E827F249AEE52004BE66A /* huffman.c in Sources */,
 				6ABF946724986FD9002DBA91 /* JPEGHuffman.swift in Sources */,
 				6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */,
 				6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */,
+				6A9E827B249AE833004BE66A /* decompress.c in Sources */,
 				6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */,
 				6A7614BF2499A1020043392E /* Bitstream.swift in Sources */,
+				6A9E8288249AFED4004BE66A /* CJPEGHuffmanTable.m in Sources */,
 				6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */,
 				6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */,
 				6ABF946524986A84002DBA91 /* JPEGMarker.swift in Sources */,
 				6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */,
 				6ABF946024986032002DBA91 /* JPEGDecoder.swift in Sources */,
+				6A9E8284249AF9FB004BE66A /* CJPEGDecompressor.m in Sources */,
 				6ABF9463249861CA002DBA91 /* Data+ReadHelpers.swift in Sources */,
 				6ABD36FC24972A79005F80EE /* TIFFReaderConfig.swift in Sources */,
 				6A7614C82499B53A0043392E /* BitHelpers.swift in Sources */,
@@ -2461,6 +2505,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2487,6 +2532,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/frameworks/Paper/src/SwiftBridging.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2544,6 +2590,7 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -2565,6 +2612,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/frameworks/Paper/src/SwiftBridging.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

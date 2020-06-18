@@ -65,7 +65,7 @@ class CanonRAWTests: XCTestCase {
             }
         }
 
-        wait(for: [expect], timeout: 600)
+        wait(for: [expect], timeout: 15)
     }
 
     // MARK: - Test Artifacts
@@ -85,12 +85,8 @@ class CanonRAWTests: XCTestCase {
         // also, save each plane
         var planeIdx = 0
 
-        for plane in image.rawPlanes {
-            let data = plane.withUnsafeBytes({ ptr -> Data in
-                return Data(ptr)
-            })
-
-            let attach = XCTAttachment(data: data)
+        for planeData in image.rawPlanes {
+            let attach = XCTAttachment(data: planeData)
             attach.name = String(format: "raw_plane\(planeIdx)")
             attach.lifetime = .keepAlways
             self.add(attach)

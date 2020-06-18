@@ -146,16 +146,10 @@ internal class JPEGDecoder {
     }
 
     // MARK: - Image decompression
+    /// Decompressor instance
+    private var decompressor: CJPEGDecompressor! = nil
     /// Output bit planes for each component
-    private var planes: [UInt8: [UInt16]] = [:]
-
-    /// Line being decompressed
-    private var currentLine: Int = 0
-    /// Column being decompressed
-    private var currentSample: Int = 0
-
-    /// Default value for predictor (1/2 full scale)
-    private var predictDefault: UInt16 = 0
+    private var planes: [UInt8: NSData] = [:]
 
     /**
      * Prepares to decode pixel data.
@@ -180,21 +174,12 @@ internal class JPEGDecoder {
             throw DecompressError.unsupportedPredictor(scan.predictor)
         }
 
-        // great, allocate the output bit planes
-        let numPixels = Int(frame.samplesPerLine) * Int(frame.numLines)
-
-        for component in self.currentFrame!.components {
-            let data = [UInt16](repeating: 0, count: numPixels)
-            self.planes[component.id] = data
-        }
-
-        // clear the row/line counters
-        self.currentLine = 0
-        self.currentSample = 0
-
-        // default prediction result
-        self.predictDefault = UInt16(1 << (Int(frame.precision) - 1))
-        DDLogVerbose("Default predictor value: \(self.predictDefault)")
+        // allocate decompressor
+        self.decompressor = CJPEGDecompressor(cols: UInt(frame.samplesPerLine),
+                                              rows: UInt(frame.numLines),
+                                              precision: UInt(frame.precision),
+                                              numPlanes: frame.components.count)
+        self.decompressor.input = self.data
     }
 
     /**
@@ -203,120 +188,42 @@ internal class JPEGDecoder {
      * - Returns: Offset of next marker, if not EoF
      */
     private func decompress(startingAt: Int) throws -> Int? {
-        // decompress data from the stream
-        let stream = JPEGBitstream(withData: self.data.advanced(by: startingAt))
+        var foundMarker: ObjCBool = false
 
-        do {
-            try self.actuallyDecompress(stream)
+        // load Huffman tables
+        for pair in self.huffman.tables {
+            self.decompressor.write(pair.value.cTree,
+                                    intoSlot: UInt(pair.key.rawValue))
         }
-        // failed to read a Huffman code; probably found a marker
-        catch HuffmanTree<UInt8>.TreeErrors.bitReadFailed {
+
+        var tableIdx: UInt = 0
+        for component in self.currentScan!.components {
+            self.decompressor.setTableIndex(UInt(component.dcTable.rawValue),
+                                            forPlane: tableIdx)
+            tableIdx += 1
+        }
+
+        // decompress until a marker or end of image is encountered
+        let doneOff = self.decompressor.decompress(from: startingAt, didFindMarker: &foundMarker)
+
+        if foundMarker.boolValue {
             self.isDecoding = false
         }
-        // found a marker
-        catch DecompressError.encounteredMarker {
+        if self.decompressor.isDone {
+            DDLogVerbose("Decoding finished at: \(doneOff)")
             self.isDecoding = false
         }
 
-        // return input offset plus the number of bytes read
-        return (startingAt + stream.rdOffset)
-    }
-
-    /**
-     * Inner decompression loop
-     */
-    private func actuallyDecompress(_ stream: JPEGBitstream) throws {
-        guard let frame = self.currentFrame, let scan = self.currentScan else {
-            throw DecompressError.invalidState
-        }
-
-        // read all lines
-        while self.currentLine < frame.numLines {
-            // offset into the current row in the plane
-            let rowOff = self.currentLine * Int(frame.samplesPerLine)
-
-            // read all samples in each line
-            while self.currentSample < frame.samplesPerLine {
-                // offset into the current column
-                let off = rowOff + self.currentSample
-
-                // read data for each component
-                for c in scan.components {
-                    // read the Huffman encoded bit length
-                    let bits = Int(try self.huffman.decodeValue(fromTable: c.dcTable, stream))
-
-                    // then, read that amount of data and convert to signed int
-                    guard let rawDiff = stream.readString(bits) else {
-                        throw DecompressError.encounteredMarker
-                    }
-
-                    var delta = 0
-
-                    if (Int(rawDiff) & (1 << (bits - 1))) != 0 {
-                        delta = Int(rawDiff)
-                    } else {
-                        // negative value is the bitwise inverse
-                        var inverse = ~UInt16(rawDiff)
-                        inverse = inverse & Self.deltaMask[bits]
-                        delta = -Int(inverse)
-                    }
-
-                    // shove it into the Predictor™
-                    let predicted = self.predict(plane: c.inComponent,
-                                                 withDelta: delta,
-                                                 deltaBits: bits,
-                                                 currentOffset: off)
-
-                    // store the value
-                    self.planes[c.inComponent]![off] = predicted
-                }
-
-                // move on to the next sample
-                self.currentSample += 1
-            }
-
-            // end of column
-            self.currentSample = 0
-            self.currentLine += 1
-        }
-
-        // finished decoding
-        self.isDecoding = false
-    }
-
-    /**
-     * Given a delta value read from the image, predicts the actual output value for the sample at the current
-     * location.
-     *
-     * Currently, this just implements predictor algorithm 1
-     */
-    private func predict(plane: UInt8, withDelta delta: Int, deltaBits bits: Int, currentOffset off: Int) -> UInt16 {
-        var last: UInt16
-
-        // if col = 0, use default value for last sample
-        if self.currentSample == 0 {
-            last = self.predictDefault
-        }
-        // otherwise, read one sample to the left
-        else {
-            last = self.planes[plane]![(off - 1)]
-        }
-
-        return UInt16(Int(last) + delta)
+        // return where the decompressor finished
+        return doneOff
     }
 
     // MARK: - Accessing
     /**
      * Returns the plane for the component with the given index.
      */
-    public func getPlane(_ index: Int) -> [UInt16]? {
-        // get the plane's identifier
-        guard let id = self.currentFrame?.components[index].id else {
-            return nil
-        }
-
-        // return the plane itself
-        return self.planes[id]
+    public func getPlane(_ index: Int) -> Data? {
+        return self.decompressor.getPlane(index) as Data
     }
 
     // MARK: - IO
@@ -340,18 +247,6 @@ internal class JPEGDecoder {
     internal func readRange(_ range: Range<Data.Index>) -> Data {
         return self.data.readRange(range)
     }
-
-    // MARK: - Constants
-    /**
-     * Look up table containing a mask for a 16-bit value where the lowest n bits are kept.
-     */
-    private static let deltaMask: [UInt16] = [
-        0x0000,
-        0x0001, 0x0003, 0x0007, 0x000F,
-        0x001F, 0x003F, 0x007F, 0x00FF,
-        0x01FF, 0x03FF, 0x07FF, 0x0FFF,
-        0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
-    ]
 
     // MARK: - Types
     /**

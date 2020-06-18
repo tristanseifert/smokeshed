@@ -13,7 +13,7 @@ class JPEGHuffman {
     /// Decoder that is using the decoder
     private weak var jpeg: JPEGDecoder?
     /// Huffman table slots 0-3
-    private var tables: [JPEGDecoder.TableId: Table] = [:]
+    private(set) internal var tables: [JPEGDecoder.TableId: Table] = [:]
 
     // MARK: - Initialization
     /**
@@ -169,18 +169,23 @@ class JPEGHuffman {
     internal class Table: CustomStringConvertible {
         /// Huffman tree
         private(set) internal var tree = HuffmanTree<UInt8>()
+        /// Huffman tree for C decoder
+        private(set) internal var cTree: CJPEGHuffmanTable!
 
         /**
          * Creates an uninitialized table. You must call `addValue(length:code:_:)` to populate
          * the table.
          */
-        init() { }
+        init() {
+            self.cTree = CJPEGHuffmanTable()
+        }
 
         /**
          * Adds a new value to the table.
          */
         internal func addValue(length: Int, code: UInt16, _ value: UInt8) {
             self.tree.add(code: code, bits: length, value)
+            self.cTree.addCode(code, length: length, andValue: value)
         }
 
         /// Pretty debug print the table
