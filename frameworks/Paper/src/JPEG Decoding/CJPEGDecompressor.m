@@ -56,6 +56,16 @@
 }
 
 /**
+ * Sets the predictor to use when decoding the image.
+ */
+- (void) setPredictor:(NSInteger) predictor {
+    _predictor = predictor;
+
+    int err = JPEGDecompressorSetPredictionAlgo(self.dec, predictor);
+    DDAssert(err == 0, @"Failed to set predictor: %d", err);
+}
+
+/**
  * Writes a Huffman compression table into the correct slot.
  */
 - (void) writeTable:(CJPEGHuffmanTable *) table

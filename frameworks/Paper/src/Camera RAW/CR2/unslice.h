@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 // forward declarations
-typedef struct decompressor decompressor_t;
+typedef struct jpeg_decompressor jpeg_decompressor_t;
 
 /**
  * Performs unslicing for the provided image.
@@ -19,7 +19,7 @@ typedef struct decompressor decompressor_t;
  * This is only intended to be used for regular RAW images, wherein the
  * horizontal and vertical sampling factors are 1.
  */
-int CR2Unslice(decompressor_t *jpeg,
+int CR2Unslice(jpeg_decompressor_t *jpeg,
                uint16_t *outPlane, uint16_t *slices,
                size_t sensorWidth, size_t sensorHeight);
 

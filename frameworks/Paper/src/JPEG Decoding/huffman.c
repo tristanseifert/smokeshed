@@ -36,7 +36,8 @@ jpeg_huffman_t *JPEGHuffmanNew(void) {
     jpeg_huffman_t *out = malloc(sizeof(jpeg_huffman_t));
     if(!out) return NULL;
 
-    memset((void*) out, 0, sizeof(jpeg_huffman_t));
+    memset((void*) &out->root, 0, sizeof(jpeg_huffman_node_t));
+    memset(out->table, 0xFF, 0x10000 * sizeof(uint16_t));
 
     out->refCount = 1;
 
@@ -47,7 +48,7 @@ jpeg_huffman_t *JPEGHuffmanNew(void) {
 /**
  * Releases a previously allocated Huffman table.
  */
-void JPEGHuffmanRelease(jpeg_huffman_t *huff) {
+jpeg_huffman_t *JPEGHuffmanRelease(jpeg_huffman_t *huff) {
     assert(huff);
 
     // release children
@@ -59,16 +60,20 @@ void JPEGHuffmanRelease(jpeg_huffman_t *huff) {
         }
 
         free(huff);
+        return NULL;
     }
+
+    return huff;
 }
 
 /**
  * Increments the reference count of the table.
  */
-void JPEGHuffmanRetain(jpeg_huffman_t *huff) {
+jpeg_huffman_t *JPEGHuffmanRetain(jpeg_huffman_t *huff) {
     assert(huff);
 
     huff->refCount++;
+    return huff;
 }
 
 /**
@@ -144,6 +149,45 @@ int JPEGHuffmanAdd(jpeg_huffman_t *huff, uint16_t inCode, size_t bits, uint8_t v
         }
     }
 
-    // successfully added the child node?
+    // insert it into the table
+    size_t numFillBits = (16 - bits);
+    uint16_t shiftedCode = inCode << numFillBits;
+
+//    printf("Right aligned 0x%04x: 0x%04x (num bits: %zu)\n", inCode, shiftedCode, numFillBits);
+
+    for(size_t i = 0; i < (1 << numFillBits); i++) {
+        uint16_t index = shiftedCode | i;
+
+        if(huff->table[index] != 0xFFFF) {
+            printf("Value at index 0x%04x (code 0x%04x, %zu bits): 0x%04x\n",
+                   index, code, bits, huff->table[index]);
+            return -1;
+        }
+
+        huff->table[index] = (bits << 8) | value;
+    }
+
+    // successfully added
     return 0;
+}
+
+/**
+ * Gets the associated value for the Huffman code in the provided word. It's expected the most
+ * significant bit of the code is matched to the MSB of the word.
+ */
+bool JPEGHuffmanFind(jpeg_huffman_t *huff, uint16_t code, size_t *bitsRead, uint8_t *value) {
+    assert(huff);
+
+    // read table entry
+    uint16_t entry = huff->table[code];
+
+    // we found something
+    if(entry != 0xFFFF) {
+        if(bitsRead) *bitsRead = (entry >> 8);
+        if(value) *value = (entry & 0x00FF);
+        return true;
+    }
+
+    // failed to find the code
+    return false;
 }

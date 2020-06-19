@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface CJPEGDecompressor : NSObject
 
+/// Prediction algorithm to use for decompression
+@property (nonatomic) NSInteger predictor;
 /// JPEG input data
 @property (nonatomic) NSData *input;
 /// Whether decoder is finished

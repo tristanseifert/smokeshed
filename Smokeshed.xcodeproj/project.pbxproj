@@ -82,7 +82,7 @@
 		6A961B83249C569700FE4D5E /* CR2Unslicer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B81249C569700FE4D5E /* CR2Unslicer.h */; };
 		6A961B84249C569700FE4D5E /* CR2Unslicer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A961B82249C569700FE4D5E /* CR2Unslicer.m */; };
 		6A961B87249C5A8100FE4D5E /* unslice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B85249C5A8100FE4D5E /* unslice.h */; };
-		6A961B88249C5A8100FE4D5E /* unslice.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A961B86249C5A8100FE4D5E /* unslice.c */; };
+		6A961B88249C5A8100FE4D5E /* unslice.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A961B86249C5A8100FE4D5E /* unslice.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6A961B8B249C5F8E00FE4D5E /* CJPEGDecompressor+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B89249C5F8D00FE4D5E /* CJPEGDecompressor+Private.h */; };
 		6A961B8F249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B8D249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h */; };
 		6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C27248F191E0088E1DB /* Library View.xcassets */; };
@@ -93,9 +93,9 @@
 		6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */; };
 		6A96646A2490833100F757A1 /* SizeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664692490833100F757A1 /* SizeTransformer.swift */; };
 		6A9E827A249AE833004BE66A /* decompress.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8278249AE833004BE66A /* decompress.h */; };
-		6A9E827B249AE833004BE66A /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8279249AE833004BE66A /* decompress.c */; };
+		6A9E827B249AE833004BE66A /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8279249AE833004BE66A /* decompress.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6A9E827D249AED35004BE66A /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E827C249AED21004BE66A /* huffman.h */; };
-		6A9E827F249AEE52004BE66A /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E827E249AEE52004BE66A /* huffman.c */; };
+		6A9E827F249AEE52004BE66A /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E827E249AEE52004BE66A /* huffman.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6A9E8283249AF9FB004BE66A /* CJPEGDecompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8281249AF9FB004BE66A /* CJPEGDecompressor.h */; };
 		6A9E8284249AF9FB004BE66A /* CJPEGDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8282249AF9FB004BE66A /* CJPEGDecompressor.m */; };
 		6A9E8287249AFED4004BE66A /* CJPEGHuffmanTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8285249AFED4004BE66A /* CJPEGHuffmanTable.h */; };

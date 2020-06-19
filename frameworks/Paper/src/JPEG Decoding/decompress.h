@@ -18,7 +18,7 @@ typedef struct jpeg_huffman jpeg_huffman_t;
 /**
  * Decompressor state
  */
-typedef struct decompressor {
+typedef struct jpeg_decompressor {
     /// Reference count; deallocated when this is decremented to 0
     size_t refCount;
 
@@ -72,52 +72,57 @@ typedef struct decompressor {
     uint8_t predictionAlgorithm;
     // Default value for predictor
     uint16_t predictorDefault;
-} decompressor_t;
+} jpeg_decompressor_t;
 
 /**
  * Allocates a new decompressor state object with the given image size.
  */
-decompressor_t *JPEGDecompressorNew(size_t cols, size_t rows, uint8_t bits, size_t components);
+jpeg_decompressor_t *JPEGDecompressorNew(size_t cols, size_t rows, uint8_t bits, size_t components);
 
 /**
  * Deallocates a previously allocated JPEG decompressor. Internal state (such as Huffman tables) are
  * released automatically, but bit planes are not.
  */
-decompressor_t * JPEGDecompressorRelease(decompressor_t *dec);
+jpeg_decompressor_t * JPEGDecompressorRelease(jpeg_decompressor_t *dec);
 
 
 
 /**
  * Sets the location and size of the input buffer the decompressor reads from.
  */
-int JPEGDecompressorSetInput(decompressor_t *dec, const void *buffer, size_t length);
+int JPEGDecompressorSetInput(jpeg_decompressor_t *dec, const void *buffer, size_t length);
 
 /**
  * Installs a Huffman table into the given slot.
  */
-int JPEGDecompressorAddTable(decompressor_t *dec, size_t slot, jpeg_huffman_t *table);
+int JPEGDecompressorAddTable(jpeg_decompressor_t *dec, size_t slot, jpeg_huffman_t *table);
 
 /**
  * Sets the output bit plane; it will contain the resulting image with each component interleaved.
  */
-int JPEGDecompressorSetOutput(decompressor_t *dec, void *plane, size_t length);
+int JPEGDecompressorSetOutput(jpeg_decompressor_t *dec, void *plane, size_t length);
 
 /**
  * Sets the table index to use for decoding a particular plane.
  */
-int JPEGDecompressorSetTableForPlane(decompressor_t *dec, size_t plane, size_t table);
+int JPEGDecompressorSetTableForPlane(jpeg_decompressor_t *dec, size_t plane, size_t table);
+
+/**
+ * Sets the prediction algorithm to use.
+ */
+int JPEGDecompressorSetPredictionAlgo(jpeg_decompressor_t *dec, uint8_t algorithm);
 
 
 /**
  * Indicate whether the decompressor has written data for every sample.
  */
-bool JPEGDecompressorIsDone(decompressor_t *dec);
+bool JPEGDecompressorIsDone(jpeg_decompressor_t *dec);
 
 
 /**
  * Decompresses image data from the given offset until either the end of the data is reached, or a marker
  * is discovered.
  */
-size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMarker);
+size_t JPEGDecompressorGo(jpeg_decompressor_t *dec, size_t offset, bool *outFoundMarker);
 
 #endif /* PAPER_JPEG_DECOMPRESS_H */

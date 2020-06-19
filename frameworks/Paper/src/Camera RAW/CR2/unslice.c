@@ -16,7 +16,7 @@
 /**
  * Unslicification
  */
-int CR2Unslice(decompressor_t *jpeg,
+int CR2Unslice(jpeg_decompressor_t *jpeg,
                uint16_t *outPlane, uint16_t *slices,
                size_t sensorWidth, size_t sensorHeight) {
     uint16_t temp;

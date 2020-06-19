@@ -50,7 +50,7 @@
     int err;
 
     // get input pointers and slice info
-    decompressor_t *dec = self.input.dec;
+    jpeg_decompressor_t *dec = self.input.dec;
 
     uint16_t slices[3] = {0, 0, 0};
     for(NSUInteger i = 0; i < 3; i++) {

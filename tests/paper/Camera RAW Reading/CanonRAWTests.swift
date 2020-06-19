@@ -62,7 +62,6 @@ class CanonRAWTests: XCTestCase {
                 let image = try reader.decode()
                 self.stopMeasuring()
                 DDLogInfo("CR2 image: \(image)")
-//                self.saveResults(image)
             } catch {
                 XCTAssertNotNil(error, "Failed to decode CR2")
             }

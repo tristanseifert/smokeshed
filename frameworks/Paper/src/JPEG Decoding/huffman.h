@@ -9,6 +9,7 @@
 #define JPEG_HUFFMAN_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * Single node in a Huffman tree
@@ -29,6 +30,8 @@ typedef struct jpeg_huffman {
     size_t refCount;
     /// Root node
     jpeg_huffman_node_t root;
+    /// Symbol table: 0xFFFF means invalid
+    uint16_t table[0x10000];
 } jpeg_huffman_t;
 
 
@@ -41,16 +44,22 @@ jpeg_huffman_t *JPEGHuffmanNew(void);
 /**
  * Releases a previously allocated Huffman table.
  */
-void JPEGHuffmanRelease(jpeg_huffman_t *huff);
+jpeg_huffman_t *JPEGHuffmanRelease(jpeg_huffman_t *huff);
 
 /**
  * Increments the reference count of the table.
  */
-void JPEGHuffmanRetain(jpeg_huffman_t *huff);
+jpeg_huffman_t *JPEGHuffmanRetain(jpeg_huffman_t *huff);
 
 /**
  * Adds a codeword to the Huffman table.
  */
 int JPEGHuffmanAdd(jpeg_huffman_t *huff, uint16_t code, size_t bits, uint8_t value);
+
+/**
+ * Gets the associated value for the Huffman code in the provided word. It's expected the most
+ * significant bit of the code is matched to the MSB of the word.
+ */
+bool JPEGHuffmanFind(jpeg_huffman_t *huff, uint16_t code, size_t *bitsRead, uint8_t *value);
 
 #endif /* JPEG_HUFFMAN_H */

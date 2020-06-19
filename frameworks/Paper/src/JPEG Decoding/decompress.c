@@ -15,16 +15,23 @@
 #include <string.h>
 #include <assert.h>
 
-static uint8_t BitstreamNextByte(decompressor_t *dec, bool *foundMarker);
-static void BitstreamSeek(decompressor_t *dec, size_t offset);
-static uint64_t BitstreamPeek(decompressor_t *dec, size_t count, bool *foundMarker);
-static int BitstreamConsume(decompressor_t *dec, size_t count);
-static uint64_t BitstreamGet(decompressor_t *dec, size_t count, bool *foundMarker);
+static uint8_t BitstreamNextByte(jpeg_decompressor_t *dec, bool *foundMarker);
+static void BitstreamSeek(jpeg_decompressor_t *dec, size_t offset);
+static uint64_t BitstreamPeek(jpeg_decompressor_t *dec, size_t count, bool *foundMarker);
+static int BitstreamConsume(jpeg_decompressor_t *dec, size_t count);
+static uint64_t BitstreamGet(jpeg_decompressor_t *dec, size_t count, bool *foundMarker);
 
-static uint16_t Predict1(decompressor_t *dec, int component, int delta, size_t bufferOffset);
+static uint16_t Predict(jpeg_decompressor_t *dec, int component, int delta, size_t bufferOffset);
+static uint16_t PredictorAlgo1(jpeg_decompressor_t *dec, int component, int delta, size_t bufferOffset);
 
-static uint8_t ReadCode(decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker);
+static uint8_t ReadCodeFast(jpeg_decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker);
+static uint8_t ReadCode(jpeg_decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker);
 
+// MARK: - Macros
+/// Does the value contain a 0 byte anywhere?
+#define haszero(v) (((v) - 0x01010101UL) & ~(v) & 0x80808080UL)
+/// Whether the value n occurrs anywhere inside x
+#define hasvalue(x,n) (haszero((x) ^ (~0UL/255 * (n))))
 
 // MARK: - Constants
 /**
@@ -43,7 +50,7 @@ static const uint16_t kDeltaMask[17] = {
 /**
  * Reads the next byte out of the buffer.
  */
-static uint8_t BitstreamNextByte(decompressor_t *dec, bool *foundMarker) {
+static uint8_t BitstreamNextByte(jpeg_decompressor_t *dec, bool *foundMarker) {
     // are we at the end of the buffer?
     if ((((void*) dec->readPtr) - dec->inBuf) >= dec->inBufSz) {
         return 0x00;
@@ -75,7 +82,7 @@ static uint8_t BitstreamNextByte(decompressor_t *dec, bool *foundMarker) {
 /**
  * Seeks the bitstream to the given byte boundary in the input buffer.
  */
-static void BitstreamSeek(decompressor_t *dec, size_t offset) {
+static void BitstreamSeek(jpeg_decompressor_t *dec, size_t offset) {
     assert(offset <= dec->inBufSz);
 
     // set the read ptr
@@ -86,9 +93,44 @@ static void BitstreamSeek(decompressor_t *dec, size_t offset) {
 }
 
 /**
+ * Attempts to prefetch 4 bytes into the bitstream buffer.
+ *
+ * Unlike other methods, we simply ignore finding a marker and leave that to the next invocation of
+ * the get method.
+ */
+static void BitstreamPrefetch4(jpeg_decompressor_t *dec) {
+    // validate state
+    assert(dec);
+
+    // bail if there's not space for 32 bits
+    if(dec->bitCount > 31) {
+        return;
+    }
+    // there must be at least 4 bytes left in the file
+    if ((((void*) dec->readPtr) - dec->inBuf) >= (dec->inBufSz - 4)) {
+        return;
+    }
+
+    // read 4 bytes and byteswap to big endian
+    uint32_t read = __builtin_bswap32(*((uint32_t *) dec->readPtr));
+
+    // it musn't contain 0xFF anywhere
+    if(hasvalue(read, 0xFF)) {
+        return;
+    }
+
+    // insert it into the buffer
+    dec->bitBuf |= ((uint64_t) read) << (32 - dec->bitCount);
+    dec->bitCount += 32;
+
+    dec->readPtr += 4;
+    dec->numBitBufReads += 4;
+}
+
+/**
  * Peeks at the next n bits.
  */
-static uint64_t BitstreamPeek(decompressor_t *dec, size_t count, bool *foundMarker) {
+static uint64_t BitstreamPeek(jpeg_decompressor_t *dec, size_t count, bool *foundMarker) {
     // validate state
     assert(dec);
     assert(count >= 1 && count <= 57);
@@ -109,7 +151,7 @@ static uint64_t BitstreamPeek(decompressor_t *dec, size_t count, bool *foundMark
 /**
  * Consumes the given number of bits.
  */
-static int BitstreamConsume(decompressor_t *dec, size_t count) {
+static int BitstreamConsume(jpeg_decompressor_t *dec, size_t count) {
     dec->bitBuf <<= count;
     dec->bitCount -= count;
 
@@ -121,9 +163,7 @@ static int BitstreamConsume(decompressor_t *dec, size_t count) {
  *
  * If reading should be aborted, all 1's is returned. The maximum count is 16 bits.
  */
-static uint64_t BitstreamGet(decompressor_t *dec, size_t count, bool *foundMarker) {
-    assert(count <= 16);
-
+static uint64_t BitstreamGet(jpeg_decompressor_t *dec, size_t count, bool *foundMarker) {
     uint64_t result = BitstreamPeek(dec, count, foundMarker);
     BitstreamConsume(dec, count);
     return result;
@@ -133,12 +173,12 @@ static uint64_t BitstreamGet(decompressor_t *dec, size_t count, bool *foundMarke
 /**
  * Allocates a new decompressor state object with the given image size.
  */
-decompressor_t *JPEGDecompressorNew(size_t cols, size_t rows, uint8_t bits, size_t components) {
+jpeg_decompressor_t *JPEGDecompressorNew(size_t cols, size_t rows, uint8_t bits, size_t components) {
     // allocate it
-    decompressor_t *out = malloc(sizeof(decompressor_t));
+    jpeg_decompressor_t *out = malloc(sizeof(jpeg_decompressor_t));
     if(!out) return NULL;
 
-    memset(out, 0, sizeof(decompressor_t));
+    memset(out, 0, sizeof(jpeg_decompressor_t));
 
     // set up initial values
     out->refCount = 1;
@@ -162,7 +202,7 @@ decompressor_t *JPEGDecompressorNew(size_t cols, size_t rows, uint8_t bits, size
  *
  * @return Pointer to decompressor, or NULL if it was deallocated
  */
-decompressor_t * JPEGDecompressorRelease(decompressor_t *dec) {
+jpeg_decompressor_t * JPEGDecompressorRelease(jpeg_decompressor_t *dec) {
     if(--dec->refCount == 0) {
         // release tables
         for (int i = 0; i < 4; i++) {
@@ -182,7 +222,7 @@ decompressor_t * JPEGDecompressorRelease(decompressor_t *dec) {
 /**
  * Sets the location and size of the input buffer the decompressor reads from.
  */
-int JPEGDecompressorSetInput(decompressor_t *dec, const void *buffer, size_t length) {
+int JPEGDecompressorSetInput(jpeg_decompressor_t *dec, const void *buffer, size_t length) {
     assert(dec);
 
     dec->inBuf = buffer;
@@ -198,7 +238,7 @@ int JPEGDecompressorSetInput(decompressor_t *dec, const void *buffer, size_t len
 /**
  * Installs a Huffman table into the given slot.
  */
-int JPEGDecompressorAddTable(decompressor_t *dec, size_t slot, jpeg_huffman_t *table) {
+int JPEGDecompressorAddTable(jpeg_decompressor_t *dec, size_t slot, jpeg_huffman_t *table) {
     assert(dec);
     assert(slot <= 3);
 
@@ -215,7 +255,7 @@ int JPEGDecompressorAddTable(decompressor_t *dec, size_t slot, jpeg_huffman_t *t
 /**
  * Sets the output bit plane; it will contain the resulting image with each component interleaved.
  */
-int JPEGDecompressorSetOutput(decompressor_t *dec, void *plane, size_t length) {
+int JPEGDecompressorSetOutput(jpeg_decompressor_t *dec, void *plane, size_t length) {
     assert(dec);
 
     dec->outBuf = plane;
@@ -227,7 +267,7 @@ int JPEGDecompressorSetOutput(decompressor_t *dec, void *plane, size_t length) {
 /**
  * Sets the table index to use for decoding a particular plane.
  */
-int JPEGDecompressorSetTableForPlane(decompressor_t *dec, size_t plane, size_t table) {
+int JPEGDecompressorSetTableForPlane(jpeg_decompressor_t *dec, size_t plane, size_t table) {
     assert(dec);
     assert(plane <= 3);
     assert(table <= 3);
@@ -239,9 +279,21 @@ int JPEGDecompressorSetTableForPlane(decompressor_t *dec, size_t plane, size_t t
 }
 
 /**
+ * Sets the prediction algorithm to use.
+ */
+int JPEGDecompressorSetPredictionAlgo(jpeg_decompressor_t *dec, uint8_t algorithm) {
+    assert(dec);
+    assert(algorithm <= 7);
+
+    dec->predictionAlgorithm = algorithm;
+
+    return 0;
+}
+
+/**
  * Indicate whether the decompressor has written data for every sample.
  */
-bool JPEGDecompressorIsDone(decompressor_t *dec) {
+bool JPEGDecompressorIsDone(jpeg_decompressor_t *dec) {
     assert(dec);
 
     return dec->isDone;
@@ -252,7 +304,7 @@ bool JPEGDecompressorIsDone(decompressor_t *dec) {
  * Decompresses image data from the given offset until either the end of the data is reached, or a marker
  * is discovered.
  */
-size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMarker) {
+size_t JPEGDecompressorGo(jpeg_decompressor_t *dec, size_t offset, bool *outFoundMarker) {
     int delta = 0;
     bool foundMarker = false;
 
@@ -277,12 +329,21 @@ size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMark
             for(int c = 0; c < dec->numComponents; c++) {
                 bool foundCode = false;
 
-                // read huffman encoded bit length of value
+                // prefetch bit buffer
+                BitstreamPrefetch4(dec);
+
+                // read huffman bit count (fast for all but last line)
                 jpeg_huffman_t *table = dec->tables[dec->tableForComponent[c]];
 
-                bits = ReadCode(dec, table, &foundCode, &foundMarker);
-                if (!foundCode) goto noCode;
+                if(dec->currentLine != (dec->lines - 1)) {
+                    bits = ReadCodeFast(dec, table, &foundCode, &foundMarker);
+                } else {
+                    // this handles markers much better
+                    bits = ReadCode(dec, table, &foundCode, &foundMarker);
+                }
+
                 if (foundMarker) goto gotMarker;
+                if (!foundCode) goto noCode;
 
                 // read value
                 if(bits) {
@@ -304,7 +365,7 @@ size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMark
                 }
 
                 // shove it into predictor
-                uint16_t actual = Predict1(dec, c, delta, off);
+                uint16_t actual = Predict(dec, c, delta, off);
 
                 // write it into buffer
                 dec->outBuf[off + c] = actual;
@@ -321,7 +382,7 @@ size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMark
 
     // failed to match a Huffman code
 noCode:;
-    fprintf(stderr, "Failed to find huffman code\n");
+    fprintf(stderr, "Failed to find huffman code (offset: %lu %lu read)\n", (offset + dec->numBitBufReads), dec->numBitBufReads);
     *outFoundMarker = true;
     return offset + dec->numBitBufReads;
 
@@ -335,10 +396,30 @@ gotMarker:;
 
 // MARK: Predictors
 /**
+ * Runs the appropriate predictor.
+ *
+ * @param dec Decompressor instance
+ * @param component Input image component we need prediction for
+ * @param delta Signed delta value read from file
+ * @param bufferOffset Offset into the output buffer for the current sample
+ * @return Actual value
+ */
+static uint16_t Predict(jpeg_decompressor_t *dec, int component, int delta, size_t bufferOffset) {
+    switch (dec->predictionAlgorithm) {
+        case 1:
+            return PredictorAlgo1(dec, component, delta, bufferOffset);
+
+        // unimplemented predictor algorithm
+        default:
+            return 0;
+    }
+}
+
+/**
  * Predicts the value of the current pixel in the given plane using prediction type 1 (difference from sample
  * directly to the left)
  */
-static uint16_t Predict1(decompressor_t *dec, int component, int delta, size_t bufferOffset) {
+static uint16_t PredictorAlgo1(jpeg_decompressor_t *dec, int component, int delta, size_t bufferOffset) {
     uint16_t last = dec->predictorDefault;
 
     if (dec->currentSample > 0) {
@@ -350,12 +431,35 @@ static uint16_t Predict1(decompressor_t *dec, int component, int delta, size_t b
 
 // MARK: Huffman codes
 /**
+ * Reads an entire 16-bit word and asks the Huffman table code to find the corresponding value and
+ * bit length.
+ */
+static uint8_t ReadCodeFast(jpeg_decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker) {
+    // outputs from the Huffman code
+    uint8_t value = 0;
+    size_t bitsRead;
+
+    // peek at the topmost 16 bits
+    uint16_t next = BitstreamPeek(dec, 16, foundMarker);
+    if (*foundMarker) return 0;
+
+    // perform the lookup
+    *found = JPEGHuffmanFind(table, next, &bitsRead, &value);
+
+    if (*found) {
+        BitstreamConsume(dec, bitsRead);
+    }
+
+    return value;
+}
+
+/**
  * Tries to read a Huffman code from the current position in the stream.
  *
  * We peek at the contents of the read buffer bit by bit, until we've either matched a code, or read 16 total
  * bits (which indicates the code wasn't found)
  */
-static uint8_t ReadCode(decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker) {
+static uint8_t ReadCode(jpeg_decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker) {
     jpeg_huffman_node_t *next = &table->root;
 
     size_t bitsRead = 0;

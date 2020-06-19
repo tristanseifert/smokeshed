@@ -187,6 +187,10 @@ internal class JPEGDecoder {
     private func decompress(startingAt: Int) throws -> Int? {
         var foundMarker: ObjCBool = false
 
+        guard let scan = self.currentScan else {
+            throw DecompressError.invalidState
+        }
+
         // load Huffman tables
         for pair in self.huffman.tables {
             self.decompressor.write(pair.value.cTree,
@@ -194,11 +198,13 @@ internal class JPEGDecoder {
         }
 
         var tableIdx: UInt = 0
-        for component in self.currentScan!.components {
+        for component in scan.components {
             self.decompressor.setTableIndex(UInt(component.dcTable.rawValue),
                                             forPlane: tableIdx)
             tableIdx += 1
         }
+
+        self.decompressor.predictor = scan.predictor
 
         // decompress until a marker or end of image is encountered
         let doneOff = self.decompressor.decompress(from: startingAt, didFindMarker: &foundMarker)

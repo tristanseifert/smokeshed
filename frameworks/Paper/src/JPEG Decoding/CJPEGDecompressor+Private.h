@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CJPEGDecompressor ()
 
-@property (nonatomic) decompressor_t *dec;
+@property (nonatomic) jpeg_decompressor_t *dec;
 
 @property (nonatomic) NSMutableData *output;
 @property (nonatomic) NSMutableDictionary<NSNumber *, CJPEGHuffmanTable *> *tables;
