@@ -26,6 +26,14 @@ public class CR2Reader {
     /// JPEG decoder for the RAW data
     private var jpeg: JPEGDecoder!
 
+    /// Main metadata chunk
+    private var metadata: TIFFReader.IFD!
+    /// Canon MakerNotes tags (this contains info relevant for RAW decoding)
+    private var canon: TIFFReader.IFD!
+
+    /// Sensor size and borders
+    private var sensor: SensorInfo!
+
     // MARK: - Initialization
     /**
      * Creates a Canon RAW file with an in-memory data object.
@@ -45,7 +53,7 @@ public class CR2Reader {
         ])
         cfg.subIfdByteSeqOverrides.append(contentsOf: [
             // MakerNotes
-            0x927c
+            0x927C,
         ])
 
         // set up TIFF reader and validate CR2 header
@@ -97,10 +105,9 @@ public class CR2Reader {
 
         if major != 2 {
             throw HeaderError.unsupportedVersion(fileMajor: major, fileMinor: minor)
-        }
-
-        if minor != 0 {
+        } else if minor != 0 {
             DDLogWarn("Minor version is not 0 - this has not been tested!")
+            throw HeaderError.unsupportedVersion(fileMajor: major, fileMinor: minor)
         }
 
         // read the raw data IFD file offset
@@ -141,7 +148,109 @@ public class CR2Reader {
      */
     private func extractMetadata(_ ifd: TIFFReader.IFD) throws {
         // just copy the object
-        self.image.metaIfd = ifd
+        self.metadata = ifd
+
+        // grab the exif chunk
+        guard let exifTag = ifd.getTag(byId: 0x8769) as? TIFFReader.TagSubIfd,
+              let exif = exifTag.value.first else {
+            throw RawError.missingTag(0x8769)
+        }
+        self.image.exif = exif
+
+        // grab the markernote chunk
+        guard let mnTag = exif.getTag(byId: 0x927C) as? TIFFReader.TagSubIfd,
+              let mn = mnTag.value.first else {
+            throw RawError.missingTag(0x927C)
+        }
+        self.canon = mn
+
+        DDLogDebug("Canon MakerNotes: \(String(describing: self.canon))")
+
+        // identify the camera from the model ID
+        try self.identifyModel()
+
+        // read some metadata into a more digestible format
+        try self.decodeSensorInfo()
+        try self.decodeColorData()
+        try self.readDustRecords()
+
+    }
+
+    /**
+     * Identifies the camera based on the model ID value in the maker notes. This will validate that the
+     * camera type is in fact supported.
+     */
+    private func identifyModel() throws {
+        // read model ID value
+        guard let idTag = self.canon.getTag(byId: 0x0010) as? TIFFReader.TagUnsigned else {
+            throw RawError.missingTag(0x0010)
+        }
+
+        DDLogDebug("Model id: 0x\(String(idTag.value, radix: 16))")
+
+        // only 6Dii is supported atm
+        guard idTag.value == 0x80000406 else {
+            throw RawError.unsupportedModel(idTag.value)
+        }
+    }
+
+    /**
+     * Reads information about sensor borders from the maker notes.
+     *
+     * This is tag 0x00E0 in the makernotes info bundle, an array of integer values:
+     * - 1..2: Sensor width and height
+     * - 5..8: Data borders (left going clockwise)
+     */
+    private func decodeSensorInfo() throws {
+        // get the SensorInfo array
+        guard let i = self.canon.getTag(byId: 0x00E0) as? TIFFReader.TagUnsignedArray else {
+            throw RawError.missingTag(0x00E0)
+        }
+
+        var sensor = SensorInfo()
+
+        // copy the sensor size
+        sensor.width = Int(i.value[1])
+        sensor.height = Int(i.value[2])
+
+        // borders
+        sensor.borderLeft = Int(i.value[5])
+        sensor.borderTop = Int(i.value[6])
+        sensor.borderRight = Int(i.value[7])
+        sensor.borderBottom = Int(i.value[8])
+
+        // done
+        self.sensor = sensor
+        DDLogDebug("Sensor info: \(String(describing: self.sensor))")
+    }
+
+    /**
+     * Attempts to read the color data information; the value contains the version of the record.
+     */
+    private func decodeColorData() throws {
+        // get ColorData blob
+        guard let i = self.canon.getTag(byId: 0x4001) as? TIFFReader.TagUnsignedArray else {
+            throw RawError.missingTag(0x4001)
+        }
+
+        // get version
+        let vers = i.value[0]
+        DDLogDebug("ColorData version: \(vers)")
+    }
+
+    /**
+     * Reads the dust records table
+     */
+    private func readDustRecords() throws {
+        // get dust delete data blob
+        guard let i = self.canon.getTag(byId: 0x0097) as? TIFFReader.TagByteSeq else {
+            throw RawError.missingTag(0x0097)
+        }
+
+        // get version
+        let data = i.value
+        let vers: UInt8 = data.read(0)
+        DDLogDebug("Dust Delete Data version: \(vers)")
     }
 
     // MARK: - Thumbnails
@@ -198,6 +307,8 @@ public class CR2Reader {
      * Extracts the raw pixel data from the image file.
      */
     private func extractRawData(_ ifd: TIFFReader.IFD) throws {
+        DDLogDebug("Raw data IFD: \(ifd)")
+
         // compression type must be "old JPEG" (6)
         guard let compression = ifd.getTag(byId: 0x0103) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0103)
@@ -222,7 +333,7 @@ public class CR2Reader {
         self.image.rawSize = CGSize(width: Int(width.value),
                                     height: Int(height.value))
 
-        // extract the raw image data
+        // read the location of the raw image data
         guard let offset = ifd.getTag(byId: 0x0111) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0111)
         }
@@ -230,14 +341,28 @@ public class CR2Reader {
             throw RawError.missingTag(0x0117)
         }
 
-        // try to decompress it
+        // try to decompress it, followed by de-slicing
         try self.decompressRawData(Int(offset.value),
                                    length: Int(length.value))
 
-        // de-slice if needed
         if slices.value[0] != 0 {
             // TODO: de-slicing
+            DDLogError("Requested deslicing: \(slices)")
         }
+
+
+
+        // convert it into one contiguous plane of sensor data
+        let bytes = Int(width.value * height.value * 2)
+        let data = NSMutableData(length: bytes)
+
+        for i in 0...3 {
+            if let plane = self.jpeg.getPlane(i) {
+                self.image.rawPlanes.append(plane)
+            }
+        }
+
+        self.image.rawValues = data as Data?
     }
 
     /**
@@ -246,16 +371,8 @@ public class CR2Reader {
      * In the CR2 file, raw pixel data is compressed using the JPEG lossless (ITU-T81) algorithm.
      */
     private func decompressRawData(_ offset: Int, length: Int) throws {
-        // create a decoder and perform decoding
         self.jpeg = try JPEGDecoder(withData: &self.data, offset: offset)
         try self.jpeg.decode()
-
-        // process the JPEG decoded planes
-        for i in 0...3 {
-            if let plane = self.jpeg.getPlane(i) {
-                self.image.rawPlanes.append(plane)
-            }
-        }
     }
 
     // MARK: - Errors
@@ -280,6 +397,8 @@ public class CR2Reader {
         case missingTag(_ requiredTagId: UInt16)
         /// Raw data is compressed with an unsupported algorithm
         case unsupportedCompression(_ method: UInt32)
+        /// The camera model is not supported
+        case unsupportedModel(_ modelId: UInt32)
     }
 
     // MARK: - File offsets

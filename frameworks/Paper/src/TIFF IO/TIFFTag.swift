@@ -244,7 +244,7 @@ extension TIFFReader {
 
         /// Debug description
         public override var description: String {
-            return String(format: "Tag %04x <field width: %d, unsigned: %d>",
+            return String(format: "Tag %04x <field width: %d, unsigned: %u>",
                           self.id, self.originalFieldWidth.rawValue, self.value)
         }
 

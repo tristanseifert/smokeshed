@@ -12,6 +12,9 @@ import Foundation
  */
 public class CR2Image {
     // MARK: - Metadata
+    /// EXIF directory
+    internal(set) public var exif: TIFFReader.IFD! = nil
+
     /// Metadata IFD
     internal(set) public var metaIfd: TIFFReader.IFD! = nil
 
@@ -24,6 +27,9 @@ public class CR2Image {
     internal(set) public var rawSize: CGSize = .zero
     /// Raw bitplanes
     internal(set) public var rawPlanes: [Data] = []
+
+    /// Sensor data; first row is RG pixels, second is GB pixels
+    internal(set) public var rawValues: Data!
 
     // MARK: - Initialization
     internal init() {}
