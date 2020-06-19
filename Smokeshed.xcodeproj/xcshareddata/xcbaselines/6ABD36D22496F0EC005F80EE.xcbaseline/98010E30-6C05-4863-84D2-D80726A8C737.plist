@@ -6,6 +6,26 @@
 	<dict>
 		<key>BitstreamTests</key>
 		<dict>
+			<key>testFullRead()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>9.8539e-05</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
+			<key>testMoreRead()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>4.8496e-05</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
 			<key>testMultibitRead()</key>
 			<dict>
 				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
