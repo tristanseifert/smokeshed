@@ -21,7 +21,7 @@ static uint64_t BitstreamPeek(decompressor_t *dec, size_t count, bool *foundMark
 static int BitstreamConsume(decompressor_t *dec, size_t count);
 static uint64_t BitstreamGet(decompressor_t *dec, size_t count, bool *foundMarker);
 
-static uint16_t Predict1(decompressor_t *dec, int plane, int delta, size_t bufferOffset);
+static uint16_t Predict1(decompressor_t *dec, int component, int delta, size_t bufferOffset);
 
 static uint8_t ReadCode(decompressor_t *dec, jpeg_huffman_t *table, bool *found, bool *foundMarker);
 
@@ -213,13 +213,13 @@ int JPEGDecompressorAddTable(decompressor_t *dec, size_t slot, jpeg_huffman_t *t
 }
 
 /**
- * Sets the address of the given output bit plane.
+ * Sets the output bit plane; it will contain the resulting image with each component interleaved.
  */
-int JPEGDecompressorAddPlane(decompressor_t *dec, size_t index, void *plane) {
+int JPEGDecompressorSetOutput(decompressor_t *dec, void *plane, size_t length) {
     assert(dec);
-    assert(index <= 3);
 
-    dec->planes[index] = plane;
+    dec->outBuf = plane;
+    dec->outBufSz = length;
 
     return 0;
 }
@@ -271,7 +271,7 @@ size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMark
         // read all samples in this line
         for(; dec->currentSample < dec->samplesPerLine; dec->currentSample++) {
             // calculate pixel offset
-            size_t off = (dec->currentLine * dec->samplesPerLine) + dec->currentSample;
+            size_t off = (dec->currentLine * dec->samplesPerLine * dec->numComponents) + (dec->currentSample * dec->numComponents);
 
             // read data for each component
             for(int c = 0; c < dec->numComponents; c++) {
@@ -307,7 +307,7 @@ size_t JPEGDecompressorGo(decompressor_t *dec, size_t offset, bool *outFoundMark
                 uint16_t actual = Predict1(dec, c, delta, off);
 
                 // write it into buffer
-                dec->planes[c][off] = actual;
+                dec->outBuf[off + c] = actual;
             }
         }
 
@@ -338,11 +338,11 @@ gotMarker:;
  * Predicts the value of the current pixel in the given plane using prediction type 1 (difference from sample
  * directly to the left)
  */
-static uint16_t Predict1(decompressor_t *dec, int plane, int delta, size_t bufferOffset) {
+static uint16_t Predict1(decompressor_t *dec, int component, int delta, size_t bufferOffset) {
     uint16_t last = dec->predictorDefault;
 
     if (dec->currentSample > 0) {
-        last = dec->planes[plane][bufferOffset - 1];
+        last = dec->outBuf[bufferOffset + component - dec->numComponents];
     }
 
     return (uint16_t) (((int) last) + delta);

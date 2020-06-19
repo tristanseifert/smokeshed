@@ -21,7 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Whether decoder is finished
 @property (nonatomic, readonly) BOOL isDone;
 
-
+/// Readonly output buffer
+@property (nonatomic, readonly) NSMutableData *output;
 
 - (instancetype) initWithCols:(NSUInteger) cols rows:(NSUInteger) rows
                     precision:(NSUInteger) bits numPlanes:(NSInteger) planes;
@@ -32,8 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSInteger) decompressFrom:(NSInteger) inOffset
                didFindMarker:(out BOOL *) foundMarker;
-
-- (NSMutableData *) getPlane:(NSInteger) index;
 
 @end
 

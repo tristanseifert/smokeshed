@@ -79,6 +79,12 @@
 		6A94C8AE2491C134008FCE90 /* Date+BowlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */; };
 		6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */; };
 		6A961B7F249C45CA00FE4D5E /* MakerNotesInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A961B7E249C45CA00FE4D5E /* MakerNotesInfo.swift */; };
+		6A961B83249C569700FE4D5E /* CR2Unslicer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B81249C569700FE4D5E /* CR2Unslicer.h */; };
+		6A961B84249C569700FE4D5E /* CR2Unslicer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A961B82249C569700FE4D5E /* CR2Unslicer.m */; };
+		6A961B87249C5A8100FE4D5E /* unslice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B85249C5A8100FE4D5E /* unslice.h */; };
+		6A961B88249C5A8100FE4D5E /* unslice.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A961B86249C5A8100FE4D5E /* unslice.c */; };
+		6A961B8B249C5F8E00FE4D5E /* CJPEGDecompressor+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B89249C5F8D00FE4D5E /* CJPEGDecompressor+Private.h */; };
+		6A961B8F249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A961B8D249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h */; };
 		6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C27248F191E0088E1DB /* Library View.xcassets */; };
 		6A962C2B248F3ABC0088E1DB /* LibraryOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A962C29248F3ABC0088E1DB /* LibraryOptionsController.swift */; };
 		6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A962C2A248F3ABC0088E1DB /* LibraryOptionsController.xib */; };
@@ -315,6 +321,12 @@
 		6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Date+BowlExtensions.swift"; path = "frameworks/Bowl/src/Date & Time/Date+BowlExtensions.swift"; sourceTree = "<group>"; };
 		6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionHeaderView.swift; path = "app_macos/src/Library View/LibraryCollectionHeaderView.swift"; sourceTree = "<group>"; };
 		6A961B7E249C45CA00FE4D5E /* MakerNotesInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MakerNotesInfo.swift; path = "frameworks/Paper/src/Camera RAW/CR2/MakerNotesInfo.swift"; sourceTree = "<group>"; };
+		6A961B81249C569700FE4D5E /* CR2Unslicer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CR2Unslicer.h; path = "frameworks/Paper/src/Camera RAW/CR2/CR2Unslicer.h"; sourceTree = "<group>"; };
+		6A961B82249C569700FE4D5E /* CR2Unslicer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CR2Unslicer.m; path = "frameworks/Paper/src/Camera RAW/CR2/CR2Unslicer.m"; sourceTree = "<group>"; };
+		6A961B85249C5A8100FE4D5E /* unslice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = unslice.h; path = "frameworks/Paper/src/Camera RAW/CR2/unslice.h"; sourceTree = "<group>"; };
+		6A961B86249C5A8100FE4D5E /* unslice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = unslice.c; path = "frameworks/Paper/src/Camera RAW/CR2/unslice.c"; sourceTree = "<group>"; };
+		6A961B89249C5F8D00FE4D5E /* CJPEGDecompressor+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CJPEGDecompressor+Private.h"; path = "frameworks/Paper/src/JPEG Decoding/CJPEGDecompressor+Private.h"; sourceTree = "<group>"; };
+		6A961B8D249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CJPEGHuffmanTable+Private.h"; path = "frameworks/Paper/src/JPEG Decoding/CJPEGHuffmanTable+Private.h"; sourceTree = "<group>"; };
 		6A962C27248F191E0088E1DB /* Library View.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library View.xcassets"; path = "app_macos/src/Library View/Library View.xcassets"; sourceTree = "<group>"; };
 		6A962C29248F3ABC0088E1DB /* LibraryOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryOptionsController.swift; path = "app_macos/src/Library UI/LibraryOptionsController.swift"; sourceTree = "<group>"; };
 		6A962C2A248F3ABC0088E1DB /* LibraryOptionsController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryOptionsController.xib; path = "app_macos/src/Library UI/LibraryOptionsController.xib"; sourceTree = "<group>"; };
@@ -884,6 +896,17 @@
 			name = "Date & Time";
 			sourceTree = "<group>";
 		};
+		6A961B80249C568100FE4D5E /* fastboi */ = {
+			isa = PBXGroup;
+			children = (
+				6A961B81249C569700FE4D5E /* CR2Unslicer.h */,
+				6A961B82249C569700FE4D5E /* CR2Unslicer.m */,
+				6A961B85249C5A8100FE4D5E /* unslice.h */,
+				6A961B86249C5A8100FE4D5E /* unslice.c */,
+			);
+			name = fastboi;
+			sourceTree = "<group>";
+		};
 		6A962C2D248F4A7A0088E1DB /* Importing */ = {
 			isa = PBXGroup;
 			children = (
@@ -921,8 +944,10 @@
 				6A9E8279249AE833004BE66A /* decompress.c */,
 				6A9E827C249AED21004BE66A /* huffman.h */,
 				6A9E827E249AEE52004BE66A /* huffman.c */,
+				6A961B89249C5F8D00FE4D5E /* CJPEGDecompressor+Private.h */,
 				6A9E8281249AF9FB004BE66A /* CJPEGDecompressor.h */,
 				6A9E8282249AF9FB004BE66A /* CJPEGDecompressor.m */,
+				6A961B8D249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h */,
 				6A9E8285249AFED4004BE66A /* CJPEGHuffmanTable.h */,
 				6A9E8286249AFED4004BE66A /* CJPEGHuffmanTable.m */,
 				6A9E828A249B0018004BE66A /* Logging.h */,
@@ -1065,6 +1090,7 @@
 				6ABD370024974362005F80EE /* CR2Reader.swift */,
 				6ABD3702249745A2005F80EE /* CR2Image.swift */,
 				6A961B7E249C45CA00FE4D5E /* MakerNotesInfo.swift */,
+				6A961B80249C568100FE4D5E /* fastboi */,
 			);
 			name = "Canon RAW";
 			sourceTree = "<group>";
@@ -1155,8 +1181,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A961B87249C5A8100FE4D5E /* unslice.h in Headers */,
 				6A9E8283249AF9FB004BE66A /* CJPEGDecompressor.h in Headers */,
 				6A9E827D249AED35004BE66A /* huffman.h in Headers */,
+				6A961B8B249C5F8E00FE4D5E /* CJPEGDecompressor+Private.h in Headers */,
+				6A961B83249C569700FE4D5E /* CR2Unslicer.h in Headers */,
+				6A961B8F249C5FF700FE4D5E /* CJPEGHuffmanTable+Private.h in Headers */,
 				6A9E827A249AE833004BE66A /* decompress.h in Headers */,
 				6A9E8287249AFED4004BE66A /* CJPEGHuffmanTable.h in Headers */,
 			);
@@ -1551,10 +1581,12 @@
 			files = (
 				6ABD370124974362005F80EE /* CR2Reader.swift in Sources */,
 				6A9E827F249AEE52004BE66A /* huffman.c in Sources */,
+				6A961B84249C569700FE4D5E /* CR2Unslicer.m in Sources */,
 				6ABF946724986FD9002DBA91 /* JPEGHuffman.swift in Sources */,
 				6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */,
 				6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */,
 				6A9E827B249AE833004BE66A /* decompress.c in Sources */,
+				6A961B88249C5A8100FE4D5E /* unslice.c in Sources */,
 				6A961B7F249C45CA00FE4D5E /* MakerNotesInfo.swift in Sources */,
 				6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */,
 				6A7614BF2499A1020043392E /* Bitstream.swift in Sources */,

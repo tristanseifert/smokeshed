@@ -303,6 +303,11 @@ public class CR2Reader {
     }
 
     // MARK: - Raw data
+    /// Destination buffer for unslicing
+    private var unsliceBuf: NSMutableData!
+    /// Unslicing implementation (ObjC wrapper around the C functions)
+    private var unslicer: CR2Unslicer!
+
     /**
      * Extracts the raw pixel data from the image file.
      */
@@ -341,28 +346,20 @@ public class CR2Reader {
             throw RawError.missingTag(0x0117)
         }
 
-        // try to decompress it, followed by de-slicing
+        // decompress lossless JPEG data
         try self.decompressRawData(Int(offset.value),
                                    length: Int(length.value))
 
-        if slices.value[0] != 0 {
-            // TODO: de-slicing
-            DDLogError("Requested deslicing: \(slices)")
-        }
-
-
-
-        // convert it into one contiguous plane of sensor data
+        // allocate output buffer and unslice image
         let bytes = Int(width.value * height.value * 2)
-        let data = NSMutableData(length: bytes)
+        self.unsliceBuf = NSMutableData(length: bytes)
 
-        for i in 0...3 {
-            if let plane = self.jpeg.getPlane(i) {
-                self.image.rawPlanes.append(plane)
-            }
-        }
+        try self.unslice(slices.value)
 
-        self.image.rawValues = data as Data?
+        self.image.rawValues = self.unsliceBuf as Data?
+
+        // copy the output plane
+        self.image.rawPlanes.append(self.jpeg.decompressor.output as Data)
     }
 
     /**
@@ -373,6 +370,27 @@ public class CR2Reader {
     private func decompressRawData(_ offset: Int, length: Int) throws {
         self.jpeg = try JPEGDecoder(withData: &self.data, offset: offset)
         try self.jpeg.decode()
+    }
+
+    /**
+     * Converts raw data from its sliced format into one big plane containing the RG/GB values.
+     */
+    private func unslice(_ sliceInfo: [UInt32]) throws {
+
+        // create and configure unslicer
+        var slicingInfo: [NSNumber] = []
+        for x in sliceInfo {
+            slicingInfo.append(NSNumber(value: x))
+        }
+
+        let size = CGSize(width: self.sensor.width, height: self.sensor.height)
+
+        self.unslicer = CR2Unslicer(input: self.jpeg.decompressor,
+                                    andOutput: self.unsliceBuf,
+                                    slicingInfo: slicingInfo, sensorSize: size)
+
+        // let er rip
+        self.unslicer.unslice()
     }
 
     // MARK: - Errors

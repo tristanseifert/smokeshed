@@ -9,7 +9,10 @@
 #define SwiftBridging_h
 
 // JPEG decoding
-#include "CJPEGDecompressor.h"
-#include "CJPEGHuffmanTable.h"
+#import "CJPEGDecompressor.h"
+#import "CJPEGHuffmanTable.h"
+
+// CR2
+#import "CR2Unslicer.h"
 
 #endif /* SwiftBridging_h */

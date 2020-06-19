@@ -6,15 +6,11 @@
 //
 
 #import "CJPEGHuffmanTable.h"
+#import "CJPEGHuffmanTable+Private.h"
+
 #import "Logging.h"
 
 #import "huffman.h"
-
-@interface CJPEGHuffmanTable ()
-
-@property (nonatomic) jpeg_huffman_t *huff;
-
-@end
 
 @implementation CJPEGHuffmanTable
 

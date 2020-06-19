@@ -83,7 +83,7 @@ class CanonRAWTests: XCTestCase {
             self.add(attach)
         }
 
-        // also, save each plane
+        // save the raw planes as well as unsliced pixel data
         var planeIdx = 0
 
         for planeData in image.rawPlanes {
@@ -94,5 +94,10 @@ class CanonRAWTests: XCTestCase {
 
             planeIdx += 1
         }
+
+        let attach = XCTAttachment(data: image.rawValues)
+        attach.name = String(format: "raw_values")
+        attach.lifetime = .keepAlways
+        self.add(attach)
     }
 }

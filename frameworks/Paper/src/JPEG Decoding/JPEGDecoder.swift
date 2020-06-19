@@ -146,7 +146,7 @@ internal class JPEGDecoder {
 
     // MARK: - Image decompression
     /// Decompressor instance
-    private var decompressor: CJPEGDecompressor! = nil
+    private(set) internal var decompressor: CJPEGDecompressor! = nil
 
     /**
      * Prepares to decode pixel data.
@@ -212,14 +212,6 @@ internal class JPEGDecoder {
 
         // return where the decompressor finished
         return doneOff
-    }
-
-    // MARK: - Accessing
-    /**
-     * Returns the plane for the component with the given index.
-     */
-    public func getPlane(_ index: Int) -> Data? {
-        return self.decompressor.getPlane(index) as Data
     }
 
     // MARK: - IO

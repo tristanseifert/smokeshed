@@ -44,8 +44,10 @@ typedef struct decompressor {
     /// Which table is used for each plane when decoding
     uint8_t tableForComponent[4];
 
-    /// Output bit planes (one for each component, up to 4)
-    uint16_t *planes[4];
+    /// Output bit plane
+    uint16_t *outBuf;
+    /// Number of bytes in the output buffer
+    size_t outBufSz;
 
     /// Address of JPEG data input buffer
     const void *inBuf;
@@ -96,11 +98,9 @@ int JPEGDecompressorSetInput(decompressor_t *dec, const void *buffer, size_t len
 int JPEGDecompressorAddTable(decompressor_t *dec, size_t slot, jpeg_huffman_t *table);
 
 /**
- * Sets the address of the given output bit plane. Plane 0 gets the contents of the first
- * component, plane 1 the second, and so forth. The decoder doesn't do any mapping
- * between components and planes beyond that.
+ * Sets the output bit plane; it will contain the resulting image with each component interleaved.
  */
-int JPEGDecompressorAddPlane(decompressor_t *dec, size_t index, void *plane);
+int JPEGDecompressorSetOutput(decompressor_t *dec, void *plane, size_t length);
 
 /**
  * Sets the table index to use for decoding a particular plane.
