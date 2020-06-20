@@ -57,11 +57,11 @@
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
                                                             <tableCellView identifier="HeaderCell" id="Znf-TM-Kez">
-                                                                <rect key="frame" x="1" y="1" width="187" height="17"/>
+                                                                <rect key="frame" x="1" y="1" width="228" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DGX-Qc-G8T">
-                                                                        <rect key="frame" x="0.0" y="1" width="187" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="1" width="228" height="14"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="HEADER CELL" id="3dY-t5-wvC">
                                                                             <font key="font" metaFont="smallSystemBold"/>
@@ -75,7 +75,7 @@
                                                                 </connections>
                                                             </tableCellView>
                                                             <tableCellView identifier="DataCell" id="u1x-DZ-vzc">
-                                                                <rect key="frame" x="1" y="20" width="187" height="17"/>
+                                                                <rect key="frame" x="1" y="20" width="228" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xau-Ld-5jF">
@@ -84,7 +84,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" imageScaling="proportionallyDown" image="NSActionTemplate" id="Emy-L0-Up1"/>
                                                                     </imageView>
                                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="55n-IS-tab">
-                                                                        <rect key="frame" x="25" y="0.0" width="162" height="17"/>
+                                                                        <rect key="frame" x="25" y="0.0" width="203" height="17"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="vA0-se-e27">
                                                                             <font key="font" metaFont="system"/>
@@ -188,7 +188,7 @@
                                                         <constraint firstAttribute="width" constant="225" id="eTB-U6-39x"/>
                                                     </constraints>
                                                     <searchFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Search all text fields" usesSingleLineMode="YES" bezelStyle="round" sendsWholeSearchString="YES" recentsAutosaveName="TSLibraryViewSearchSave" id="spc-kO-3WA">
-                                                        <font key="font" metaFont="message" size="11"/>
+                                                        <font key="font" metaFont="controlContent" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </searchFieldCell>

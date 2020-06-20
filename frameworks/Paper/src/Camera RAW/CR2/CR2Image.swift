@@ -12,8 +12,8 @@ import Foundation
  */
 public class CR2Image {
     // MARK: - Metadata
-    /// EXIF directory
-    internal(set) public var exif: TIFFReader.IFD! = nil
+    /// Image metadata object
+    internal(set) public var meta: ImageMeta! = nil
 
     /// Metadata IFD
     internal(set) public var metaIfd: TIFFReader.IFD! = nil

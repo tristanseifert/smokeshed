@@ -33,6 +33,11 @@ public class CR2Reader {
 
     /// Sensor size and borders
     private var sensor: SensorInfo!
+    /// White balance and other color info
+    private var color: ColorInfo!
+    
+    /// Whether raw image data should be decoded
+    private var shouldDecodeRaw: Bool = false
 
     // MARK: - Initialization
     /**
@@ -41,8 +46,10 @@ public class CR2Reader {
      * This initializer will validate that the file is, in fact, a CR2 file by reading some values from the first
      * few bytes of the file.
      */
-    public init(withData data: Data) throws {
+    public init(withData data: Data, decodeRawData: Bool) throws {
         self.data = data
+        
+        self.shouldDecodeRaw = decodeRawData
 
         // TIFF reading config
         var cfg = TIFFReaderConfig()
@@ -64,9 +71,9 @@ public class CR2Reader {
     /**
      * Creates a Canon RAW file by reading from the given URL.
      */
-    public convenience init(fromUrl url: URL) throws {
+    public convenience init(fromUrl url: URL, decodeRawData: Bool) throws {
         let data = try Data(contentsOf: url, options: [.mappedIfSafe])
-        try self.init(withData: data)
+        try self.init(withData: data, decodeRawData: decodeRawData)
     }
 
     // MARK: - Decoding
@@ -74,7 +81,9 @@ public class CR2Reader {
     private var rawIfdFileOff: Int = -1
     /// Image file we build up during processing
     private var image: CR2Image = CR2Image()
-
+    /// TIFF metadata parser
+    private var meta = TIFFMetadataReader()
+    
     /**
      * Decodes the RAW image.
      */
@@ -83,6 +92,9 @@ public class CR2Reader {
         while let ifd = try self.tiff.decode() {
             try self.handleIfd(ifd)
         }
+        
+        // get metadata
+        self.image.meta = self.meta.finalize()
 
         // return the image (fully decoded by now)
         return self.image
@@ -133,6 +145,7 @@ public class CR2Reader {
         }
         // Is it the first ifd (by index)?
         else if ifd.index == 0 {
+            try self.meta.addIfd(ifd)
             try self.extractMetadata(ifd)
             try self.extractJpegThumb(ifd)
         }
@@ -144,20 +157,17 @@ public class CR2Reader {
 
     // MARK: - Metadata
     /**
-     * Extracts EXIF metadata from the given IFD.
+     * Grabs various metadata from the Canon-specific metadata fields.
      */
     private func extractMetadata(_ ifd: TIFFReader.IFD) throws {
         // just copy the object
         self.metadata = ifd
 
-        // grab the exif chunk
+        // grab the exif chunk, and from it, the MakerNote field
         guard let exifTag = ifd.getTag(byId: 0x8769) as? TIFFReader.TagSubIfd,
               let exif = exifTag.value.first else {
             throw RawError.missingTag(0x8769)
         }
-        self.image.exif = exif
-
-        // grab the markernote chunk
         guard let mnTag = exif.getTag(byId: 0x927C) as? TIFFReader.TagSubIfd,
               let mn = mnTag.value.first else {
             throw RawError.missingTag(0x927C)
@@ -229,13 +239,29 @@ public class CR2Reader {
      */
     private func decodeColorData() throws {
         // get ColorData blob
-        guard let i = self.canon.getTag(byId: 0x4001) as? TIFFReader.TagUnsignedArray else {
+        guard let tag = self.canon.getTag(byId: 0x4001) as? TIFFReader.TagUnsignedArray else {
             throw RawError.missingTag(0x4001)
         }
 
         // get version
-        let vers = i.value[0]
-        DDLogDebug("ColorData version: \(vers)")
+        let vers = tag.value[0]
+        
+        guard vers == 15 else {
+            DDLogWarn("Unsupported ColorData version: \(vers)")
+            return
+        }
+        
+        var color = ColorInfo()
+        
+        // read the WB_RGGBLevelsAsShot field (4 signed 16 bit ints)
+        for i in 63..<67 {
+            let read = Int16(tag.value[i])
+            color.wbRggbLevelsAsShot.append(read)
+        }
+        
+        // done
+        self.color = color
+        DDLogDebug("Color data: \(String(describing: self.color))")
     }
 
     /**
@@ -322,11 +348,6 @@ public class CR2Reader {
             throw RawError.unsupportedCompression(compression.value)
         }
 
-        // read the de-slicing information for later
-        guard let slices = ifd.getTag(byId: 0xc640) as? TIFFReader.TagUnsignedArray else {
-            throw RawError.missingTag(0xc640)
-        }
-
         // read the raw image size
         guard let width = ifd.getTag(byId: 0x0100) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0100)
@@ -338,6 +359,16 @@ public class CR2Reader {
         self.image.rawSize = CGSize(width: Int(width.value),
                                     height: Int(height.value))
 
+        // bail out if we don't actually want raw data decompressed
+        guard self.shouldDecodeRaw else {
+            return
+        }
+
+        // read the de-slicing information for later
+        guard let slices = ifd.getTag(byId: 0xc640) as? TIFFReader.TagUnsignedArray else {
+            throw RawError.missingTag(0xc640)
+        }
+        
         // read the location of the raw image data
         guard let offset = ifd.getTag(byId: 0x0111) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0111)

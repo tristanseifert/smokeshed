@@ -54,4 +54,16 @@ extension CR2Reader {
             self.effectiveHeight = (self.borderBottom - self.borderTop) + 1
         }
     }
+    
+    /**
+     * Information about color and white balance of the image.
+     */
+    internal struct ColorInfo: CustomStringConvertible {
+        var description: String {
+            return String(format: "<WB RGGB levels: %@>", self.wbRggbLevelsAsShot)
+        }
+        
+        /// Multipliers for white balance of each of the RGGB components as shot, for WB compensation
+        var wbRggbLevelsAsShot: [Int16] = []
+    }
 }

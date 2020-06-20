@@ -188,10 +188,21 @@ extension TIFFReader {
          * Reads string bytes.
          */
         private func readStringBytes() throws {
-            // reads the raw bytes
-            let start = Int(self.offsetField)
-            let end = start + Int(self.count)
-            let bytes = self.directory!.file!.readRange(start..<end)
+            var bytes: Data!
+            
+            // for 4 or less bytes, the offset field contains the data
+            if self.count <= 4 {
+                let start = Int(self.fileOffset + Self.dataOffset)
+                let end = start + Int(self.count)
+                bytes = self.directory!.file!.readRange(start..<end)
+            }
+            // otherwise, read subdata
+            else {
+                // reads the raw bytes
+                let start = Int(self.offsetField)
+                let end = start + Int(self.count)
+                bytes = self.directory!.file!.readRange(start..<end)
+            }
 
             // create an ASCII string
             guard let str = String(bytes: bytes, encoding: .ascii) else {

@@ -150,6 +150,9 @@
 		6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE0248E064D009AF452 /* MapViewController.xib */; };
 		6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE4248E0A79009AF452 /* EditViewController.swift */; };
 		6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE5248E0A79009AF452 /* EditViewController.xib */; };
+		6AE51ABD249D91A50091A550 /* MetadataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABC249D91A50091A550 /* MetadataTypes.swift */; };
+		6AE51ABF249D98580091A550 /* TIFFMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */; };
+		6AE51AC1249DC41D0091A550 /* Fraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51AC0249DC41D0091A550 /* Fraction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -393,6 +396,9 @@
 		6AD8CFE0248E064D009AF452 /* MapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MapViewController.xib; path = "app_macos/src/Map View/MapViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFE4248E0A79009AF452 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewController.swift; path = "app_macos/src/Edit View/EditViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFE5248E0A79009AF452 /* EditViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = EditViewController.xib; path = "app_macos/src/Edit View/EditViewController.xib"; sourceTree = "<group>"; };
+		6AE51ABC249D91A50091A550 /* MetadataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetadataTypes.swift; path = frameworks/Paper/src/Metadata/MetadataTypes.swift; sourceTree = "<group>"; };
+		6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFMetadataReader.swift; path = frameworks/Paper/src/Metadata/TIFFMetadataReader.swift; sourceTree = "<group>"; };
+		6AE51AC0249DC41D0091A550 /* Fraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Fraction.swift; path = frameworks/Paper/src/Helpers/Fraction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1012,6 +1018,7 @@
 				6ABD36FF249741E5005F80EE /* Canon RAW */,
 				6ABF945E24985FF5002DBA91 /* JPEG Decoding */,
 				6ABD36C62496D3D3005F80EE /* TIFF Reader */,
+				6AE51ABB249D90250091A550 /* Metadata Support */,
 				6ABF9461249861A2002DBA91 /* Helpers */,
 				6ABD36AF2496D1F2005F80EE /* Resources */,
 			);
@@ -1116,6 +1123,7 @@
 				6A7614BC24999C740043392E /* HuffmanTree.swift */,
 				6A7614BE2499A1020043392E /* Bitstream.swift */,
 				6A7614C72499B53A0043392E /* BitHelpers.swift */,
+				6AE51AC0249DC41D0091A550 /* Fraction.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1147,6 +1155,15 @@
 				6AD8CFE5248E0A79009AF452 /* EditViewController.xib */,
 			);
 			name = "Edit View";
+			sourceTree = "<group>";
+		};
+		6AE51ABB249D90250091A550 /* Metadata Support */ = {
+			isa = PBXGroup;
+			children = (
+				6AE51ABC249D91A50091A550 /* MetadataTypes.swift */,
+				6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */,
+			);
+			name = "Metadata Support";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1584,6 +1601,7 @@
 				6A961B84249C569700FE4D5E /* CR2Unslicer.m in Sources */,
 				6ABF946724986FD9002DBA91 /* JPEGHuffman.swift in Sources */,
 				6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */,
+				6AE51AC1249DC41D0091A550 /* Fraction.swift in Sources */,
 				6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */,
 				6A9E827B249AE833004BE66A /* decompress.c in Sources */,
 				6A961B88249C5A8100FE4D5E /* unslice.c in Sources */,
@@ -1596,9 +1614,11 @@
 				6ABF946524986A84002DBA91 /* JPEGMarker.swift in Sources */,
 				6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */,
 				6ABF946024986032002DBA91 /* JPEGDecoder.swift in Sources */,
+				6AE51ABF249D98580091A550 /* TIFFMetadataReader.swift in Sources */,
 				6A9E8284249AF9FB004BE66A /* CJPEGDecompressor.m in Sources */,
 				6ABF9463249861CA002DBA91 /* Data+ReadHelpers.swift in Sources */,
 				6ABD36FC24972A79005F80EE /* TIFFReaderConfig.swift in Sources */,
+				6AE51ABD249D91A50091A550 /* MetadataTypes.swift in Sources */,
 				6A7614C82499B53A0043392E /* BitHelpers.swift in Sources */,
 				6ABD3703249745A2005F80EE /* CR2Image.swift in Sources */,
 				6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */,
