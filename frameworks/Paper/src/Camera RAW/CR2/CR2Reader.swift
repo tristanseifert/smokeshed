@@ -56,7 +56,9 @@ public class CR2Reader {
 
         cfg.subIfdUnsignedOverrides.append(contentsOf: [
             // EXIF
-            0x8769
+            0x8769,
+            // GPS
+            0x8825,
         ])
         cfg.subIfdByteSeqOverrides.append(contentsOf: [
             // MakerNotes
@@ -338,8 +340,6 @@ public class CR2Reader {
      * Extracts the raw pixel data from the image file.
      */
     private func extractRawData(_ ifd: TIFFReader.IFD) throws {
-        DDLogDebug("Raw data IFD: \(ifd)")
-
         // compression type must be "old JPEG" (6)
         guard let compression = ifd.getTag(byId: 0x0103) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0103)

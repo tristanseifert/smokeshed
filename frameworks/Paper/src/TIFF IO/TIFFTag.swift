@@ -203,7 +203,12 @@ extension TIFFReader {
                 let end = start + Int(self.count)
                 bytes = self.directory!.file!.readRange(start..<end)
             }
-
+            
+            // strip the last zero byte
+            if bytes[bytes.count-1] == 0x00 {
+                bytes = bytes.subdata(in: 0..<(bytes.count-1))
+            }
+                
             // create an ASCII string
             guard let str = String(bytes: bytes, encoding: .ascii) else {
                 throw TagError.stringDecodeFailed(bytes)
@@ -367,7 +372,7 @@ extension TIFFReader {
         fileprivate let denominatorOffset: Int = 4
 
         /// Size of a single rational value
-        fileprivate  let rationalSize: Int = 8
+        fileprivate let rationalSize: Int = 8
     }
 
     /**
@@ -445,7 +450,7 @@ extension TIFFReader {
 
             for i in 0..<Int(self.count) {
                 // read a single entry from the offset
-                let offset = dataStart + (i * Self.size)
+                let offset = dataStart + (i * 8)
                 self.value.append(try self.readRational(offset))
             }
         }

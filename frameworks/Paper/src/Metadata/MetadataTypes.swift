@@ -31,6 +31,9 @@ public struct ImageMeta: CustomStringConvertible {
         /// How to interpret the ISO value
         internal(set) public var isoType: SensitivityType = .unknown
         
+        /// Exposure compensation (bias)
+        internal(set) public var exposureCompesation: Fraction?
+        
         /// Exposure program
         internal(set) public var programType: ProgramType = .undefined
         
@@ -96,7 +99,7 @@ public struct ImageMeta: CustomStringConvertible {
         internal init() {}
         
         public var description: String {
-            return String(format: "<EXIF: exposure %@ fnum %@ iso %@ type %@; program type %@; captured %@ digitized %@; body serial %@; lens %@ serial %@>",
+            return String(format: "<EXIF: exposure: %@ fnum: %@ iso: %@ (type %@); program type: %@; captured: %@ digitized: %@; body serial: %@; lens: %@, serial: %@>",
                           String(describing: self.exposureTime),
                           String(describing: self.fNumber),
                           String(describing: self.iso),
@@ -117,8 +120,31 @@ public struct ImageMeta: CustomStringConvertible {
     /**
      * Geolocation information
      */
-    public struct GPS {
+    public struct GPS: CustomStringConvertible {
+        /// Latitude
+        internal(set) public var latitude: Double = Double.nan
+        /// Longitude
+        internal(set) public var longitude: Double = Double.nan
+        /// Altitude relative to sea level (negative is below, positive above) in meters
+        internal(set) public var altitude: Double = Double.nan
+        
+        /// Reference model (usually WGS-84)
+        internal(set) public var reference: String = "WGS-84"
+        
+        /// UTC timestamp of this sample
+        internal(set) public var utcTimestamp: Date?
+        
+        /// Dilution of Precision (DoP)
+        internal(set) public var dop: Double = Double.nan
+        
         internal init() {}
+        
+        public var description: String {
+            return String(format: "<GPS: (%f, %f) ref: %@ alt: %gm; timestamp: %@; dof: %g>",
+                          self.latitude, self.longitude, self.reference,
+                          self.altitude, String(describing: self.utcTimestamp),
+                          self.dop)
+        }
     }
     
     // MARK: - TIFF
@@ -181,7 +207,7 @@ public struct ImageMeta: CustomStringConvertible {
         }
         
         public var description: String {
-            return String(format: "<TIFF %dx%d; make '%@', model '%@'; orientation: '%@'; artist: '%@', copyright: '%@'; created %@>",
+            return String(format: "<TIFF %dx%d; make '%@', model '%@'; orientation: '%@'; artist: '%@', copyright: '%@'; created: %@>",
                           self.width, self.height, self.make ?? "(null)",
                           self.model ?? "(null)",
                           String(describing: self.orientation),
@@ -194,7 +220,7 @@ public struct ImageMeta: CustomStringConvertible {
 
     // MARK: - Helpers
     public var description: String {
-        return String(format: "ImageMetadata: TIFF %@, EXIF %@, GPS %@",
+        return String(format: "ImageMetadata:\n\tTIFF %@\n\tEXIF %@\n\tGPS %@",
                       String(describing: self.tiff),
                       String(describing: self.exif),
                       String(describing: self.gps))

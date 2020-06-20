@@ -18,11 +18,17 @@ internal class TIFFMetadataReader {
     
     /// Date formatter for reading TIFF dates
     private var tiffDates = DateFormatter()
+    /// Formatter for parsing GPS date string (yyyy:mm:dd)
+    private var dayFormatter = DateFormatter()
     
     internal init() {
         self.tiffDates.locale = Locale(identifier: "en_US_POSIX")
         self.tiffDates.dateFormat = "yyyy:MM:dd HH:mm:ss"
         self.tiffDates.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        self.dayFormatter.locale = Locale(identifier: "en_US_POSIX")
+        self.dayFormatter.dateFormat = "yyyy:MM:dd"
+        self.dayFormatter.timeZone = TimeZone(secondsFromGMT: 0)
     }
     
     // MARK: - Public interface
@@ -31,8 +37,6 @@ internal class TIFFMetadataReader {
      * as EXIF directories.
      */
     internal func addIfd(_ ifd: TIFFReader.IFD) throws {
-        DDLogVerbose("IFD: \(ifd)")
-        
         // tiff-specific data
         self.meta.tiff = try self.getTiffData(ifd)
         
@@ -41,18 +45,23 @@ internal class TIFFMetadataReader {
            let exif = exifTag.value.first {
             self.meta.exif = try self.getExifData(exif)
         }
+        
+        // grab GPS data
+        if let gpsTag = ifd.getTag(byId: 0x8825) as? TIFFReader.TagSubIfd,
+           let gps = gpsTag.value.first {
+            self.meta.gps = try self.getGpsData(gps)
+        }
     }
     
     /**
      * Finalizes metadata parsing and returns the finished object.
      */
     internal func finalize() -> ImageMeta {
-        DDLogVerbose("Meta: \(self.meta.exif!)")
-        
         return self.meta
     }
     
     // MARK: - IFD Parsing
+    // MARK: TIFF
     /**
      * Gets TIFF-specific information from the IFD.
      *
@@ -126,6 +135,7 @@ internal class TIFFMetadataReader {
         return tiff
     }
     
+    // MARK: EXIF
     /**
      * Builds the EXIF image data object.
      */
@@ -183,6 +193,12 @@ internal class TIFFMetadataReader {
         if let rawValue = ifd.getTag(byId: 0x8830) as? TIFFReader.TagUnsigned,
            let type = ImageMeta.EXIF.SensitivityType(rawValue: rawValue.value) {
             exif.isoType = type
+        }
+        
+        // exposure bias
+        if let value = ifd.getTag(byId: 0x9204) as? TIFFReader.TagRational<Int32> {
+            exif.exposureCompesation = Fraction(numerator: Int(value.numerator),
+                                                denominator: Int(value.denominator))
         }
     }
     /**
@@ -251,6 +267,99 @@ internal class TIFFMetadataReader {
         }
     }
     
+    // MARK: GPS
+    /**
+     * Retrieves the GPS information from the given IFD.
+     */
+    private func getGpsData(_ ifd: TIFFReader.IFD) throws -> ImageMeta.GPS {
+        var gps = ImageMeta.GPS()
+        
+        // altitude and altitude reference
+        if let altitude = ifd.getTag(byId: 0x0006) as? TIFFReader.TagRational<UInt32>,
+           let ref = ifd.getTag(byId: 0x0005) as? TIFFReader.TagUnsigned{
+            if ref.value == 0 {
+                gps.altitude = altitude.value
+            } else {
+                gps.altitude = altitude.value * -1.0
+            }
+        }
+        
+        // DoP
+        if let dop = ifd.getTag(byId: 0x000B) as? TIFFReader.TagRational<UInt32> {
+            gps.dop = dop.value
+        }
+        
+        // latitude
+        if let lat = ifd.getTag(byId: 0x0002) as? TIFFReader.TagRationalArray<UInt32>,
+           let ref = ifd.getTag(byId: 0x0001) as? TIFFReader.TagString {
+            let values = lat.value.map({ $0.value })
+            let degrees = values[0] + (values[1] / 60) + (values[2] / 3600)
+            
+            if ref.value.first == "S" {
+                gps.latitude = -degrees
+            } else if ref.value.first == "N" {
+                gps.latitude = degrees
+            } else {
+                throw Errors.invalidLatitudeRef(ref.value)
+            }
+        }
+        
+        // longitude
+        if let lng = ifd.getTag(byId: 0x0004) as? TIFFReader.TagRationalArray<UInt32>,
+           let ref = ifd.getTag(byId: 0x0003) as? TIFFReader.TagString {
+            let values = lng.value.map({ $0.value })
+            let degrees = values[0] + (values[1] / 60) + (values[2] / 3600)
+            
+            if ref.value.first == "W" {
+                gps.longitude = -degrees
+            } else if ref.value.first == "E" {
+                gps.longitude = degrees
+            } else {
+                throw Errors.invalidLongitudeRef(ref.value)
+            }
+        }
+        
+        // reference model
+        if let ref = ifd.getTag(byId: 0x0012) as? TIFFReader.TagString {
+            gps.reference = ref.value
+        }
+        
+        // GPS fix date/time
+        let cal = NSCalendar.init(calendarIdentifier: .ISO8601)
+        cal?.timeZone = TimeZone(secondsFromGMT: 0)!
+        
+        var comp = DateComponents()
+        var compValid = false
+        
+        if let fixTime = ifd.getTag(byId: 0x0007) as? TIFFReader.TagRationalArray<UInt32> {
+            let values = fixTime.value.map({ $0.value })
+            
+            comp.hour = Int(values[0])
+            comp.minute = Int(values[1])
+            comp.second = Int(values[2])
+            compValid = true
+        }
+        
+        if let fixDate = ifd.getTag(byId: 0x001d) as? TIFFReader.TagString {
+            var date: AnyObject! = nil
+            try self.dayFormatter.getObjectValue(&date, for: fixDate.value, range: nil)
+            
+            if let date = date as? Date,
+               let dayComps = cal?.components([.day, .month, .year], from: date) {
+                comp.day = dayComps.day
+                comp.month = dayComps.month
+                comp.year = dayComps.year
+                compValid = true
+            }
+        }
+        
+        if compValid {
+            gps.utcTimestamp = cal?.date(from: comp)
+        }
+        
+        return gps
+    }
+    
     // MARK: - Errors
     private enum Errors: Error {
         /// Missing TIFF metadata field
@@ -260,5 +369,10 @@ internal class TIFFMetadataReader {
         case missingExifTag(_ tagId: UInt16)
         /// Unsupported EXIF version
         case unsupportedExifVersion(_ version: UInt32)
+        
+        /// Invalid latitude reference
+        case invalidLatitudeRef(_ ref: String)
+        /// Invalid longitude reference
+        case invalidLongitudeRef(_ ref: String)
     }
 }
