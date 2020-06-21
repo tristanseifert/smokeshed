@@ -22,38 +22,42 @@ public struct ImageMeta: CustomStringConvertible {
      */
     public struct EXIF: CustomStringConvertible {
         /// Exposure time, in seconds
-        internal(set) public var exposureTime: Fraction?
+        internal(set) public var exposureTime: Fraction? = nil
         /// F number
-        internal(set) public var fNumber: Fraction?
+        internal(set) public var fNumber: Fraction? = nil
         
         /// ISO values
-        internal(set) public var iso: [UInt]?
+        internal(set) public var iso: [UInt]? = nil
         /// How to interpret the ISO value
         internal(set) public var isoType: SensitivityType = .unknown
         
         /// Exposure compensation (bias)
-        internal(set) public var exposureCompesation: Fraction?
+        internal(set) public var exposureCompesation: Fraction? = nil
         
         /// Exposure program
         internal(set) public var programType: ProgramType = .undefined
         
         /// When was the image captured?
-        internal(set) public var captured: Date?
+        internal(set) public var captured: Date? = nil
         /// When was the image digitized/recorded?
-        internal(set) public var digitized: Date?
+        internal(set) public var digitized: Date? = nil
         
         /// Width of final image
-        internal(set) public var width: Int?
+        internal(set) public var width: Int? = nil
         /// Height of the decompressed image
-        internal(set) public var height: Int?
+        internal(set) public var height: Int? = nil
         
         /// Serial number of the camera body
-        internal(set) public var bodySerial: String?
+        internal(set) public var bodySerial: String? = nil
         
+        /// Vendor-specific lens ID
+        internal(set) public var lensId: UInt? = nil
+        /// Lens manufacturer
+        internal(set) public var lensMake: String? = nil
         /// Lens model
-        internal(set) public var lensModel: String?
+        internal(set) public var lensModel: String? = nil
         /// Serial number of the lens
-        internal(set) public var lensSerial: String?
+        internal(set) public var lensSerial: String? = nil
         
         /// Sensitivity types (how to interpret the ISO field)
         public enum SensitivityType: UInt32 {
@@ -99,7 +103,7 @@ public struct ImageMeta: CustomStringConvertible {
         internal init() {}
         
         public var description: String {
-            return String(format: "<EXIF: exposure: %@ fnum: %@ iso: %@ (type %@); program type: %@; captured: %@ digitized: %@; body serial: %@; lens: %@, serial: %@>",
+            return String(format: "<EXIF: exposure: %@ fnum: %@ iso: %@ (type %@); program type: %@; captured: %@ digitized: %@; body serial: %@; lens: %@ (id %@), serial: %@>",
                           String(describing: self.exposureTime),
                           String(describing: self.fNumber),
                           String(describing: self.iso),
@@ -109,6 +113,7 @@ public struct ImageMeta: CustomStringConvertible {
                           String(describing: self.digitized),
                           String(describing: self.bodySerial),
                           String(describing: self.lensModel),
+                          String(describing: self.lensId),
                           String(describing: self.lensSerial))
         }
     }
@@ -132,7 +137,7 @@ public struct ImageMeta: CustomStringConvertible {
         internal(set) public var reference: String = "WGS-84"
         
         /// UTC timestamp of this sample
-        internal(set) public var utcTimestamp: Date?
+        internal(set) public var utcTimestamp: Date? = nil
         
         /// Dilution of Precision (DoP)
         internal(set) public var dop: Double = Double.nan
@@ -140,7 +145,7 @@ public struct ImageMeta: CustomStringConvertible {
         internal init() {}
         
         public var description: String {
-            return String(format: "<GPS: (%f, %f) ref: %@ alt: %gm; timestamp: %@; dof: %g>",
+            return String(format: "<GPS: (%f, %f) ref: %@ alt: %gm; timestamp: %@; dop: %g>",
                           self.latitude, self.longitude, self.reference,
                           self.altitude, String(describing: self.utcTimestamp),
                           self.dop)
@@ -161,9 +166,9 @@ public struct ImageMeta: CustomStringConvertible {
         internal(set) public var height: Int = 0
         
         /// Manufacturer of capture device
-        internal(set) public var make: String?
+        internal(set) public var make: String? = nil
         /// Capture device model
-        internal(set) public var model: String?
+        internal(set) public var model: String? = nil
         
         /// Image orientation
         internal(set) public var orientation: Orientation = .topLeft
@@ -171,22 +176,22 @@ public struct ImageMeta: CustomStringConvertible {
         /// Unit for resolution values
         internal(set) public var resolutionUnits: ResUnit = .none
         /// Horizontal physical resolution (pixels per resolution unit)
-        internal(set) public var xResolution: Double?
+        internal(set) public var xResolution: Double? = nil
         /// Vertical physical resolution (pixels per resolution unit)
-        internal(set) public var yResolution: Double?
+        internal(set) public var yResolution: Double? = nil
         
         /// Software that created this image
-        internal(set) public var software: String?
+        internal(set) public var software: String? = nil
         /// System on which this image was created
-        internal(set) public var system: String?
+        internal(set) public var system: String? = nil
         
         /// Artist name
-        internal(set) public var artist: String?
+        internal(set) public var artist: String? = nil
         /// Copyright information
-        internal(set) public var copyright: String?
+        internal(set) public var copyright: String? = nil
         
         /// Image creation date
-        internal(set) public var created: Date?
+        internal(set) public var created: Date? = nil
         
         /// Possible image orientations
         public enum Orientation: UInt32 {

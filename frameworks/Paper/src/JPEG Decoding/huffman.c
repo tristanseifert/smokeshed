@@ -13,6 +13,7 @@
 #include <assert.h>
 
 static void ReleaseChildren(jpeg_huffman_node_t *node);
+static jpeg_huffman_node_t *MakeNode(void);
 
 // MARK: - Constants
 /**

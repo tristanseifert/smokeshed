@@ -153,6 +153,7 @@
 		6AE51ABD249D91A50091A550 /* MetadataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABC249D91A50091A550 /* MetadataTypes.swift */; };
 		6AE51ABF249D98580091A550 /* TIFFMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */; };
 		6AE51AC1249DC41D0091A550 /* Fraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51AC0249DC41D0091A550 /* Fraction.swift */; };
+		6AE51AC3249EABF40091A550 /* ImageIOMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51AC2249EABF40091A550 /* ImageIOMetadataReader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -399,6 +400,7 @@
 		6AE51ABC249D91A50091A550 /* MetadataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetadataTypes.swift; path = frameworks/Paper/src/Metadata/MetadataTypes.swift; sourceTree = "<group>"; };
 		6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFMetadataReader.swift; path = frameworks/Paper/src/Metadata/TIFFMetadataReader.swift; sourceTree = "<group>"; };
 		6AE51AC0249DC41D0091A550 /* Fraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Fraction.swift; path = frameworks/Paper/src/Helpers/Fraction.swift; sourceTree = "<group>"; };
+		6AE51AC2249EABF40091A550 /* ImageIOMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageIOMetadataReader.swift; path = frameworks/Paper/src/Metadata/ImageIOMetadataReader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1162,6 +1164,7 @@
 			children = (
 				6AE51ABC249D91A50091A550 /* MetadataTypes.swift */,
 				6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */,
+				6AE51AC2249EABF40091A550 /* ImageIOMetadataReader.swift */,
 			);
 			name = "Metadata Support";
 			sourceTree = "<group>";
@@ -1610,6 +1613,7 @@
 				6A7614BF2499A1020043392E /* Bitstream.swift in Sources */,
 				6A9E8288249AFED4004BE66A /* CJPEGHuffmanTable.m in Sources */,
 				6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */,
+				6AE51AC3249EABF40091A550 /* ImageIOMetadataReader.swift in Sources */,
 				6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */,
 				6ABF946524986A84002DBA91 /* JPEGMarker.swift in Sources */,
 				6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */,

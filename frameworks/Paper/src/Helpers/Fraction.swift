@@ -21,6 +21,45 @@ public struct Fraction {
         return Double(self.numerator) / Double(self.denominator)
     }
     
+    /**
+     * Creates a new fraction with the provdied numerator and denominator.
+     */
+    init(numerator: Int, denominator: Int) {
+        self.numerator = numerator
+        self.denominator = denominator
+    }
+    /**
+     * Creates a new fraction from a double value.
+     */
+    init(_ value: Double) {
+        let precision = 1000000
+        
+        let integral = floor(value)
+        let frac = value - integral
+        
+        let gcd = Self.gcd(Int(frac * Double(precision)), precision)
+        
+        self.init(numerator: (precision / gcd),
+                  denominator: Int(round(frac * Double(precision))) / gcd)
+    }
+    
+    /**
+     * Computes the greatest common divisor between two numbers.
+     */
+    static func gcd(_ a: Int, _ b: Int) -> Int {
+        if a == 0 {
+            return b
+        } else if b == 0 {
+            return a
+        }
+        
+        if a < b {
+            return Self.gcd(a, b % a)
+        } else {
+            return Self.gcd(b, a % b)
+        }
+    }
+    
     /// A fraction that has no value
     internal static let none = Fraction(numerator: 0, denominator: 0)
 }

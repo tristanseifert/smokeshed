@@ -97,6 +97,7 @@ public class CR2Reader {
         
         // get metadata
         self.image.meta = self.meta.finalize()
+        try self.updateExif()
 
         // return the image (fully decoded by now)
         return self.image
@@ -185,7 +186,6 @@ public class CR2Reader {
         try self.decodeSensorInfo()
         try self.decodeColorData()
         try self.readDustRecords()
-
     }
 
     /**
@@ -279,6 +279,17 @@ public class CR2Reader {
         let data = i.value
         let vers: UInt8 = data.read(0)
         DDLogDebug("Dust Delete Data version: \(vers)")
+    }
+    
+    /**
+     * Updates the EXIF dictionary with some information from the MakerNote field.
+     */
+    private func updateExif() throws {
+        // camera settings
+        if let settings = self.canon.getTag(byId: 0x0001) as? TIFFReader.TagUnsignedArray {
+            // lens ID is at index 22
+            self.image.meta.exif!.lensId = UInt(settings.value[22])
+        }
     }
 
     // MARK: - Thumbnails
