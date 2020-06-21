@@ -118,3 +118,36 @@ int CR2CalculateBayerShift(uint16_t *inPlane, size_t rowWidth, size_t *borders) 
         return 0;
     }
 }
+
+/**
+ * Trims the raw image in place to remove borders.
+ *
+ * @param inPlane Image data plane (1 component)
+ * @param rowWidth Number of pixels (including border area) per line
+ * @param borders Position of borders in image, starting with top and going clockwise.
+ * @return Total number of bytes required for trimmed image
+ */
+size_t CR2Trim(uint16_t *inPlane, size_t rowWidth, size_t *borders) {
+    size_t line, l, inRowOff;
+//    size_t col, c;
+    size_t outPixel = 0;
+    
+    // calculate some constants
+    const size_t pixelsPerLine = (borders[1] - borders[3]) + 1;
+    
+    // iterate each line
+    for (line = borders[0], l = 0; line <= borders[2]; line++, l++) {
+        inRowOff = (line * rowWidth);
+        
+        // iterate each column in the line
+        size_t bytes = pixelsPerLine * sizeof(uint16_t);
+        memmove((inPlane + outPixel), (inPlane + inRowOff + borders[3]), bytes);
+        outPixel += pixelsPerLine;
+        
+//        for (col = borders[3], c = 0; col <= borders[1]; col++, c++) {
+//            inPlane[outPixel++] = inPlane[inRowOff + col];
+//        }
+    }
+            
+    return (outPixel * sizeof(uint16_t));
+}

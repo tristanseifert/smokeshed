@@ -34,10 +34,20 @@ int CR2Unslice(jpeg_decompressor_t *jpeg,
  * shifted down one line.
  *
  * @param inPlane Image data plane (1 component)
- * @param rowWidth Number of pixels (including border area) per line 
+ * @param rowWidth Number of pixels (including border area) per line
  * @param borders Position of borders in image, starting with top and going clockwise.
  * @return Vertical shift for bayer matrix, either 0 or 1.
  */
 int CR2CalculateBayerShift(uint16_t *inPlane, size_t rowWidth, size_t *borders);
+
+/**
+ * Trims the raw image in place to remove borders.
+ *
+ * @param inPlane Image data plane (1 component)
+ * @param rowWidth Number of pixels (including border area) per line
+ * @param borders Position of borders in image, starting with top and going clockwise.
+ * @return Total number of bytes required for trimmed image
+ */
+size_t CR2Trim(uint16_t *inPlane, size_t rowWidth, size_t *borders);
 
 #endif /* unslice_h */

@@ -15,4 +15,7 @@
 // CR2
 #import "CR2Unslicer.h"
 
+// Debayering
+#import "PAPDebayerer.h"
+
 #endif /* SwiftBridging_h */

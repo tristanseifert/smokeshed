@@ -28,10 +28,12 @@ public class CR2Image {
     /// Raw bitplanes
     internal(set) public var rawPlanes: [Data] = []
 
-    /// Sensor data; first row is RG pixels, second is GB pixels
+    /// Dimensions of sensor data
+    internal(set) public var rawValuesSize: CGSize = .zero
+    /// Sensor data; first row is RG pixels, second is GB pixels, with borders trimmed.
     internal(set) public var rawValues: Data!
     /// Vertical shift of the Bayer matrix; the first actual line (after borders) may be GB pixels
-    internal(set) public var rawValuesVshift: Int = 0
+    internal(set) public var rawValuesVshift: UInt = 0
 
     // MARK: - Initialization
     internal init() {}

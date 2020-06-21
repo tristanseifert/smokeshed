@@ -396,13 +396,18 @@ public class CR2Reader {
         self.unsliceBuf = NSMutableData(length: bytes)
 
         try self.unslice(slices.value)
-
-        self.image.rawValues = self.unsliceBuf as Data?
         
         // calculate the vshift for the raw image
         self.image.rawValuesVshift = self.calculateRawVshift()
+        
+        // TODO: calculate black levels, etc. from borders
+        
+        // remove borders from image
+        self.trimRawBorders()
 
         // copy the output plane
+        self.image.rawValues = self.unsliceBuf as Data?
+        
         self.image.rawPlanes.append(self.jpeg.decompressor.output as Data)
     }
 
@@ -438,10 +443,33 @@ public class CR2Reader {
     }
     
     /**
+     * Trims the image buffer in place to remove borders.
+     */
+    private func trimRawBorders() {
+        // we don't need to trim if the borders are zero
+        if self.sensor.effectiveWidth == self.sensor.width &&
+           self.sensor.effectiveHeight == self.sensor.height {
+            return
+        }
+        
+        // perform trimming; this is implemented in C
+        let borders: [Int] = [
+            self.sensor.borderTop, self.sensor.borderRight,
+            self.sensor.borderBottom, self.sensor.borderLeft
+        ]
+        
+        self.unslicer.trimBorders(borders as [NSNumber])
+        
+        // store trimmed size
+        self.image.rawValuesSize = CGSize(width: self.sensor.effectiveWidth,
+                                          height: self.sensor.effectiveHeight)
+    }
+    
+    /**
      * Determine whether the first row of image data is likely to be the RG row of the Bayer array, or if it is
      * shifted by one and is the GB row.
      */
-    private func calculateRawVshift() -> Int {
+    private func calculateRawVshift() -> UInt {
         let borders: [Int] = [
             self.sensor.borderTop, self.sensor.borderRight,
             self.sensor.borderBottom, self.sensor.borderLeft

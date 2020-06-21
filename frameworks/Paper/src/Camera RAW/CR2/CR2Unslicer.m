@@ -61,8 +61,7 @@
     DDAssert(outPtr, @"Failed to get output pointer");
 
     // call into C code
-    err = CR2Unslice(dec, outPtr,
-                     slices, self.sensorSize.width,
+    err = CR2Unslice(dec, outPtr, slices, self.sensorSize.width,
                      self.sensorSize.height);
     DDAssert(outPtr, @"Failed to unslice: %d", err);
 }
@@ -72,24 +71,43 @@
  *
  * @param inBorders Array of border indices, starting with top and going cw.
  */
-- (NSInteger) calculateBayerShiftWithBorders:(NSArray<NSNumber *> *) inBorders {
+- (NSUInteger) calculateBayerShiftWithBorders:(NSArray<NSNumber *> *) inBorders {
     // validate inputs
     DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
     
     // build inputs
     size_t borders[] = {
-        inBorders[0].unsignedIntegerValue,
-        inBorders[1].unsignedIntegerValue,
-        inBorders[2].unsignedIntegerValue,
-        inBorders[3].unsignedIntegerValue,
+        inBorders[0].unsignedIntegerValue, inBorders[1].unsignedIntegerValue,
+        inBorders[2].unsignedIntegerValue, inBorders[3].unsignedIntegerValue,
     };
 
     uint16_t *outPtr = self.output.mutableBytes;
     DDAssert(outPtr, @"Failed to get output pointer");
     
-    return CR2CalculateBayerShift(outPtr,
-                                  self.sensorSize.width,
-                                  borders);
+    return CR2CalculateBayerShift(outPtr, self.sensorSize.width, borders);
+}
+
+/**
+ * Trims the image borders away.
+ */
+- (void) trimBorders:(NSArray<NSNumber *> *) inBorders {
+    // validate inputs
+    DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
+    
+    // build inputs
+    size_t borders[] = {
+        inBorders[0].unsignedIntegerValue, inBorders[1].unsignedIntegerValue,
+        inBorders[2].unsignedIntegerValue, inBorders[3].unsignedIntegerValue,
+    };
+
+    uint16_t *outPtr = self.output.mutableBytes;
+    DDAssert(outPtr, @"Failed to get output pointer");
+    
+    // do it and resize the buffer
+    size_t new = CR2Trim(outPtr, self.sensorSize.width, borders);
+    DDAssert(new > 0, @"Failed to trim image");
+    
+    [self.output setLength:new];
 }
 
 @end
