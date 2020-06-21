@@ -38,6 +38,8 @@ public class CR2Reader {
     
     /// Whether raw image data should be decoded
     private var shouldDecodeRaw: Bool = false
+    /// Should thumbnails be decoded?
+    private var shouldDecodeThumbs: Bool = false
 
     // MARK: - Initialization
     /**
@@ -46,10 +48,11 @@ public class CR2Reader {
      * This initializer will validate that the file is, in fact, a CR2 file by reading some values from the first
      * few bytes of the file.
      */
-    public init(withData data: Data, decodeRawData: Bool) throws {
+    public init(withData data: Data, decodeRawData: Bool, decodeThumbs: Bool) throws {
         self.data = data
         
         self.shouldDecodeRaw = decodeRawData
+        self.shouldDecodeThumbs = decodeThumbs
 
         // TIFF reading config
         var cfg = TIFFReaderConfig()
@@ -73,9 +76,10 @@ public class CR2Reader {
     /**
      * Creates a Canon RAW file by reading from the given URL.
      */
-    public convenience init(fromUrl url: URL, decodeRawData: Bool) throws {
+    public convenience init(fromUrl url: URL, decodeRawData: Bool, decodeThumbs: Bool) throws {
         let data = try Data(contentsOf: url, options: [.mappedIfSafe])
-        try self.init(withData: data, decodeRawData: decodeRawData)
+        try self.init(withData: data, decodeRawData: decodeRawData,
+                      decodeThumbs: decodeThumbs)
     }
 
     // MARK: - Decoding
@@ -295,6 +299,8 @@ public class CR2Reader {
      * tags are checked.
      */
     private func extractJpegThumb(_ ifd: TIFFReader.IFD) throws {
+        guard self.shouldDecodeThumbs else { return }
+        
         // IFD0 has the `stripOffset` and `stripByteCounts` tags
         if let offset = ifd.getTag(byId: 0x0111) as? TIFFReader.TagUnsigned,
            let length = ifd.getTag(byId: 0x0117) as? TIFFReader.TagUnsigned {
@@ -392,6 +398,9 @@ public class CR2Reader {
         try self.unslice(slices.value)
 
         self.image.rawValues = self.unsliceBuf as Data?
+        
+        // calculate the vshift for the raw image
+        self.image.rawValuesVshift = self.calculateRawVshift()
 
         // copy the output plane
         self.image.rawPlanes.append(self.jpeg.decompressor.output as Data)
@@ -426,6 +435,19 @@ public class CR2Reader {
 
         // let er rip
         self.unslicer.unslice()
+    }
+    
+    /**
+     * Determine whether the first row of image data is likely to be the RG row of the Bayer array, or if it is
+     * shifted by one and is the GB row.
+     */
+    private func calculateRawVshift() -> Int {
+        let borders: [Int] = [
+            self.sensor.borderTop, self.sensor.borderRight,
+            self.sensor.borderBottom, self.sensor.borderLeft
+        ]
+        
+        return self.unslicer.calculateBayerShift(withBorders: borders as [NSNumber])
     }
 
     // MARK: - Errors

@@ -39,7 +39,7 @@ class CanonRAWTests: XCTestCase {
         let url = Bundle(for: type(of: self)).url(forResource: "birb",
                                                   withExtension: "cr2")!
 
-        let reader = try CR2Reader(fromUrl: url, decodeRawData: true)
+        let reader = try CR2Reader(fromUrl: url, decodeRawData: true, decodeThumbs: true)
         let image = try reader.decode()
         
         DDLogInfo("Metadata: \(String(describing: image.meta))")
@@ -59,7 +59,7 @@ class CanonRAWTests: XCTestCase {
             let url = Bundle(for: type(of: self)).url(forResource: "birb",
                                                       withExtension: "cr2")!
             do {
-                reader = try CR2Reader(fromUrl: url, decodeRawData: true)
+                reader = try CR2Reader(fromUrl: url, decodeRawData: true, decodeThumbs: true)
                 let image = try reader.decode()
                 self.stopMeasuring()
                 DDLogInfo("CR2 image: \(image)")

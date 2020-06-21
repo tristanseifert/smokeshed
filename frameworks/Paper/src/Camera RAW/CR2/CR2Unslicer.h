@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype) initWithInput:(CJPEGDecompressor *) input andOutput:(NSMutableData *) outBuf slicingInfo:(NSArray<NSNumber *> *) slices sensorSize:(CGSize) size;
 
 - (void) unslice;
+- (NSInteger) calculateBayerShiftWithBorders:(NSArray<NSNumber *> *) borders;
 
 @end
 

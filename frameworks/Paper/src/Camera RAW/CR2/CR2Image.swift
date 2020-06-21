@@ -30,6 +30,8 @@ public class CR2Image {
 
     /// Sensor data; first row is RG pixels, second is GB pixels
     internal(set) public var rawValues: Data!
+    /// Vertical shift of the Bayer matrix; the first actual line (after borders) may be GB pixels
+    internal(set) public var rawValuesVshift: Int = 0
 
     // MARK: - Initialization
     internal init() {}

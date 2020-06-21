@@ -44,7 +44,8 @@ internal class MetaHelper {
      * Reads metadata from a Canon RAW (CR2) image
      */
     private func metaFromCr2(_ image: URL) throws -> ImageMeta {
-        let reader = try CR2Reader(fromUrl: image, decodeRawData: false)
+        let reader = try CR2Reader(fromUrl: image, decodeRawData: false,
+                                   decodeThumbs: false)
         let image = try reader.decode()
         
         return image.meta!

@@ -67,4 +67,29 @@
     DDAssert(outPtr, @"Failed to unslice: %d", err);
 }
 
+/**
+ * Calculates the bayer vertical shift.
+ *
+ * @param inBorders Array of border indices, starting with top and going cw.
+ */
+- (NSInteger) calculateBayerShiftWithBorders:(NSArray<NSNumber *> *) inBorders {
+    // validate inputs
+    DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
+    
+    // build inputs
+    size_t borders[] = {
+        inBorders[0].unsignedIntegerValue,
+        inBorders[1].unsignedIntegerValue,
+        inBorders[2].unsignedIntegerValue,
+        inBorders[3].unsignedIntegerValue,
+    };
+
+    uint16_t *outPtr = self.output.mutableBytes;
+    DDAssert(outPtr, @"Failed to get output pointer");
+    
+    return CR2CalculateBayerShift(outPtr,
+                                  self.sensorSize.width,
+                                  borders);
+}
+
 @end
