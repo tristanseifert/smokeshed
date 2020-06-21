@@ -260,6 +260,8 @@ public class CR2Reader {
             color.wbRggbLevelsAsShot.append(read)
         }
         
+        self.image.rawWbMultiplier = color.wbRggbLevelsAsShot.map(Double.init)
+        
         // done
         self.color = color
     }
@@ -397,17 +399,14 @@ public class CR2Reader {
 
         try self.unslice(slices.value)
         
-        // calculate the vshift for the raw image
+        // calculate some values from the image before trimming
         self.image.rawValuesVshift = self.calculateRawVshift()
+        self.image.rawBlackLevel = self.calculateRawBlackLevel()
         
-        // TODO: calculate black levels, etc. from borders
-        
-        // remove borders from image
+        // remove borders from image, then copy data
         self.trimRawBorders()
 
-        // copy the output plane
         self.image.rawValues = self.unsliceBuf as Data?
-        
         self.image.rawPlanes.append(self.jpeg.decompressor.output as Data)
     }
 
@@ -476,6 +475,19 @@ public class CR2Reader {
         ]
         
         return self.unslicer.calculateBayerShift(withBorders: borders as [NSNumber])
+    }
+    
+    /**
+     * Calculates the black levels in the image.
+     */
+    private func calculateRawBlackLevel() -> [UInt16] {
+        let borders: [Int] = [
+            self.sensor.borderTop, self.sensor.borderRight,
+            self.sensor.borderBottom, self.sensor.borderLeft
+        ]
+        let shift = self.unslicer.calculateBlackLevel(withBorders: borders as [NSNumber])
+        
+        return shift.map({ $0.uint16Value })
     }
 
     // MARK: - Errors

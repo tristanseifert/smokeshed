@@ -88,6 +88,38 @@
 }
 
 /**
+ * Determine black level for each of the 4 bayer components
+ */
+- (NSArray<NSNumber *> *) calculateBlackLevelWithBorders:(NSArray<NSNumber *> *) inBorders {
+    uint16_t outLevels[4];
+    
+    // convert borders
+    DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
+    
+    size_t borders[] = {
+        inBorders[0].unsignedIntegerValue, inBorders[1].unsignedIntegerValue,
+        inBorders[2].unsignedIntegerValue, inBorders[3].unsignedIntegerValue,
+    };
+
+    // get pointers
+    uint16_t *plane = self.output.mutableBytes;
+    DDAssert(plane, @"Failed to get output pointer");
+    
+    // do it
+    CR2CalculateBlackLevel(plane, self.sensorSize.width,
+                           self.sensorSize.height, borders, outLevels);
+    
+    // convert output
+    NSMutableArray *arr = [NSMutableArray new];
+    
+    for (NSUInteger i = 0; i < 4; i++) {
+        [arr addObject:@(outLevels[i])];
+    }
+    
+    return [arr copy];
+}
+
+/**
  * Trims the image borders away.
  */
 - (void) trimBorders:(NSArray<NSNumber *> *) inBorders {

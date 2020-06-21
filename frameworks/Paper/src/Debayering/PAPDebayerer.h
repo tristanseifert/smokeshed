@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PAPDebayerer : NSObject
 
 + (void) debayer:(NSData *) input withOutput:(NSMutableData *) output
-       imageSize:(CGSize) size andAlgorithm:(NSUInteger) algo vShift:(NSUInteger) vShift;
+       imageSize:(CGSize) size andAlgorithm:(NSUInteger) algo
+          vShift:(NSUInteger) vShift wbShift:(NSArray<NSNumber *> *) wb
+      blackLevel:(NSArray<NSNumber *> *) black;
 
 @end
 

@@ -30,10 +30,15 @@ public class CR2Image {
 
     /// Dimensions of sensor data
     internal(set) public var rawValuesSize: CGSize = .zero
-    /// Sensor data; first row is RG pixels, second is GB pixels, with borders trimmed.
+    /// Sensor data; first row is RG pixels, second is GB pixels, with borders trimmed. (UInt16 per pixel)
     internal(set) public var rawValues: Data!
     /// Vertical shift of the Bayer matrix; the first actual line (after borders) may be GB pixels
     internal(set) public var rawValuesVshift: UInt = 0
+    
+    /// Black level factors, for each CFA index
+    internal(set) public var rawBlackLevel: [UInt16] = []
+    /// White balance compensation factors, in RG/GB order
+    internal(set) public var rawWbMultiplier: [Double] = []
 
     // MARK: - Initialization
     internal init() {}

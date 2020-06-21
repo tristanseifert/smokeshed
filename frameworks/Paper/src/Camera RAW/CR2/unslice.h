@@ -41,6 +41,18 @@ int CR2Unslice(jpeg_decompressor_t *jpeg,
 int CR2CalculateBayerShift(uint16_t *inPlane, size_t rowWidth, size_t *borders);
 
 /**
+ * Calculates the black level of the image by taking an average of black values in the border of the image.
+ *
+ * @param inPlane Image data plane (1 component)
+ * @param rowWidth Number of pixels (including border area) per line
+ * @param numRows Total number of lines (including border) in the image 
+ * @param borders Position of borders in image, starting with top and going clockwise.
+ * @param outLevels Calculated black levels, one for each component in the Bayer array
+ */
+void CR2CalculateBlackLevel(uint16_t *inPlane, size_t rowWidth, size_t numRows,
+                            size_t *borders, uint16_t *outLevels);
+
+/**
  * Trims the raw image in place to remove borders.
  *
  * @param inPlane Image data plane (1 component)

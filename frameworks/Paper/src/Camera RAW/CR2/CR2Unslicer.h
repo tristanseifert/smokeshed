@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) unslice;
 - (NSUInteger) calculateBayerShiftWithBorders:(NSArray<NSNumber *> *) borders;
+- (NSArray<NSNumber *> *) calculateBlackLevelWithBorders:(NSArray<NSNumber *> *) inBorders;
 - (void) trimBorders:(NSArray<NSNumber *> *) borders;
 
 @end

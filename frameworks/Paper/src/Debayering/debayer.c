@@ -12,8 +12,15 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
 
 static inline size_t GetColor(size_t line, size_t col);
+
+static void CopyAndApplyWB(const uint16_t *inPlane, uint16_t *outPlane,
+                           size_t width, size_t height, size_t vShift,
+                           const double *wb, const uint16_t *black);
 
 // Debayering algorithms
 static int InterpolateBilinear(const uint16_t *inPlane, uint16_t *outPlane, size_t width, size_t height, size_t vShift);
@@ -50,27 +57,21 @@ static inline size_t GetColor(size_t line, size_t col) {
  * @param width Image width
  * @param height Image height
  * @param vShift Vertical shift for the debayering pattern
+ * @param wb White balance multipliers for each of the 4 bayer elements
+ * @param black Black level for each CFA index
  */
 int Debayer(debayer_algorithm_t algo, const uint16_t *inPlane,
-            uint16_t *outPlane, size_t width, size_t height, size_t vShift) {
-    size_t col, row;
-    size_t inRowOff, outRowOff;
-    uint8_t colorOff;
-    uint16_t temp;
+            uint16_t *outPlane, size_t width, size_t height, size_t vShift,
+            const double *wb, const uint16_t *black) {
+    assert(inPlane);
+    assert(outPlane);
+    assert(wb);
+    assert(black);
     
-    // copy the color values we have to the output buffer
-    for (row = 0; row < height; row++) {
-        inRowOff = (row * width);
-        outRowOff = (row * width * 4);
-        
-        for (col = 0; col < width; col++) {
-//            colorOff = ColorOutputMap[GetColor(row + vShift, col)];
-            colorOff = GetColor(row + vShift, col);
-            
-            temp = inPlane[inRowOff + col];
-            outPlane[outRowOff + (col * 4) + colorOff] = temp;
-        }
-    }
+    printf("WB multipliers: %f %f %f %f\n", wb[0], wb[1], wb[2], wb[3]);
+    
+    // apply WB compensation and copy colors
+    CopyAndApplyWB(inPlane, outPlane, width, height, vShift, wb, black);
     
     // invoke the appropriate algorithm
     switch(algo) {
@@ -81,6 +82,49 @@ int Debayer(debayer_algorithm_t algo, const uint16_t *inPlane,
     
     // yeet
     return 0;
+}
+
+// MARK: White Balance
+/**
+ * Copies pixels from the single component input plane to the proper place in the output plane, while
+ * applying white balance compensation and black levels.
+ *
+ * @param inPlane Input plane
+ * @param outPlane Output plane
+ * @param width Image width
+ * @param height Image height
+ * @param vShift Vertical shift for the debayering pattern
+ * @param wb White balance multipliers for each of the 4 bayer elements
+ * @param black Black level for each CFA index
+ */
+static void CopyAndApplyWB(const uint16_t *inPlane, uint16_t *outPlane,
+                           size_t width, size_t height, size_t vShift,
+                           const double *wb, const uint16_t *black) {
+    size_t line, col;
+    uint8_t color;
+    size_t inRowOff, outRowOff;
+    uint16_t inPixel;
+    
+    for(line = 0; line < height; line++) {
+        inRowOff = (line * width);
+        outRowOff = (line * width * 4);
+        
+        for(col = 0; col < width; col++) {
+            // get input pixel value
+            color = GetColor(line, col);
+            inPixel = inPlane[inRowOff + col];
+            
+            // apply compensation
+            if(inPixel > black[color]) {
+                inPixel -= black[color];
+            } else {
+                inPixel = 0;
+            }
+            
+            // write to output
+            outPlane[outRowOff + (col * 4) + color] = inPixel;
+        }
+    }
 }
 
 // MARK: Algorithms

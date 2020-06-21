@@ -95,6 +95,9 @@ int CR2Unslice(jpeg_decompressor_t *jpeg,
  * @return Vertical shift for bayer matrix, either 0 or 1.
  */
 int CR2CalculateBayerShift(uint16_t *inPlane, size_t rowWidth, size_t *borders) {
+    assert(inPlane);
+    assert(borders);
+    
     double sums[4] = {0, 0, 0, 0};
     size_t line, l, rowOff;
     size_t col, c;
@@ -120,6 +123,55 @@ int CR2CalculateBayerShift(uint16_t *inPlane, size_t rowWidth, size_t *borders) 
 }
 
 /**
+ * Calculates the black level of the image by taking an average of black values in the border of the image.
+ *
+ * We currently just look at the left border of the image, completely ignoring all of the other borders; this could
+ * be changed later. The first and last two columns are ignored since they might be more noisy than usual.
+ *
+ * Technically, the border area of the sensor doesn't have a Bayer array; however, there seems to be some
+ * column-specific noise in some cameras, but taking an average for each component of the 2x2 CFA hides
+ * that pretty nicely.
+ *
+ * TODO: we probably should take vShift into account…
+ *
+ * @param inPlane Image data plane (1 component)
+ * @param rowWidth Number of pixels (including border area) per line
+ * @param numRows Total number of lines (including border) in the image
+ * @param borders Position of borders in image, starting with top and going clockwise.
+ * @param outLevels Calculated black levels, one for each component in the Bayer array
+ */
+void CR2CalculateBlackLevel(uint16_t *inPlane, size_t rowWidth, size_t numRows, size_t *borders, uint16_t *outLevels) {
+    assert(inPlane);
+    assert(borders);
+    assert(outLevels);
+    
+    size_t rowOff;
+    size_t line, l, col, c;
+    uint8_t color;
+    size_t levels[4] = {0,0,0,0};
+    size_t levelsCount[4] = {0,0,0,0};
+    
+    // iterate over the left and right borders in the image
+    for (line = 0, l = 0; line <= numRows; line++, l++) {
+        rowOff = (line * rowWidth);
+        
+        // iterate each column in the left border
+        for (col = 2, c = 0; col < borders[3]; col++, c++) {
+            color = BAYER_COLOR(l, c);
+            
+            levels[color] += inPlane[rowOff + col];
+            levelsCount[color]++;
+        }
+    }
+    
+    // calculate averages and write into output
+    for (l = 0; l < 4; l++) {
+        size_t avg = levels[l] / levelsCount[l];
+        outLevels[l] = (uint16_t) avg;
+    }
+}
+
+/**
  * Trims the raw image in place to remove borders.
  *
  * @param inPlane Image data plane (1 component)
@@ -128,6 +180,9 @@ int CR2CalculateBayerShift(uint16_t *inPlane, size_t rowWidth, size_t *borders) 
  * @return Total number of bytes required for trimmed image
  */
 size_t CR2Trim(uint16_t *inPlane, size_t rowWidth, size_t *borders) {
+    assert(inPlane);
+    assert(borders);
+    
     size_t line, l, inRowOff;
 //    size_t col, c;
     size_t outPixel = 0;

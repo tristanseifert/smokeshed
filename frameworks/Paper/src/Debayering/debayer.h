@@ -31,7 +31,11 @@ typedef enum debayer_algorithm {
  * @param width Image width
  * @param height Image height
  * @param vShift Vertical shift for the debayering pattern
+ * @param wb White balance multipliers for each of the 4 bayer elements 
+ * @param black Black level for each CFA index
  */
-int Debayer(debayer_algorithm_t algo, const uint16_t *inPlane, uint16_t *outPlane, size_t width, size_t height, size_t vShift);
+int Debayer(debayer_algorithm_t algo, const uint16_t *inPlane,
+            uint16_t *outPlane, size_t width, size_t height, size_t vShift,
+            const double *wb, const uint16_t *black);
 
 #endif /* debayer_h */
