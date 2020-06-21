@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 
 import Bowl
+import Paper
 import CocoaLumberjackSwift
 
 @objc(Image)
@@ -44,6 +45,37 @@ public class Image: NSManagedObject {
         // update the day captured
         if key == #keyPath(Image.dateCaptured) {
             self.dayCaptured = self.dateCaptured?.withoutTime()
+        }
+        // raw metadata
+        if key == #keyPath(Image.rawMetadata) {
+            guard self.encodeMetadataOnChange == true else { return }
+            self.decodeMetadata()
+        }
+    }
+    
+    // MARK: Metadata
+    /// Whether metadata will be encoded for this change
+    private var encodeMetadataOnChange = true
+    
+    /// Image metadata
+    public var metadata: ImageMeta? = nil {
+        didSet {
+            self.encodeMetadataOnChange = false
+            
+            if let meta = self.metadata {
+                let encoder = PropertyListEncoder()
+                encoder.outputFormat = .binary
+                
+                do {
+                    self.rawMetadata = try encoder.encode(meta)
+                } catch {
+                    DDLogError("Failed to encode metadata for \(self.objectID): \(error)")
+                }
+            } else {
+                self.rawMetadata = nil
+            }
+            
+            self.encodeMetadataOnChange = true
         }
     }
 
@@ -94,6 +126,24 @@ public class Image: NSManagedObject {
     private func updateTransients() {
         // update capture day
         self.dayCaptured = self.dateCaptured?.withoutTime()
+        
+        // decode metadata
+        self.decodeMetadata()
+    }
+    
+    /**
+     * Decodes the metadata object.
+     */
+    private func decodeMetadata() {
+        if let data = self.rawMetadata {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                self.metadata = try decoder.decode(ImageMeta.self, from: data)
+            } catch {
+                DDLogError("Failed to decode metadata for \(self.objectID): \(error)")
+            }
+        }
     }
 
     // MARK: Image size, orientation

@@ -10,7 +10,7 @@ import Foundation
 /**
  * Generic fraction class
  */
-public struct Fraction {
+public struct Fraction: Codable {
     /// Numerator (top)
     private(set) public var numerator: Int
     /// Denominator (bottom)
@@ -39,8 +39,11 @@ public struct Fraction {
         
         let gcd = Self.gcd(Int(frac * Double(precision)), precision)
         
-        self.init(numerator: (precision / gcd),
-                  denominator: Int(round(frac * Double(precision))) / gcd)
+        let denom = (precision / gcd)
+        var num = (Int(round(frac * Double(precision))) / gcd)
+        num += denom * Int(integral)
+        
+        self.init(numerator: num, denominator: denom)
     }
     
     /**

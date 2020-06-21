@@ -274,9 +274,11 @@ public class ImportHandler {
         // extract some metadata from the image
         let meta = try self.metaHelper.getMeta(url, type: uti)
 
-        let size = try self.metaHelper.size(meta)
+        guard let size = meta.size else {
+            throw ImportError.failedToSizeImage
+        }
+        
         let orientation = try self.metaHelper.orientation(meta)
-        let captureDate = try self.metaHelper.captureDate(meta)
         let lens = try self.lensFinder.find(meta)
         let cam = try self.cameraFinder.find(meta)
 
@@ -296,14 +298,14 @@ public class ImportHandler {
 
                 image.dateImported = importDate
                 image.name = resVals.name
-                image.originalMetadata = meta as NSDictionary?
+                image.metadata = meta
 
                 // save image url and a bookmark to it
                 image.originalUrl = url
                 try image.setUrlBookmark(url)
 
                 // store other precomputed properties
-                image.dateCaptured = captureDate
+                image.dateCaptured = meta.captureDate
                 image.imageSize = size
                 image.rawOrientation = orientation.rawValue
                 image.lens = lens

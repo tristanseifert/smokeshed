@@ -296,7 +296,7 @@ internal class TIFFMetadataReader {
             let degrees = values[0] + (values[1] / 60) + (values[2] / 3600)
             
             if ref.value.first == "S" {
-                gps.latitude = -degrees
+                gps.latitude = degrees * -1.0
             } else if ref.value.first == "N" {
                 gps.latitude = degrees
             } else {
@@ -311,7 +311,7 @@ internal class TIFFMetadataReader {
             let degrees = values[0] + (values[1] / 60) + (values[2] / 3600)
             
             if ref.value.first == "W" {
-                gps.longitude = -degrees
+                gps.longitude = degrees * -1.0
             } else if ref.value.first == "E" {
                 gps.longitude = degrees
             } else {

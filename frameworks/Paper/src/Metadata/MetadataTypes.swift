@@ -12,7 +12,7 @@ import Foundation
 /**
  * Represents all known metadata about a particular image.
  */
-public struct ImageMeta: CustomStringConvertible {
+public struct ImageMeta: CustomStringConvertible, Codable {
     // MARK: - Exif data
     /// EXIF tags
     internal(set) public var exif: EXIF?
@@ -20,7 +20,7 @@ public struct ImageMeta: CustomStringConvertible {
     /**
      * Contains information about how the image was captured.
      */
-    public struct EXIF: CustomStringConvertible {
+    public struct EXIF: CustomStringConvertible, Codable {
         /// Exposure time, in seconds
         internal(set) public var exposureTime: Fraction? = nil
         /// F number
@@ -60,7 +60,7 @@ public struct ImageMeta: CustomStringConvertible {
         internal(set) public var lensSerial: String? = nil
         
         /// Sensitivity types (how to interpret the ISO field)
-        public enum SensitivityType: UInt32 {
+        public enum SensitivityType: UInt32, Codable {
             /// Unknown (default)
             case unknown = 0
             /// Standard output sensitivity
@@ -79,7 +79,7 @@ public struct ImageMeta: CustomStringConvertible {
             case all = 7
         }
         /// Exposure program types as defined by EXIF standard
-        public enum ProgramType: UInt32 {
+        public enum ProgramType: UInt32, Codable {
             /// Undefined program type (default)
             case undefined = 0
             /// Full manual
@@ -125,7 +125,7 @@ public struct ImageMeta: CustomStringConvertible {
     /**
      * Geolocation information
      */
-    public struct GPS: CustomStringConvertible {
+    public struct GPS: CustomStringConvertible, Codable {
         /// Latitude
         internal(set) public var latitude: Double = Double.nan
         /// Longitude
@@ -159,7 +159,7 @@ public struct ImageMeta: CustomStringConvertible {
     /**
      * Metadata specific to a TIFF image
      */
-    public struct TIFF: CustomStringConvertible {
+    public struct TIFF: CustomStringConvertible, Codable {
         /// Width of image
         internal(set) public var width: Int = 0
         /// Height of image
@@ -194,7 +194,7 @@ public struct ImageMeta: CustomStringConvertible {
         internal(set) public var created: Date? = nil
         
         /// Possible image orientations
-        public enum Orientation: UInt32 {
+        public enum Orientation: UInt32, Codable {
             case topLeft = 1
             case topRight = 2
             case bottomRight = 3
@@ -205,7 +205,7 @@ public struct ImageMeta: CustomStringConvertible {
             case leftBottom = 8
         }
         /// Resolution units
-        public enum ResUnit: UInt32 {
+        public enum ResUnit: UInt32, Codable {
             case none = 1
             case inch = 2
             case centimeter = 3
@@ -221,6 +221,63 @@ public struct ImageMeta: CustomStringConvertible {
         }
         
         internal init() {}
+    }
+    
+    // MARK: - Convenience
+    /// Camera make
+    public var cameraMake: String? {
+        if let make = self.tiff?.make {
+            return make
+        }
+        return nil
+    }
+    /// Camera model
+    public var cameraModel: String? {
+        if let model = self.tiff?.model {
+            return model
+        }
+        return nil
+    }
+    
+    /// Lens model
+    public var lensModel: String? {
+        if let model = self.exif?.lensModel {
+            return model
+        }
+        return nil
+    }
+    /// Lens id
+    public var lensId: UInt? {
+        if let id = self.exif?.lensId {
+            return id
+        }
+        return nil
+    }
+    
+    /// Capture date
+    public var captureDate: Date? {
+        if let captured = self.exif?.captured {
+            return captured
+        } else if let digitized = self.exif?.digitized {
+            return digitized
+        } else if let created = self.tiff?.created {
+            return created
+        }
+        return nil
+    }
+    
+    /// Physical image size
+    public var size: CGSize? {
+        // get size from TIFF
+        if let width = self.tiff?.width, let height = self.tiff?.height {
+            return CGSize(width: width, height: height)
+        }
+        // get size from EXIF
+        if let width = self.exif?.width, let height = self.exif?.height {
+            return CGSize(width: width, height: height)
+        }
+        // really shouldn't get here
+        return nil
     }
 
     // MARK: - Helpers

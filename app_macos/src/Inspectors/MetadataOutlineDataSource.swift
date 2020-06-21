@@ -20,7 +20,7 @@ class MetadataOutlineDataSource: NSObject, NSOutlineViewDataSource, NSOutlineVie
     /// Image for which metadata is to be displayed
     internal var image: Image? = nil {
         didSet {
-            self.dict = self.image?.originalMetadata
+//            self.dict = self.image?.originalMetadata
             self.view?.reloadData()
         }
     }

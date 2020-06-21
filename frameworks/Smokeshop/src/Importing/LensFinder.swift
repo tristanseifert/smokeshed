@@ -7,6 +7,7 @@
 
 import Foundation
 
+import Paper
 import CocoaLumberjackSwift
 
 /**
@@ -21,21 +22,16 @@ internal class LensFinder {
      * Tries to find a lens that best matches what is laid out in the given metadata. If we could identify the
      * lens but none exists in the library, it's created.
      */
-    internal func find(_ meta: [String: AnyObject]) throws -> Lens? {
+    internal func find(_ meta: ImageMeta) throws -> Lens? {
         var fetchRes: Result<[Lens], Error>? = nil
 
         // read the model string and lens id
-        guard let exif = meta[kCGImagePropertyExifDictionary as String],
-            let model = exif[kCGImagePropertyExifLensModel] as? String else {
-                DDLogWarn("Failed to get lens model from metadata: \(meta)")
-                return nil
+        guard let model = meta.lensModel else {
+            DDLogWarn("Failed to get lens model from metadata: \(meta)")
+            return nil
         }
 
-        var lensId: Int? = nil
-        if let aux = meta[kCGImagePropertyExifAuxDictionary as String],
-            let id = aux[kCGImagePropertyExifAuxLensID] as? NSNumber {
-            lensId = id.intValue
-        }
+        let lensId: UInt? = meta.lensId
 
         // try to find an existing lens matching BOTH criteria
         let req = NSFetchRequest<Lens>(entityName: "Lens")
@@ -73,7 +69,7 @@ internal class LensFinder {
      * The context is not saved after creation; the assumption is that pretty much immediately after this call,
      * an image is imported, where we'll save the context anyhow.
      */
-    private func create(_ meta: [String: AnyObject], _ model: String, _ id: Int?) throws -> Lens? {
+    private func create(_ meta: ImageMeta, _ model: String, _ id: UInt?) throws -> Lens? {
         var res: Result<Lens, Error>? = nil
 
         // run a block to create it
@@ -83,7 +79,9 @@ internal class LensFinder {
             lens.exifLensModel = model
             lens.name = model
 
-            lens.exifLensId = Int32(id ?? -1)
+            if let id = id {
+                lens.exifLensId = Int64(id)
+            }
 
             // try to save it
             do {

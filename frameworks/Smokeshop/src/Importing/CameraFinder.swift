@@ -7,7 +7,7 @@
 
 import Foundation
 
-
+import Paper
 import CocoaLumberjackSwift
 
 /**
@@ -23,17 +23,11 @@ internal class CameraFinder {
      * Tries to find a camera that best matches what is laid out in the given metadata. If we could identify the
      * camera but none exists in the library, it's created.
      */
-    internal func find(_ meta: [String: AnyObject]) throws -> Camera? {
+    internal func find(_ meta: ImageMeta) throws -> Camera? {
         var fetchRes: Result<[Camera], Error>? = nil
 
-        // get the tiff dictionary (contains maker and model)
-        guard let tiff = meta[kCGImagePropertyTIFFDictionary as String] else {
-            return nil
-        }
-
         // read the make and model strings
-        guard let make = tiff[kCGImagePropertyTIFFMake as String] as? String,
-            let model = tiff[kCGImagePropertyTIFFModel as String] as? String else {
+        guard let make = meta.cameraMake, let model = meta.cameraModel else {
             return nil
         }
 
@@ -66,7 +60,7 @@ internal class CameraFinder {
     /**
      * Creates a lens object for the given metadata.
      */
-    private func create(_ meta: [String: AnyObject], _ make: String, _ model: String) throws -> Camera? {
+    private func create(_ meta: ImageMeta, _ make: String, _ model: String) throws -> Camera? {
         var res: Result<Camera, Error>? = nil
 
         // run a block to create it
@@ -77,12 +71,6 @@ internal class CameraFinder {
             cam.exifModel = model
 
             cam.name = model
-
-            // DNG info may have a localized name
-            if let dng = meta[kCGImagePropertyDNGDictionary as String],
-                let loc = dng[kCGImagePropertyDNGLocalizedCameraModel as String] as? String {
-                cam.localizedModel = loc
-            }
 
             // try to save it
             do {

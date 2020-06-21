@@ -9,6 +9,8 @@ import Foundation
 
 import ImageIO
 
+import CocoaLumberjackSwift
+
 /**
  * Gets image metadata using the system's ImageIO framework.
  */
@@ -17,8 +19,10 @@ public class ImageIOMetadataReader {
     private var tiffDates = DateFormatter()
     /// Formatter for parsing GPS date string (yyyy:mm:dd)
     private var dayFormatter = DateFormatter()
+    /// Formatter for parsing GPS time string (hh:mm:ss)
+    private var timeFormatter = DateFormatter()
     
-    internal init() {
+    public init() {
         self.tiffDates.locale = Locale(identifier: "en_US_POSIX")
         self.tiffDates.dateFormat = "yyyy:MM:dd HH:mm:ss"
         self.tiffDates.timeZone = TimeZone(secondsFromGMT: 0)
@@ -26,6 +30,10 @@ public class ImageIOMetadataReader {
         self.dayFormatter.locale = Locale(identifier: "en_US_POSIX")
         self.dayFormatter.dateFormat = "yyyy:MM:dd"
         self.dayFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        self.timeFormatter.locale = Locale(identifier: "en_US_POSIX")
+        self.timeFormatter.dateFormat = "HH:mm:ss"
+        self.timeFormatter.timeZone = TimeZone(secondsFromGMT: 0)
     }
 
     // MARK: - Public interface
@@ -61,8 +69,9 @@ public class ImageIOMetadataReader {
             try self.readExifBodyLensInfo(exif, &obj)
             
             // aux dict contains more lens info
-            if let exifAux = imageInfo[kCGImagePropertyExifAuxDictionary as String] {
-                try self.readExifBodyLensInfo(exif, &obj)
+            if let dict = imageInfo[kCGImagePropertyExifAuxDictionary as String],
+               let exifAux = dict as? [String: AnyObject]{
+                try self.readExifBodyLensInfo(exifAux, &obj)
             }
             
             meta.exif = obj
@@ -70,7 +79,7 @@ public class ImageIOMetadataReader {
         
         if let dict = imageInfo[kCGImagePropertyGPSDictionary as String],
            let gps = dict as? [String: AnyObject] {
-            
+            meta.gps = try self.getGpsData(gps)
         }
         
         // done!
@@ -197,24 +206,39 @@ public class ImageIOMetadataReader {
     /**
      * Copies capture and digitization dates from the EXIF dictionary.
      */
-    private func readExifDates(_ dict: [String: AnyObject], _ exif: inout ImageMeta.EXIF) throws {
+    private func readExifDates(_ dict: [String: AnyObject], _ exif: inout ImageMeta.EXIF) throws {        
         // capture and digitization date
-        if let string = dict[kCGImagePropertyExifDateTimeOriginal as String] as? String,
-           let date = self.tiffDates.date(from: string) {
-            exif.captured = date
+        if let string = dict[kCGImagePropertyExifDateTimeOriginal as String] as? String {
+            var out: AnyObject! = nil
+            try self.tiffDates.getObjectValue(&out, for: string, range: nil)
+            
+            if let date = out as? Date {
+                // handle subseconds
+                if let string = dict[kCGImagePropertyExifSubsecTimeOriginal as String] as? String,
+                   let value = Double(string), value != 0 {
+                    exif.captured = date.advanced(by: TimeInterval(1.0/value))
+                } else {
+                    exif.captured = date
+                }
+            }
         }
         
-        if let string = dict[kCGImagePropertyExifDateTimeDigitized as String] as? String,
-           let date = self.tiffDates.date(from: string) {
-            exif.digitized = date
+        if let string = dict[kCGImagePropertyExifDateTimeDigitized as String] as? String {
+            var out: AnyObject! = nil
+            try self.tiffDates.getObjectValue(&out, for: string, range: nil)
+
+            if let date = out as? Date {
+                // handle subseconds
+                if let string = dict[kCGImagePropertyExifSubsecTimeDigitized as String] as? String,
+                   let value = Double(string), value != 0 {
+                       exif.captured = date.advanced(by: TimeInterval(1.0/value))
+                } else {
+                    exif.digitized = date
+                }
+            }
         }
         
         // subseconds for capture and digitization date
-        if let string = dict[kCGImagePropertyExifSubsecTimeOriginal as String] as? String,
-           let value = Double(string) {
-            exif.captured?.addTimeInterval(TimeInterval(1/value))
-        }
-        
         if let string = dict[kCGImagePropertyExifSubsecTimeDigitized as String] as? String,
            let value = Double(string) {
             exif.digitized?.addTimeInterval(TimeInterval(1/value))
@@ -242,6 +266,98 @@ public class ImageIOMetadataReader {
         }
     }
     
+    // MARK: GPS
+    /**
+     * Parses the GPS dictionary into a GPS struct.
+     */
+    private func getGpsData(_ dict: [String: AnyObject]) throws -> ImageMeta.GPS {
+        var gps = ImageMeta.GPS()
+        
+        // altitude and altitude reference
+        if let alt = dict[kCGImagePropertyGPSAltitude as String] as? NSNumber,
+           let ref = dict[kCGImagePropertyGPSAltitudeRef as String] as? NSNumber {
+            if ref.intValue == 0 {
+                gps.altitude = alt.doubleValue
+            } else {
+                gps.altitude = alt.doubleValue * -1.0
+            }
+        }
+        
+        // dilution of precision
+        if let dop = dict[kCGImagePropertyGPSDOP as String] as? NSNumber {
+            gps.dop = dop.doubleValue
+        }
+        
+        // latitude
+        if let lat = dict[kCGImagePropertyGPSLatitude as String] as? NSNumber,
+           let ref = dict[kCGImagePropertyGPSLatitudeRef as String] as? String {
+            if ref.first == "S" {
+                gps.latitude = lat.doubleValue * -1.0
+            } else if ref.first == "N" {
+                gps.latitude = lat.doubleValue
+            } else {
+              throw Errors.invalidLatitudeRef(ref)
+          }
+        }
+        
+        // longitude
+        if let lng = dict[kCGImagePropertyGPSLongitude as String] as? NSNumber,
+           let ref = dict[kCGImagePropertyGPSLongitudeRef as String] as? String {
+            if ref.first == "W" {
+                gps.longitude = lng.doubleValue * -1.0
+            } else if ref.first == "E" {
+                gps.longitude = lng.doubleValue
+            } else {
+                throw Errors.invalidLongitudeRef(ref)
+            }
+        }
+        
+        // reference model (map datum)
+        if let datum = dict[kCGImagePropertyGPSMapDatum as String] as? String {
+            gps.reference = datum
+        }
+        
+        // fix date and time
+        let cal = NSCalendar.init(calendarIdentifier: .ISO8601)
+        cal?.timeZone = TimeZone(secondsFromGMT: 0)!
+        
+        var comp = DateComponents()
+        var compValid = false
+        
+        if let fixTime = dict[kCGImagePropertyGPSTimeStamp as String] as? String {
+            var date: AnyObject! = nil
+            try self.timeFormatter.getObjectValue(&date, for: fixTime, range: nil)
+
+            if let date = date as? Date,
+               let timeComps = cal?.components([.hour, .minute, .second], from: date) {
+                comp.hour = timeComps.hour
+                comp.minute = timeComps.minute
+                comp.second = timeComps.second
+                compValid = true
+            }
+        }
+        
+        if let fixDate = dict[kCGImagePropertyGPSDateStamp as String] as? String {
+            var date: AnyObject! = nil
+            try self.dayFormatter.getObjectValue(&date, for: fixDate, range: nil)
+            
+            if let date = date as? Date,
+               let dayComps = cal?.components([.day, .month, .year], from: date) {
+                comp.day = dayComps.day
+                comp.month = dayComps.month
+                comp.year = dayComps.year
+                compValid = true
+            }
+        }
+        
+        if compValid {
+            gps.utcTimestamp = cal?.date(from: comp)
+        }
+        
+        // done
+        return gps
+    }
+    
     // MARK: - Errors
     private enum Errors: Error {
         /// Couldn't open the image
@@ -251,5 +367,10 @@ public class ImageIOMetadataReader {
         
         /// Failed to get some required properties
         case missingKey(_ key: CFString)
+        
+        /// Invalid latitude reference
+        case invalidLatitudeRef(_ ref: String)
+        /// Invalid longitude reference
+        case invalidLongitudeRef(_ ref: String)
     }
 }

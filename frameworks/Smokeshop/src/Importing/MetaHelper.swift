@@ -10,30 +10,28 @@ import CoreServices
 import ImageIO
 import CoreGraphics
 
+import Paper
 import CocoaLumberjackSwift
 
 /**
  * Provides some helpers to extract basic information from an image's metadata dictionary.
  */
 internal class MetaHelper {
-    /// Date formatter for converting EXIF date strings to date
-    private var dateFormatter = DateFormatter()
-
-    /**
-     * Initializes the metadata helper.
-     */
-    init() {
-        // set up the EXIF date parser
-        self.dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        self.dateFormatter.dateFormat = "yyyy':'MM':'dd HH':'mm':'ss"
-    }
+    /// Metadata reader using ImageIO
+    private lazy var defaultReader = ImageIOMetadataReader()
 
     /**
      * Extracts image metadata from the image at the given URL.
      */
-    internal func getMeta(_ image: URL, type uti: String) throws -> [String: AnyObject] {
+    internal func getMeta(_ image: URL, type inUti: String) throws -> ImageMeta {
+        let uti = inUti as CFString
+        
+        // CR2 image?
+        if UTTypeConformsTo(uti, "com.canon.cr2-raw-image" as CFString) {
+            return try self.metaFromCr2(image)
+        }
         // generic image type
-        if UTTypeConformsTo(uti as CFString, kUTTypeImage) {
+        else if UTTypeConformsTo(uti, kUTTypeImage) {
             return try self.metaFromImageIo(image)
         }
 
@@ -43,57 +41,30 @@ internal class MetaHelper {
 
     // MARK: - Metadata readers
     /**
+     * Reads metadata from a Canon RAW (CR2) image
+     */
+    private func metaFromCr2(_ image: URL) throws -> ImageMeta {
+        let reader = try CR2Reader(fromUrl: image, decodeRawData: false)
+        let image = try reader.decode()
+        
+        return image.meta!
+    }
+    
+    /**
      * Uses ImageIO to read the metadata from the provided file. This is supported for most image types on
      * the system.
      */
-    private func metaFromImageIo(_ image: URL) throws -> [String: AnyObject] {
-        // create an image source
-        guard let src = CGImageSourceCreateWithURL(image as CFURL, nil) else {
-            throw MetaError.sourceCreateFailed
-        }
-
-        // get the properties
-        guard let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil),
-            let meta = props as? [String: AnyObject] else {
-                throw MetaError.copyPropertiesFailed
-        }
-
-        return meta
+    private func metaFromImageIo(_ image: URL) throws -> ImageMeta {
+        return try self.defaultReader.getMetadata(image)
     }
 
     // MARK: - Helpers
     /**
-     * Gets the image size (in pixels) from the given metadata.
-     */
-    internal func size(_ meta: [String: AnyObject]) throws -> CGSize {
-        guard let width = meta[kCGImagePropertyPixelWidth as String] as? NSNumber,
-            let height = meta[kCGImagePropertyPixelHeight as String] as? NSNumber else {
-                throw MetaError.failedToSizeImage
-        }
-
-        return CGSize(width: width.doubleValue, height: height.doubleValue)
-    }
-
-    /**
-     * Extracts the capture date of the iamge from the exif data.
-     */
-    internal func captureDate(_ meta: [String: AnyObject]) throws -> Date? {
-        if let exif = meta[kCGImagePropertyExifDictionary as String],
-            let dateStr = exif[kCGImagePropertyExifDateTimeOriginal as String] as? String,
-            let date = self.dateFormatter.date(from: dateStr) {
-            return date
-        }
-
-        // failed to get date :(
-        return nil
-    }
-
-    /**
      * Extracts the orientation from the given image metadata.
      */
-    internal func orientation(_ meta: [String: AnyObject]) throws -> Image.ImageOrientation {
-        if let orientation = meta[kCGImagePropertyOrientation as String] as? NSNumber {
-            let val = CGImagePropertyOrientation(rawValue: orientation.uint32Value)
+    internal func orientation(_ meta: ImageMeta) throws -> Image.ImageOrientation {
+        if let orientation = meta.tiff?.orientation {
+            let val = CGImagePropertyOrientation(rawValue: orientation.rawValue)
 
             switch val {
                 case .down, .downMirrored:
