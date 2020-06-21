@@ -211,7 +211,13 @@ internal class TIFFMetadataReader {
             try self.tiffDates.getObjectValue(&date, for: captured.value, range: nil)
             
             if let date = date as? Date {
-                exif.captured = date
+                // read subseconds
+                if let tag = ifd.getTag(byId: 0x9291) as? TIFFReader.TagString,
+                   let value = Double(tag.value), value != 0 {
+                    exif.captured = date.advanced(by: TimeInterval(1.0/value))
+                } else {
+                    exif.captured = date
+                }
             }
         }
         // Digitization date
@@ -220,19 +226,14 @@ internal class TIFFMetadataReader {
            try self.tiffDates.getObjectValue(&date, for: digitized.value, range: nil)
            
            if let date = date as? Date {
-               exif.digitized = date
+                // read subseconds
+                if let tag = ifd.getTag(byId: 0x9292) as? TIFFReader.TagString,
+                   let value = Double(tag.value), value != 0 {
+                    exif.digitized = date.advanced(by: TimeInterval(1.0/value))
+                } else {
+                    exif.digitized = date
+                }
            }
-        }
-        
-        // Subseconds for capture date
-        if let tag = ifd.getTag(byId: 0x9291) as? TIFFReader.TagString,
-            let value = Double(tag.value) {
-            exif.captured?.addTimeInterval(TimeInterval(1/value))
-        }
-        // Subseconds for digitization date
-        if let tag = ifd.getTag(byId: 0x9292) as? TIFFReader.TagString,
-            let value = Double(tag.value) {
-            exif.digitized?.addTimeInterval(TimeInterval(1/value))
         }
     }
     /**
@@ -271,8 +272,14 @@ internal class TIFFMetadataReader {
     /**
      * Retrieves the GPS information from the given IFD.
      */
-    private func getGpsData(_ ifd: TIFFReader.IFD) throws -> ImageMeta.GPS {
+    private func getGpsData(_ ifd: TIFFReader.IFD) throws -> ImageMeta.GPS? {
         var gps = ImageMeta.GPS()
+        
+        // measurement must be valid
+        guard let tag = ifd.getTag(byId: 0x0009) as? TIFFReader.TagString,
+              tag.value.first == "A" else {
+            return nil
+        }
         
         // altitude and altitude reference
         if let altitude = ifd.getTag(byId: 0x0006) as? TIFFReader.TagRational<UInt32>,

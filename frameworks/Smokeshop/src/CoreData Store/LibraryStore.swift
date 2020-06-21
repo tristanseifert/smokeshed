@@ -127,6 +127,9 @@ public class LibraryStore {
 
         self.mainCtx.persistentStoreCoordinator = self.psc
         self.mainCtx.name = "Smokeshop Main Context"
+        
+        // XXX: is this correct behavior?
+        self.mainCtx.automaticallyMergesChangesFromParent = true
     }
 
     // MARK: Deferred migrations

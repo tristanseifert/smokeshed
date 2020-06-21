@@ -177,8 +177,6 @@ public class CR2Reader {
         }
         self.canon = mn
 
-        DDLogDebug("Canon MakerNotes: \(String(describing: self.canon))")
-
         // identify the camera from the model ID
         try self.identifyModel()
 
@@ -197,8 +195,6 @@ public class CR2Reader {
         guard let idTag = self.canon.getTag(byId: 0x0010) as? TIFFReader.TagUnsigned else {
             throw RawError.missingTag(0x0010)
         }
-
-        DDLogDebug("Model id: 0x\(String(idTag.value, radix: 16))")
 
         // only 6Dii is supported atm
         guard idTag.value == 0x80000406 else {
@@ -233,7 +229,6 @@ public class CR2Reader {
 
         // done
         self.sensor = sensor
-        DDLogDebug("Sensor info: \(String(describing: self.sensor))")
     }
 
     /**
@@ -263,7 +258,6 @@ public class CR2Reader {
         
         // done
         self.color = color
-        DDLogDebug("Color data: \(String(describing: self.color))")
     }
 
     /**
@@ -278,7 +272,6 @@ public class CR2Reader {
         // get version
         let data = i.value
         let vers: UInt8 = data.read(0)
-        DDLogDebug("Dust Delete Data version: \(vers)")
     }
     
     /**

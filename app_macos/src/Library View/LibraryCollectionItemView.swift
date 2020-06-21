@@ -654,7 +654,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * Clears UI state and cancels any outstanding thumb requests.
      */
     override func prepareForReuse() {
-        ThumbHandler.shared.cancel(self.image)
+        if let image = self.image {
+            ThumbHandler.shared.cancel(image)
+        }
         self.image = nil
 
         self.refreshThumb()

@@ -206,6 +206,13 @@
 			remoteGlobalIDString = 6A4CEF1B248B59CE00145E49;
 			remoteInfo = "Bowl (macOS)";
 		};
+		6AAC4563249F0CF5009B9AFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6ABD36B02496D1FB005F80EE;
+			remoteInfo = "Paper (macOS)";
+		};
 		6ABD36C32496D274005F80EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
@@ -1226,6 +1233,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6AAC4564249F0CF5009B9AFF /* PBXTargetDependency */,
 				6A020D4324920A8C006F5093 /* PBXTargetDependency */,
 				6A020D4724920A8C006F5093 /* PBXTargetDependency */,
 			);
@@ -1677,6 +1685,11 @@
 			isa = PBXTargetDependency;
 			target = 6A4CEF1B248B59CE00145E49 /* Bowl (macOS) */;
 			targetProxy = 6A4CEF30248B5A5600145E49 /* PBXContainerItemProxy */;
+		};
+		6AAC4564249F0CF5009B9AFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6ABD36B02496D1FB005F80EE /* Paper (macOS) */;
+			targetProxy = 6AAC4563249F0CF5009B9AFF /* PBXContainerItemProxy */;
 		};
 		6ABD36C42496D274005F80EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

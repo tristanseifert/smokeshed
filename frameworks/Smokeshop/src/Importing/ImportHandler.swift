@@ -26,9 +26,12 @@ public class ImportHandler {
 
             if let lib = self.library {
                 // create the background queue
-                self.context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-                self.context.parent = lib.store.mainContext
-                self.context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                let ctx = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                ctx.parent = lib.store.mainContext
+                ctx.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                ctx.automaticallyMergesChangesFromParent = true
+                
+                self.context = ctx
             }
         }
     }
@@ -281,6 +284,7 @@ public class ImportHandler {
         let orientation = try self.metaHelper.orientation(meta)
         let lens = try self.lensFinder.find(meta)
         let cam = try self.cameraFinder.find(meta)
+        let captureDate = meta.captureDate
 
         // hop on the queue to create the object
         self.context.performAndWait {
@@ -305,7 +309,7 @@ public class ImportHandler {
                 try image.setUrlBookmark(url)
 
                 // store other precomputed properties
-                image.dateCaptured = meta.captureDate
+                image.dateCaptured = captureDate
                 image.imageSize = size
                 image.rawOrientation = orientation.rawValue
                 image.lens = lens

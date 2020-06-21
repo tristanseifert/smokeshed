@@ -206,7 +206,7 @@ public class ImageIOMetadataReader {
     /**
      * Copies capture and digitization dates from the EXIF dictionary.
      */
-    private func readExifDates(_ dict: [String: AnyObject], _ exif: inout ImageMeta.EXIF) throws {        
+    private func readExifDates(_ dict: [String: AnyObject], _ exif: inout ImageMeta.EXIF) throws {
         // capture and digitization date
         if let string = dict[kCGImagePropertyExifDateTimeOriginal as String] as? String {
             var out: AnyObject! = nil
@@ -236,6 +236,7 @@ public class ImageIOMetadataReader {
                     exif.digitized = date
                 }
             }
+            
         }
         
         // subseconds for capture and digitization date
