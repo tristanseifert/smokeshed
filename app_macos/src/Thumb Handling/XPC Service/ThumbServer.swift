@@ -17,6 +17,8 @@ import CocoaLumberjackSwift
 class ThumbServer: ThumbXPCProtocol {
     /// Background work queue
     private var queue = OperationQueue()
+    /// Thumbnail directory
+    private var directory: ThumbDirectory! = nil
 
     // MARK: - Initialization
     /**
@@ -79,7 +81,38 @@ class ThumbServer: ThumbXPCProtocol {
      * Loads the thumbnail directory, if not done already.
      */
     func wakeUp(withReply reply: @escaping (Error?) -> Void) {
-        // nothing to be done
+        // open thumbnail directory if needed
+        if self.directory == nil {
+            do {
+                self.directory = try ThumbDirectory()
+            } catch {
+                DDLogError("Failed to open thumb directory: \(error)")
+                return reply(error)
+            }
+            
+            // if we get here, directory opened successfully
+            reply(nil)
+        }
+        // otherwise, nothing to be done
+        else {
+            reply(nil)
+        }
+    }
+    
+    /**
+     * Opens a library with the given UUID. This will create an entry for it in the library directory if needed.
+     */
+    func openLibrary(_ libraryId: UUID, withReply reply: @escaping (Error?) -> Void) {
+        DDLogVerbose("Opening thumb library: \(libraryId)")
+        
+        do {
+            try self.directory.openLibrary(libraryId)
+        } catch {
+            DDLogError("Failed to open library: \(error)")
+            return reply(error)
+        }
+        
+        // library was opened successfully
         reply(nil)
     }
 

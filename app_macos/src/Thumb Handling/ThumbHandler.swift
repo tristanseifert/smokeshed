@@ -101,6 +101,15 @@ class ThumbHandler {
      * Pushes a library id onto the stack.
      */
     public func pushLibraryId(_ id: UUID) {
+        // open it in the xpc service as well
+        if let service = self.service {
+            service.openLibrary(id, withReply: { error in
+                if let err = error {
+                    DDLogError("Failed to open library in thumb handler: \(err)")
+                }
+            })
+        }
+        
         self.libraryIdStack.append(id)
     }
 

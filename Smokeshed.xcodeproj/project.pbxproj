@@ -111,6 +111,8 @@
 		6AAC457E24A0033B009B9AFF /* colorspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC457C24A0033A009B9AFF /* colorspace.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6AAC458124A0130F009B9AFF /* PAPColorSpaceConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC457F24A0130F009B9AFF /* PAPColorSpaceConverter.h */; };
 		6AAC458224A01310009B9AFF /* PAPColorSpaceConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */; };
+		6AAC458624A0541F009B9AFF /* ThumbDirectory.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458424A0541F009B9AFF /* ThumbDirectory.xcdatamodeld */; };
+		6AAC458824A0621A009B9AFF /* ThumbDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458724A0621A009B9AFF /* ThumbDirectory.swift */; };
 		6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */; };
 		6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */; };
 		6ABD368224956DA9005F80EE /* LibraryCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */; };
@@ -378,6 +380,8 @@
 		6AAC457C24A0033A009B9AFF /* colorspace.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = colorspace.c; path = "frameworks/Paper/src/Color Conversions/colorspace.c"; sourceTree = "<group>"; };
 		6AAC457F24A0130F009B9AFF /* PAPColorSpaceConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PAPColorSpaceConverter.h; path = "frameworks/Paper/src/Color Conversions/PAPColorSpaceConverter.h"; sourceTree = "<group>"; };
 		6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PAPColorSpaceConverter.m; path = "frameworks/Paper/src/Color Conversions/PAPColorSpaceConverter.m"; sourceTree = "<group>"; };
+		6AAC458524A0541F009B9AFF /* ThumbDirectory.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ThumbDirectory.xcdatamodel; sourceTree = "<group>"; };
+		6AAC458724A0621A009B9AFF /* ThumbDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbDirectory.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ThumbDirectory.swift"; sourceTree = "<group>"; };
 		6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InspectorWindowController.swift; path = app_macos/src/Inspectors/InspectorWindowController.swift; sourceTree = "<group>"; };
 		6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InspectorWindowController.xib; path = app_macos/src/Inspectors/InspectorWindowController.xib; sourceTree = "<group>"; };
 		6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionView.swift; path = "app_macos/src/Library View/LibraryCollectionView.swift"; sourceTree = "<group>"; };
@@ -527,6 +531,7 @@
 		6A020D3F24920A76006F5093 /* XPC Service */ = {
 			isa = PBXGroup;
 			children = (
+				6AAC458324A053FE009B9AFF /* Directory */,
 				6A9315912493116400A9F9B4 /* Thumbnail Handler */,
 				6A020D5624920D80006F5093 /* Initialization and Setup */,
 				6A020D4C24920B1B006F5093 /* Resources */,
@@ -1045,6 +1050,15 @@
 				6AAC4576249FFF19009B9AFF /* Accelerate.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6AAC458324A053FE009B9AFF /* Directory */ = {
+			isa = PBXGroup;
+			children = (
+				6AAC458424A0541F009B9AFF /* ThumbDirectory.xcdatamodeld */,
+				6AAC458724A0621A009B9AFF /* ThumbDirectory.swift */,
+			);
+			name = Directory;
 			sourceTree = "<group>";
 		};
 		6ABD367C2494C508005F80EE /* Inspectors */ = {
@@ -1602,6 +1616,8 @@
 			files = (
 				6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */,
+				6AAC458824A0621A009B9AFF /* ThumbDirectory.swift in Sources */,
+				6AAC458624A0541F009B9AFF /* ThumbDirectory.xcdatamodeld in Sources */,
 				6A020D5224920C97006F5093 /* main.swift in Sources */,
 				6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */,
 			);
@@ -3011,6 +3027,17 @@
 			currentVersion = 6A4CEEF1248B30B400145E49 /* Smokeshop.xcdatamodel */;
 			name = Library.xcdatamodeld;
 			path = frameworks/Smokeshop/assets/Library.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		6AAC458424A0541F009B9AFF /* ThumbDirectory.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6AAC458524A0541F009B9AFF /* ThumbDirectory.xcdatamodel */,
+			);
+			currentVersion = 6AAC458524A0541F009B9AFF /* ThumbDirectory.xcdatamodel */;
+			name = ThumbDirectory.xcdatamodeld;
+			path = "app_macos/src/Thumb Handling/XPC Service/Directory/ThumbDirectory.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

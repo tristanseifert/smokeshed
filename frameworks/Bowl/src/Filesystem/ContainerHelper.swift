@@ -27,6 +27,16 @@ public class ContainerHelper {
         // safe to force unwrap since always valid on macOS
         return fm.containerURL(forSecurityApplicationGroupIdentifier: groupName)!
     }
+    /// Application support directory for group container
+    public static var groupAppData: URL {
+        return self.groupContainer.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Application Support", isDirectory: true)
+    }
+    /// Cache for group container
+    public static var groupCache: URL {
+        return self.groupContainer.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Caches", isDirectory: true)
+    }
     
     
     

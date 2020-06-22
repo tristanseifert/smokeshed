@@ -106,6 +106,11 @@ import Smokeshop
      * Initializes the XPC service and load the thumbnail directory.
      */
     func wakeUp(withReply reply: @escaping (Error?) -> Void)
+    
+    /**
+     * Opens a library.
+     */
+    func openLibrary(_ libraryId: UUID, withReply reply: @escaping (Error?) -> Void)
 
     /**
      * Retrieves a thumbnail for an image. The image is identified by its library id and some other properties
