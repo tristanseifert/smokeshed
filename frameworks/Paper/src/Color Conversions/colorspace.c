@@ -19,8 +19,6 @@
 
 // MARK: Declarations
 static void MakeConversionMatrix(const double *camXyz, double *outCam);
-static void MakeCamRgb(const double *camXyz, double *camRgb);
-static void MakeOutCam(const double *rgbCam, double *outCam);
 
 static void MatrixPseudoInverse3x3(const double *in, double *out);
 
@@ -34,7 +32,7 @@ static long MultiplyImage(vImage_Buffer *buffers, size_t width, size_t height,
 
 // MARK: - Constants
 /// Conversion matrix to go from RGB to XYX
-static const double RgbToXyzMatrix[3][3] = {
+const double RgbToXyzMatrix[3][3] = {
     { 0.412453, 0.357580, 0.180423 },
     { 0.212671, 0.715160, 0.072169 },
     { 0.019334, 0.119193, 0.950227 },
@@ -50,10 +48,15 @@ const double D50White[3] = {
 
 /// Conversion matrix to go from camera RGB to ProPhoto RGB
 static const double ProPhotoRgbMatrix[3][3] = {
+    // Bruce Lindbloom matrix
 //    {0.797675,  0.288040, 0.000000 },
 //    {0.135192,  0.711874, 0.000000 },
 //    {0.0313534, 0.000086, 0.825210 },
-    
+    // Bruce Lindbloom matrix adapted for D65
+//    { 0.529304, 0.098366, 0.016882 },
+//    { 0.330076, 0.873468, 0.117673 },
+//    { 0.140602, 0.028168, 0.865572 },
+    // dcraw matrix
     { 0.529317, 0.330092, 0.140588 },
     { 0.098368, 0.873465, 0.028169 },
     { 0.016879, 0.117663, 0.865457 },
@@ -63,8 +66,6 @@ static const double ProPhotoRgbMatrix[3][3] = {
 /**
  * Converts RGB pixel data to the working color space, in place. The pixel buffer will contain 32-bit floating
  * point image components when done, so it should be sized appropriately.
- *
- * @note The D65 white point is used as a reference.
  *
  * @param pixels The 3-component pixel buffer
  * @param width Number of pixels per line
@@ -148,77 +149,6 @@ static void MakeConversionMatrix(const double *camXyz, double *outCam) {
     
     // inverse that shit
     MatrixPseudoInverse3x3((double *) temp, outCam);
-    
-//    // calculate the reference camera conversion matrix
-//    double camRgb[3][3];
-//    MakeCamRgb(camXyz, (double *) camRgb);
-//
-//    printf("camRgb matrix:\n");
-//    for(int i = 0; i < 3; i++) {
-//        printf("\t%06f %06f %06f\n", camRgb[i][0], camRgb[i][1], camRgb[i][2]);
-//    }
-//
-//    // calculate the pseudoinverse of that matrix
-//    double rgbCam[3][3];
-//    MatrixPseudoInverse3x3((double *) camRgb, (double *) rgbCam);
-//
-//    printf("rgbCam matrix:\n");
-//    for(int i = 0; i < 3; i++) {
-//        printf("\t%06f %06f %06f\n", rgbCam[i][0], rgbCam[i][1], rgbCam[i][2]);
-//    }
-//
-//    // calculate the output matrix to convert to working space
-//    MakeOutCam((double *) camRgb, outCam);
-}
-
-/**
- * Calculates the 3x3 camera RGB matrix.
- *
- * This is done with two steps:
- * 1. camRgb = camXyz * RgbToXyzMatrix
- * 2. camRgb = normalize(camRgb)
- *
- * @param camXyz Camera XYZ matrix
- * @param outCamRgb Output camera rgb matrix
- */
-static void MakeCamRgb(const double *camXyz, double *outCamRgb) {
-    double num = 0;
-    size_t i, j;
-    
-    // multiplication step
-    vDSP_mmulD(camXyz, 1, (const double *) RgbToXyzMatrix, 1, outCamRgb, 1,
-               3, 3, 3);
-    
-    // normalization step
-    for (i=0; i < 3; i++) {
-        // sum up the entire column
-        num = 0;
-        for (j = 0; j < 3; j++) {
-            num += outCamRgb[(i * 3) + j];
-        }
-        
-        // divide each column value by that
-        for (j = 0; j < 3; j++) {
-            outCamRgb[(i * 3) + j] /= num;
-        }
-    }
-}
-
-/**
- * Computes the conversion matrix to go from the camera RGB space to the working color space.
- *
- * This is a single matrix multiplication: OutProfile * rgbCam
- *
- * @param rgbCam Camera space matrix
- * @param outCam Output camera -> working matrix
- */
-static void MakeOutCam(const double *rgbCam, double *outCam) {
-    double inverse[3][3];
-    MatrixPseudoInverse3x3((double *) ProPhotoRgbMatrix, (double *) inverse);
-    
-    
-    vDSP_mmulD((double *) inverse, 1, rgbCam, 1, outCam, 1,
-               3, 3, 3);
 }
 
 /**
