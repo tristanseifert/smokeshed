@@ -166,6 +166,8 @@ void CR2CalculateBlackLevel(uint16_t *inPlane, size_t rowWidth, size_t numRows, 
     
     // calculate averages and write into output
     for (l = 0; l < 4; l++) {
+        if(!levelsCount[l]) continue;
+        
         size_t avg = levels[l] / levelsCount[l];
         outLevels[l] = (uint16_t) avg;
     }

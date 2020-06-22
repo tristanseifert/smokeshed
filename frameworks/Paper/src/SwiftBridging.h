@@ -18,4 +18,7 @@
 // Debayering
 #import "PAPDebayerer.h"
 
+// color space conversions
+#import "PAPColorSpaceConverter.h"
+
 #endif /* SwiftBridging_h */

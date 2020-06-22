@@ -260,7 +260,15 @@ public class CR2Reader {
             color.wbRggbLevelsAsShot.append(read)
         }
         
-        self.image.rawWbMultiplier = color.wbRggbLevelsAsShot.map(Double.init)
+        /*
+         * Convert the read integer white balance levels to multipliers: we do
+         * this by finding the lowest value, and setting that to be 1.0, then
+         * simply calculating the ratio between them.
+         */
+        let min = Double(color.wbRggbLevelsAsShot.min()!)        
+        self.image.rawWbMultiplier = color.wbRggbLevelsAsShot.map({
+            Double($0) / min
+        })
         
         // done
         self.color = color

@@ -38,13 +38,24 @@ class DebayerTests: XCTestCase {
         DDLogVerbose("WB multipliers: \(wb)")
         
         // attempt debayering
-        let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 2
+        let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 3
         let outData = NSMutableData(length: Int(bytes))!
         
         PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
                              imageSize: image.rawValuesSize, andAlgorithm: 1,
                              vShift: UInt(image.rawValuesVshift), wbShift: wb,
                              blackLevel: image.rawBlackLevel as [NSNumber])
+        
+        // convert to XYZ color space
+        var error: NSError? = nil
+        PAPColorSpaceConverter.shared().convert(outData,
+                                                withModel: image.meta.cameraModel!,
+                                                size: image.meta.size!,
+                                                andError: &error)
+        
+        if let err = error {
+            throw err
+        }
         
         // save that shit
         let attach = XCTAttachment(data: image.rawValues)

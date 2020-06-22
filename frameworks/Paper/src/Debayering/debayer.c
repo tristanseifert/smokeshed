@@ -68,8 +68,6 @@ int Debayer(debayer_algorithm_t algo, const uint16_t *inPlane,
     assert(wb);
     assert(black);
     
-    printf("WB multipliers: %f %f %f %f\n", wb[0], wb[1], wb[2], wb[3]);
-    
     // apply WB compensation and copy colors
     CopyAndApplyWB(inPlane, outPlane, width, height, vShift, wb, black);
     
@@ -114,12 +112,15 @@ static void CopyAndApplyWB(const uint16_t *inPlane, uint16_t *outPlane,
             color = GetColor(line, col);
             inPixel = inPlane[inRowOff + col];
             
-            // apply compensation
+            // apply black level compensation
             if(inPixel > black[color]) {
                 inPixel -= black[color];
             } else {
                 inPixel = 0;
             }
+            
+            // multiply it by the white balance coefficient
+            inPixel *= wb[color];
             
             // write to output
             outPlane[outRowOff + (col * 4) + color] = inPixel;
