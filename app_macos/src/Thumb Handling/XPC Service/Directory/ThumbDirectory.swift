@@ -15,7 +15,11 @@ import CocoaLumberjackSwift
 /**
  * Persistent store for thumbnail metadata
  */
-class ThumbDirectory {
+internal class ThumbDirectory {
+    /// Chunk manager
+    private var chonker: ChunkManager!
+    
+    // MARK: - Initialization
     /**
      * Initializes a new thumb directory, opening the persistent store and creating the main context.
      */
@@ -23,6 +27,8 @@ class ThumbDirectory {
         try self.loadModel()
         try self.createPersistentStore()
         try self.createContext()
+        
+        self.chonker = try ChunkManager(withDirectory: self)
     }
     
     // MARK: - CoreData stack setup
@@ -31,7 +37,7 @@ class ThumbDirectory {
     /// Persistent store coordinator (backed by metadata file in group container)
     private var psc: NSPersistentStoreCoordinator! = nil
     /// Main context
-    private var mainCtx: NSManagedObjectContext! = nil
+    private(set) internal var mainCtx: NSManagedObjectContext! = nil
     
     /**
      * Loads the model used to represent thumbnail data.
@@ -132,8 +138,6 @@ class ThumbDirectory {
                                                             into: self.mainCtx) as? Library else {
             throw ThumbDirectoryErrors.failedToCreateLibrary
         }
-        
-        new.identifier = id
         
         // save it
         try self.mainCtx.save()

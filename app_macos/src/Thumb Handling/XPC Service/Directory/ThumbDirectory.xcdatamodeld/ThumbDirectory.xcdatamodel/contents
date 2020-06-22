@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Chunk" representedClassName="Chunk" syncable="YES" codeGenerationType="class">
+    <entity name="Chunk" representedClassName="Chunk" syncable="YES" codeGenerationType="category">
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="length" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
         <relationship name="thumbs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Thumbnail" inverseName="chunk" inverseEntity="Thumbnail"/>
     </entity>
-    <entity name="Library" representedClassName="Library" syncable="YES" codeGenerationType="class">
+    <entity name="Library" representedClassName="Library" syncable="YES" codeGenerationType="category">
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="thumbs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Thumbnail" inverseName="library" inverseEntity="Thumbnail"/>
     </entity>
-    <entity name="Thumbnail" representedClassName="Thumbnail" syncable="YES" codeGenerationType="class">
+    <entity name="Thumbnail" representedClassName="Thumbnail" syncable="YES" codeGenerationType="category">
         <attribute name="imageIdentifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="chunk" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chunk" inverseName="thumbs" inverseEntity="Chunk"/>
         <relationship name="library" maxCount="1" deletionRule="Nullify" destinationEntity="Library" inverseName="thumbs" inverseEntity="Library"/>
     </entity>
     <elements>
-        <element name="Library" positionX="-63" positionY="-18" width="128" height="73"/>
-        <element name="Thumbnail" positionX="-54" positionY="9" width="128" height="88"/>
-        <element name="Chunk" positionX="-36" positionY="36" width="128" height="88"/>
+        <element name="Library" positionX="-63" positionY="-18" width="128" height="28"/>
+        <element name="Thumbnail" positionX="-54" positionY="9" width="128" height="28"/>
+        <element name="Chunk" positionX="-36" positionY="36" width="128" height="28"/>
     </elements>
 </model>

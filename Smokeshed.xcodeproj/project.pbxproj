@@ -113,6 +113,11 @@
 		6AAC458224A01310009B9AFF /* PAPColorSpaceConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */; };
 		6AAC458624A0541F009B9AFF /* ThumbDirectory.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458424A0541F009B9AFF /* ThumbDirectory.xcdatamodeld */; };
 		6AAC458824A0621A009B9AFF /* ThumbDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458724A0621A009B9AFF /* ThumbDirectory.swift */; };
+		6AAC458B24A07BAD009B9AFF /* Chunk+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458A24A07BAD009B9AFF /* Chunk+CoreDataClass.swift */; };
+		6AAC459424A07C21009B9AFF /* Thumbnail+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC458E24A07C21009B9AFF /* Thumbnail+CoreDataClass.swift */; };
+		6AAC459624A07C21009B9AFF /* Library+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */; };
+		6AAC459A24A07EF2009B9AFF /* ChunkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459924A07EF2009B9AFF /* ChunkManager.swift */; };
+		6AAC459C24A08152009B9AFF /* ChunkRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459B24A08152009B9AFF /* ChunkRef.swift */; };
 		6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */; };
 		6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */; };
 		6ABD368224956DA9005F80EE /* LibraryCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */; };
@@ -382,6 +387,11 @@
 		6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PAPColorSpaceConverter.m; path = "frameworks/Paper/src/Color Conversions/PAPColorSpaceConverter.m"; sourceTree = "<group>"; };
 		6AAC458524A0541F009B9AFF /* ThumbDirectory.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ThumbDirectory.xcdatamodel; sourceTree = "<group>"; };
 		6AAC458724A0621A009B9AFF /* ThumbDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbDirectory.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ThumbDirectory.swift"; sourceTree = "<group>"; };
+		6AAC458A24A07BAD009B9AFF /* Chunk+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Chunk+CoreDataClass.swift"; path = "app_macos/src/Thumb Handling/XPC Service/Directory/Chunk+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6AAC458E24A07C21009B9AFF /* Thumbnail+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Thumbnail+CoreDataClass.swift"; path = "app_macos/src/Thumb Handling/XPC Service/Directory/Thumbnail+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Library+CoreDataClass.swift"; path = "app_macos/src/Thumb Handling/XPC Service/Directory/Library+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6AAC459924A07EF2009B9AFF /* ChunkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChunkManager.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ChunkManager.swift"; sourceTree = "<group>"; };
+		6AAC459B24A08152009B9AFF /* ChunkRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChunkRef.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ChunkRef.swift"; sourceTree = "<group>"; };
 		6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InspectorWindowController.swift; path = app_macos/src/Inspectors/InspectorWindowController.swift; sourceTree = "<group>"; };
 		6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InspectorWindowController.xib; path = app_macos/src/Inspectors/InspectorWindowController.xib; sourceTree = "<group>"; };
 		6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionView.swift; path = "app_macos/src/Library View/LibraryCollectionView.swift"; sourceTree = "<group>"; };
@@ -531,6 +541,7 @@
 		6A020D3F24920A76006F5093 /* XPC Service */ = {
 			isa = PBXGroup;
 			children = (
+				6AAC459824A07D25009B9AFF /* Thumb Chunk Handling */,
 				6AAC458324A053FE009B9AFF /* Directory */,
 				6A9315912493116400A9F9B4 /* Thumbnail Handler */,
 				6A020D5624920D80006F5093 /* Initialization and Setup */,
@@ -1057,8 +1068,28 @@
 			children = (
 				6AAC458424A0541F009B9AFF /* ThumbDirectory.xcdatamodeld */,
 				6AAC458724A0621A009B9AFF /* ThumbDirectory.swift */,
+				6AAC458924A07B88009B9AFF /* Model Extensions */,
 			);
 			name = Directory;
+			sourceTree = "<group>";
+		};
+		6AAC458924A07B88009B9AFF /* Model Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6AAC458E24A07C21009B9AFF /* Thumbnail+CoreDataClass.swift */,
+				6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */,
+				6AAC458A24A07BAD009B9AFF /* Chunk+CoreDataClass.swift */,
+			);
+			name = "Model Extensions";
+			sourceTree = "<group>";
+		};
+		6AAC459824A07D25009B9AFF /* Thumb Chunk Handling */ = {
+			isa = PBXGroup;
+			children = (
+				6AAC459924A07EF2009B9AFF /* ChunkManager.swift */,
+				6AAC459B24A08152009B9AFF /* ChunkRef.swift */,
+			);
+			name = "Thumb Chunk Handling";
 			sourceTree = "<group>";
 		};
 		6ABD367C2494C508005F80EE /* Inspectors */ = {
@@ -1614,12 +1645,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AAC458B24A07BAD009B9AFF /* Chunk+CoreDataClass.swift in Sources */,
 				6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */,
 				6AAC458824A0621A009B9AFF /* ThumbDirectory.swift in Sources */,
+				6AAC459424A07C21009B9AFF /* Thumbnail+CoreDataClass.swift in Sources */,
+				6AAC459C24A08152009B9AFF /* ChunkRef.swift in Sources */,
 				6AAC458624A0541F009B9AFF /* ThumbDirectory.xcdatamodeld in Sources */,
 				6A020D5224920C97006F5093 /* main.swift in Sources */,
 				6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */,
+				6AAC459624A07C21009B9AFF /* Library+CoreDataClass.swift in Sources */,
+				6AAC459A24A07EF2009B9AFF /* ChunkManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
