@@ -17,6 +17,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
             // update libraries of all components
             self.content.library = self.library
             self.importer.library = self.library
+            
+            ThumbHandler.shared.library = self.library
 
             // set the window's URL
             if let window = self.window {

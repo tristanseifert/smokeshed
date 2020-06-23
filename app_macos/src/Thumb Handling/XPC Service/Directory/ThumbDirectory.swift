@@ -107,7 +107,7 @@ internal class ThumbDirectory {
         
         // ask for such a library from the store
         let req = NSFetchRequest<Library>(entityName: "Library")
-        req.predicate = NSPredicate(format: "identifier == %@", id as NSUUID)
+        req.predicate = NSPredicate(format: "%K == %@", "identifier", id as CVarArg)
         
         self.mainCtx.performAndWait {
             do {
@@ -138,6 +138,8 @@ internal class ThumbDirectory {
                                                             into: self.mainCtx) as? Library else {
             throw ThumbDirectoryErrors.failedToCreateLibrary
         }
+        
+        new.identifier = id
         
         // save it
         try self.mainCtx.save()

@@ -45,7 +45,18 @@ class ThumbHandler {
      * service and tells it about our state.
      */
     private init() {
+        self.observerQueue.name = "ThumbHandler MOC Observers"
+        self.observerQueue.qualityOfService = .utility
+        self.observerQueue.maxConcurrentOperationCount = 1
+        
         self.establishXpcConnection()
+    }
+    
+    /**
+     * Remove observers on deallocation
+     */
+    deinit {
+        self.removeImageObservers()
     }
 
     /**
@@ -123,17 +134,107 @@ class ThumbHandler {
 
         return self.libraryIdStack.removeLast()
     }
-
-    // MARK: Helpers
+    
+    // MARK: - Context observer
+    /// Queue for background notifications
+    private var observerQueue = OperationQueue()
+    /// Observers we've registered for background changes
+    private var observers: [NSObjectProtocol] = []
+    
     /**
-     * Converts a managed object Image structure to a dictionary.
+     * Specifies the currently opened library; the context of this library is observed for changes (such as
+     * insertions, edits or deletions) of images, so that thumbnails can be updated accordingly.
      */
-    private func imageToDict(_ image: Image) -> [String: Any] {
-        return [
-            "mocId": image.objectID.uriRepresentation(),
-            "identifier": image.identifier!,
-            "originalUrl": image.url!
-        ]
+    internal var library: LibraryBundle? {
+        didSet(oldLibrary) {
+            let c = NotificationCenter.default
+            
+            // unsubscribe old notifications
+            self.removeImageObservers()
+            
+            guard let new = self.library else {
+                return
+            }
+            
+            // subscribe for object queue changes on the new context
+            let o = c.addObserver(forName: .NSManagedObjectContextObjectsDidChange,
+                                  object: new.store.mainContext,
+                                  queue: self.observerQueue)
+            { [weak self] notification in
+                guard let changes = notification.userInfo else {
+                    fatalError("Received NSManagedObjectContext.didChangeObjectsNotification without user info")
+                }
+                
+                self?.processContextChanges(changes)
+            }
+            self.observers.append(o)
+        }
+    }
+    
+    /**
+     * Removes all existing observers for image changes.
+     */
+    private func removeImageObservers() {
+        for observer in self.observers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        self.observers.removeAll()
+    }
+    
+    /**
+     * Processes a CoreData change notification.
+     */
+    private func processContextChanges(_ changes: [AnyHashable: Any]) {
+        guard let ctx = self.library?.store.mainContext,
+              let libraryId = self.library?.identifier else {
+            return
+        }
+        
+        // for deleted objects, simply discard them
+        if let objects = changes[NSDeletedObjectsKey] as? Set<NSManagedObject> {
+            let deleted = objects.compactMap({ $0 as? Image })
+            if !deleted.isEmpty {
+                // create thumb requests on the context queue
+                ctx.perform {
+                    let req = deleted.compactMap({
+                        return ThumbRequest(libraryId: libraryId, image: $0,
+                                            withDetails: false)
+                    })
+                    
+                    // issue deletion on our background queue
+                    self.observerQueue.addOperation { [weak self] in
+                        self?.service!.discard(req)
+                    }
+                }
+            }
+        }
+        
+        // newly generated objects need to be generated
+        if let objects = changes[NSInsertedObjectsKey] as? Set<NSManagedObject> {
+            let inserted = objects.compactMap({ $0 as? Image })
+            if !inserted.isEmpty {
+                // create thumb requests on the context queue
+                ctx.perform {
+                    let req = inserted.compactMap({
+                        return ThumbRequest(libraryId: libraryId, image: $0,
+                                            withDetails: false)
+                    })
+                    
+                    // issue generation request on our background queue
+                    self.observerQueue.addOperation { [weak self] in
+                        self?.service!.generate(req)
+                    }
+                }
+            }
+        }
+        
+        // TODO: for changed objects… lmao yikes
+        if let objects = changes[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+            let updated = objects.compactMap({ $0 as? Image })
+            if !updated.isEmpty {
+                DDLogInfo("Modified images: \(updated)")
+            }
+        }
     }
 
     // MARK: - External API
@@ -161,7 +262,12 @@ class ThumbHandler {
      * provided library id.
      */
     public func generate(_ libraryId: UUID, _ images: [Image]) {
-//        DDLogDebug("Thumb req: libId=\(libraryId), info=\(props)")
+        // convert images to requests
+        let requests = images.compactMap({ image in
+            return ThumbRequest(libraryId: libraryId, image: image)
+        })
+        
+        self.service!.generate(requests)
     }
 
     // MARK: Retrieval
@@ -221,8 +327,8 @@ class ThumbHandler {
             fatalError("No library id has been set; use the long form of generate() or call pushLibraryId()")
         }
 
-        self.cancel(self.libraryIdStack.last!, images.map({ (image) in
-            return image.identifier!
+        self.cancel(self.libraryIdStack.last!, images.compactMap({ (image) in
+            return image.identifier
         }))
     }
 

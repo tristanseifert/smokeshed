@@ -37,7 +37,7 @@ class ThumbServer: ThumbXPCProtocol {
      */
     func retrieve(_ request: ThumbRequest, _ callback: (Result<CGImage, Error>) -> Void) {
         // get the original image
-        let url = request.imageUrl
+        let url = request.imageUrl!
 
         // create an image source
         guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
@@ -114,6 +114,23 @@ class ThumbServer: ThumbXPCProtocol {
         
         // library was opened successfully
         reply(nil)
+    }
+    
+    /**
+     * Generates a thumbnail for the image specified in the request. This is dispatched to the background
+     * processing thread.
+     */
+    func generate(_ requests: [ThumbRequest]) {
+        DDLogInfo("Generating thumbs for images: \(requests)")
+    }
+    
+    /**
+     * Discards thumbnail data for all images specified.
+     *
+     * Images are identified only by their library id and image id; the URL and orientation are ignored.
+     */
+    func discard(_ requests: [ThumbRequest]) {
+        DDLogInfo("Discarding images: \(requests)")
     }
 
     /**

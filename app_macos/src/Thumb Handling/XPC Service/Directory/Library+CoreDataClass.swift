@@ -17,7 +17,6 @@ public class Library: NSManagedObject {
     public override func awakeFromInsert() {
         super.awakeFromInsert()
         
-        self.identifier = UUID()
         self.created = Date()
     }
 }

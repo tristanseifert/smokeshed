@@ -130,6 +130,7 @@ public class LibraryStore {
         
         // XXX: is this correct behavior?
         self.mainCtx.automaticallyMergesChangesFromParent = true
+        self.mainCtx.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
     }
 
     // MARK: Deferred migrations

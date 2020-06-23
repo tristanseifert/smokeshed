@@ -28,7 +28,9 @@ public class ImportHandler {
                 // create the background queue
                 let ctx = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
                 ctx.parent = lib.store.mainContext
-                ctx.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                
+                // effectively ignore conflicts
+                ctx.mergePolicy = NSMergePolicy.rollback
                 ctx.automaticallyMergesChangesFromParent = true
                 
                 self.context = ctx
@@ -132,7 +134,8 @@ public class ImportHandler {
      */
     public func deleteImages(_ images: [Image], shouldDelete: Bool = false, _ completion: ((Result<Void, Error>) -> Void)? = nil) {
         // get IDs and URLs on calling thread
-        let ids = images.map({$0.objectID})
+        let imageIdentifiers = images.compactMap({$0.identifier})
+        let objectIds = images.map({$0.objectID})
         let urls = images.compactMap({$0.url})
 
         // create the "remove files" operation
@@ -160,7 +163,7 @@ public class ImportHandler {
         // create the "remove from library" operation
         let removeFromLib = BlockOperation(block: {
             // set up batch delete request
-            let delete = NSBatchDeleteRequest(objectIDs: ids)
+            let delete = NSBatchDeleteRequest(objectIDs: objectIds)
             delete.resultType = .resultTypeObjectIDs
 
             self.context.performAndWait {
@@ -169,8 +172,17 @@ public class ImportHandler {
                     let idArray = result.result! as! [NSManagedObjectID]
                     let changes = [NSDeletedObjectsKey: idArray]
 
-                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self.context, self.context.parent!])
+                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes,
+                                                        into: [self.context.parent!, self.context])
 
+                    // send notification
+                    let center = NotificationCenter.default
+                    center.post(name: Self.imagesDeletedNotification,
+                                object: self.library, userInfo: [
+                        "identifiers": imageIdentifiers,
+                        "objectIds": objectIds,
+                    ])
+                    
                     // if this succeeded, run the file deletion
                     if shouldDelete {
                         self.queue.addOperation(removeFiles)
@@ -331,7 +343,7 @@ public class ImportHandler {
     /**
      * Represents import errors.
      */
-    enum ImportError: Error {
+    public enum ImportError: Error {
         /// An unknown error took place while processing the given URL.
         case unknownError(_ url: URL)
         /// Failed to get a directory enumerator.
@@ -345,4 +357,16 @@ public class ImportHandler {
         /// Failed to size the image.
         case failedToSizeImage
     }
+    
+    // MARK: - Notifications
+    /**
+     * Posted after images have been deleted from the library.
+     *
+     * The `userInfo` dictionary contains two keys: `identifiers` containing image identifiers
+     * (UUIDs) and `objectIds` containing an array of `NSManagedObjectID`s for each deleted
+     * image. You should not rely on the order of both arrays being the same.
+     *
+     * The object of the notification is the library to which the notification pertains.
+     */
+    public static let imagesDeletedNotification = Notification.Name("me.tseifert.smokeshed.imagesDeletedNotification")
 }

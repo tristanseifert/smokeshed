@@ -15,14 +15,21 @@ import Smokeshop
  * Represents a thumbnail request (either to generate or retrieve)
  */
 @objc(ThumbRequest_XPC) public class ThumbRequest: NSObject, NSSecureCoding {
+    public override var description: String {
+        return String(format: "<ThumbRequest: lib %@ img %@ (url %@) size %@>",
+                      self.libraryId as CVarArg, self.imageId as CVarArg,
+                      String(describing: self.imageUrl),
+                      String(describing: self.size))
+    }
+    
     /// Identifier of the library this image is associated with
     public var libraryId: UUID
     /// Identifier of the image
     public var imageId: UUID
     /// URL of the image on disk
-    public var imageUrl: URL
+    public var imageUrl: URL!
     /// Image orientation
-    public var orientation: Image.ImageOrientation
+    public var orientation: Image.ImageOrientation = .unknown
 
     /// Size of the thumbnail that's desired
     public var size: CGSize? = nil
@@ -31,7 +38,7 @@ import Smokeshop
     /**
      * Creates an unpopulated thumb request.
      */
-    public init?(libraryId: UUID, image: Image) {
+    public init?(libraryId: UUID, image: Image, withDetails: Bool) {
         self.libraryId = libraryId
 
         guard let imageId = image.identifier else {
@@ -39,12 +46,21 @@ import Smokeshop
         }
         self.imageId = imageId
 
-        guard let url = image.url else {
-            return nil
-        }
-        self.imageUrl = url
+        if withDetails {
+            guard let url = image.url else {
+                return nil
+            }
+            self.imageUrl = url
 
-        self.orientation = image.orientation
+            self.orientation = image.orientation
+        }
+    }
+    
+    /**
+     * Creates an unpopulated thumb request.
+     */
+    public convenience init?(libraryId: UUID, image: Image) {
+        self.init(libraryId: libraryId, image: image, withDetails: true)
     }
 
     // MARK: Encoding
@@ -57,8 +73,11 @@ import Smokeshop
     public func encode(with coder: NSCoder) {
         coder.encode(self.libraryId, forKey: "libraryId")
         coder.encode(self.imageId, forKey: "imageId")
-        coder.encode(self.imageUrl, forKey: "imageUrl")
         coder.encode(Int(self.orientation.rawValue), forKey: "orientation")
+        
+        if let url = self.imageUrl {
+            coder.encode(url, forKey: "imageUrl")
+        }
 
         if let size = self.size, size != .zero {
             coder.encode(true, forKey: "hasSize")
@@ -81,10 +100,9 @@ import Smokeshop
         }
         self.imageId = imageId
 
-        guard let url = coder.decodeObject(forKey: "imageUrl") as? URL else {
-            return nil
+        if let url = coder.decodeObject(forKey: "imageUrl") as? URL {
+            self.imageUrl = url
         }
-        self.imageUrl = url
 
         let rawOrientation = Int16(coder.decodeInteger(forKey: "orientation"))
         guard let orientation = Image.ImageOrientation(rawValue: rawOrientation) else {
@@ -111,6 +129,21 @@ import Smokeshop
      * Opens a library.
      */
     func openLibrary(_ libraryId: UUID, withReply reply: @escaping (Error?) -> Void)
+    
+    /**
+     * Requests the thumbnail handler generates a thumbnail for the given images.
+     *
+     * This is processed in the background in the thumb handler; the caller doesn't get any indication if the
+     * request failed or succeeded.
+     */
+    func generate(_ requests: [ThumbRequest])
+    
+    /**
+     * Discards thumbnail data for the images specified in these thumb requests.
+     *
+     * As with thumbnail generation, this request runs asynchronously in the background in the service.
+     */
+    func discard(_ requests: [ThumbRequest])
 
     /**
      * Retrieves a thumbnail for an image. The image is identified by its library id and some other properties
@@ -148,6 +181,14 @@ class ThumbXPCProtocolHelpers {
         int.setClasses(imageClass,
                        for: #selector(ThumbXPCProtocol.get(_:withReply:)),
                        argumentIndex: 1, ofReply: true)
+        
+
+        int.setClasses(thumbReqClass,
+                       for: #selector(ThumbXPCProtocol.generate(_:)),
+                       argumentIndex: 0, ofReply: false)
+        int.setClasses(thumbReqClass,
+                       for: #selector(ThumbXPCProtocol.discard(_:)),
+                       argumentIndex: 0, ofReply: false)
 
         return int
     }
