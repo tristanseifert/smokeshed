@@ -106,7 +106,7 @@ internal class ThumbDirectory {
         var tempErr: Error? = nil
         
         // ask for such a library from the store
-        let req = NSFetchRequest<Library>(entityName: "Library")
+        let req: NSFetchRequest<Library> = Library.fetchRequest()
         req.predicate = NSPredicate(format: "%K == %@", "identifier", id as CVarArg)
         
         self.mainCtx.performAndWait {
@@ -145,6 +145,40 @@ internal class ThumbDirectory {
         try self.mainCtx.save()
         
         DDLogInfo("Created library for id \(id): \(new.objectID)")
+    }
+    
+    // MARK: - Thumbnails
+    /**
+     * Returns the thumbnail object for the given library and image ids, if it exists.
+     */
+    internal func getThumb(libraryId: UUID, _ thumbId: UUID) throws -> Thumbnail? {
+        var tempErr: Error? = nil
+        var thumb: Thumbnail? = nil
+        
+        // ask for such a library from the store
+        let req: NSFetchRequest<Thumbnail> = Thumbnail.fetchRequest()
+        req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "%K == %@", "imageIdentifier", thumbId as CVarArg),
+            NSPredicate(format: "%K == %@", "library.identifier", libraryId as CVarArg)
+        ])
+        req.fetchLimit = 1
+        req.relationshipKeyPathsForPrefetching = ["chunk"]
+        
+        self.mainCtx.performAndWait {
+            do {
+                let result: [Thumbnail] = try self.mainCtx.fetch(req)
+                thumb = result.first
+            } catch {
+                tempErr = error
+            }
+        }
+        
+        // rethrow errors or return object
+        if let err = tempErr {
+            throw err
+        }
+        
+        return thumb
     }
     
     // MARK: - Errors

@@ -233,7 +233,7 @@ NSFetchedResultsControllerDelegate {
     }
 
     /// Fetch request used to get data
-    internal var fetchReq: NSFetchRequest<Image>! = NSFetchRequest(entityName: "Image")
+    internal var fetchReq: NSFetchRequest<Image>! = Image.fetchRequest()
     /// Fetched results controller
     internal var fetchReqCtrl: NSFetchedResultsController<Image>! = nil
     /// Has the fetch request been changed since the last time? (Used to invalidate cache)

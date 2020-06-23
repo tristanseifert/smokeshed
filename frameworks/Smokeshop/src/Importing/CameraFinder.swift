@@ -32,7 +32,7 @@ internal class CameraFinder {
         }
 
         // try to find an existing lens matching BOTH criteria
-        let req = NSFetchRequest<Camera>(entityName: "Camera")
+        let req: NSFetchRequest<Camera> = Camera.fetchRequest()
 
         req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "exifModel == %@", model),

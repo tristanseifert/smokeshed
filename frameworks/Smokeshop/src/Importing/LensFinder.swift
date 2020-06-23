@@ -34,7 +34,7 @@ internal class LensFinder {
         let lensId: UInt? = meta.lensId
 
         // try to find an existing lens matching BOTH criteria
-        let req = NSFetchRequest<Lens>(entityName: "Lens")
+        let req: NSFetchRequest<Lens> = Lens.fetchRequest()
 
         var predicates = [
             NSPredicate(format: "exifLensModel == %@", model)

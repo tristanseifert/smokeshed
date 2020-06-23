@@ -121,7 +121,33 @@ class ThumbServer: ThumbXPCProtocol {
      * processing thread.
      */
     func generate(_ requests: [ThumbRequest]) {
-        DDLogInfo("Generating thumbs for images: \(requests)")
+        self.queue.addOperation {
+            do {
+                var new = requests
+                
+                // find all already existing images (these are to be updated)
+                let existing = try requests.compactMap({ try self.thumbForRequest($0) })
+                DDLogInfo("Existing thumbs to update: \(existing)")
+                
+                // get the requests that don't correspond to existing images
+                if existing.count == new.count {
+                    new.removeAll()
+                } else {
+                    // remove requests for which we've got thumb objects
+                    for thumb in existing {
+                        new.removeAll(where: {
+                            $0.libraryId == thumb.library!.identifier &&
+                            $0.imageId == thumb.imageIdentifier
+                        })
+                    }
+                }
+            
+                // generate the remaining thumbs from scratch
+                DDLogInfo("Thumbs to create new: \(new)")
+            } catch {
+                DDLogError("discard(_:) failed: \(error) (requests: \(requests))")
+            }
+        }
     }
     
     /**
@@ -130,15 +156,39 @@ class ThumbServer: ThumbXPCProtocol {
      * Images are identified only by their library id and image id; the URL and orientation are ignored.
      */
     func discard(_ requests: [ThumbRequest]) {
-        DDLogInfo("Discarding images: \(requests)")
+        self.queue.addOperation {
+            do {
+                // read the thumbs from the library
+                let thumbs = try requests.compactMap({ try self.thumbForRequest($0) })
+                
+                if thumbs.count != requests.count {
+                    DDLogWarn("discard(_:) count mistmatch: requests \(requests) thumbs \(thumbs)")
+                }
+                
+                // discard them and their chunk data
+                DDLogInfo("Discarding images: \(thumbs)")
+            } catch {
+                DDLogError("discard(_:) failed: \(error) (requests: \(requests))")
+            }
+        }
     }
 
     /**
      * Gets the thumbnail for the provided image.
      */
     func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, IOSurface?, Error?) -> Void) {
+        // is the (library id, thumb id) pair in progress?
+        
         // perform actual work on the background queue
         self.queue.addOperation {
+            // retrieve a thumbnail object
+            guard let thumb = try? self.thumbForRequest(request) else {
+                return reply(request, nil, XPCError.noSuchThumb)
+            }
+            
+            DDLogVerbose("Thumb: \(thumb)")
+            
+            // TODO: read data out of the thumbnail
             self.retrieve(request) { res in
                 switch res {
                     // pass the image forward to the reply
@@ -154,5 +204,21 @@ class ThumbServer: ThumbXPCProtocol {
                 }
             }
         }
+    }
+    
+    // MARK: - Thumb helpers
+    /**
+     * Gets a thumb corresponding to the given thumb request, if we have one.
+     */
+    private func thumbForRequest(_ req: ThumbRequest) throws -> Thumbnail? {
+        return try self.directory.getThumb(libraryId: req.libraryId,
+                                           req.imageId)
+    }
+    
+    // MARK: - Errors
+    // XPC errors
+    private enum XPCError: Error {
+        /// Failed to find a thumbnail for the request
+        case noSuchThumb
     }
 }

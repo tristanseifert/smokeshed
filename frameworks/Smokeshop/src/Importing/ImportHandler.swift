@@ -302,7 +302,7 @@ public class ImportHandler {
         self.context.performAndWait {
             do {
                 // ensure no image with this URL exists
-                let req = NSFetchRequest<NSFetchRequestResult>(entityName: "Image")
+                let req: NSFetchRequest<Image> = Image.fetchRequest()
                 req.predicate = NSPredicate(format: "%K = %@", argumentArray: ["originalUrl", url])
 
                 if try self.context.count(for: req) > 0 {
