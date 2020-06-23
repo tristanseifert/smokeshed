@@ -15,11 +15,9 @@ internal class ChunkRef: Codable {
     private(set) internal var version: UInt = ChunkRef.currentVersion
     /// Identifier of the chunk
     internal var identifier: UUID!
-    /// Database identifier
-    internal var directoryUrl: URL!
     
     /// File entries
-    internal var entries: [ChunkEntry] = []
+    internal var entries: [Entry] = []
     
     /// Has the chunk been modified? Determines whether it is written to disk when released
     internal var isDirty: Bool = false
@@ -32,9 +30,9 @@ internal class ChunkRef: Codable {
     /**
      * Thumbnail chunk entry for a single file; this contains all thumbnail images associated with that file.
      */
-    internal struct ChunkEntry: Codable {
+    internal struct Entry: Codable {
         /// Database identifier of the thumbnail
-        internal var directoryUrl: URL
+        internal var directoryId: UUID
         /// Associated thumbnail data
         internal var data: Data
     }
@@ -43,7 +41,6 @@ internal class ChunkRef: Codable {
     enum CodingKeys: String, CodingKey {
         case version
         case identifier
-        case directoryUrl
         case entries
     }
     

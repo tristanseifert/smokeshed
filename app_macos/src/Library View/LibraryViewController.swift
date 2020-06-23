@@ -398,6 +398,15 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
         }
 
         let trashFiles = (result == .alertThirdButtonReturn)
+        
+        // save library; this guards against images not yet having permanent ids
+        do {
+            try self.library.store.save()
+        } catch {
+            DDLogError("Failed to save library prior to deletion: \(error)")
+            self.presentError(error)
+            return
+        }
 
         // run the deletion
         guard let wc = self.view.window?.windowController as? MainWindowController else {

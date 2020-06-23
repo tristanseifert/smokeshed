@@ -13,6 +13,9 @@ import CocoaLumberjackSwift
 
 /**
  * Provides an interface for reading chunks of thumbnail data from disk.
+ *
+ * Callers can retrieve and remove entries from an existing chunk, as well as remove the entire chunk. To add
+ * new data, provide an entry and it will be added to the most suitable chunk.
  */
 internal class ChunkManager: NSObject, NSCacheDelegate {
     /// Managed object context specifically for the chunk manager
@@ -56,9 +59,126 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         self.chunkCache.delegate = self
     }
     
+    // MARK: - Public interface
+    /**
+     * Gets an entry from a chunk.
+     */
+    internal func getEntry(fromChunk chunkId: UUID, entryId: UUID) throws -> ChunkRef.Entry {
+        // read chunk and extract entry
+        let chunk = try self.getChunk(withId: chunkId, true)
+    
+        guard let entry = chunk.entries.first(where: { $0.directoryId == entryId }) else {
+            throw ChunkErrors.noSuchEntry(chunkId: chunkId, entryId)
+        }
+        
+        // return the chunk we've found
+        return entry
+    }
+    
+    /**
+     * Writes an entry to the most optimal chunk; its identifier is returned.
+     */
+    internal func writeEntry(_ entry: ChunkRef.Entry) throws -> UUID {
+        precondition(entry.data.count < ChunkRef.maxPayload, "Chunk entry may not be larger than maximum chunk payload size")
+        
+        // create a write chunk if there is not one
+        if self.writeChunk == nil {
+            try self.newWriteChunk()
+        }
+        
+        // create new write chunk if it doesn't have sufficient space
+        if (self.writeChunk!.payloadBytes + entry.data.count) > ChunkRef.maxPayload {
+            try self.newWriteChunk()
+        }
+        
+        guard let write = self.writeChunk else {
+            throw ChunkErrors.noWriteChunk
+        }
+        
+        // append the entry to the chunk
+        write.entries.append(entry)
+        write.isDirty = true
+        
+        // write it out to disk
+        try self.saveChunk(write)
+        
+        return write.identifier!
+    }
+    
+    /**
+     * Replaces an entry in an existing chunk.
+     */
+    internal func replaceEntry(inChunk chunkId: UUID, entry: ChunkRef.Entry) throws {
+        // remove the existing entry
+        let entryId = entry.directoryId
+        let chunk = try self.getChunk(withId: chunkId, false)
+        let beforeCount = chunk.entries.count
+        chunk.entries.removeAll(where: { $0.directoryId == entryId })
+        
+        guard chunk.entries.count < beforeCount else {
+            throw ChunkErrors.noSuchEntry(chunkId: chunkId, entryId)
+        }
+        
+        // insert new entry
+        chunk.entries.append(entry)
+        
+        // write chunk back to disk
+        chunk.isDirty = true
+        try self.saveChunk(chunk)
+        
+        // TODO: we really should validate this won't make us over the max size
+    }
+    
+    /**
+     * Removes an entry from a chunk, both identified by their respective ids.
+     */
+    internal func deleteEntry(inChunk chunkId: UUID, entryId: UUID) throws {
+        // get the chunk
+        let chunk = try self.getChunk(withId: chunkId, false)
+        
+        // remove from it the object
+        let beforeCount = chunk.entries.count
+        chunk.entries.removeAll(where: { $0.directoryId == entryId })
+        
+        guard chunk.entries.count < beforeCount else {
+            throw ChunkErrors.noSuchEntry(chunkId: chunkId, entryId)
+        }
+
+        // if the chunk has no entries, delete it
+        if chunk.entries.isEmpty {
+            try self.deleteChunk(withId: chunkId)
+        }
+        // otherwise, write it back to disk
+        else {
+            chunk.isDirty = true
+            try self.saveChunk(chunk)
+        }
+    }
+    
+    /**
+     * Deletes chunk data for a chunk with the provided identifier.
+     */
+    internal func deleteChunk(withId id: UUID) throws {
+        // if we cached the chunk: mark as clean and remove from cache
+        if let chunk = self.chunkCache.object(forKey: id as NSUUID) {
+            chunk.isDirty = false
+            self.chunkCache.removeObject(forKey: id as NSUUID)
+        }
+        
+        // delete this chunk from the filesystem
+        let url = try self.urlForChunk(withId: id)
+        
+        if FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.removeItem(at: url)
+        }
+    }
+    
     // MARK: - Cache support
     /// Cache containing chunk refs that have been decoded from disk
     private var chunkCache = NSCache<NSUUID, ChunkRef>()
+    
+    /// Most optimal chunk for writing; if nil, a new chunk should be created
+    private var writeChunk: ChunkRef? = nil
     
     // MARK: Cache access
     /**
@@ -67,7 +187,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      *
      * This assumes that the chunk does exist in the directory.
      */
-    internal func getChunk(withId id: UUID) throws -> ChunkRef {
+    private func getChunk(withId id: UUID, _ shouldCache: Bool) throws -> ChunkRef {
         // can we get it out of the cache?
         if let ref = self.chunkCache.object(forKey: id as NSUUID) {
             return ref
@@ -75,8 +195,11 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         
         // it's not in the cache, so load it then add it
         let chunk = try self.readChunk(withId: id)
-        self.chunkCache.setObject(chunk, forKey: id as NSUUID,
-                                  cost: chunk.payloadBytes)
+        
+        if shouldCache {
+            self.chunkCache.setObject(chunk, forKey: id as NSUUID,
+                                      cost: chunk.payloadBytes)
+        }
         
         return chunk
     }
@@ -84,9 +207,11 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
     /**
      * Inserts a chunk into the cache. This ensures the chunk is persisted to disk.
      */
-    internal func addChunk(_ chunk: ChunkRef) throws {
+    private func addChunk(_ chunk: ChunkRef) throws {
         // ensure chunk is written out to disk before adding to cache
-        try self.saveChunk(chunk)
+        if chunk.isDirty {
+            try self.saveChunk(chunk)
+        }
         
         self.chunkCache.setObject(chunk, forKey: chunk.identifier as NSUUID,
                                   cost: chunk.payloadBytes)
@@ -114,11 +239,34 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         }
     }
     
+    // MARK: Write chunk cache
+    /**
+     * Creates a new write chunk; if there exists an old one, it is written to disk.
+     */
+    private func newWriteChunk() throws {
+        // write old chunk out to disk, if needed
+        if let old = self.writeChunk {
+            if old.isDirty {
+                try self.saveChunk(old)
+            }
+        }
+        
+        // create a new chunk (not dirty; explicitly saved by callers tho)
+        let new = ChunkRef()
+        new.identifier = UUID()
+        new.isDirty = false
+        
+        self.writeChunk = new
+        
+        // it should be in the cache
+        try self.addChunk(new)
+    }
+    
     // MARK: - Disk IO
     /**
      * Saves a chunk to disk.
      */
-    internal func saveChunk(_ chunk: ChunkRef) throws {
+    private func saveChunk(_ chunk: ChunkRef) throws {
         // produce data to encode
         let encoder = PropertyListEncoder()
         encoder.outputFormat = .binary
@@ -131,27 +279,30 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         
         // clear the dirty flag
         chunk.isDirty = false
+        DDLogDebug("Wrote chunk \(data.count) bytes for chunk \(chunk.identifier!)")
     }
     
     /**
      * Reads a chunk with the given identifier from disk.
      */
-    internal func readChunk(withId id: UUID) throws -> ChunkRef {
+    private func readChunk(withId id: UUID) throws -> ChunkRef {
         // read data
         let url = try self.urlForChunk(withId: id)
         let data = try Data(contentsOf: url)
         
         // decode it
         let decoder = PropertyListDecoder()
-        let obj = try decoder.decode(ChunkRef.self, from: data)
+        let chunk = try decoder.decode(ChunkRef.self, from: data)
         
         // ensure its version matches
-        guard obj.version == ChunkRef.currentVersion else {
-            throw IOErrors.unsupportedChunkVersion(obj.version)
+        guard chunk.version == ChunkRef.currentVersion else {
+            throw IOErrors.unsupportedChunkVersion(chunk.version)
         }
         
+        DDLogDebug("Read \(data.count) bytes for chunk \(chunk.identifier!)")
+        
         // done
-        return obj
+        return chunk
     }
     
     /**
@@ -184,6 +335,14 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
     private static let maxChunkCacheSize: Int = (1024 * 1024 * 128)
     
     // MARK: - Errors
+    /// Public interface errors
+    internal enum ChunkErrors: Error {
+        /// A write chunk could not be created
+        case noWriteChunk
+        /// Failed to find an entry with the given id in the specified chunk.
+        case noSuchEntry(chunkId: UUID, _ entryId: UUID)
+    }
+    
     /// Chunk IO errors
     enum IOErrors: Error {
         /// Decoded a chunk with an unsupported version

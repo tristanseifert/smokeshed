@@ -200,6 +200,7 @@ class ThumbHandler {
                         return ThumbRequest(libraryId: libraryId, image: $0,
                                             withDetails: false)
                     })
+                    guard !req.isEmpty else { return }
                     
                     // issue deletion on our background queue
                     self.observerQueue.addOperation { [weak self] in
@@ -219,6 +220,7 @@ class ThumbHandler {
                         return ThumbRequest(libraryId: libraryId, image: $0,
                                             withDetails: false)
                     })
+                    guard !req.isEmpty else { return }
                     
                     // issue generation request on our background queue
                     self.observerQueue.addOperation { [weak self] in
