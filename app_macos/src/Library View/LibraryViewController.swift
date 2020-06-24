@@ -31,7 +31,6 @@ class LibraryViewController: LibraryBrowserBase {
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.identifier = .libraryViewController
 
         // connect up the sub controllers
         self.collection.kushDelegate = self.menuController
@@ -274,9 +273,4 @@ class LibraryViewController: LibraryBrowserBase {
         // we do not handle it
         return super.validateMenuItem(menuItem)
     }
-}
-
-extension NSUserInterfaceItemIdentifier {
-    /// Library view controller (restoration)
-    static let libraryViewController = NSUserInterfaceItemIdentifier("libraryViewController")
 }

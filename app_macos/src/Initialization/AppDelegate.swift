@@ -47,14 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
             
             // instantiate main window controller from storyboard
             let sb = NSStoryboard(name: "Main", bundle: nil)
-            guard let wc = sb.instantiateInitialController(creator: { (coder) -> MainWindowController? in
-                // try to allocate a window controller by decoding
-                guard let new = MainWindowController(coder: coder) else {
-                    return nil
-                }
-                
-                return new
-            }) else {
+            guard let wc = sb.instantiateInitialController() as? MainWindowController else {
                 fatalError("Failed to create initial window controller")
             }
             
@@ -167,14 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
             
             // create main window controller
             let sb = NSStoryboard(name: "Main", bundle: nil)
-            guard let wc = sb.instantiateInitialController(creator: { (coder) -> MainWindowController? in
-                // try to allocate a window controller by decoding
-                guard let new = MainWindowController(coder: coder) else {
-                    return nil
-                }
-                
-                return new
-            }) else {
+            guard let wc = sb.instantiateInitialController() as? MainWindowController else {
                 return completionHandler(nil, RestorationError.failedToMakeMainController)
             }
 

@@ -10,7 +10,7 @@
         <!--Window Controller-->
         <scene sceneID="zmO-L7-HZZ">
             <objects>
-                <windowController storyboardIdentifier="MainWindowController" id="QkT-3F-BBN" customClass="MainWindowController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                <windowController id="QkT-3F-BBN" customClass="MainWindowController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" title="Smokeshed" subtitle="this is the weed zone" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" toolbarStyle="unified" id="K9m-y8-oar">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
                         <rect key="contentRect" x="-2135" y="318" width="800" height="600"/>
@@ -37,19 +37,22 @@
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </searchFieldCell>
+                                        <connections>
+                                            <outlet property="searchMenuTemplate" destination="Wmw-Dm-49c" id="vFq-8q-KGb"/>
+                                        </connections>
                                     </searchField>
                                 </searchToolbarItem>
                                 <toolbarItem implicitItemIdentifier="B6329813-2A09-42F0-88A9-551AFC75AB28" label="Actions" paletteLabel="Actions" image="NSActionTemplate" sizingBehavior="auto" navigational="YES" id="gQO-nN-uOH">
                                     <nil key="toolTip"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="zx4-eP-Otv">
-                                        <rect key="frame" x="0.0" y="14" width="55" height="24"/>
+                                    <popUpButton key="view" toolTip="Opens a menu with various shortcuts" verticalHuggingPriority="750" id="zx4-eP-Otv">
+                                        <rect key="frame" x="4" y="14" width="39" height="0.0"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" imagePosition="only" alignment="left" controlSize="large" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="2mz-4y-BQB">
+                                        <popUpButtonCell key="cell" type="roundTextured" title="Actions" bezelStyle="texturedRounded" imagePosition="only" alignment="left" controlSize="large" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="PXC-Hs-Utz" id="2mz-4y-BQB">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="fgC-yc-1Hm">
                                                 <items>
-                                                    <menuItem title="Item 1" state="on" image="NSActionTemplate" hidden="YES" id="PXC-Hs-Utz"/>
+                                                    <menuItem title="Actions" state="on" image="NSActionTemplate" hidden="YES" id="PXC-Hs-Utz"/>
                                                     <menuItem title="Import…" keyEquivalent="o" id="7UR-ao-U19">
                                                         <connections>
                                                             <action selector="importFromDevice:" target="0c5-tG-9me" id="fGd-jU-Xfd"/>
@@ -87,7 +90,7 @@
                                 <toolbarItem implicitItemIdentifier="1B27C16D-0181-4937-9C1C-2C046ED73031" label="Navigation" paletteLabel="Navigation" sizingBehavior="auto" navigational="YES" id="we8-2L-WRJ">
                                     <nil key="toolTip"/>
                                     <segmentedControl key="view" verticalHuggingPriority="750" id="OcB-9r-qWO">
-                                        <rect key="frame" x="0.0" y="14" width="77" height="26"/>
+                                        <rect key="frame" x="0.0" y="14" width="75" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="momentary" id="qpF-2R-Ey1">
                                             <font key="font" metaFont="system"/>
@@ -116,6 +119,23 @@
                     </connections>
                 </windowController>
                 <customObject id="0c5-tG-9me" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="Wmw-Dm-49c" userLabel="Toolbar Search Menu">
+                    <items>
+                        <menuItem title="Recent Searches" tag="1000" enabled="NO" id="zT5-TM-jB5">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="&lt;recent search placeholder&gt;" tag="1001" id="nIp-AU-wZu">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="No recent searches" tag="1003" enabled="NO" id="PeD-Mg-dTe">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="veN-CJ-vpF"/>
+                        <menuItem title="Clear recent searches" tag="1002" id="P8h-Xa-sf5">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                    </items>
+                </menu>
             </objects>
             <point key="canvasLocation" x="-277" y="-376"/>
         </scene>
@@ -290,7 +310,7 @@
         <!--Sidebar-->
         <scene sceneID="Dpr-HW-N62">
             <objects>
-                <viewController title="Sidebar" id="xZy-g3-OGY" sceneMemberID="viewController">
+                <viewController title="Sidebar" id="xZy-g3-OGY" customClass="SidebarController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Afv-6p-ig2">
                         <rect key="frame" x="0.0" y="0.0" width="250" height="486"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -341,6 +361,10 @@
                                                     </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="xZy-g3-OGY" id="wZS-Fh-7IA"/>
+                                                <outlet property="delegate" destination="xZy-g3-OGY" id="oRd-eT-c6U"/>
+                                            </connections>
                                         </outlineView>
                                     </subviews>
                                     <nil key="backgroundColor"/>
@@ -375,7 +399,7 @@
         <!--Content Tab Controller-->
         <scene sceneID="vRb-K2-E1g">
             <objects>
-                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="6QJ-um-eAH" userLabel="Content Tab Controller" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="6QJ-um-eAH" userLabel="Content Tab Controller" customClass="MainWindowTabController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem id="tho-5A-PY4"/>
                         <tabViewItem id="kgl-3n-YSU"/>

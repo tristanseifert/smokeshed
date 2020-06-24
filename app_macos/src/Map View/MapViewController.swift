@@ -24,8 +24,6 @@ class MapViewController: NSViewController, NSMenuItemValidation, MainWindowLibra
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.identifier = .mapViewController
     }
 
     /**
@@ -49,9 +47,4 @@ class MapViewController: NSViewController, NSMenuItemValidation, MainWindowLibra
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return false
     }
-}
-
-extension NSUserInterfaceItemIdentifier {
-    /// Map view controller (restoration)
-    static let mapViewController = NSUserInterfaceItemIdentifier("mapViewController")
 }

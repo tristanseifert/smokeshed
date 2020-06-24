@@ -46,6 +46,9 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         guard let window = self.window else {
             fatalError()
         }
+        
+        // cache the tab controller reference
+        self.contentTabs = self.findTabController(self.contentViewController!)
 
         // restoration
         window.isRestorable = true
@@ -150,12 +153,13 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     }
 
     // MARK: - Content containers
+    /// Content tab controller
+    private var contentTabs: NSTabViewController!
+    
     /**
      * Propagates this library object to all child view controllers, recursively.
      */
     private func updateChildLibrary(_ child: NSViewController) {
-        DDLogInfo("child: \(child)")
-        
         // set library if the controller supports it
         if var c = child as? MainWindowLibraryPropagating {
             c.library = self.library
@@ -180,17 +184,12 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
             inTag = menu.tag
         }
         
-        // validate the tag is valid
+        // validate the tag is valid then set selection
         guard let tag = inTag, (1...3).contains(tag) else {
             fatalError("Invalid tag: \(String(describing: inTag))")
         }
         
-        // find tab controller and set its selection
-        guard let tab = self.findTabController(self.contentViewController!) else {
-            fatalError("Failed to locate tab controller")
-        }
-        
-        tab.selectedTabViewItemIndex = tag - 1
+        self.contentTabs?.selectedTabViewItemIndex = tag - 1
     }
     
     /**
@@ -273,10 +272,10 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         if self.inspector == nil {
             self.inspector = InspectorWindowController()
 
-//            self.inspector?.bind(NSBindingName(rawValue: "selection"),
-//                                 to: self.content,
-//                                 withKeyPath: #keyPath(ContentViewController.representedObject),
-//                                 options: nil)
+            self.inspector?.bind(NSBindingName(rawValue: "selection"),
+                                 to: self.contentTabs!,
+                                 withKeyPath: #keyPath(MainWindowTabController.representedObject),
+                                 options: nil)
         }
     }
 
@@ -346,7 +345,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         
         // changing app mode
         if menuItem.action == #selector(changeAppMode(_:)) {
-            if let c = self.findTabController(self.contentViewController!),
+            if let c = self.contentTabs,
                menuItem.tag == (c.selectedTabViewItemIndex + 1) {
                 menuItem.state = .on
             } else {

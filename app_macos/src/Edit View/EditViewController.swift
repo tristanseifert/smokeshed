@@ -24,8 +24,6 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowLibr
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.identifier = .editViewController
     }
 
     /**
@@ -49,9 +47,4 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowLibr
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return false
     }
-}
-
-extension NSUserInterfaceItemIdentifier {
-    /// Edit view controller (restoration)
-    static let editViewController = NSUserInterfaceItemIdentifier("editViewController")
 }
