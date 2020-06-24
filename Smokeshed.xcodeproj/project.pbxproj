@@ -20,6 +20,10 @@
 		6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47B248B696A0044B433 /* Defaults.plist */; };
 		6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */; };
 		6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */; };
+		6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116224A2C74300CD8D36 /* Main.storyboard */; };
+		6A1C116524A2D6B800CD8D36 /* MainWindowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */; };
+		6A1C116724A2E37E00CD8D36 /* Library View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116624A2E37E00CD8D36 /* Library View.storyboard */; };
+		6A1C116924A3030600CD8D36 /* Map View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116824A3030600CD8D36 /* Map View.storyboard */; };
 		6A2C5EF4248C8CAD009EA409 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */; };
 		6A2C5EF6248C8ECA009EA409 /* LibraryStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */; };
 		6A2C5F52248CB611009EA409 /* AlbumContainer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F44248CB5F7009EA409 /* AlbumContainer+CoreDataClass.swift */; };
@@ -30,7 +34,6 @@
 		6A2C5F5C248CB612009EA409 /* Camera+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F4E248CB5F7009EA409 /* Camera+CoreDataClass.swift */; };
 		6A2C5F5E248CB612009EA409 /* GPSLocation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F50248CB5F7009EA409 /* GPSLocation+CoreDataClass.swift */; };
 		6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F61248CC83E009EA409 /* MainWindowController.swift */; };
-		6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A2C5F62248CC83E009EA409 /* MainWindowController.xib */; };
 		6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */; };
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
@@ -118,11 +121,11 @@
 		6AAC459624A07C21009B9AFF /* Library+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */; };
 		6AAC459A24A07EF2009B9AFF /* ChunkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459924A07EF2009B9AFF /* ChunkManager.swift */; };
 		6AAC459C24A08152009B9AFF /* ChunkRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459B24A08152009B9AFF /* ChunkRef.swift */; };
+		6AAF473824A3055A00572AB3 /* Edit View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6AAF473724A3055A00572AB3 /* Edit View.storyboard */; };
 		6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */; };
 		6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */; };
 		6ABD368224956DA9005F80EE /* LibraryCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */; };
 		6ABD3689249572D2005F80EE /* LibraryViewMenuProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD3688249572D2005F80EE /* LibraryViewMenuProvider.swift */; };
-		6ABD368B24957633005F80EE /* LibraryViewMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD368A24957633005F80EE /* LibraryViewMenu.xib */; };
 		6ABD368E24958E15005F80EE /* LibraryBrowserBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD368D24958E15005F80EE /* LibraryBrowserBase.swift */; };
 		6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */; };
 		6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36912495AEEA005F80EE /* LibraryViewController.strings */; };
@@ -161,13 +164,9 @@
 		6ABF946524986A84002DBA91 /* JPEGMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABF946424986A84002DBA91 /* JPEGMarker.swift */; };
 		6ABF946724986FD9002DBA91 /* JPEGHuffman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABF946624986FD9002DBA91 /* JPEGHuffman.swift */; };
 		6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */; };
-		6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */; };
-		6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */; };
 		6AD8CFDD248E00B6009AF452 /* AppMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDC248E00B6009AF452 /* AppMode.swift */; };
 		6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFDF248E064D009AF452 /* MapViewController.swift */; };
-		6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE0248E064D009AF452 /* MapViewController.xib */; };
 		6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE4248E0A79009AF452 /* EditViewController.swift */; };
-		6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD8CFE5248E0A79009AF452 /* EditViewController.xib */; };
 		6AE51ABD249D91A50091A550 /* MetadataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABC249D91A50091A550 /* MetadataTypes.swift */; };
 		6AE51ABF249D98580091A550 /* TIFFMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */; };
 		6AE51AC1249DC41D0091A550 /* Fraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51AC0249DC41D0091A550 /* Fraction.swift */; };
@@ -293,6 +292,10 @@
 		6A0EE47B248B696A0044B433 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = app_macos/assets/Defaults.plist; sourceTree = "<group>"; };
 		6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryPickerController.swift; path = "app_macos/src/Library UI/LibraryPickerController.swift"; sourceTree = "<group>"; };
 		6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryPickerController.xib; path = "app_macos/src/Library UI/LibraryPickerController.xib"; sourceTree = "<group>"; };
+		6A1C116224A2C74300CD8D36 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Main.storyboard; path = "app_macos/src/Main Window/Main.storyboard"; sourceTree = "<group>"; };
+		6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowViewController.swift; path = "app_macos/src/Main Window/MainWindowViewController.swift"; sourceTree = "<group>"; };
+		6A1C116624A2E37E00CD8D36 /* Library View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Library View.storyboard"; path = "app_macos/src/Library View/Library View.storyboard"; sourceTree = "<group>"; };
+		6A1C116824A3030600CD8D36 /* Map View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Map View.storyboard"; path = "app_macos/src/Map View/Map View.storyboard"; sourceTree = "<group>"; };
 		6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryStore.swift; path = "frameworks/Smokeshop/src/CoreData Store/LibraryStore.swift"; sourceTree = "<group>"; };
 		6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryStoreError.swift; path = "frameworks/Smokeshop/src/CoreData Store/LibraryStoreError.swift"; sourceTree = "<group>"; };
 		6A2C5F44248CB5F7009EA409 /* AlbumContainer+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AlbumContainer+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/AlbumContainer+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -303,7 +306,6 @@
 		6A2C5F4E248CB5F7009EA409 /* Camera+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Camera+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/Camera+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6A2C5F50248CB5F7009EA409 /* GPSLocation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GPSLocation+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/GPSLocation+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6A2C5F61248CC83E009EA409 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowController.swift; path = "app_macos/src/Main Window/MainWindowController.swift"; sourceTree = "<group>"; };
-		6A2C5F62248CC83E009EA409 /* MainWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindowController.xib; path = "app_macos/src/Main Window/MainWindowController.xib"; sourceTree = "<group>"; };
 		6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityViewController.swift; path = "app_macos/src/Main Window/ActivityViewController.swift"; sourceTree = "<group>"; };
 		6A4CEE9A248B259500145E49 /* SmokeShed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmokeShed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEB6248B272300145E49 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Icons.xcassets; path = app_macos/assets/Icons.xcassets; sourceTree = "<group>"; };
@@ -392,11 +394,11 @@
 		6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Library+CoreDataClass.swift"; path = "app_macos/src/Thumb Handling/XPC Service/Directory/Library+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6AAC459924A07EF2009B9AFF /* ChunkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChunkManager.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ChunkManager.swift"; sourceTree = "<group>"; };
 		6AAC459B24A08152009B9AFF /* ChunkRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChunkRef.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ChunkRef.swift"; sourceTree = "<group>"; };
+		6AAF473724A3055A00572AB3 /* Edit View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Edit View.storyboard"; path = "app_macos/src/Edit View/Edit View.storyboard"; sourceTree = "<group>"; };
 		6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InspectorWindowController.swift; path = app_macos/src/Inspectors/InspectorWindowController.swift; sourceTree = "<group>"; };
 		6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InspectorWindowController.xib; path = app_macos/src/Inspectors/InspectorWindowController.xib; sourceTree = "<group>"; };
 		6ABD368124956DA9005F80EE /* LibraryCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionView.swift; path = "app_macos/src/Library View/LibraryCollectionView.swift"; sourceTree = "<group>"; };
 		6ABD3688249572D2005F80EE /* LibraryViewMenuProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewMenuProvider.swift; path = "app_macos/src/Library View/LibraryViewMenuProvider.swift"; sourceTree = "<group>"; };
-		6ABD368A24957633005F80EE /* LibraryViewMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewMenu.xib; path = "app_macos/src/Library View/LibraryViewMenu.xib"; sourceTree = "<group>"; };
 		6ABD368D24958E15005F80EE /* LibraryBrowserBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBrowserBase.swift; path = "app_macos/src/Library View/LibraryBrowserBase.swift"; sourceTree = "<group>"; };
 		6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = LibraryViewController.stringsdict; path = "app_macos/src/Library View/LibraryViewController.stringsdict"; sourceTree = "<group>"; };
 		6ABD36912495AEEA005F80EE /* LibraryViewController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryViewController.strings; path = "app_macos/src/Library View/LibraryViewController.strings"; sourceTree = "<group>"; };
@@ -434,13 +436,9 @@
 		6ABF946424986A84002DBA91 /* JPEGMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGMarker.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGMarker.swift"; sourceTree = "<group>"; };
 		6ABF946624986FD9002DBA91 /* JPEGHuffman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGHuffman.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGHuffman.swift"; sourceTree = "<group>"; };
 		6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViewController.swift; path = "app_macos/src/Library View/LibraryViewController.swift"; sourceTree = "<group>"; };
-		6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryViewController.xib; path = "app_macos/src/Library View/LibraryViewController.xib"; sourceTree = "<group>"; };
-		6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentViewController.swift; path = "app_macos/src/Main Window/ContentViewController.swift"; sourceTree = "<group>"; };
 		6AD8CFDC248E00B6009AF452 /* AppMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppMode.swift; path = "app_macos/src/Main Window/AppMode.swift"; sourceTree = "<group>"; };
 		6AD8CFDF248E064D009AF452 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = "app_macos/src/Map View/MapViewController.swift"; sourceTree = "<group>"; };
-		6AD8CFE0248E064D009AF452 /* MapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MapViewController.xib; path = "app_macos/src/Map View/MapViewController.xib"; sourceTree = "<group>"; };
 		6AD8CFE4248E0A79009AF452 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewController.swift; path = "app_macos/src/Edit View/EditViewController.swift"; sourceTree = "<group>"; };
-		6AD8CFE5248E0A79009AF452 /* EditViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = EditViewController.xib; path = "app_macos/src/Edit View/EditViewController.xib"; sourceTree = "<group>"; };
 		6AE51ABC249D91A50091A550 /* MetadataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetadataTypes.swift; path = frameworks/Paper/src/Metadata/MetadataTypes.swift; sourceTree = "<group>"; };
 		6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFMetadataReader.swift; path = frameworks/Paper/src/Metadata/TIFFMetadataReader.swift; sourceTree = "<group>"; };
 		6AE51AC0249DC41D0091A550 /* Fraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Fraction.swift; path = frameworks/Paper/src/Helpers/Fraction.swift; sourceTree = "<group>"; };
@@ -618,12 +616,12 @@
 		6A2C5F60248CC59B009EA409 /* Main Window */ = {
 			isa = PBXGroup;
 			children = (
+				6A1C116224A2C74300CD8D36 /* Main.storyboard */,
 				6A2C5F61248CC83E009EA409 /* MainWindowController.swift */,
-				6A2C5F62248CC83E009EA409 /* MainWindowController.xib */,
-				6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */,
-				6AD8CFDA248DFFB7009AF452 /* ContentViewController.swift */,
-				6AD8CFDC248E00B6009AF452 /* AppMode.swift */,
 				6ABD36972495C9EB005F80EE /* MainWindowController.strings */,
+				6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */,
+				6AD8CFDC248E00B6009AF452 /* AppMode.swift */,
+				6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */,
 			);
 			name = "Main Window";
 			sourceTree = "<group>";
@@ -1107,11 +1105,10 @@
 		6ABD3683249570F2005F80EE /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */,
-				6AD8CFD7248DFAF3009AF452 /* LibraryViewController.xib */,
-				6ABD3688249572D2005F80EE /* LibraryViewMenuProvider.swift */,
-				6ABD368A24957633005F80EE /* LibraryViewMenu.xib */,
+				6A1C116624A2E37E00CD8D36 /* Library View.storyboard */,
 				6ABD368D24958E15005F80EE /* LibraryBrowserBase.swift */,
+				6AD8CFD6248DFAF3009AF452 /* LibraryViewController.swift */,
+				6ABD3688249572D2005F80EE /* LibraryViewMenuProvider.swift */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -1268,8 +1265,8 @@
 		6AD8CFDE248E0636009AF452 /* Map View */ = {
 			isa = PBXGroup;
 			children = (
+				6A1C116824A3030600CD8D36 /* Map View.storyboard */,
 				6AD8CFDF248E064D009AF452 /* MapViewController.swift */,
-				6AD8CFE0248E064D009AF452 /* MapViewController.xib */,
 			);
 			name = "Map View";
 			sourceTree = "<group>";
@@ -1277,8 +1274,8 @@
 		6AD8CFE3248E0A58009AF452 /* Edit View */ = {
 			isa = PBXGroup;
 			children = (
+				6AAF473724A3055A00572AB3 /* Edit View.storyboard */,
 				6AD8CFE4248E0A79009AF452 /* EditViewController.swift */,
-				6AD8CFE5248E0A79009AF452 /* EditViewController.xib */,
 			);
 			name = "Edit View";
 			sourceTree = "<group>";
@@ -1555,23 +1552,22 @@
 			files = (
 				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
 				6ABD369A2495CACE005F80EE /* LibraryCollectionItems.strings in Resources */,
-				6ABD368B24957633005F80EE /* LibraryViewMenu.xib in Resources */,
 				6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
 				6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */,
 				6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */,
+				6A1C116924A3030600CD8D36 /* Map View.storyboard in Resources */,
 				6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */,
-				6AD8CFE2248E064D009AF452 /* MapViewController.xib in Resources */,
-				6AD8CFD9248DFAF3009AF452 /* LibraryViewController.xib in Resources */,
+				6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */,
 				6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
-				6AD8CFE7248E0A79009AF452 /* EditViewController.xib in Resources */,
 				6ABD36A22496115F005F80EE /* MetadataKeyDisplayNameTransformer.strings in Resources */,
 				6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */,
 				6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */,
-				6A2C5F64248CC83E009EA409 /* MainWindowController.xib in Resources */,
+				6AAF473824A3055A00572AB3 /* Edit View.storyboard in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
+				6A1C116724A2E37E00CD8D36 /* Library View.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1671,6 +1667,7 @@
 				6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */,
+				6A1C116524A2D6B800CD8D36 /* MainWindowViewController.swift in Sources */,
 				6ABD36A0249610A6005F80EE /* MetadataKeyDisplayNameTransformer.swift in Sources */,
 				6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
@@ -1684,7 +1681,6 @@
 				6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */,
 				6AD8CFDD248E00B6009AF452 /* AppMode.swift in Sources */,
-				6AD8CFDB248DFFB7009AF452 /* ContentViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

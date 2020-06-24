@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="UIV-Hs-rwi">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="17132"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Map-->
+        <scene sceneID="YEJ-cf-g40">
+            <objects>
+                <viewController title="Map" id="UIV-Hs-rwi" customClass="MapViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="fBV-ER-VO6">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <mapView mapType="standard" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SRE-M8-Niv">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                            </mapView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="SRE-M8-Niv" firstAttribute="top" secondItem="fBV-ER-VO6" secondAttribute="top" id="2YR-5g-KkS"/>
+                            <constraint firstAttribute="trailing" secondItem="SRE-M8-Niv" secondAttribute="trailing" id="dTC-qS-ne2"/>
+                            <constraint firstItem="SRE-M8-Niv" firstAttribute="leading" secondItem="fBV-ER-VO6" secondAttribute="leading" id="szD-ae-wBz"/>
+                            <constraint firstAttribute="bottom" secondItem="SRE-M8-Niv" secondAttribute="bottom" id="zYf-my-8KV"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="emu-Ih-jgu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-282" y="127"/>
+        </scene>
+    </scenes>
+</document>

@@ -44,11 +44,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         // if no state is being restored, run through normal library opening
         if isDefault || self.mainWindow == nil {
             self.openLastLibrary()
-
-            // load main window
-            self.mainWindow = MainWindowController()
+            
+            // instantiate main window controller from storyboard
+            let sb = NSStoryboard(name: "Main", bundle: nil)
+            guard let wc = sb.instantiateInitialController(creator: { (coder) -> MainWindowController? in
+                // try to allocate a window controller by decoding
+                guard let new = MainWindowController(coder: coder) else {
+                    return nil
+                }
+                
+                return new
+            }) else {
+                fatalError("Failed to create initial window controller")
+            }
+            
+            self.mainWindow = wc
             self.mainWindow.library = self.library
-            self.mainWindow.content.setContent(.Library)
         }
 
         // open the main window controller (it should be allocated by now)
@@ -118,6 +129,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
                               completionHandler: @escaping (NSWindow?, Error?) -> Void) {
         // get a handle to the app delegate class
         guard let delegate = NSApp.delegate as? AppDelegate else {
+            DDLogError("Failed to convert delegate: \(String(describing: NSApp.delegate))")
             return completionHandler(nil, RestorationError.invalidAppDelegate)
         }
 
@@ -152,13 +164,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
                 DDLogError("Failed to open library from \(libraryUrl): \(error)")
                 return completionHandler(nil, RestorationError.libraryLoadErr(error))
             }
+            
+            // create main window controller
+            let sb = NSStoryboard(name: "Main", bundle: nil)
+            guard let wc = sb.instantiateInitialController(creator: { (coder) -> MainWindowController? in
+                // try to allocate a window controller by decoding
+                guard let new = MainWindowController(coder: coder) else {
+                    return nil
+                }
+                
+                return new
+            }) else {
+                return completionHandler(nil, RestorationError.failedToMakeMainController)
+            }
 
-            // create a window controller and set its library
-            delegate.mainWindow = MainWindowController()
+            // done!
+            delegate.mainWindow = wc
             delegate.mainWindow.library = delegate.library
-
-            // run completion handler
-            return completionHandler(delegate.mainWindow.window, nil)
+            return completionHandler(wc.window, nil)
         }
 
         // unknown window type. should not happen
@@ -178,6 +201,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         case userRequestsPicking
         /// Failed to load the library
         case libraryLoadErr(_ underlying: Error)
+        /// The main window controller couldn't be created.
+        case failedToMakeMainController
         /// Unknown error; should never get this
         case unknown
     }
@@ -290,6 +315,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         }
         
         return picker.presentModal()
+    }
+    
+    // MARK: Errors
+    enum Errors: Error {
+        /// Failed to instantiate the main window controller
+        case failedToMakeMainWindow
     }
 }
 

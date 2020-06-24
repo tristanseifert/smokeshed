@@ -15,36 +15,28 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     public var library: LibraryBundle! = nil {
         didSet {
             // update libraries of all components
-            self.content.library = self.library
             self.importer.library = self.library
-            
             ThumbHandler.shared.library = self.library
+            
+            if let content = self.contentViewController {
+                self.updateChildLibrary(content)
+                
+            }
 
             // set the window's URL
-            if let window = self.window {
-                if let library = self.library {
-                    window.representedURL = library.getURL()
-                } else {
-                    window.representedURL = nil
-                }
+            if let library = self.library {
+                self.window?.representedURL = library.getURL()
+            } else {
+                self.window?.representedURL = nil
             }
 
             // we need to persist the library url
+            DDLogVerbose("Library set: \(String(describing: self.library))")
             self.invalidateRestorableState()
         }
     }
 
-    /// Content view controller
-    @objc dynamic public var content = ContentViewController()
-
     // MARK: - Initialization
-    /**
-     * Provide the nib name.
-     */
-    override var windowNibName: NSNib.Name? {
-        return "MainWindowController"
-    }
-
     /**
      * Once the window has loaded, add the child window controllers as needed.
      */
@@ -64,9 +56,6 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         if let library = self.library {
             window.representedURL = library.getURL()
         }
-
-        // update the content
-        window.contentViewController = self.content
     }
 
     /**
@@ -160,48 +149,68 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
                                   preferredEdge: .maxY)
     }
 
-    // MARK: - Container support
+    // MARK: - Content containers
     /**
-     * Claim that we can respond to a particular selector, if our content claims to. This is necessary to allow
-     * forwarding invocations (for first responder) to content windows.
+     * Propagates this library object to all child view controllers, recursively.
      */
-    override func responds(to aSelector: Selector!) -> Bool {
-        if super.responds(to: aSelector) {
-            return true
+    private func updateChildLibrary(_ child: NSViewController) {
+        DDLogInfo("child: \(child)")
+        
+        // set library if the controller supports it
+        if var c = child as? MainWindowLibraryPropagating {
+            c.library = self.library
         }
-        else if self.content.responds(to: aSelector) {
-            return true
+        
+        // if there are children to this controller, invoke this on each of them
+        if !child.children.isEmpty {
+            for child in child.children {
+                self.updateChildLibrary(child)
+            }
         }
-
-        // nobody supports this selector :(
-        return false
     }
+    
     /**
-     * Returns the new target for the given selector. If the content controller implements the given action, we
-     * forward directly to it.
+     * Switches to a different app mode, identified by its index 1-3. This is stored in the sender's tag.
      */
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        // can the content controller respond to this message?
-        if self.content.responds(to: aSelector) {
-            return self.content
+    @IBAction func changeAppMode(_ sender: Any) {
+        var inTag: Int?
+        
+        // menu item?
+        if let menu = sender as? NSMenuItem {
+            inTag = menu.tag
         }
-
-        // nobody supports this selector :(
+        
+        // validate the tag is valid
+        guard let tag = inTag, (1...3).contains(tag) else {
+            fatalError("Invalid tag: \(String(describing: inTag))")
+        }
+        
+        // find tab controller and set its selection
+        guard let tab = self.findTabController(self.contentViewController!) else {
+            fatalError("Failed to locate tab controller")
+        }
+        
+        tab.selectedTabViewItemIndex = tag - 1
+    }
+    
+    /**
+     * Locates the tab controller containing the main view.
+     */
+    private func findTabController(_ parent: NSViewController) -> NSTabViewController? {        
+        // did we find the tab controller?
+        if let tab = parent as? NSTabViewController {
+            return tab
+        }
+            
+        // if not, check each of its children
+        for child in parent.children {
+            if let result = self.findTabController(child) {
+                return result
+            }
+        }
+        
+        // failed to find the controller
         return nil
-    }
-    /**
-     * Returns the method implementation for the given selector. If we don't implement the method, provide
-     * the implementation provided by the content controller.
-     */
-    override func method(for aSelector: Selector!) -> IMP! {
-        let sig = super.method(for: aSelector)
-
-        // forward to content if not supported
-        if sig == nil, self.content.responds(to: aSelector) {
-            return self.content.method(for: aSelector)
-        }
-
-        return sig
     }
 
     // MARK: - Importing, Library UI
@@ -264,10 +273,10 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
         if self.inspector == nil {
             self.inspector = InspectorWindowController()
 
-            self.inspector?.bind(NSBindingName(rawValue: "selection"),
-                                 to: self.content,
-                                 withKeyPath: #keyPath(ContentViewController.representedObject),
-                                 options: nil)
+//            self.inspector?.bind(NSBindingName(rawValue: "selection"),
+//                                 to: self.content,
+//                                 withKeyPath: #keyPath(ContentViewController.representedObject),
+//                                 options: nil)
         }
     }
 
@@ -334,13 +343,32 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
             menuItem.action == #selector(openLibraryOptions(_:)) {
             return true
         }
+        
+        // changing app mode
+        if menuItem.action == #selector(changeAppMode(_:)) {
+            if let c = self.findTabController(self.contentViewController!),
+               menuItem.tag == (c.selectedTabViewItemIndex + 1) {
+                menuItem.state = .on
+            } else {
+                menuItem.state = .off
+            }
+            
+            return true
+        }
 
         // forward unhandled calls to the content controller
-        return self.content.validateMenuItem(menuItem)
+        return false
     }
 }
 
 extension NSUserInterfaceItemIdentifier {
     /// App main window (restoration)
     static let mainWindow = NSUserInterfaceItemIdentifier("mainWindow")
+}
+
+/**
+ * Implement this protocol to get a pointer to the current library.
+ */
+protocol MainWindowLibraryPropagating {
+    var library: LibraryBundle! { get set }
 }

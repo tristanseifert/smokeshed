@@ -15,7 +15,7 @@ import CocoaLumberjackSwift
  */
 class LibraryBrowserBase: NSViewController, NSMenuItemValidation,
     NSCollectionViewPrefetching, NSCollectionViewDelegate,
-NSFetchedResultsControllerDelegate {
+NSFetchedResultsControllerDelegate, MainWindowLibraryPropagating {
     /// Library that is being browsed
     public var library: LibraryBundle! = nil {
         didSet {

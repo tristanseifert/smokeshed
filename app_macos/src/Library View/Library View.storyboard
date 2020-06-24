@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="zIe-Iq-sJe">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Library-->
+        <scene sceneID="NZt-1K-1Dp">
+            <objects>
+                <viewController title="Library" id="zIe-Iq-sJe" customClass="LibraryViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="8Za-Jd-tix">
+                        <rect key="frame" x="0.0" y="0.0" width="1091" height="751"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ywz-L5-3Gl" userLabel="Bottom Bar">
+                                <rect key="frame" x="0.0" y="0.0" width="1091" height="32"/>
+                                <subviews>
+                                    <customView horizontalHuggingPriority="500" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="qbX-hf-Q89" userLabel="Sort/Group">
+                                        <rect key="frame" x="0.0" y="0.0" width="164" height="32"/>
+                                        <subviews>
+                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bkm-mJ-7LI">
+                                                <rect key="frame" x="10" y="6" width="52" height="19"/>
+                                                <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="a4o-UB-QvD" id="StL-yA-OXh">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                    <font key="font" metaFont="systemBold" size="12"/>
+                                                    <menu key="menu" id="FYz-YS-nXi">
+                                                        <items>
+                                                            <menuItem title="Sort" state="on" tag="-1" hidden="YES" id="a4o-UB-QvD">
+                                                                <connections>
+                                                                    <binding destination="zIe-Iq-sJe" name="title" keyPath="self.sortMenuTitle" id="9pV-hu-5sj"/>
+                                                                </connections>
+                                                            </menuItem>
+                                                            <menuItem title="Date Captured" tag="1" id="736-wb-vRY">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem title="Date Imported" tag="2" id="pxa-w2-z7b">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem title="Rating" tag="3" id="rDx-Lm-aS4">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem isSeparatorItem="YES" id="blu-su-D9H"/>
+                                                            <menuItem title="Ascending" tag="1" id="c2i-2H-gUT">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem title="Descending" tag="2" id="aeO-eP-Hgd">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                        </items>
+                                                    </menu>
+                                                </popUpButtonCell>
+                                            </popUpButton>
+                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HIz-kV-s3O" userLabel="Group">
+                                                <rect key="frame" x="72" y="6" width="82" height="19"/>
+                                                <popUpButtonCell key="cell" type="recessed" title="Group By" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="06n-VD-hzB" id="dP5-NR-kqu">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                    <font key="font" metaFont="systemBold" size="12"/>
+                                                    <menu key="menu" id="Chq-hS-Zbu">
+                                                        <items>
+                                                            <menuItem title="Group By" state="on" tag="-1" hidden="YES" id="06n-VD-hzB">
+                                                                <connections>
+                                                                    <binding destination="zIe-Iq-sJe" name="title" keyPath="self.groupMenuTitle" id="i6g-hg-Bd1"/>
+                                                                </connections>
+                                                            </menuItem>
+                                                            <menuItem title="Date Captured" tag="1" id="q9d-Cs-kdQ">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem title="Date Imported" tag="2" id="KR5-R7-qlC">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem title="Rating" tag="3" id="Fop-rA-SHO">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem isSeparatorItem="YES" id="F2c-X7-Rlx"/>
+                                                            <menuItem title="Ascending" tag="1" id="AVQ-Tg-cjt">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                            <menuItem title="Descending" tag="2" id="eA9-Jp-Wlu">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                            </menuItem>
+                                                        </items>
+                                                    </menu>
+                                                </popUpButtonCell>
+                                            </popUpButton>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="HIz-kV-s3O" secondAttribute="trailing" constant="10" id="3kf-Xz-yDf"/>
+                                            <constraint firstItem="HIz-kV-s3O" firstAttribute="leading" secondItem="Bkm-mJ-7LI" secondAttribute="trailing" constant="10" id="Aiu-kV-GMK"/>
+                                            <constraint firstItem="HIz-kV-s3O" firstAttribute="top" secondItem="Bkm-mJ-7LI" secondAttribute="top" id="CXe-jk-pE1"/>
+                                            <constraint firstItem="Bkm-mJ-7LI" firstAttribute="leading" secondItem="qbX-hf-Q89" secondAttribute="leading" constant="10" id="ifx-Bm-jtw"/>
+                                            <constraint firstItem="Bkm-mJ-7LI" firstAttribute="centerY" secondItem="qbX-hf-Q89" secondAttribute="centerY" id="zie-e6-nDt"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="PLA-cq-Iid" userLabel="Spacer">
+                                        <rect key="frame" x="166" y="0.0" width="788" height="32"/>
+                                    </customView>
+                                    <slider toolTip="Change how many images are shown per row." horizontalHuggingPriority="500" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRq-AU-vw7">
+                                        <rect key="frame" x="950" y="6" width="137" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="125" id="bOO-mX-Axx"/>
+                                        </constraints>
+                                        <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="1" maxValue="8" doubleValue="4" tickMarkPosition="below" numberOfTickMarks="8" allowsTickMarkValuesOnly="YES" sliderType="linear" id="DaD-m8-7eu"/>
+                                        <connections>
+                                            <binding destination="zIe-Iq-sJe" name="value" keyPath="self.gridZoom" id="Wd7-wQ-jzx">
+                                                <dictionary key="options">
+                                                    <bool key="NSValidatesImmediately" value="YES"/>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </slider>
+                                </subviews>
+                                <edgeInsets key="edgeInsets" left="0.0" right="10" top="0.0" bottom="0.0"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="GSm-ki-jeU"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <real value="750"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                            <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vfC-gg-iXO" userLabel="Collection Scroll View">
+                                <rect key="frame" x="0.0" y="32" width="1091" height="719"/>
+                                <clipView key="contentView" drawsBackground="NO" id="6ym-7o-cn1">
+                                    <rect key="frame" x="0.0" y="0.0" width="1091" height="719"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <collectionView selectable="YES" allowsMultipleSelection="YES" id="RFR-NK-UGV" customClass="LibraryCollectionView" customModule="SmokeShed" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="1091" height="360"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <collectionViewFlowLayout key="collectionViewLayout" sectionHeadersPinToVisibleBounds="YES" id="CoQ-Rt-bPQ">
+                                                <size key="itemSize" width="100" height="125"/>
+                                                <size key="headerReferenceSize" width="0.0" height="30"/>
+                                            </collectionViewFlowLayout>
+                                            <color key="primaryBackgroundColor" name="LibraryViewPrimaryBackground"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="zIe-Iq-sJe" id="Bhn-t8-mjN"/>
+                                                <outlet property="prefetchDataSource" destination="zIe-Iq-sJe" id="hFQ-zW-ZgW"/>
+                                            </connections>
+                                        </collectionView>
+                                    </subviews>
+                                    <color key="backgroundColor" name="LibraryViewCollectionBackground"/>
+                                </clipView>
+                                <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="1Wy-4h-6X2">
+                                    <rect key="frame" x="-100" y="-100" width="662" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="rYS-Me-Uw6">
+                                    <rect key="frame" x="1035" y="0.0" width="16" height="342"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Ywz-L5-3Gl" firstAttribute="leading" secondItem="8Za-Jd-tix" secondAttribute="leading" id="Av5-kn-ecY"/>
+                            <constraint firstItem="vfC-gg-iXO" firstAttribute="leading" secondItem="8Za-Jd-tix" secondAttribute="leading" id="LMx-jx-NiQ"/>
+                            <constraint firstItem="vfC-gg-iXO" firstAttribute="top" secondItem="8Za-Jd-tix" secondAttribute="top" id="UBt-fw-LaU"/>
+                            <constraint firstAttribute="bottom" secondItem="Ywz-L5-3Gl" secondAttribute="bottom" id="UeX-ZG-jfw"/>
+                            <constraint firstItem="Ywz-L5-3Gl" firstAttribute="top" secondItem="vfC-gg-iXO" secondAttribute="bottom" id="eMp-lM-BSq"/>
+                            <constraint firstAttribute="trailing" secondItem="Ywz-L5-3Gl" secondAttribute="trailing" id="hMr-rH-2vR"/>
+                            <constraint firstAttribute="trailing" secondItem="vfC-gg-iXO" secondAttribute="trailing" id="yHg-c3-qac"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="IcI-lB-fkR"/>
+                        <viewLayoutGuide key="layoutMargins" id="fGl-S6-96T"/>
+                    </view>
+                    <connections>
+                        <outlet property="collection" destination="RFR-NK-UGV" id="YVp-BJ-BY8"/>
+                        <outlet property="menuController" destination="bei-7L-9fQ" id="Jeh-O5-4Bj"/>
+                    </connections>
+                </viewController>
+                <customObject id="KXU-v1-0Nv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="bei-7L-9fQ" userLabel="Context Menu Provider" customClass="LibraryViewMenuProvider" customModule="SmokeShed" customModuleProvider="target">
+                    <connections>
+                        <outlet property="parent" destination="zIe-Iq-sJe" id="fU3-yw-iNt"/>
+                        <outlet property="template" destination="jtb-nE-IbH" id="wsT-wf-L5c"/>
+                    </connections>
+                </customObject>
+                <menu id="jtb-nE-IbH" userLabel="Item Context Menu">
+                    <items>
+                        <menuItem title="Open in Edit…" keyEquivalent="e" id="gw8-Ox-8ii">
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                            <connections>
+                                <action selector="editImage:" target="bei-7L-9fQ" id="xJH-Yu-icP"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="hp2-P7-0dO"/>
+                        <menuItem title="Rating" enabled="NO" id="Thj-0N-mHT">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Not Set" tag="-1" indentationLevel="1" id="EZy-9P-Jag">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="3iX-bA-Psn"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="☆☆☆☆☆" keyEquivalent="0" indentationLevel="1" id="9PT-DL-brz">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="6mc-Vc-djJ"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="★☆☆☆☆" tag="1" keyEquivalent="1" indentationLevel="1" id="X0n-aA-Rdb">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="1iW-aT-gvO"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="★★☆☆☆" tag="2" keyEquivalent="2" indentationLevel="1" id="bf1-97-Bhv">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="XQf-27-b68"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="★★★☆☆" tag="3" keyEquivalent="3" indentationLevel="1" id="jqG-Qn-1Cw">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="Dzp-ba-HLc"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="★★★★☆" tag="4" keyEquivalent="4" indentationLevel="1" id="0Wc-BB-JwC">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="eYY-bn-Hbp"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="★★★★★" tag="5" keyEquivalent="5" indentationLevel="1" id="K0i-vf-3Zj">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setRating:" target="bei-7L-9fQ" id="XMq-cE-cuO"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="DFA-rV-d0M"/>
+                        <menuItem title="Remove…" id="2Cy-Bp-Wux">
+                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                            <connections>
+                                <action selector="removeImage:" target="bei-7L-9fQ" id="N91-iF-63k"/>
+                            </connections>
+                        </menuItem>
+                    </items>
+                </menu>
+            </objects>
+            <point key="canvasLocation" x="-268.5" y="101.5"/>
+        </scene>
+    </scenes>
+    <resources>
+        <namedColor name="LibraryViewCollectionBackground">
+            <color red="0.58823529411764708" green="0.58823529411764708" blue="0.58823529411764708" alpha="0.89803921568627454" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="LibraryViewPrimaryBackground">
+            <color white="0.25" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
+    </resources>
+</document>

@@ -16,10 +16,8 @@ import CocoaLumberjackSwift
 class LibraryViewMenuProvider: NSObject, LibraryCollectionViewDelegate,
                                NSMenuItemValidation, NSMenuDelegate {
     /// Containing library controller
-    private var parent: LibraryViewController
+    @IBOutlet private var parent: LibraryViewController!
 
-    /// Nib file containing the menu template
-    private var templateNib: NSNib!
     /// Menu template
     @IBOutlet private var template: NSMenu!
 
@@ -27,23 +25,6 @@ class LibraryViewMenuProvider: NSObject, LibraryCollectionViewDelegate,
     private weak var currentItem: NSCollectionViewItem? = nil
     /// Image for which the current menu is displayed
     private var currentImage: Image? = nil
-
-    // MARK: - Initialization
-    /**
-     * Creates a new menu provider with the given library controller as a parent.
-     */
-    init(_ parent: LibraryViewController) {
-        // set the parent and initialize superclass
-        self.parent = parent
-        super.init()
-
-        // load the menu template
-        guard let nib = NSNib(nibNamed: "LibraryViewMenu", bundle: nil) else {
-            fatalError("Failed to load library view menu")
-        }
-        self.templateNib = nib
-        self.templateNib.instantiate(withOwner: self, topLevelObjects: nil)
-    }
 
     // MARK: - Collection delegate
     /**

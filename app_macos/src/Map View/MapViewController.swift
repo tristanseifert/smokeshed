@@ -10,38 +10,12 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChild {
+class MapViewController: NSViewController, NSMenuItemValidation, MainWindowLibraryPropagating {
     /// Library that is being browsed
     public var library: LibraryBundle! {
         didSet {
 
         }
-    }
-
-    // MARK: - Initialization
-    /**
-     * Provide the nib name.
-     */
-    override var nibName: NSNib.Name? {
-        return "MapViewController"
-    }
-
-    /**
-     * Initializes a new map view controller.
-     */
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.identifier = .mapViewController
-    }
-    /// Decoding is not supported
-    required init?(coder: NSCoder) {
-        return nil
-    }
-    func getPreferredApperance() -> NSAppearance? {
-        return nil
-    }
-    func getBottomBorderThickness() -> CGFloat {
-        return 0
     }
 
     // MARK: View Lifecycle
@@ -50,6 +24,8 @@ class MapViewController: NSViewController, NSMenuItemValidation, ContentViewChil
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.identifier = .mapViewController
     }
 
     /**

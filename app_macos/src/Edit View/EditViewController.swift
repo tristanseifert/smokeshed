@@ -10,43 +10,12 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChild {
+class EditViewController: NSViewController, NSMenuItemValidation, MainWindowLibraryPropagating {
     /// Library that is being browsed
     public var library: LibraryBundle! {
         didSet {
 
         }
-    }
-
-    // MARK: - Initialization
-    /**
-     * Provide the nib name.
-     */
-    override var nibName: NSNib.Name? {
-        return "EditViewController"
-    }
-
-    /**
-     * Initializes a new edit view controller.
-     */
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.identifier = .editViewController
-    }
-    
-    /// Decoding is not supported
-    required init?(coder: NSCoder) {
-        return nil
-    }
-
-    /**
-     * Edit view is DARK MODE™ zone
-     */
-    func getPreferredApperance() -> NSAppearance? {
-        return NSAppearance(named: .darkAqua)
-    }
-    func getBottomBorderThickness() -> CGFloat {
-        return 0
     }
 
     // MARK: View Lifecycle
@@ -55,6 +24,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, ContentViewChi
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.identifier = .editViewController
     }
 
     /**

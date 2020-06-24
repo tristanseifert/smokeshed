@@ -10,9 +10,9 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentViewChild {
+class LibraryViewController: LibraryBrowserBase {
     /// Context menu controller for the collection view
-    private var menuController: LibraryViewMenuProvider!
+    @IBOutlet private var menuController: LibraryViewMenuProvider!
 
     // MARK: - Initialization
     /**
@@ -20,37 +20,6 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
      */
     override var fetchCacheName: String? {
         return "LibraryViewController"
-    }
-
-    /**
-     * Provide the nib name.
-     */
-    override var nibName: NSNib.Name? {
-        return "LibraryViewController"
-    }
-
-    /**
-     * Initializes the library controller.
-     */
-    init() {
-        // load the view controller with default nib name
-        super.init(nibName: nil, bundle: nil)
-
-        self.menuController = LibraryViewMenuProvider(self)
-
-        // configure restoration
-        self.identifier = .libraryViewController
-    }
-
-    /// Decoding is not supported
-    required init?(coder: NSCoder) {
-        return nil
-    }
-    func getPreferredApperance() -> NSAppearance? {
-        return nil
-    }
-    func getBottomBorderThickness() -> CGFloat {
-        return 32
     }
 
     // MARK: View Lifecycle
@@ -62,15 +31,10 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.identifier = .libraryViewController
 
         // connect up the sub controllers
         self.collection.kushDelegate = self.menuController
-
-        // set up filter bar state
-        self.isFilterVisible = false
-        self.filter.enclosingScrollView?.isHidden = true
-
-        self.setUpFilterAreaHeightNotifications()
 
         // register the collection view classes
         self.collection.register(LibraryCollectionItem.self,
@@ -134,10 +98,7 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
 
     // MARK: - State restoration
     private struct StateKeys {
-        /// Filter bar visibility state
-        static let filterVisibility = "LibraryViewController.isFilterVisible"
-        /// Position of the sidebar splitter
-        static let sidebarPosition = "LibraryViewController.sidebarPosition"
+        
     }
 
     /**
@@ -145,13 +106,6 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
      */
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-
-        // save the filter visibility
-        coder.encode(self.isFilterVisible, forKey: StateKeys.filterVisibility)
-
-        // save split view state
-        let splitPos = self.sidebarContainer.frame.width
-        coder.encode(Double(splitPos), forKey: StateKeys.sidebarPosition)
     }
 
     /**
@@ -159,135 +113,6 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
      */
     override func restoreState(with coder: NSCoder) {
         super.restoreState(with: coder)
-
-        // read values
-        let isVisible = coder.decodeBool(forKey: StateKeys.filterVisibility)
-
-        let shouldRestoreSplit = coder.containsValue(forKey: StateKeys.sidebarPosition)
-        let splitPos = coder.decodeDouble(forKey: StateKeys.sidebarPosition)
-
-        // set the restoration block
-        self.restoreBlock.append({
-            self.isFilterVisible = isVisible
-
-            if shouldRestoreSplit {
-                self.splitter.setPosition(CGFloat(splitPos), ofDividerAt: 0)
-            }
-        })
-    }
-
-    // MARK: - Filter bar UI
-    /// Container view that holds the filter bar and editor
-    @IBOutlet private var filterArea: NSStackView! = nil
-    /// Predicate editor for the filters
-    @IBOutlet private var filter: NSPredicateEditor! = nil
-    /// Size constraint for the filter predicate editor
-    @IBOutlet private var filterHeightConstraint: NSLayoutConstraint! = nil
-    /// Is the filter predicate editor visible?
-    @objc dynamic private var isFilterVisible: Bool = false {
-        // update the UI if needed
-        didSet {
-            if self.shouldAnimate {
-                NSAnimationContext.runAnimationGroup({ (ctx) in
-                    ctx.duration = 0.125
-                    ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-
-                    self.filter.enclosingScrollView?.isHidden = false
-
-                    if self.isFilterVisible {
-                        self.filter.enclosingScrollView?.animator().alphaValue = 1
-                        self.filterHeightConstraint.animator().constant = 192
-                    } else {
-                        self.filter.enclosingScrollView?.animator().alphaValue = 0
-                        self.filterHeightConstraint.animator().constant = 0
-                    }
-                }, completionHandler: {
-                    if !self.isFilterVisible {
-                        self.filter.enclosingScrollView?.isHidden = true
-                    }
-
-                    // force grid view to recalculate layout
-                    // TODO: improve this, animate headers?
-                    self.collection.reloadItems(at: self.collection.indexPathsForVisibleItems())
-                })
-
-                self.parent?.invalidateRestorableState()
-            } else {
-                if self.isFilterVisible {
-                    self.filter.enclosingScrollView?.alphaValue = 1
-                    self.filterHeightConstraint.constant = 192
-                    self.filter.enclosingScrollView?.isHidden = false
-                } else {
-                    self.filter.enclosingScrollView?.alphaValue = 0
-                    self.filterHeightConstraint.constant = 0
-                    self.filter.enclosingScrollView?.isHidden = true
-                }
-
-                // force grid view to recalculate layout
-                // TODO: improve this, animate headers?
-                self.collection.reloadItems(at: self.collection.indexPathsForVisibleItems())
-            }
-        }
-    }
-
-    /**
-     * Registers for filter area height update notifications.
-     */
-    private func setUpFilterAreaHeightNotifications() {
-        // register for frame change on filter area
-        let c = NotificationCenter.default
-
-        c.addObserver(forName: NSView.frameDidChangeNotification,
-                      object: self.filterArea, queue: nil, using: { _ in
-            self.filterAreaHeightUpdate()
-        })
-
-        // enable posting of the notification
-        self.filterArea.postsFrameChangedNotifications = true
-        // last, manually update to make sure UI is updated
-        self.filterAreaHeightUpdate()
-    }
-
-    /**
-     * Handles the height of the filter area changing. This adjusts the edge insets of the content view
-     * accordingly.
-     */
-    private func filterAreaHeightUpdate() {
-        guard let scroll = self.collection?.enclosingScrollView else {
-            DDLogError("Failed to get reference to collection scroll view")
-            return
-        }
-
-        // the height of the filter bounds is the top inset
-        let filterBounds = self.filterArea.bounds
-
-        var insets = NSEdgeInsets()
-        insets.top = filterBounds.size.height
-
-        scroll.contentInsets = insets
-    }
-
-    // MARK: - Split view handling
-    /// Main split view
-    @IBOutlet private var splitter: NSSplitView! = nil
-    /// Sidebar view
-    @IBOutlet private var sidebarContainer: NSView! = nil
-
-    /**
-     * Ensure that the new split view state is saved when the split changes.
-     */
-    func splitViewDidResizeSubviews(_ notification: Notification) {
-        self.parent!.invalidateRestorableState()
-    }
-
-    /**
-     * Allow the split view to collapse the sidebar.
-     */
-    func splitView(_ splitView: NSSplitView, canCollapseSubview subview: NSView) -> Bool {
-        if subview == self.sidebarContainer {
-            return true
-        }
-        return false
     }
 
     // MARK: Sort, grouping filters
@@ -323,18 +148,6 @@ class LibraryViewController: LibraryBrowserBase, NSSplitViewDelegate, ContentVie
             #keyPath(LibraryBrowserBase.groupBy),
             #keyPath(LibraryBrowserBase.groupOrder)
         ]
-    }
-
-    // MARK: - Lens/Camera Filters
-    /// Lens filter pulldown
-    @IBOutlet private var lensFilter: NSPopUpButton! = nil
-    /// Menu displayed by the lens filter pulldown
-    @objc dynamic private var lensMenu: NSMenu = NSMenu() {
-        didSet {
-            if let btn = self.lensFilter {
-                btn.menu = lensMenu
-            }
-        }
     }
 
     // MARK: - Menu actions
