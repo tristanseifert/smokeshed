@@ -31,7 +31,6 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
             }
 
             // we need to persist the library url
-            DDLogVerbose("Library set: \(String(describing: self.library))")
             self.invalidateRestorableState()
         }
     }

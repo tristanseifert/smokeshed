@@ -16,10 +16,17 @@ import CocoaLumberjackSwift
  */
 class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutlineViewDataSource, NSOutlineViewDelegate {
     /// Currently opened library
-    internal var library: LibraryBundle!
+    internal var library: LibraryBundle! {
+        didSet {
+            self.shortcutsController.library = self.library
+        }
+    }
     
     /// Outline view for sidebar
     @IBOutlet private var outline: NSOutlineView!
+    
+    /// Controller for the all images items
+    private var shortcutsController = SidebarShortcutsController()
     
     // MARK: - Initialization
     /**
@@ -36,31 +43,33 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         let allImages = OutlineItem()
         allImages.viewIdentifier = imageCountType
         allImages.title = NSLocalizedString("images.all.title",
-                                          tableName: "SidebarController",
+                                          tableName: "Sidebar",
                                           bundle: Bundle.main, value: "",
                                           comment: "All images item")
-        allImages.badgeValue = 69420
         allImages.icon = NSImage(systemSymbolName: "photo.on.rectangle.angled",
-                                accessibilityDescription: "All photosicon")
+                                accessibilityDescription: "All photos icon")
+        
         self.root.append(allImages)
+        self.shortcutsController.allItem = allImages
         
         // last import
         let last = OutlineItem()
         last.viewIdentifier = imageCountType
         last.title = NSLocalizedString("images.last_import.title",
-                                          tableName: "SidebarController",
+                                          tableName: "Sidebar",
                                           bundle: Bundle.main, value: "",
                                           comment: "Last import item")
-        last.badgeValue = 420
         last.icon = NSImage(systemSymbolName: "clock.arrow.circlepath",
                                 accessibilityDescription: "Last Import icon")
+        
         self.root.append(last)
+        self.shortcutsController.lastImportItem = last
         
         // albums
         let albums = OutlineItem()
         albums.viewIdentifier = groupItemType
         albums.title = NSLocalizedString("albums.group.title",
-                                          tableName: "SidebarController",
+                                          tableName: "Sidebar",
                                           bundle: Bundle.main, value: "",
                                           comment: "Albums group title")
         albums.isGroupItem = true
@@ -70,7 +79,7 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         let images = OutlineItem()
         images.viewIdentifier = groupItemType
         images.title = NSLocalizedString("images.group.title",
-                                          tableName: "SidebarController",
+                                          tableName: "Sidebar",
                                           bundle: Bundle.main, value: "",
                                           comment: "Images group title")
         images.isGroupItem = true
@@ -152,6 +161,17 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         return false
     }
     
+    /**
+     * Returns the tint desired by the item.
+     */
+    func outlineView(_ outlineView: NSOutlineView, tintConfigurationForItem item: Any) -> NSTintConfiguration? {
+        if let item = item as? OutlineItem {
+            return item.tint
+        }
+        
+        return nil
+    }
+    
     // MARK: Helpers
     /**
      * Creates a cell for the given identifier and object.
@@ -166,7 +186,7 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
     /**
      * Represents a single entry in the sidebar list, which may have children.
      */
-    @objc private class OutlineItem: NSObject {
+    @objc class OutlineItem: NSObject {
         /// Title displayed in the cell
         @objc dynamic var title: String = "<no title>"
         /// Badge count
@@ -177,10 +197,10 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
             }
         }
         /// Icon
-        @objc dynamic var icon: NSImage! = nil
+        @objc dynamic var icon: NSImage? = nil
         
         /// Tint color of icon
-        @objc dynamic var tintColor: NSColor! = nil
+        @objc dynamic var tint: NSTintConfiguration? = nil
         
         /// Should the badge be displayed?
         @objc dynamic var showBadge: Bool {

@@ -9,7 +9,7 @@ import Cocoa
 
 import CocoaLumberjackSwift
 
-class MainWindowViewController: NSSplitViewController {
+class MainWindowViewController: NSSplitViewController, NSMenuItemValidation {
     /**
      * When the view is about to appear, add the toolbar item if it doesn't already exist.
      */
@@ -30,5 +30,47 @@ class MainWindowViewController: NSSplitViewController {
 //                toolbar.items = items
 //            }
 //        }
+    }
+    
+    // MARK: - Child message handling
+    /**
+     * Forward messages to child controllers as needed
+     */
+    override func supplementalTarget(forAction action: Selector, sender: Any?) -> Any? {        
+        // check each child
+        for child in self.children {
+            // does it directly support this action?
+            if child.responds(to: action) {
+                return child
+            }
+            // does it provide a supplemental target?
+            else if let target = child.supplementalTarget(forAction: action,
+                                                          sender: sender) {
+                return target
+            }
+        }
+        
+        // no controller supports this method
+        return super.supplementalTarget(forAction: action, sender: sender)
+    }
+    
+    /**
+     * Requests child controllers validate menu items
+     */
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        for child in self.children {
+            // does it support menu item validation?
+            guard let validator = child as? NSMenuItemValidation else {
+                continue
+            }
+            
+            // if handled, return
+            if validator.validateMenuItem(menuItem) {
+                return true
+            }
+        }
+        
+        // not handled
+        return false
     }
 }
