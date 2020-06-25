@@ -67,32 +67,32 @@
                                                             <menuItem title="Date Captured" tag="1" id="736-wb-vRY">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibrarySortKey:" target="KXU-v1-0Nv" id="lPx-ia-mI9"/>
+                                                                    <action selector="setLibrarySortKey:" target="zIe-Iq-sJe" id="74f-K3-Kfr"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Date Imported" tag="2" id="pxa-w2-z7b">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibrarySortKey:" target="KXU-v1-0Nv" id="Zvz-Wu-TwQ"/>
+                                                                    <action selector="setLibrarySortKey:" target="zIe-Iq-sJe" id="fgV-TI-SaB"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Rating" tag="3" id="rDx-Lm-aS4">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibrarySortKey:" target="KXU-v1-0Nv" id="cih-Fs-DpT"/>
+                                                                    <action selector="setLibrarySortKey:" target="zIe-Iq-sJe" id="gpZ-Dk-iK8"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem isSeparatorItem="YES" id="blu-su-D9H"/>
                                                             <menuItem title="Ascending" tag="1" id="c2i-2H-gUT">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibrarySortOrder:" target="KXU-v1-0Nv" id="5Vd-AG-giT"/>
+                                                                    <action selector="setLibrarySortOrder:" target="zIe-Iq-sJe" id="HyJ-mW-0Rc"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Descending" tag="2" id="aeO-eP-Hgd">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibrarySortOrder:" target="KXU-v1-0Nv" id="aLi-My-aa9"/>
+                                                                    <action selector="setLibrarySortOrder:" target="zIe-Iq-sJe" id="Enp-5j-i8L"/>
                                                                 </connections>
                                                             </menuItem>
                                                         </items>
@@ -114,32 +114,32 @@
                                                             <menuItem title="Date Captured" tag="1" id="q9d-Cs-kdQ">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibraryGroupKey:" target="KXU-v1-0Nv" id="UH9-rP-nGH"/>
+                                                                    <action selector="setLibraryGroupKey:" target="zIe-Iq-sJe" id="lvx-72-QuG"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Date Imported" tag="2" id="KR5-R7-qlC">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibraryGroupKey:" target="KXU-v1-0Nv" id="cdl-ZA-8me"/>
+                                                                    <action selector="setLibraryGroupKey:" target="zIe-Iq-sJe" id="ksg-IP-bbl"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Rating" tag="3" id="Fop-rA-SHO">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibraryGroupKey:" target="KXU-v1-0Nv" id="Sa6-cH-Cme"/>
+                                                                    <action selector="setLibraryGroupKey:" target="zIe-Iq-sJe" id="elu-xj-5El"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem isSeparatorItem="YES" id="F2c-X7-Rlx"/>
                                                             <menuItem title="Ascending" tag="1" id="AVQ-Tg-cjt">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibraryGroupOrder:" target="KXU-v1-0Nv" id="mcO-vO-9Jr"/>
+                                                                    <action selector="setLibraryGroupOrder:" target="zIe-Iq-sJe" id="6Kf-La-Mrb"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Descending" tag="2" id="eA9-Jp-Wlu">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
-                                                                    <action selector="setLibraryGroupOrder:" target="KXU-v1-0Nv" id="Tsf-rW-gzA"/>
+                                                                    <action selector="setLibraryGroupOrder:" target="zIe-Iq-sJe" id="QMb-5Y-89d"/>
                                                                 </connections>
                                                             </menuItem>
                                                         </items>

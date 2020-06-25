@@ -35,6 +35,7 @@
 		6A2C5F5E248CB612009EA409 /* GPSLocation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F50248CB5F7009EA409 /* GPSLocation+CoreDataClass.swift */; };
 		6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F61248CC83E009EA409 /* MainWindowController.swift */; };
 		6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */; };
+		6A2D4D1D24A4392B002AAB53 /* SidebarController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A2D4D1C24A4392B002AAB53 /* SidebarController.strings */; };
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
@@ -308,6 +309,7 @@
 		6A2C5F50248CB5F7009EA409 /* GPSLocation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GPSLocation+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/GPSLocation+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6A2C5F61248CC83E009EA409 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowController.swift; path = "app_macos/src/Main Window/MainWindowController.swift"; sourceTree = "<group>"; };
 		6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityViewController.swift; path = "app_macos/src/Main Window/ActivityViewController.swift"; sourceTree = "<group>"; };
+		6A2D4D1C24A4392B002AAB53 /* SidebarController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = SidebarController.strings; path = app_macos/src/Sidebar/SidebarController.strings; sourceTree = "<group>"; };
 		6A4CEE9A248B259500145E49 /* SmokeShed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmokeShed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEB6248B272300145E49 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Icons.xcassets; path = app_macos/assets/Icons.xcassets; sourceTree = "<group>"; };
 		6A4CEEBA248B273D00145E49 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenu.xib; path = app_macos/assets/UI/MainMenu.xib; sourceTree = "<group>"; };
@@ -1097,6 +1099,7 @@
 			isa = PBXGroup;
 			children = (
 				6AAF473A24A3229500572AB3 /* SidebarController.swift */,
+				6A2D4D1C24A4392B002AAB53 /* SidebarController.strings */,
 			);
 			name = Sidebar;
 			sourceTree = "<group>";
@@ -1564,6 +1567,7 @@
 				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
 				6ABD369A2495CACE005F80EE /* LibraryCollectionItems.strings in Resources */,
 				6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */,
+				6A2D4D1D24A4392B002AAB53 /* SidebarController.strings in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
 				6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */,
