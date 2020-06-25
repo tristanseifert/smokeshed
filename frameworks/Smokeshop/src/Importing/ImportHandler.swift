@@ -322,6 +322,7 @@ public class ImportHandler {
 
                 // store other precomputed properties
                 image.dateCaptured = captureDate
+                image.dayCaptured = captureDate?.withoutTime()
                 image.imageSize = size
                 image.rawOrientation = orientation.rawValue
                 image.lens = lens

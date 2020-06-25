@@ -46,7 +46,7 @@
                                     <popUpButton key="view" toolTip="Opens a menu with various shortcuts" verticalHuggingPriority="750" id="zx4-eP-Otv">
                                         <rect key="frame" x="4" y="14" width="39" height="0.0"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="Actions" bezelStyle="texturedRounded" imagePosition="only" alignment="left" controlSize="large" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="PXC-Hs-Utz" id="2mz-4y-BQB">
+                                        <popUpButtonCell key="cell" type="roundTextured" title="Actions" bezelStyle="texturedRounded" imagePosition="only" alignment="left" controlSize="large" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="4d6-Nt-jhn" id="2mz-4y-BQB">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="fgC-yc-1Hm">
@@ -320,7 +320,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="364" height="394"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="33" rowSizeStyle="automatic" usesAutomaticRowHeights="YES" viewBased="YES" indentationPerLevel="13" outlineTableColumn="mJ1-fU-DFE" id="S56-ch-VWt">
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="33" rowSizeStyle="automatic" usesAutomaticRowHeights="YES" viewBased="YES" indentationPerLevel="13" autosaveExpandedItems="YES" outlineTableColumn="mJ1-fU-DFE" id="S56-ch-VWt">
                                             <rect key="frame" x="0.0" y="0.0" width="364" height="394"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
@@ -379,12 +379,12 @@
                                                                     </constraints>
                                                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="photo" catalog="system" id="xHS-Vi-8Sb"/>
                                                                     <connections>
+                                                                        <binding destination="ecN-KI-d4U" name="value" keyPath="objectValue.icon" id="Jd9-OT-KFd"/>
                                                                         <binding destination="ecN-KI-d4U" name="hidden" keyPath="objectValue.icon" id="n57-vC-bpn">
                                                                             <dictionary key="options">
                                                                                 <string key="NSValueTransformerName">NSIsNil</string>
                                                                             </dictionary>
                                                                         </binding>
-                                                                        <binding destination="ecN-KI-d4U" name="value" keyPath="objectValue.icon" id="Jd9-OT-KFd"/>
                                                                     </connections>
                                                                 </imageView>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="aXo-Jx-MZG">
@@ -409,12 +409,12 @@
                                                                         <font key="font" metaFont="smallSystemBold"/>
                                                                     </buttonCell>
                                                                     <connections>
+                                                                        <binding destination="ecN-KI-d4U" name="title" keyPath="objectValue.badgeString" id="CCT-Fw-qDZ"/>
                                                                         <binding destination="ecN-KI-d4U" name="hidden" keyPath="objectValue.showBadge" id="ubQ-Th-Fv7">
                                                                             <dictionary key="options">
                                                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                                             </dictionary>
                                                                         </binding>
-                                                                        <binding destination="ecN-KI-d4U" name="title" keyPath="objectValue.badgeString" id="CCT-Fw-qDZ"/>
                                                                     </connections>
                                                                 </button>
                                                             </subviews>
@@ -430,6 +430,118 @@
                                                             </constraints>
                                                             <connections>
                                                                 <outlet property="textField" destination="aXo-Jx-MZG" id="jvO-nt-Bg9"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                        <tableCellView identifier="ImagesYear" misplaced="YES" id="Ndl-Px-37Q" userLabel="Image Year">
+                                                            <rect key="frame" x="11" y="57" width="341" height="33"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4bS-me-hyg">
+                                                                    <rect key="frame" x="4" y="0.0" width="19" height="22"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="width" secondItem="4bS-me-hyg" secondAttribute="height" multiplier="1:1" id="fbk-1e-qgP"/>
+                                                                    </constraints>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="folder" catalog="system" id="oPp-aE-wjt"/>
+                                                                </imageView>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="eeM-ZQ-pgJ">
+                                                                    <rect key="frame" x="29" y="8" width="260" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Year" id="4vT-Bj-rF1">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <connections>
+                                                                        <binding destination="Ndl-Px-37Q" name="value" keyPath="objectValue.title" id="RLr-yX-PL3">
+                                                                            <dictionary key="options">
+                                                                                <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                                            </dictionary>
+                                                                        </binding>
+                                                                    </connections>
+                                                                </textField>
+                                                                <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g1R-B2-9VH" userLabel="Count Badge">
+                                                                    <rect key="frame" x="291" y="7" width="46" height="16"/>
+                                                                    <buttonCell key="cell" type="inline" title="Count" bezelStyle="inline" alignment="center" enabled="NO" borderStyle="border" inset="2" id="yu5-kV-WSy">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="smallSystemBold"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <binding destination="Ndl-Px-37Q" name="title" keyPath="objectValue.badgeString" id="Iq7-OW-D9C"/>
+                                                                        <binding destination="Ndl-Px-37Q" name="hidden" keyPath="objectValue.showBadge" id="U2g-l2-DqT">
+                                                                            <dictionary key="options">
+                                                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                                            </dictionary>
+                                                                        </binding>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="eeM-ZQ-pgJ" firstAttribute="top" secondItem="Ndl-Px-37Q" secondAttribute="top" constant="8" id="2CF-gD-IrD"/>
+                                                                <constraint firstItem="4bS-me-hyg" firstAttribute="leading" secondItem="Ndl-Px-37Q" secondAttribute="leading" constant="4" id="5Xl-1z-Jxu"/>
+                                                                <constraint firstItem="g1R-B2-9VH" firstAttribute="firstBaseline" secondItem="eeM-ZQ-pgJ" secondAttribute="firstBaseline" id="HiY-J3-Ug1"/>
+                                                                <constraint firstAttribute="trailing" secondItem="g1R-B2-9VH" secondAttribute="trailing" constant="4" id="Obi-rZ-kvL"/>
+                                                                <constraint firstItem="4bS-me-hyg" firstAttribute="firstBaseline" secondItem="eeM-ZQ-pgJ" secondAttribute="firstBaseline" id="XVX-8c-kic"/>
+                                                                <constraint firstItem="eeM-ZQ-pgJ" firstAttribute="leading" secondItem="4bS-me-hyg" secondAttribute="trailing" constant="8" symbolic="YES" id="ZIQ-uH-W6O"/>
+                                                                <constraint firstItem="g1R-B2-9VH" firstAttribute="leading" secondItem="eeM-ZQ-pgJ" secondAttribute="trailing" constant="4" id="nFE-DS-sBA"/>
+                                                                <constraint firstAttribute="bottom" secondItem="eeM-ZQ-pgJ" secondAttribute="bottom" constant="8" id="xl8-nt-iaI"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="textField" destination="eeM-ZQ-pgJ" id="Wyn-BK-5gT"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                        <tableCellView identifier="ImagesDay" id="s4Z-gh-FGC" userLabel="Image Date">
+                                                            <rect key="frame" x="11" y="90" width="341" height="24"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mvC-Z0-d3b">
+                                                                    <rect key="frame" x="4" y="-2" width="17" height="20"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="width" secondItem="mvC-Z0-d3b" secondAttribute="height" multiplier="1:1" id="GBy-Hq-Cqf"/>
+                                                                    </constraints>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="calendar" catalog="system" id="8am-A0-tnR"/>
+                                                                </imageView>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="RAt-cH-JEh" userLabel="Image Date (day)">
+                                                                    <rect key="frame" x="27" y="4" width="262" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Date" id="jUj-Bj-ahN">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <connections>
+                                                                        <binding destination="s4Z-gh-FGC" name="value" keyPath="objectValue.title" id="MzA-bl-a4c">
+                                                                            <dictionary key="options">
+                                                                                <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                                            </dictionary>
+                                                                        </binding>
+                                                                    </connections>
+                                                                </textField>
+                                                                <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ddr-pd-HZX" userLabel="Count Badge">
+                                                                    <rect key="frame" x="291" y="3" width="46" height="16"/>
+                                                                    <buttonCell key="cell" type="inline" title="Count" bezelStyle="inline" alignment="center" enabled="NO" borderStyle="border" inset="2" id="ieK-cF-rFH">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="smallSystemBold"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <binding destination="s4Z-gh-FGC" name="title" keyPath="objectValue.badgeString" id="4Jp-iJ-iW8"/>
+                                                                        <binding destination="s4Z-gh-FGC" name="hidden" keyPath="objectValue.showBadge" id="ij1-SI-16u">
+                                                                            <dictionary key="options">
+                                                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                                            </dictionary>
+                                                                        </binding>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="mvC-Z0-d3b" firstAttribute="leading" secondItem="s4Z-gh-FGC" secondAttribute="leading" constant="4" id="0HY-7l-3Z4"/>
+                                                                <constraint firstAttribute="trailing" secondItem="Ddr-pd-HZX" secondAttribute="trailing" constant="4" id="DIf-NW-d1G"/>
+                                                                <constraint firstItem="Ddr-pd-HZX" firstAttribute="leading" secondItem="RAt-cH-JEh" secondAttribute="trailing" constant="4" id="YJh-9U-Y0v"/>
+                                                                <constraint firstItem="RAt-cH-JEh" firstAttribute="top" secondItem="s4Z-gh-FGC" secondAttribute="top" constant="4" id="bCM-M6-ZRv"/>
+                                                                <constraint firstItem="RAt-cH-JEh" firstAttribute="leading" secondItem="mvC-Z0-d3b" secondAttribute="trailing" constant="8" symbolic="YES" id="gxJ-d5-27w"/>
+                                                                <constraint firstItem="Ddr-pd-HZX" firstAttribute="firstBaseline" secondItem="RAt-cH-JEh" secondAttribute="firstBaseline" id="sDm-9C-I3s"/>
+                                                                <constraint firstAttribute="bottom" secondItem="RAt-cH-JEh" secondAttribute="bottom" constant="4" id="ukk-Kr-h49"/>
+                                                                <constraint firstItem="mvC-Z0-d3b" firstAttribute="firstBaseline" secondItem="RAt-cH-JEh" secondAttribute="firstBaseline" id="w0e-Ri-v6K"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="textField" destination="RAt-cH-JEh" id="YP7-uJ-yz0"/>
                                                             </connections>
                                                         </tableCellView>
                                                     </prototypeCellViews>
@@ -469,7 +581,7 @@
                 </viewController>
                 <customObject id="WPQ-WF-tPZ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1188.5" y="-776"/>
+            <point key="canvasLocation" x="1188" y="-776"/>
         </scene>
         <!--Content Tab Controller-->
         <scene sceneID="vRb-K2-E1g">
@@ -529,6 +641,8 @@
         <image name="NSGoBackTemplate" width="11" height="12"/>
         <image name="NSGoForwardTemplate" width="11" height="12"/>
         <image name="NSStopProgressFreestandingTemplate" width="15" height="13"/>
+        <image name="calendar" catalog="system" width="17" height="12"/>
+        <image name="folder" catalog="system" width="19" height="12"/>
         <image name="photo" catalog="system" width="19" height="12"/>
     </resources>
 </document>

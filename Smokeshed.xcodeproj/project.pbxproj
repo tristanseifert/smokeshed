@@ -37,6 +37,7 @@
 		6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */; };
 		6A2D4D1D24A4392B002AAB53 /* Sidebar.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A2D4D1C24A4392B002AAB53 /* Sidebar.strings */; };
 		6A2D4D1F24A47692002AAB53 /* SidebarShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2D4D1E24A47692002AAB53 /* SidebarShortcutsController.swift */; };
+		6A2D4D2124A532A6002AAB53 /* SidebarImagesByDateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */; };
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
@@ -312,6 +313,7 @@
 		6A2C5F65248CCDF6009EA409 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityViewController.swift; path = "app_macos/src/Main Window/ActivityViewController.swift"; sourceTree = "<group>"; };
 		6A2D4D1C24A4392B002AAB53 /* Sidebar.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Sidebar.strings; path = app_macos/src/Sidebar/Sidebar.strings; sourceTree = "<group>"; };
 		6A2D4D1E24A47692002AAB53 /* SidebarShortcutsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarShortcutsController.swift; path = app_macos/src/Sidebar/SidebarShortcutsController.swift; sourceTree = "<group>"; };
+		6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarImagesByDateController.swift; path = app_macos/src/Sidebar/SidebarImagesByDateController.swift; sourceTree = "<group>"; };
 		6A4CEE9A248B259500145E49 /* SmokeShed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmokeShed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEB6248B272300145E49 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Icons.xcassets; path = app_macos/assets/Icons.xcassets; sourceTree = "<group>"; };
 		6A4CEEBA248B273D00145E49 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenu.xib; path = app_macos/assets/UI/MainMenu.xib; sourceTree = "<group>"; };
@@ -1103,6 +1105,7 @@
 				6AAF473A24A3229500572AB3 /* SidebarController.swift */,
 				6A2D4D1C24A4392B002AAB53 /* Sidebar.strings */,
 				6A2D4D1E24A47692002AAB53 /* SidebarShortcutsController.swift */,
+				6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */,
 			);
 			name = Sidebar;
 			sourceTree = "<group>";
@@ -1693,6 +1696,7 @@
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
 				6A020D2A2491EFB1006F5093 /* ThumbHandler.swift in Sources */,
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
+				6A2D4D2124A532A6002AAB53 /* SidebarImagesByDateController.swift in Sources */,
 				6ABD368E24958E15005F80EE /* LibraryBrowserBase.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
 				6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */,

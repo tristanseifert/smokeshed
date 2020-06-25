@@ -124,9 +124,6 @@ public class Image: NSManagedObject {
      * Updates all transient variables.
      */
     private func updateTransients() {
-        // update capture day
-        self.dayCaptured = self.dateCaptured?.withoutTime()
-        
         // decode metadata
         self.decodeMetadata()
     }
@@ -214,10 +211,6 @@ public class Image: NSManagedObject {
         }
         else if key == "rotatedImageSize" {
             keyPaths = keyPaths.union(["imageSize", "orientation"])
-        }
-        // handle the day captured
-        else if key == "dayCaptured" {
-            keyPaths = keyPaths.union(["dateCaptured"])
         }
         // irl url
         else if key == "url" {

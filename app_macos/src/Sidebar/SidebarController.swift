@@ -19,14 +19,21 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
     internal var library: LibraryBundle! {
         didSet {
             self.shortcutsController.library = self.library
+            self.imagesController.library = self.library
         }
     }
     
     /// Outline view for sidebar
-    @IBOutlet private var outline: NSOutlineView!
+    @IBOutlet private var outline: NSOutlineView! {
+        didSet {
+            self.imagesController.outline = self.outline
+        }
+    }
     
     /// Controller for the all images items
     private var shortcutsController = SidebarShortcutsController()
+    /// Image date tree controller
+    private var imagesController = SidebarImagesByDateController()
     
     // MARK: - Initialization
     /**
@@ -83,7 +90,9 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
                                           bundle: Bundle.main, value: "",
                                           comment: "Images group title")
         images.isGroupItem = true
+        
         self.root.append(images)
+        self.imagesController.groupItem = images
         
         // update the view
         self.outline.reloadData()
@@ -151,14 +160,24 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
     }
     
     /**
-     * Allow only non group items to be selected
+     * Allow only non group items to be selected; additionally, disallow multiple selection if needed.
      */
     func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        if let item = item as? OutlineItem {
-            return !item.isGroupItem
+        guard let item = item as? OutlineItem else {
+            return false
         }
         
-        return false
+        // don't allow selecting group headers
+        if item.isGroupItem {
+            return false
+        }
+        // handle multiple selection
+        if !outlineView.selectedRowIndexes.isEmpty {
+            return item.allowsMultipleSelect
+        }
+        
+        // otherwise, the item can be selected
+        return true
     }
     
     /**
@@ -220,7 +239,21 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         /// Identifier of the cell view to render this item
         var viewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "none")
         /// Is this a group item (source list title)?
-        var isGroupItem: Bool = false
+        var isGroupItem: Bool = false {
+            didSet {
+                // enable group item specific behaviors
+                if self.isGroupItem {
+                    // you cannot multiselect group items
+                    self.allowsMultipleSelect = false
+                    // they are expanded by default
+                    self.expandedByDefault = true
+                }
+            }
+        }
+        /// Can this item participate in multiple selection?
+        var allowsMultipleSelect: Bool = true
+        /// Should this item be expanded by default?
+        var expandedByDefault: Bool = false
         
         /// Number formatter for badge values
         private static let numberFormatter: NumberFormatter = {
@@ -230,6 +263,15 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
             f.numberStyle = .decimal
             return f
         }()
+        
+        /**
+         * Recalculates the count displayed by summing the count of all children.
+         *
+         * - NOTE: This does not take into account children that may have further children.
+         */
+        func updateCountFromChildren() {
+            self.badgeValue = self.children.reduce(0, { $0 + $1.badgeValue })
+        }
     }
 }
 

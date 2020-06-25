@@ -1,5 +1,5 @@
 //
-//  SidebarAllPhotosController.swift
+//  SidebarShortcutsController.swift
 //  Smokeshed (macOS)
 //
 //  Created by Tristan Seifert on 20200624.
@@ -18,13 +18,16 @@ internal class SidebarShortcutsController {
     /// Library being displayed by this sidebar
     internal var library: LibraryBundle! {
         didSet {
+            self.removeMOCObservers()
+            
             // set up fetch request
             if self.library != nil {
-                self.removeMOCObservers()
                 self.addMOCObservers()
                 
-                self.updateImageCount()
-                self.updateRecentImportCount()
+                self.mainCtx.perform {
+                    self.updateImageCount()
+                    self.updateRecentImportCount()
+                }
             }
             // clean up CoreData interfaces
             else {
