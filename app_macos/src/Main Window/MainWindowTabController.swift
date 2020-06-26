@@ -15,7 +15,30 @@ import CocoaLumberjackSwift
  */
 class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
     /// Observers placed on previous tab items
-    var kvos: [NSKeyValueObservation] = []
+    private var kvos: [NSKeyValueObservation] = []
+    
+    /// Observer for parent sidebar selection
+    private var sidebarSelectionKvo: NSKeyValueObservation!
+    
+    /**
+     * Sets up an observer on the parent sidebar selection so we can propagate it to the currently active
+     * view controller.
+     */
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        guard let parent = self.parent as? MainWindowViewController else {
+            fatalError("Invalid parent: \(String(describing: self.parent))")
+        }
+        
+        self.sidebarSelectionKvo = parent.observe(\MainWindowViewController.sidebarFilter)
+        { (controller, change) in
+            let item = self.tabViewItems[self.selectedTabViewItemIndex]
+            var vc = item.viewController! as! MainWindowContent
+            
+            vc.sidebarFilters = controller.sidebarFilter
+        }
+    }
     
     /**
      * When an item is about to be selected, remove the old observers and add new ones on the object
@@ -25,15 +48,24 @@ class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
         // remove old observers
         self.kvos.removeAll()
         
-        // create a new observer
+        // get view controller
         let vc = tabViewItem!.viewController!
+        guard var content = vc as? MainWindowContent else {
+            fatalError("Invalid content controller \(vc); must implement MainWindowContent")
+        }
         
+        // propagate the selected item's selection through
         let obs = vc.observe(\NSViewController.representedObject) { (controller, change) in
             self.representedObject = controller.representedObject
         }
         self.kvos.append(obs)
         
         self.representedObject = vc.representedObject
+        
+        // update sidebar filters
+        if let parent = self.parent as? MainWindowViewController {
+            content.sidebarFilters = parent.sidebarFilter
+        }
         
         // perform superclass implementation
         super.tabView(tabView, willSelect: tabViewItem)

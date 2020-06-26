@@ -219,9 +219,9 @@ internal class SidebarImagesByDateController {
         // sort by child date
         parent.children.sort(by: {
             if let first = $0 as? DayItem, let second = $1 as? DayItem {
-                return first.date > second.date
+                return first.date < second.date
             } else {
-                return $0.title > $1.title
+                return $0.title < $1.title
             }
         })
         
@@ -291,6 +291,23 @@ internal class SidebarImagesByDateController {
         
         self.groupItem.children.append(parent)
         
+        // calculate start date
+        var comps = self.calendar.dateComponents([.year], from: year)
+        comps.timeZone = TimeZone(secondsFromGMT: 0)!
+        comps.month = 1
+        comps.day = 1
+        
+        let start = self.calendar.date(from: comps)!
+        
+        // end date is just one year added to this
+        let end = self.calendar.date(byAdding: .year, value: 1, to: start)!
+        
+        // create predicate start <= dateCaptured < end
+        parent.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "%K >= %@", "dateCaptured", start as CVarArg),
+            NSPredicate(format: "%K < %@", "dateCaptured", end as CVarArg),
+        ])
+        
         // update children on the item
         self.updateChildren(parent, childDates)
     }
@@ -307,6 +324,11 @@ internal class SidebarImagesByDateController {
         let item = DayItem()
         item.date = date
         
+        // create a predicate checking against the day captured        
+        item.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "%K == %@", "dayCaptured", date as CVarArg)
+        ])
+
         // update it
         self.updateDayItem(item)
         

@@ -193,5 +193,10 @@ internal class SidebarShortcutsController {
             DDLogError("Failed to count images in last import: \(error)")
             return
         }
+        
+        // set the predicate to find images imported on this date
+        self.lastImportItem.predicate = NSPredicate(format: "%K == %@",
+                                                    "dateImported",
+                                                    date as CVarArg)
     }
 }

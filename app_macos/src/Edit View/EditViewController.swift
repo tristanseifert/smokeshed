@@ -10,13 +10,15 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class EditViewController: NSViewController, NSMenuItemValidation, MainWindowLibraryPropagating {
+class EditViewController: NSViewController, NSMenuItemValidation, MainWindowContent {
     /// Library that is being browsed
     public var library: LibraryBundle! {
         didSet {
 
         }
     }
+    /// Sidebar filter
+    var sidebarFilters: NSPredicate? = nil
 
     // MARK: View Lifecycle
     /**

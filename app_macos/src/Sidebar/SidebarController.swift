@@ -14,7 +14,7 @@ import CocoaLumberjackSwift
  * Implements the main window's sidebar: an outline view allowing the user to select from shortcuts, their
  * images sorted by days, and their albums.
  */
-class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutlineViewDataSource, NSOutlineViewDelegate {
+class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataSource, NSOutlineViewDelegate {
     /// Currently opened library
     internal var library: LibraryBundle! {
         didSet {
@@ -22,6 +22,8 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
             self.imagesController.library = self.library
         }
     }
+    /// Declare sidebar filter (we don't use it)
+    weak var sidebarFilters: NSPredicate? = nil
     
     /// Outline view for sidebar
     @IBOutlet private var outline: NSOutlineView! {
@@ -55,6 +57,7 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
                                           comment: "All images item")
         allImages.icon = NSImage(systemSymbolName: "photo.on.rectangle.angled",
                                 accessibilityDescription: "All photos icon")
+        allImages.allowsMultipleSelect = false
         
         self.root.append(allImages)
         self.shortcutsController.allItem = allImages
@@ -96,6 +99,18 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         
         // update the view
         self.outline.reloadData()
+    }
+
+    /**
+     * Attempts to restore the selected sidebar item.
+     */
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        
+        if self.outline.selectedRowIndexes.isEmpty {
+            self.outline.selectRowIndexes(IndexSet(integer: 0),
+                                          byExtendingSelection: false)
+        }
     }
     
     // MARK: - Outline data source
@@ -160,24 +175,31 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
     }
     
     /**
-     * Allow only non group items to be selected; additionally, disallow multiple selection if needed.
+     * Validates the selection; this ensures that all items selected allow multiple selection, and that no group
+     * item headers are selected.
      */
-    func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        guard let item = item as? OutlineItem else {
-            return false
+    func outlineView(_ outlineView: NSOutlineView, selectionIndexesForProposedSelection indices: IndexSet) -> IndexSet {
+        // convert selection to items
+        let items = indices.compactMap({
+            return outlineView.item(atRow: $0) as? OutlineItem
+        })
+        
+        // find the first non-multiselect item
+        for item in items {
+            // if we've found one, return a set containing only its index
+            if !item.allowsMultipleSelect, !item.isGroupItem {
+                let index = outlineView.row(forItem: item)
+                return IndexSet(integer: index)
+            }
         }
         
-        // don't allow selecting group headers
-        if item.isGroupItem {
-            return false
-        }
-        // handle multiple selection
-        if !outlineView.selectedRowIndexes.isEmpty {
-            return item.allowsMultipleSelect
-        }
-        
-        // otherwise, the item can be selected
-        return true
+        // remove indices of any group headers
+        return IndexSet(indices.filter({
+            if let item = outlineView.item(atRow: $0) as? OutlineItem {
+                return !item.isGroupItem
+            }
+            return true
+        }))
     }
     
     /**
@@ -189,6 +211,37 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         }
         
         return nil
+    }
+    
+    // MARK: Selection
+    /// Predicate for filtering images to match the sidebar selection; may be nil if no filter needed
+    @objc dynamic var filter: NSPredicate? = nil
+    
+    /**
+     * The outline view's selection changed; build a new compound predicate.
+     */
+    func outlineViewSelectionDidChange(_ notification: Notification) {
+        var predicates: [NSPredicate] = []
+        
+        // get all selected items and their predicates
+        let items = self.outline.selectedRowIndexes.compactMap({
+            return self.outline.item(atRow: $0) as? OutlineItem
+        })
+        
+        for item in items {
+            if let pred = item.predicate {
+                predicates.append(pred)
+            }
+        }
+        
+        // if no predicates, remove filter
+        guard !predicates.isEmpty else {
+            self.filter = nil
+            return
+        }
+        
+        // create a compound OR predicate
+        self.filter = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
     }
     
     // MARK: Helpers
@@ -254,6 +307,9 @@ class SidebarController: NSViewController, MainWindowLibraryPropagating, NSOutli
         var allowsMultipleSelect: Bool = true
         /// Should this item be expanded by default?
         var expandedByDefault: Bool = false
+        
+        /// Filter predicate to use to filter images when this item is selected
+        var predicate: NSPredicate!
         
         /// Number formatter for badge values
         private static let numberFormatter: NumberFormatter = {

@@ -17,11 +17,12 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
     internal weak var owner: LibraryBrowserBase! = nil
 
     /// Date formatter used to present capture dates
-    private static let captureDateFormatter: DateFormatter = {
+    private static let captureDayFormatter: DateFormatter = {
         let fmt = DateFormatter()
 
         fmt.dateStyle = .long
         fmt.timeStyle = .none
+        fmt.timeZone = TimeZone(secondsFromGMT: 0)!
 
         return fmt
     }()
@@ -37,7 +38,8 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
     /// Date formatter for parsing the stringified section header dates
     private static let inFormatter: DateFormatter = {
         let fmt = DateFormatter()
-
+        fmt.timeZone = TimeZone(secondsFromGMT: 0)!
+        fmt.locale = Locale(identifier: "en_US_POSIX")
         fmt.dateFormat = "yyyy-MM-dd HH:mm:ss ZZ"
 
         return fmt
@@ -76,7 +78,7 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
                     }
 
                     if self.owner.groupBy == .dateCaptured {
-                        self.nameLabel.stringValue = LibraryCollectionHeaderView.captureDateFormatter.string(from: date)
+                        self.nameLabel.stringValue = LibraryCollectionHeaderView.captureDayFormatter.string(from: date)
                     } else if self.owner.groupBy == .dateImported {
                         self.nameLabel.stringValue = LibraryCollectionHeaderView.importDateFormatter.string(from: date)
                     }

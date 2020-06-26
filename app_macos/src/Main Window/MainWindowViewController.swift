@@ -10,11 +10,23 @@ import Cocoa
 import CocoaLumberjackSwift
 
 class MainWindowViewController: NSSplitViewController, NSMenuItemValidation {
+    /// Filter for the sidebar selection
+    @objc dynamic var sidebarFilter: NSPredicate?
+    
     /**
      * When the view is about to appear, add the toolbar item if it doesn't already exist.
      */
     override func viewWillAppear() {
         super.viewWillAppear()
+        
+        // bind the sidebar's filter
+        guard let sidebar = self.splitViewItems.first?.viewController as? SidebarController else {
+            fatalError("Failed to get sidebar controller")
+        }
+        
+        self.bind(NSBindingName("sidebarFilter"), to: sidebar,
+                  withKeyPath: #keyPath(SidebarController.filter),
+                  options: nil)
         
 //        if let window = self.view.window, let toolbar = window.toolbar {
 //            if !toolbar.items.contains(where: { $0.itemIdentifier == .sidebarTrackingSeparatorItemIdentifier }) {//

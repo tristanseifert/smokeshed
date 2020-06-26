@@ -15,7 +15,7 @@ import CocoaLumberjackSwift
  */
 class LibraryBrowserBase: NSViewController, NSMenuItemValidation,
     NSCollectionViewPrefetching, NSCollectionViewDelegate,
-NSFetchedResultsControllerDelegate, MainWindowLibraryPropagating {
+NSFetchedResultsControllerDelegate {
     /// Library that is being browsed
     public var library: LibraryBundle! = nil {
         didSet {
@@ -239,9 +239,6 @@ NSFetchedResultsControllerDelegate, MainWindowLibraryPropagating {
     /// Has the fetch request been changed since the last time? (Used to invalidate cache)
     internal var fetchReqChanged: Bool = false
 
-    /// Filter predicate for what's being displayed
-    @objc dynamic private var filterPredicate: NSPredicate! = nil
-
     /**
      * Initializes the fetch request.
      */
@@ -267,11 +264,13 @@ NSFetchedResultsControllerDelegate, MainWindowLibraryPropagating {
             // it's important the cache is cleared in this case
             NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: self.fetchCacheName)
 
-            self.fetchReqCtrl = NSFetchedResultsController(fetchRequest: self.fetchReq,
-                                   managedObjectContext: self.ctx,
-                                   sectionNameKeyPath: self.groupBy.keyPath,
-                                   cacheName: self.fetchCacheName)
-            self.fetchReqCtrl.delegate = self
+            if self.fetchReqCtrl == nil {
+                self.fetchReqCtrl = NSFetchedResultsController(fetchRequest: self.fetchReq,
+                                       managedObjectContext: self.ctx,
+                                       sectionNameKeyPath: self.groupBy.keyPath,
+                                       cacheName: self.fetchCacheName)
+                self.fetchReqCtrl.delegate = self
+            }
 
             // clear the flag
             self.fetchReqChanged = false
@@ -536,7 +535,7 @@ NSFetchedResultsControllerDelegate, MainWindowLibraryPropagating {
      *
      * This is reset when the data source is created, and set once the first update completed.
      */
-    private var animateDataSourceUpdates: Bool = false
+    internal var animateDataSourceUpdates: Bool = false
 
     /**
      * Initializes the diffable data source. This is done instead of a standard data source pattern so that

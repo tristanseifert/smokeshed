@@ -10,13 +10,15 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class MapViewController: NSViewController, NSMenuItemValidation, MainWindowLibraryPropagating {
+class MapViewController: NSViewController, NSMenuItemValidation, MainWindowContent {
     /// Library that is being browsed
     public var library: LibraryBundle! {
         didSet {
 
         }
     }
+    /// Sidebar filter
+    var sidebarFilters: NSPredicate? = nil
 
     // MARK: View Lifecycle
     /**

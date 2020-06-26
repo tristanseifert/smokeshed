@@ -293,7 +293,7 @@
                         <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="g2l-6T-jOV"/>
                         <splitViewItem id="6zQ-Fg-dFj"/>
                     </splitViewItems>
-                    <splitView key="splitView" dividerStyle="thin" vertical="YES" id="vwh-nV-G8J">
+                    <splitView key="splitView" autosaveName="" dividerStyle="thin" vertical="YES" id="vwh-nV-G8J">
                         <rect key="frame" x="0.0" y="0.0" width="667" height="603"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </splitView>
@@ -320,7 +320,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="364" height="394"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="33" rowSizeStyle="automatic" usesAutomaticRowHeights="YES" viewBased="YES" indentationPerLevel="13" autosaveExpandedItems="YES" outlineTableColumn="mJ1-fU-DFE" id="S56-ch-VWt">
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="33" rowSizeStyle="automatic" usesAutomaticRowHeights="YES" viewBased="YES" indentationPerLevel="13" autosaveExpandedItems="YES" outlineTableColumn="mJ1-fU-DFE" id="S56-ch-VWt">
                                             <rect key="frame" x="0.0" y="0.0" width="364" height="394"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>

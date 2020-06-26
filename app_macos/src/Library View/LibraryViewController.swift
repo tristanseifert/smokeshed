@@ -10,10 +10,27 @@ import Cocoa
 import Smokeshop
 import CocoaLumberjackSwift
 
-class LibraryViewController: LibraryBrowserBase {
+class LibraryViewController: LibraryBrowserBase, MainWindowContent {
     /// Context menu controller for the collection view
     @IBOutlet private var menuController: LibraryViewMenuProvider!
 
+    /// Sidebar filter
+    var sidebarFilters: NSPredicate? = nil {
+        didSet {
+            // we MUST have a library at this point
+            guard self.library != nil else {
+                return
+            }
+            
+            // update fetch request with new predicate and re-fetch
+            self.fetchReq.predicate = self.sidebarFilters
+            
+            self.animateDataSourceUpdates = false
+            self.fetchReqChanged = true
+            self.fetch()
+        }
+    }
+    
     // MARK: - Initialization
     /**
      * Fetch cache name

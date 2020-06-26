@@ -160,7 +160,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
      */
     private func updateChildLibrary(_ child: NSViewController) {
         // set library if the controller supports it
-        if var c = child as? MainWindowLibraryPropagating {
+        if var c = child as? MainWindowContent {
             c.library = self.library
         }
         
@@ -365,8 +365,11 @@ extension NSUserInterfaceItemIdentifier {
 }
 
 /**
- * Implement this protocol to get a pointer to the current library.
+ * All view controllers shown in the main window as content should implement this protocol.
  */
-protocol MainWindowLibraryPropagating {
+protocol MainWindowContent {
+    /// Currently open library
     var library: LibraryBundle! { get set }
+    /// Sidebar filters
+    var sidebarFilters: NSPredicate? { get set }
 }
