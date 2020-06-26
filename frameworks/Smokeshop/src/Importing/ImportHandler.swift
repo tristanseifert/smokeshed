@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
 import CocoaLumberjackSwift
 
@@ -278,16 +279,16 @@ public class ImportHandler {
         // get some info about the file and ensure it's actually an image
         let resVals = try url.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
 
-        guard let uti = resVals.typeIdentifier else {
+        guard let uti = resVals.typeIdentifier, let type = UTType(uti) else {
             throw ImportError.unknownError(url)
         }
 
-        guard UTTypeConformsTo(uti as CFString, kUTTypeImage) else {
+        guard type.conforms(to: UTType.image) else {
             throw ImportError.notAnImage(url, uti)
         }
 
         // extract some metadata from the image
-        let meta = try self.metaHelper.getMeta(url, type: uti)
+        let meta = try self.metaHelper.getMeta(url, type)
 
         guard let size = meta.size else {
             throw ImportError.failedToSizeImage

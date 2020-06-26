@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import CoreServices
 import ImageIO
 import CoreGraphics
+import UniformTypeIdentifiers
 
 import Paper
 import CocoaLumberjackSwift
@@ -23,15 +23,13 @@ internal class MetaHelper {
     /**
      * Extracts image metadata from the image at the given URL.
      */
-    internal func getMeta(_ image: URL, type inUti: String) throws -> ImageMeta {
-        let uti = inUti as CFString
-        
+    internal func getMeta(_ image: URL, _ type: UTType) throws -> ImageMeta {
         // CR2 image?
-        if UTTypeConformsTo(uti, "com.canon.cr2-raw-image" as CFString) {
+        if type.conforms(to: UTType("com.canon.cr2-raw-image")!) {
             return try self.metaFromCr2(image)
         }
         // generic image type
-        else if UTTypeConformsTo(uti, kUTTypeImage) {
+        else if type.conforms(to: UTType.image) {
             return try self.metaFromImageIo(image)
         }
 

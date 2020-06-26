@@ -102,11 +102,11 @@ class DebayerTests: XCTestCase {
         }
         
         // save that shit
-        let attach = XCTAttachment(data: image.rawValues)
-        attach.name = String(format: "raw")
-        attach.lifetime = .keepAlways
-        self.add(attach)
-
+//        let attach = XCTAttachment(data: image.rawValues)
+//        attach.name = String(format: "raw")
+//        attach.lifetime = .keepAlways
+//        self.add(attach)
+//
         let attach2 = XCTAttachment(data: outData as Data)
         attach2.name = String(format: "debayered")
         attach2.lifetime = .keepAlways

@@ -62,7 +62,6 @@
 		6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BC24999C740043392E /* HuffmanTree.swift */; };
 		6A7614BF2499A1020043392E /* Bitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BE2499A1020043392E /* Bitstream.swift */; };
 		6A7614C02499A5340043392E /* Bitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BE2499A1020043392E /* Bitstream.swift */; };
-		6A7614C42499A57A0043392E /* BitstreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C32499A57A0043392E /* BitstreamTests.swift */; };
 		6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C52499AE590043392E /* JPEGBitstream.swift */; };
 		6A7614C82499B53A0043392E /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
 		6A7614C92499DDFD0043392E /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
@@ -98,6 +97,22 @@
 		6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */; };
 		6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */; };
 		6A96646A2490833100F757A1 /* SizeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9664692490833100F757A1 /* SizeTransformer.swift */; };
+		6A9D00AF24A5C706007566A5 /* ImageIOThumbReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00AE24A5C706007566A5 /* ImageIOThumbReader.swift */; };
+		6A9D00B024A5C70B007566A5 /* ThumbReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00AC24A5C4A4007566A5 /* ThumbReaderImpl.swift */; };
+		6A9D00B224A5C9E9007566A5 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
+		6A9D00B324A5C9F3007566A5 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
+		6A9D00B624A5CB1B007566A5 /* ThumbReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00B524A5CB1A007566A5 /* ThumbReader.swift */; };
+		6A9D00C224A5CF05007566A5 /* leaves.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00BE24A5CF05007566A5 /* leaves.tif */; };
+		6A9D00C324A5CF05007566A5 /* forest.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00BF24A5CF05007566A5 /* forest.tif */; };
+		6A9D00C424A5CF05007566A5 /* mri.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00C024A5CF05007566A5 /* mri.tif */; };
+		6A9D00C524A5CF05007566A5 /* f14.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00C124A5CF05007566A5 /* f14.tif */; };
+		6A9D00C824A5CF5C007566A5 /* BitstreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00C724A5CF5C007566A5 /* BitstreamTests.swift */; };
+		6A9D00CC24A5CF69007566A5 /* DebayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CA24A5CF69007566A5 /* DebayerTests.swift */; };
+		6A9D00CD24A5CF69007566A5 /* CanonRAWTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CB24A5CF69007566A5 /* CanonRAWTests.swift */; };
+		6A9D00D024A5D044007566A5 /* ThumbReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CF24A5D044007566A5 /* ThumbReaderTests.swift */; };
+		6A9D00D524A5D250007566A5 /* yenrail.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00D424A5D24F007566A5 /* yenrail.jpg */; };
+		6A9D00D824A5D3B9007566A5 /* birb.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00D724A5D3B9007566A5 /* birb.cr2 */; };
+		6A9D00DA24A5D3DF007566A5 /* CR2ThumbReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00D924A5D3DF007566A5 /* CR2ThumbReader.swift */; };
 		6A9E827A249AE833004BE66A /* decompress.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8278249AE833004BE66A /* decompress.h */; };
 		6A9E827B249AE833004BE66A /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8279249AE833004BE66A /* decompress.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6A9E827D249AED35004BE66A /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E827C249AED21004BE66A /* huffman.h */; };
@@ -110,7 +125,6 @@
 		6AAC4569249F3A93009B9AFF /* debayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC4567249F3A93009B9AFF /* debayer.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6AAC456C249F48C0009B9AFF /* PAPDebayerer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC456A249F48C0009B9AFF /* PAPDebayerer.h */; };
 		6AAC456D249F48C0009B9AFF /* PAPDebayerer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC456B249F48C0009B9AFF /* PAPDebayerer.m */; };
-		6AAC4570249F4A83009B9AFF /* DebayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC456F249F4A83009B9AFF /* DebayerTests.swift */; };
 		6AAC4574249FFDAF009B9AFF /* CamToXYZInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6AAC4573249FFDAF009B9AFF /* CamToXYZInfo.plist */; };
 		6AAC4577249FFF19009B9AFF /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAC4576249FFF19009B9AFF /* Accelerate.framework */; };
 		6AAC457D24A0033A009B9AFF /* colorspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC457B24A0033A009B9AFF /* colorspace.h */; };
@@ -154,14 +168,9 @@
 		6ABD36D82496F0EC005F80EE /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
 		6ABD36E02496F146005F80EE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6ABD36E12496F14F005F80EE /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
-		6ABD36EF2496F794005F80EE /* leaves.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36EC2496F793005F80EE /* leaves.tif */; };
-		6ABD36F02496F794005F80EE /* forest.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36ED2496F793005F80EE /* forest.tif */; };
-		6ABD36F12496F794005F80EE /* f14.tif in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36EE2496F793005F80EE /* f14.tif */; };
 		6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36F224970644005F80EE /* TIFFTag.swift */; };
 		6ABD36F724971EF3005F80EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36F624971EEF005F80EE /* Cocoa.framework */; };
-		6ABD36FA24972316005F80EE /* birb.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36F924972315005F80EE /* birb.cr2 */; };
 		6ABD36FC24972A79005F80EE /* TIFFReaderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36FB24972A79005F80EE /* TIFFReaderConfig.swift */; };
-		6ABD36FE24973EC2005F80EE /* CanonRAWTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36FD24973EC2005F80EE /* CanonRAWTests.swift */; };
 		6ABD370124974362005F80EE /* CR2Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD370024974362005F80EE /* CR2Reader.swift */; };
 		6ABD3703249745A2005F80EE /* CR2Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD3702249745A2005F80EE /* CR2Image.swift */; };
 		6ABF946024986032002DBA91 /* JPEGDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABF945F24986032002DBA91 /* JPEGDecoder.swift */; };
@@ -340,7 +349,6 @@
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
 		6A7614BC24999C740043392E /* HuffmanTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HuffmanTree.swift; path = frameworks/Paper/src/Helpers/HuffmanTree.swift; sourceTree = "<group>"; };
 		6A7614BE2499A1020043392E /* Bitstream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Bitstream.swift; path = frameworks/Paper/src/Helpers/Bitstream.swift; sourceTree = "<group>"; };
-		6A7614C32499A57A0043392E /* BitstreamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BitstreamTests.swift; path = tests/paper/Helpers/BitstreamTests.swift; sourceTree = SOURCE_ROOT; };
 		6A7614C52499AE590043392E /* JPEGBitstream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGBitstream.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGBitstream.swift"; sourceTree = "<group>"; };
 		6A7614C72499B53A0043392E /* BitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BitHelpers.swift; path = frameworks/Paper/src/Helpers/BitHelpers.swift; sourceTree = "<group>"; };
 		6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryHistoryManager.swift; path = "app_macos/src/UI State Handling/LibraryHistoryManager.swift"; sourceTree = "<group>"; };
@@ -372,6 +380,22 @@
 		6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItem.swift; path = "app_macos/src/Library View/LibraryCollectionItem.swift"; sourceTree = "<group>"; };
 		6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryCollectionItemView.swift; path = "app_macos/src/Library View/LibraryCollectionItemView.swift"; sourceTree = "<group>"; };
 		6A9664692490833100F757A1 /* SizeTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SizeTransformer.swift; path = "frameworks/Smokeshop/src/CoreData Store/Transformers/SizeTransformer.swift"; sourceTree = "<group>"; };
+		6A9D00AC24A5C4A4007566A5 /* ThumbReaderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbReaderImpl.swift; path = frameworks/Paper/src/Thumbnails/ThumbReaderImpl.swift; sourceTree = "<group>"; };
+		6A9D00AE24A5C706007566A5 /* ImageIOThumbReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageIOThumbReader.swift; path = frameworks/Paper/src/Thumbnails/ImageIOThumbReader.swift; sourceTree = "<group>"; };
+		6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		6A9D00B524A5CB1A007566A5 /* ThumbReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbReader.swift; path = frameworks/Paper/src/Thumbnails/ThumbReader.swift; sourceTree = "<group>"; };
+		6A9D00BB24A5CEF2007566A5 /* TIFFReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TIFFReaderTests.swift; path = "tests/paper/TIFF Reading/TIFFReaderTests.swift"; sourceTree = "<group>"; };
+		6A9D00BE24A5CF05007566A5 /* leaves.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = leaves.tif; path = tests/data/leaves.tif; sourceTree = "<group>"; };
+		6A9D00BF24A5CF05007566A5 /* forest.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = forest.tif; path = tests/data/forest.tif; sourceTree = "<group>"; };
+		6A9D00C024A5CF05007566A5 /* mri.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = mri.tif; path = tests/data/mri.tif; sourceTree = "<group>"; };
+		6A9D00C124A5CF05007566A5 /* f14.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = f14.tif; path = tests/data/f14.tif; sourceTree = "<group>"; };
+		6A9D00C724A5CF5C007566A5 /* BitstreamTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitstreamTests.swift; path = tests/paper/Helpers/BitstreamTests.swift; sourceTree = "<group>"; };
+		6A9D00CA24A5CF69007566A5 /* DebayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DebayerTests.swift; path = "tests/paper/Camera RAW Reading/DebayerTests.swift"; sourceTree = "<group>"; };
+		6A9D00CB24A5CF69007566A5 /* CanonRAWTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CanonRAWTests.swift; path = "tests/paper/Camera RAW Reading/CanonRAWTests.swift"; sourceTree = "<group>"; };
+		6A9D00CF24A5D044007566A5 /* ThumbReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbReaderTests.swift; path = tests/paper/Thumbs/ThumbReaderTests.swift; sourceTree = "<group>"; };
+		6A9D00D424A5D24F007566A5 /* yenrail.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = yenrail.jpg; path = tests/data/yenrail.jpg; sourceTree = "<group>"; };
+		6A9D00D724A5D3B9007566A5 /* birb.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = birb.cr2; path = tests/data/birb.cr2; sourceTree = "<group>"; };
+		6A9D00D924A5D3DF007566A5 /* CR2ThumbReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2ThumbReader.swift; path = frameworks/Paper/src/Thumbnails/CR2ThumbReader.swift; sourceTree = "<group>"; };
 		6A9E8278249AE833004BE66A /* decompress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = decompress.h; path = "frameworks/Paper/src/JPEG Decoding/decompress.h"; sourceTree = "<group>"; };
 		6A9E8279249AE833004BE66A /* decompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = decompress.c; path = "frameworks/Paper/src/JPEG Decoding/decompress.c"; sourceTree = "<group>"; };
 		6A9E827C249AED21004BE66A /* huffman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "frameworks/Paper/src/JPEG Decoding/huffman.h"; sourceTree = "<group>"; };
@@ -386,7 +410,6 @@
 		6AAC4567249F3A93009B9AFF /* debayer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = debayer.c; path = frameworks/Paper/src/Debayering/debayer.c; sourceTree = "<group>"; };
 		6AAC456A249F48C0009B9AFF /* PAPDebayerer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PAPDebayerer.h; path = frameworks/Paper/src/Debayering/PAPDebayerer.h; sourceTree = "<group>"; };
 		6AAC456B249F48C0009B9AFF /* PAPDebayerer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PAPDebayerer.m; path = frameworks/Paper/src/Debayering/PAPDebayerer.m; sourceTree = "<group>"; };
-		6AAC456F249F4A83009B9AFF /* DebayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DebayerTests.swift; path = "tests/paper/Misc Decoding/DebayerTests.swift"; sourceTree = SOURCE_ROOT; };
 		6AAC4573249FFDAF009B9AFF /* CamToXYZInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = CamToXYZInfo.plist; path = "frameworks/Paper/src/Color Conversions/CamToXYZInfo.plist"; sourceTree = "<group>"; };
 		6AAC4576249FFF19009B9AFF /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		6AAC4579249FFF21009B9AFF /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -428,16 +451,9 @@
 		6ABD36C92496D4FE005F80EE /* Combine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Combine.framework; path = System/Library/Frameworks/Combine.framework; sourceTree = SDKROOT; };
 		6ABD36CB2496DB93005F80EE /* TIFFDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFDirectory.swift; path = "frameworks/Paper/src/TIFF IO/TIFFDirectory.swift"; sourceTree = "<group>"; };
 		6ABD36D32496F0EC005F80EE /* PaperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6ABD36DF2496F120005F80EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = tests/paper/assets/Info.plist; sourceTree = SOURCE_ROOT; };
-		6ABD36EC2496F793005F80EE /* leaves.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = leaves.tif; path = tests/data/leaves.tif; sourceTree = SOURCE_ROOT; };
-		6ABD36ED2496F793005F80EE /* forest.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = forest.tif; path = tests/data/forest.tif; sourceTree = SOURCE_ROOT; };
-		6ABD36EE2496F793005F80EE /* f14.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = f14.tif; path = tests/data/f14.tif; sourceTree = SOURCE_ROOT; };
 		6ABD36F224970644005F80EE /* TIFFTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFTag.swift; path = "frameworks/Paper/src/TIFF IO/TIFFTag.swift"; sourceTree = "<group>"; };
-		6ABD36F424971C74005F80EE /* TIFFReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TIFFReaderTests.swift; path = "tests/paper/TIFF Reading/TIFFReaderTests.swift"; sourceTree = SOURCE_ROOT; };
 		6ABD36F624971EEF005F80EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		6ABD36F924972315005F80EE /* birb.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = birb.cr2; path = tests/data/birb.cr2; sourceTree = SOURCE_ROOT; };
 		6ABD36FB24972A79005F80EE /* TIFFReaderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFReaderConfig.swift; path = "frameworks/Paper/src/TIFF IO/TIFFReaderConfig.swift"; sourceTree = "<group>"; };
-		6ABD36FD24973EC2005F80EE /* CanonRAWTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CanonRAWTests.swift; path = "tests/paper/Camera RAW Reading/CanonRAWTests.swift"; sourceTree = SOURCE_ROOT; };
 		6ABD370024974362005F80EE /* CR2Reader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2Reader.swift; path = "frameworks/Paper/src/Camera RAW/CR2/CR2Reader.swift"; sourceTree = "<group>"; };
 		6ABD3702249745A2005F80EE /* CR2Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2Image.swift; path = "frameworks/Paper/src/Camera RAW/CR2/CR2Image.swift"; sourceTree = "<group>"; };
 		6ABF945F24986032002DBA91 /* JPEGDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGDecoder.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGDecoder.swift"; sourceTree = "<group>"; };
@@ -485,6 +501,7 @@
 				6A903FD0248C623800BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A9315AB2493443800A9F9B4 /* CoreData.framework in Frameworks */,
 				6A9315AA2493443500A9F9B4 /* Foundation.framework in Frameworks */,
+				6A9D00B224A5C9E9007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +530,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A9D00B324A5C9F3007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
 				6ABD36B92496D1FB005F80EE /* CocoaLumberjack.framework in Frameworks */,
 				6ABD36BA2496D1FB005F80EE /* Foundation.framework in Frameworks */,
 				6AAC4577249FFF19009B9AFF /* Accelerate.framework in Frameworks */,
@@ -901,15 +919,6 @@
 			name = Logging;
 			sourceTree = "<group>";
 		};
-		6A7614C22499A54D0043392E /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				6A7614C32499A57A0043392E /* BitstreamTests.swift */,
-			);
-			name = Helpers;
-			path = PaperTests;
-			sourceTree = "<group>";
-		};
 		6A903FC6248B8DF900BD1602 /* UI State Handling */ = {
 			isa = PBXGroup;
 			children = (
@@ -1001,6 +1010,88 @@
 			name = "Value Transformers";
 			sourceTree = "<group>";
 		};
+		6A9D00AB24A5C416007566A5 /* Thumbnails */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00B524A5CB1A007566A5 /* ThumbReader.swift */,
+				6A9D00AC24A5C4A4007566A5 /* ThumbReaderImpl.swift */,
+				6A9D00B424A5CB02007566A5 /* Implementations */,
+			);
+			name = Thumbnails;
+			sourceTree = "<group>";
+		};
+		6A9D00B424A5CB02007566A5 /* Implementations */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00AE24A5C706007566A5 /* ImageIOThumbReader.swift */,
+				6A9D00D924A5D3DF007566A5 /* CR2ThumbReader.swift */,
+			);
+			name = Implementations;
+			sourceTree = "<group>";
+		};
+		6A9D00B924A5CE86007566A5 /* TIFF Reading */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00BB24A5CEF2007566A5 /* TIFFReaderTests.swift */,
+				6A9D00BD24A5CEF8007566A5 /* Data */,
+			);
+			name = "TIFF Reading";
+			sourceTree = "<group>";
+		};
+		6A9D00BD24A5CEF8007566A5 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00C124A5CF05007566A5 /* f14.tif */,
+				6A9D00BF24A5CF05007566A5 /* forest.tif */,
+				6A9D00BE24A5CF05007566A5 /* leaves.tif */,
+				6A9D00C024A5CF05007566A5 /* mri.tif */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
+		6A9D00C624A5CF53007566A5 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00C724A5CF5C007566A5 /* BitstreamTests.swift */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		6A9D00C924A5CF5E007566A5 /* Camera raw */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00CB24A5CF69007566A5 /* CanonRAWTests.swift */,
+				6A9D00CA24A5CF69007566A5 /* DebayerTests.swift */,
+				6A9D00D624A5D3AF007566A5 /* Data */,
+			);
+			name = "Camera raw";
+			sourceTree = "<group>";
+		};
+		6A9D00CE24A5D011007566A5 /* Thumbs */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00CF24A5D044007566A5 /* ThumbReaderTests.swift */,
+				6A9D00D124A5D23B007566A5 /* Data */,
+			);
+			name = Thumbs;
+			sourceTree = "<group>";
+		};
+		6A9D00D124A5D23B007566A5 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00D424A5D24F007566A5 /* yenrail.jpg */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
+		6A9D00D624A5D3AF007566A5 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6A9D00D724A5D3B9007566A5 /* birb.cr2 */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
 		6A9E8277249AE7EF004BE66A /* C Decompressor */ = {
 			isa = PBXGroup;
 			children = (
@@ -1030,22 +1121,13 @@
 			name = Debayering;
 			sourceTree = "<group>";
 		};
-		6AAC456E249F4A56009B9AFF /* Raw decoding */ = {
-			isa = PBXGroup;
-			children = (
-				6AAC456F249F4A83009B9AFF /* DebayerTests.swift */,
-			);
-			name = "Raw decoding";
-			path = "PaperTests/Raw decoding";
-			sourceTree = "<group>";
-		};
 		6AAC4571249F4C7C009B9AFF /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6AAC456E249F4A56009B9AFF /* Raw decoding */,
-				6A7614C22499A54D0043392E /* Helpers */,
-				6ABD36E22496F1A0005F80EE /* TIFF Reading */,
-				6ABD36DE2496F115005F80EE /* Resources */,
+				6A9D00CE24A5D011007566A5 /* Thumbs */,
+				6A9D00C924A5CF5E007566A5 /* Camera raw */,
+				6A9D00C624A5CF53007566A5 /* Helpers */,
+				6A9D00B924A5CE86007566A5 /* TIFF Reading */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -1065,6 +1147,7 @@
 		6AAC4575249FFF18009B9AFF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */,
 				6AAC4576249FFF19009B9AFF /* Accelerate.framework */,
 			);
 			name = Frameworks;
@@ -1168,6 +1251,7 @@
 				6ABD36FF249741E5005F80EE /* Canon RAW */,
 				6ABF945E24985FF5002DBA91 /* JPEG Decoding */,
 				6ABD36C62496D3D3005F80EE /* TIFF Reader */,
+				6A9D00AB24A5C416007566A5 /* Thumbnails */,
 				6AE51ABB249D90250091A550 /* Metadata Support */,
 				6ABF9461249861A2002DBA91 /* Helpers */,
 				6ABD36AF2496D1F2005F80EE /* Resources */,
@@ -1201,37 +1285,6 @@
 			children = (
 			);
 			name = IO;
-			sourceTree = "<group>";
-		};
-		6ABD36DE2496F115005F80EE /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				6ABD36DF2496F120005F80EE /* Info.plist */,
-			);
-			name = Resources;
-			path = PaperTests/Resources;
-			sourceTree = "<group>";
-		};
-		6ABD36E22496F1A0005F80EE /* TIFF Reading */ = {
-			isa = PBXGroup;
-			children = (
-				6ABD36F424971C74005F80EE /* TIFFReaderTests.swift */,
-				6ABD36FD24973EC2005F80EE /* CanonRAWTests.swift */,
-				6ABD36EB2496F77B005F80EE /* Data */,
-			);
-			name = "TIFF Reading";
-			path = "PaperTests/TIFF Reading";
-			sourceTree = "<group>";
-		};
-		6ABD36EB2496F77B005F80EE /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				6ABD36F924972315005F80EE /* birb.cr2 */,
-				6ABD36EE2496F793005F80EE /* f14.tif */,
-				6ABD36ED2496F793005F80EE /* forest.tif */,
-				6ABD36EC2496F793005F80EE /* leaves.tif */,
-			);
-			path = Data;
 			sourceTree = "<group>";
 		};
 		6ABD36FF249741E5005F80EE /* Canon RAW */ = {
@@ -1625,10 +1678,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6ABD36FA24972316005F80EE /* birb.cr2 in Resources */,
-				6ABD36F12496F794005F80EE /* f14.tif in Resources */,
-				6ABD36F02496F794005F80EE /* forest.tif in Resources */,
-				6ABD36EF2496F794005F80EE /* leaves.tif in Resources */,
+				6A9D00D824A5D3B9007566A5 /* birb.cr2 in Resources */,
+				6A9D00C424A5CF05007566A5 /* mri.tif in Resources */,
+				6A9D00C324A5CF05007566A5 /* forest.tif in Resources */,
+				6A9D00D524A5D250007566A5 /* yenrail.jpg in Resources */,
+				6A9D00C224A5CF05007566A5 /* leaves.tif in Resources */,
+				6A9D00C524A5CF05007566A5 /* f14.tif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1757,7 +1812,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6ABD370124974362005F80EE /* CR2Reader.swift in Sources */,
+				6A9D00AF24A5C706007566A5 /* ImageIOThumbReader.swift in Sources */,
 				6A9E827F249AEE52004BE66A /* huffman.c in Sources */,
+				6A9D00B624A5CB1B007566A5 /* ThumbReader.swift in Sources */,
 				6A961B84249C569700FE4D5E /* CR2Unslicer.m in Sources */,
 				6ABF946724986FD9002DBA91 /* JPEGHuffman.swift in Sources */,
 				6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */,
@@ -1766,11 +1823,13 @@
 				6AAC457E24A0033B009B9AFF /* colorspace.c in Sources */,
 				6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */,
 				6A9E827B249AE833004BE66A /* decompress.c in Sources */,
+				6A9D00B024A5C70B007566A5 /* ThumbReaderImpl.swift in Sources */,
 				6A961B88249C5A8100FE4D5E /* unslice.c in Sources */,
 				6A961B7F249C45CA00FE4D5E /* MakerNotesInfo.swift in Sources */,
 				6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */,
 				6A7614BF2499A1020043392E /* Bitstream.swift in Sources */,
 				6A9E8288249AFED4004BE66A /* CJPEGHuffmanTable.m in Sources */,
+				6A9D00DA24A5D3DF007566A5 /* CR2ThumbReader.swift in Sources */,
 				6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */,
 				6AE51AC3249EABF40091A550 /* ImageIOMetadataReader.swift in Sources */,
 				6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */,
@@ -1794,10 +1853,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6ABD36FE24973EC2005F80EE /* CanonRAWTests.swift in Sources */,
-				6AAC4570249F4A83009B9AFF /* DebayerTests.swift in Sources */,
-				6A7614C42499A57A0043392E /* BitstreamTests.swift in Sources */,
+				6A9D00CD24A5CF69007566A5 /* CanonRAWTests.swift in Sources */,
 				6A7614C02499A5340043392E /* Bitstream.swift in Sources */,
+				6A9D00CC24A5CF69007566A5 /* DebayerTests.swift in Sources */,
+				6A9D00D024A5D044007566A5 /* ThumbReaderTests.swift in Sources */,
+				6A9D00C824A5CF5C007566A5 /* BitstreamTests.swift in Sources */,
 				6A7614C92499DDFD0043392E /* BitHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2969,7 +3029,7 @@
 					"$(BUILT_PRODUCTS_DIR)",
 					"$(SRCROOT)/Carthage/Build/Mac",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.16;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3042,7 +3102,7 @@
 					"$(BUILT_PRODUCTS_DIR)",
 					"$(SRCROOT)/Carthage/Build/Mac",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.16;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.test.PaperTests;

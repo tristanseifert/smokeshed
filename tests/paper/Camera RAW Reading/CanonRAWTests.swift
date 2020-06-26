@@ -44,7 +44,7 @@ class CanonRAWTests: XCTestCase {
         
         DDLogInfo("Metadata: \(String(describing: image.meta))")
         DDLogInfo("CR2 image: \(image)")
-        self.saveResults(image)
+//        self.saveResults(image)
     }
 
     /**
