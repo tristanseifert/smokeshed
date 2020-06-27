@@ -31,7 +31,7 @@ public class ThumbReader {
         }
         
         // query each reader implementation
-        for reader in Self.readers {            
+        for reader in Self.readers {
             if reader.supportsType(type) {
                 do {
                     self.reader = try reader.init(withFileAt: url)
@@ -63,6 +63,12 @@ public class ThumbReader {
      */
     public func getThumb(_ size: CGFloat) -> CGImage? {
         return self.reader.getImage(size)
+    }
+    
+    // MARK: - Helpers
+    /// Size of the original image
+    public var originalSize: CGSize {
+        return self.reader.originalImageSize
     }
     
     // MARK: - Configuration

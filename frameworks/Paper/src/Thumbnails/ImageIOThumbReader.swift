@@ -63,6 +63,18 @@ internal class ImageIOThumbReader: ThumbReaderImpl {
         return type.conforms(to: UTType.image)
     }
     
+    /**
+     * Return the decoded image size
+     */
+    var originalImageSize: CGSize {
+        let props = CGImageSourceCopyPropertiesAtIndex(self.source, 0, nil) as! [CFString: Any]
+        
+        let width = (props[kCGImagePropertyPixelWidth] as! NSNumber).intValue
+        let height = (props[kCGImagePropertyPixelHeight] as! NSNumber).intValue
+        
+        return CGSize(width: width, height: height)
+    }
+    
     // MARK: - Errors
     enum ImageIOThumbErrors: Error {
         /// Failed to create an image source

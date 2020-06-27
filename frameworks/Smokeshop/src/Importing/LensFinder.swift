@@ -85,7 +85,8 @@ internal class LensFinder {
 
             // try to save it
             do {
-                try self.context.save()
+                try self.context.obtainPermanentIDs(for: [lens])
+//                try self.context.save()
                 res = .success(lens)
             } catch {
                 res = .failure(error)

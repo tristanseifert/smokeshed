@@ -11,6 +11,9 @@ import Foundation
  * Class representing a single chunk of thumbnail data on disk.
  */
 internal class ChunkRef: Codable {
+    /// Lock restricting writes to the chunk
+    private(set) internal var writeLock = NSLock()
+    
     /// Chunk version
     private(set) internal var version: UInt = ChunkRef.currentVersion
     /// Identifier of the chunk

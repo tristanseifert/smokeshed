@@ -97,4 +97,11 @@ internal class CR2ThumbReader: ThumbReaderImpl {
     static func supportsType(_ type: UTType) -> Bool {
         return type.conforms(to: Self.uti)
     }
+    
+    /**
+     * Return the decoded image size
+     */
+    var originalImageSize: CGSize {
+        return self.image.rawSize
+    }
 }

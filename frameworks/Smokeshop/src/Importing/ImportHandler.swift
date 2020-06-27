@@ -120,6 +120,15 @@ public class ImportHandler {
                         }
                     })
                 })
+                
+                // after all imports complete, save context
+                self.queue.addBarrierBlock {
+                    do {
+                        try self.context.save()
+                    } catch {
+                        DDLogError("Failed to save context after import: \(error)")
+                    }
+                }
             } catch {
                 // TODO: signal this error somehow
                 DDLogError("Failed to flatten URLs: \(error)")
@@ -328,9 +337,11 @@ public class ImportHandler {
                 image.rawOrientation = orientation.rawValue
                 image.lens = lens
                 image.camera = cam
-
-                // save the context
-                try self.context.save()
+                
+                // obtain permanent ids for the image
+                try self.context.obtainPermanentIDs(for: [image])
+//                try self.context.save()
+                
                 insertRes = .success(image.objectID)
             } catch {
                 insertRes = .failure(error)

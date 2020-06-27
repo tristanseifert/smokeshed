@@ -168,6 +168,19 @@ class ThumbHandler {
                 self?.processContextChanges(changes)
             }
             self.observers.append(o)
+            
+            // save thumb data whenever main context saves
+            let o2 = c.addObserver(forName: .NSManagedObjectContextDidSave,
+                                   object: new.store.mainContext,
+                                   queue: self.observerQueue)
+            { [weak self] notification in
+                self?.service.save() { error in
+                    if let error = error {
+                        DDLogError("Failed to save thumb data: \(error)")
+                    }
+                }
+            }
+            self.observers.append(o2)
         }
     }
     
@@ -218,7 +231,7 @@ class ThumbHandler {
                 ctx.perform {
                     let req = inserted.compactMap({
                         return ThumbRequest(libraryId: libraryId, image: $0,
-                                            withDetails: false)
+                                            withDetails: true)
                     })
                     guard !req.isEmpty else { return }
                     

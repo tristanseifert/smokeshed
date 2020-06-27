@@ -276,7 +276,6 @@ internal class SidebarImagesByDateController {
         }
         // create a new parent item
         else {
-            DDLogVerbose("Created year item for \(year)")
             self.createYearItemFor(year: yearDate, dates)
         }
     }
@@ -324,7 +323,7 @@ internal class SidebarImagesByDateController {
         let item = DayItem()
         item.date = date
         
-        // create a predicate checking against the day captured        
+        // create a predicate checking against the day captured
         item.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "%K == %@", "dayCaptured", date as CVarArg)
         ])

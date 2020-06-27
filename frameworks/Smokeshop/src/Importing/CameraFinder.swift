@@ -74,7 +74,8 @@ internal class CameraFinder {
 
             // try to save it
             do {
-                try self.context.save()
+                try self.context.obtainPermanentIDs(for: [cam])
+//                try self.context.save()
                 res = .success(cam)
             } catch {
                 res = .failure(error)

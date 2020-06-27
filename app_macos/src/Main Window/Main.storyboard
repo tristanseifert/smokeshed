@@ -403,7 +403,7 @@
                                                                     </connections>
                                                                 </textField>
                                                                 <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmG-MX-W7l" userLabel="Count Badge">
-                                                                    <rect key="frame" x="291" y="7" width="46" height="16"/>
+                                                                    <rect key="frame" x="291" y="6" width="46" height="17"/>
                                                                     <buttonCell key="cell" type="inline" title="Count" bezelStyle="inline" alignment="center" enabled="NO" borderStyle="border" inset="2" id="alt-mK-i6y">
                                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                         <font key="font" metaFont="smallSystemBold"/>
@@ -459,7 +459,7 @@
                                                                     </connections>
                                                                 </textField>
                                                                 <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g1R-B2-9VH" userLabel="Count Badge">
-                                                                    <rect key="frame" x="291" y="7" width="46" height="16"/>
+                                                                    <rect key="frame" x="291" y="6" width="46" height="17"/>
                                                                     <buttonCell key="cell" type="inline" title="Count" bezelStyle="inline" alignment="center" enabled="NO" borderStyle="border" inset="2" id="yu5-kV-WSy">
                                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                         <font key="font" metaFont="smallSystemBold"/>
@@ -515,7 +515,7 @@
                                                                     </connections>
                                                                 </textField>
                                                                 <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ddr-pd-HZX" userLabel="Count Badge">
-                                                                    <rect key="frame" x="291" y="3" width="46" height="16"/>
+                                                                    <rect key="frame" x="291" y="2" width="46" height="17"/>
                                                                     <buttonCell key="cell" type="inline" title="Count" bezelStyle="inline" alignment="center" enabled="NO" borderStyle="border" inset="2" id="ieK-cF-rFH">
                                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                         <font key="font" metaFont="smallSystemBold"/>

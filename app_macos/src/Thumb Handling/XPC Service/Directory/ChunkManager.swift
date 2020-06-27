@@ -95,11 +95,16 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             throw ChunkErrors.noWriteChunk
         }
         
+        // get write lock
+        write.writeLock.lock()
+        
         // append the entry to the chunk
         write.entries.append(entry)
         write.isDirty = true
         
-        // write it out to disk
+        write.writeLock.unlock()
+        
+        // write it back to disk
         try self.saveChunk(write)
         
         return write.identifier!
@@ -112,18 +117,25 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         // remove the existing entry
         let entryId = entry.directoryId
         let chunk = try self.getChunk(withId: chunkId, false)
+        
+        // take write lock before removing old entries
+        chunk.writeLock.lock()
+        
         let beforeCount = chunk.entries.count
         chunk.entries.removeAll(where: { $0.directoryId == entryId })
         
         guard chunk.entries.count < beforeCount else {
+            chunk.writeLock.unlock()
             throw ChunkErrors.noSuchEntry(chunkId: chunkId, entryId)
         }
         
         // insert new entry
         chunk.entries.append(entry)
         
-        // write chunk back to disk
         chunk.isDirty = true
+        chunk.writeLock.unlock()
+        
+        // write it back to disk
         try self.saveChunk(chunk)
         
         // TODO: we really should validate this won't make us over the max size
@@ -133,16 +145,23 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      * Removes an entry from a chunk, both identified by their respective ids.
      */
     internal func deleteEntry(inChunk chunkId: UUID, entryId: UUID) throws {
-        // get the chunk
+        // get the chunk and acquire write lock
         let chunk = try self.getChunk(withId: chunkId, false)
+        chunk.writeLock.lock()
         
-        // remove from it the object
+        // remove that entry from the chunk
         let beforeCount = chunk.entries.count
         chunk.entries.removeAll(where: { $0.directoryId == entryId })
         
         guard chunk.entries.count < beforeCount else {
+            chunk.writeLock.unlock()
             throw ChunkErrors.noSuchEntry(chunkId: chunkId, entryId)
         }
+        
+        chunk.isDirty = true
+        
+        // release the lock
+        chunk.writeLock.unlock()
 
         // if the chunk has no entries, delete it
         if chunk.entries.isEmpty {
@@ -150,7 +169,6 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         }
         // otherwise, write it back to disk
         else {
-            chunk.isDirty = true
             try self.saveChunk(chunk)
         }
     }
@@ -171,6 +189,13 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         if FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.removeItem(at: url)
         }
+    }
+    
+    /**
+     * Ensures all dirty chunks in the cache are written out to disk.
+     */
+    internal func flushDirtyChunks() throws {
+        // TODO: implement
     }
     
     // MARK: - Cache support
@@ -227,8 +252,6 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             fatalError("Failed to convert cache object: \(obj)")
         }
         
-        DDLogVerbose("Evicting \(obj)")
-        
         // save it out to disk if it's changed
         if chunk.isDirty {
             do {
@@ -267,19 +290,30 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      * Saves a chunk to disk.
      */
     private func saveChunk(_ chunk: ChunkRef) throws {
-        // produce data to encode
-        let encoder = PropertyListEncoder()
-        encoder.outputFormat = .binary
+        // before encoding and writing to disk, take a lock on the chunk
+        chunk.writeLock.lock()
         
-        let data = try encoder.encode(chunk)
+        do {
+            // produce data to encode
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .binary
+            
+            let data = try encoder.encode(chunk)
+            
+            // write it out to file
+            let url = try self.urlForChunk(withId: chunk.identifier)
+            try data.write(to: url, options: .atomic)
+        } catch {
+            // ensure chunk lock is released
+            chunk.writeLock.unlock()
+            throw error
+        }
         
-        // write it out to file
-        let url = try self.urlForChunk(withId: chunk.identifier)
-        try data.write(to: url, options: .atomic)
+        // release the chunk lock
+        chunk.writeLock.unlock()
         
         // clear the dirty flag
         chunk.isDirty = false
-        DDLogDebug("Wrote chunk \(data.count) bytes for chunk \(chunk.identifier!)")
     }
     
     /**
@@ -299,8 +333,6 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             throw IOErrors.unsupportedChunkVersion(chunk.version)
         }
         
-        DDLogDebug("Read \(data.count) bytes for chunk \(chunk.identifier!)")
-        
         // done
         return chunk
     }
@@ -315,7 +347,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         let fm = FileManager.default
         
         // get the first byte of the uuid
-        let first = String(id.uuid.0, radix: 16, uppercase: true)
+        let first = String(format: "%02X", id.uuid.0)
         let name = String(format: "%@.chonker", id.uuidString)
         
         // get container directory url (and create dir if needed)
@@ -332,7 +364,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
     
     // MARK: - Constants
     /// Maximum chunk cache size, bytes
-    private static let maxChunkCacheSize: Int = (1024 * 1024 * 128)
+    private static let maxChunkCacheSize: Int = (1024 * 1024 * 250)
     
     // MARK: - Errors
     /// Public interface errors

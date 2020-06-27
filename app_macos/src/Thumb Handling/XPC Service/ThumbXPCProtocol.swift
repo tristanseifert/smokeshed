@@ -131,6 +131,11 @@ import Smokeshop
     func openLibrary(_ libraryId: UUID, withReply reply: @escaping (Error?) -> Void)
     
     /**
+     * Saves any uncommitted thumbnail data to the thumb handler's persistent storage.
+     */
+    func save(withReply reply: @escaping (Error?) -> Void)
+    
+    /**
      * Requests the thumbnail handler generates a thumbnail for the given images.
      *
      * This is processed in the background in the thumb handler; the caller doesn't get any indication if the

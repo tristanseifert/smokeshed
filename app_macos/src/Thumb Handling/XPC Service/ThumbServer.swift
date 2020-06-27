@@ -15,66 +15,12 @@ import CocoaLumberjackSwift
  * Provides the interface used by XPC clients to generate and request thumbnail images.
  */
 class ThumbServer: ThumbXPCProtocol {
-    /// Background work queue
-    private var queue = OperationQueue()
     /// Thumbnail directory
     private var directory: ThumbDirectory! = nil
-
-    // MARK: - Initialization
-    /**
-     * Sets up the thumb server.
-     */
-    init() {
-        self.queue.name = "ThumbServer Work Queue"
-        self.queue.maxConcurrentOperationCount = OperationQueue.defaultMaxConcurrentOperationCount
-    }
-
-    // MARK: - Thumb Retrieval
-    /**
-     * Attempts to retrieve a thumbnail for the provided image.
-     *
-     * Right now, this is just a pretty shitty wrapper around ImageIO.
-     */
-    func retrieve(_ request: ThumbRequest, _ callback: (Result<CGImage, Error>) -> Void) {
-        // get the original image
-        let url = request.imageUrl!
-
-        // create an image source
-        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
-            return callback(.failure(RetrievalError.readError))
-        }
-
-        // get a thumbnail
-        var opt: [CFString: Any] = [
-            // let ImageIO cache the thumbnail
-            kCGImageSourceShouldCache: false,
-            // create the thumbnail always
-            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
-        ]
-
-        if let size = request.size, size != .zero {
-            opt[kCGImageSourceThumbnailMaxPixelSize] = max(size.width, size.height)
-        }
-
-        guard let img = CGImageSourceCreateThumbnailAtIndex(src, 0, opt as CFDictionary) else {
-            return callback(.failure(RetrievalError.generationFailed))
-        }
-
-        // run callback
-        callback(.success(img))
-    }
-
-    /**
-     * Errors raised during image retrieval
-     */
-    enum RetrievalError: Error {
-        /// The request was invalid.
-        case invalidRequest
-        /// Failed to open the original image.
-        case readError
-        /// Something went wrong while creating the thumbnail.
-        case generationFailed
-    }
+    /// Generator for creating/deleting thumbs
+    private var generator: Generator! = nil
+    /// Retrieving thumbs
+    private var retriever: Retriever! = nil
 
     // MARK: - XPC Calls
     /**
@@ -85,6 +31,8 @@ class ThumbServer: ThumbXPCProtocol {
         if self.directory == nil {
             do {
                 self.directory = try ThumbDirectory()
+                self.generator = Generator(self.directory)
+                self.retriever = Retriever(self.directory)
             } catch {
                 DDLogError("Failed to open thumb directory: \(error)")
                 return reply(error)
@@ -117,37 +65,30 @@ class ThumbServer: ThumbXPCProtocol {
     }
     
     /**
+     * Saves all thumbnail data.
+     */
+    func save(withReply reply: @escaping (Error?) -> Void) {
+        do {
+            // first, save all chunks
+            try self.directory.chonker.flushDirtyChunks()
+            
+            // then, save the object context
+            try self.directory.save()
+        } catch {
+            DDLogError("Failed to save thumbnail data: \(error)")
+            return reply(error)
+        }
+        
+        // if we get here, save succeeded
+        return reply(nil)
+    }
+    
+    /**
      * Generates a thumbnail for the image specified in the request. This is dispatched to the background
      * processing thread.
      */
     func generate(_ requests: [ThumbRequest]) {
-        self.queue.addOperation {
-            do {
-                var new = requests
-                
-                // find all already existing images (these are to be updated)
-                let existing = try requests.compactMap({ try self.thumbForRequest($0) })
-                DDLogInfo("Existing thumbs to update: \(existing)")
-                
-                // get the requests that don't correspond to existing images
-                if existing.count == new.count {
-                    new.removeAll()
-                } else {
-                    // remove requests for which we've got thumb objects
-                    for thumb in existing {
-                        new.removeAll(where: {
-                            $0.libraryId == thumb.library!.identifier &&
-                            $0.imageId == thumb.imageIdentifier
-                        })
-                    }
-                }
-            
-                // generate the remaining thumbs from scratch
-                DDLogInfo("Thumbs to create new: \(new)")
-            } catch {
-                DDLogError("discard(_:) failed: \(error) (requests: \(requests))")
-            }
-        }
+        self.generator.generate(requests)
     }
     
     /**
@@ -156,21 +97,7 @@ class ThumbServer: ThumbXPCProtocol {
      * Images are identified only by their library id and image id; the URL and orientation are ignored.
      */
     func discard(_ requests: [ThumbRequest]) {
-        self.queue.addOperation {
-            do {
-                // read the thumbs from the library
-                let thumbs = try requests.compactMap({ try self.thumbForRequest($0) })
-                
-                if thumbs.count != requests.count {
-                    DDLogWarn("discard(_:) count mistmatch: requests \(requests) thumbs \(thumbs)")
-                }
-                
-                // discard them and their chunk data
-                DDLogInfo("Discarding images: \(thumbs)")
-            } catch {
-                DDLogError("discard(_:) failed: \(error) (requests: \(requests))")
-            }
-        }
+        self.generator?.discard(requests)
     }
 
     /**
@@ -178,47 +105,32 @@ class ThumbServer: ThumbXPCProtocol {
      */
     func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, IOSurface?, Error?) -> Void) {
         // is the (library id, thumb id) pair in progress?
+        guard !self.generator.isInFlight(request) else {
+            // TODO: run callback when generation completes
+            return reply(request, nil, XPCError.requestInFlight)
+        }
         
-        // perform actual work on the background queue
-        self.queue.addOperation {
-            // retrieve a thumbnail object
-            guard let thumb = try? self.thumbForRequest(request) else {
-                return reply(request, nil, XPCError.noSuchThumb)
-            }
-            
-            DDLogVerbose("Thumb: \(thumb)")
-            
-            // TODO: read data out of the thumbnail
-            self.retrieve(request) { res in
-                switch res {
-                    // pass the image forward to the reply
-                    case .success(let image):
-                        // create a surface from the image
-                        let surface = IOSurface.fromImage(image)
-                        reply(request, surface, nil)
-                        surface?.decrementUseCount()
-
-                    // some sort of error took place, pass that
-                    case .failure(let error):
-                        reply(request, nil, error)
-                }
+        // try to get the image
+        self.retriever.retrieve(request) { result in
+            switch result {
+            // create an IOSurface from the image
+            case .success(let image):
+                let surface = IOSurface.fromImage(image)
+                reply(request, surface, nil)
+                surface?.decrementUseCount()
+                
+            // propagate failures to caller
+            case .failure(let error):
+                DDLogError("Failed to create thumb: \(error)")
+                reply(request, nil, error)
             }
         }
-    }
-    
-    // MARK: - Thumb helpers
-    /**
-     * Gets a thumb corresponding to the given thumb request, if we have one.
-     */
-    private func thumbForRequest(_ req: ThumbRequest) throws -> Thumbnail? {
-        return try self.directory.getThumb(libraryId: req.libraryId,
-                                           req.imageId)
     }
     
     // MARK: - Errors
     // XPC errors
     private enum XPCError: Error {
-        /// Failed to find a thumbnail for the request
-        case noSuchThumb
+        /// Request is in flight, retry later
+        case requestInFlight
     }
 }

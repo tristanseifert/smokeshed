@@ -745,6 +745,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         var thumbSize = self.imageContainer.bounds.size
         thumbSize.width = thumbSize.width * self.imageContainer.contentsScale
         thumbSize.height = thumbSize.height * self.imageContainer.contentsScale
+        
+        // fake a size for initial load when view isn't yet visible
+        if thumbSize == .zero {
+            thumbSize = CGSize(width: 300, height: 300)
+        }
 
         // request the image id
         ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in

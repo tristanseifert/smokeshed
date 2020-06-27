@@ -43,4 +43,9 @@ internal protocol ThumbReaderImpl {
      * larger, or smaller, depending on what was decoded from the file.
      */
     func getImage(_ size: CGFloat) -> CGImage?
+    
+    /**
+     * Size of the original image
+     */
+    var originalImageSize: CGSize { get }
 }
