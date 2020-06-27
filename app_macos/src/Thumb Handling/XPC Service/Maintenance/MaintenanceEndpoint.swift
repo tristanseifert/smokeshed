@@ -67,7 +67,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
      * that the bundle id is in a hardcoded list.
      */
     public func listener(_ listener: NSXPCListener, shouldAcceptNewConnection new: NSXPCConnection) -> Bool {
-        DDLogVerbose("Received connection request from \(new)")
+        DDLogVerbose("Connection to maintenance endpoint: \(new)")
         
         do {
             // get a reference to its code signature and its info

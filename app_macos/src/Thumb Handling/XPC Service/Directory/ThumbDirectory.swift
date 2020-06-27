@@ -75,11 +75,9 @@ internal class ThumbDirectory {
         ]
         
         // add it :)
-        let store = try self.psc.addPersistentStore(ofType: NSSQLiteStoreType,
-                                                    configurationName: nil,
-                                                    at: url,
-                                                    options: opts)
-        DDLogInfo("Added persistent store: \(store)")
+        try self.psc.addPersistentStore(ofType: NSSQLiteStoreType,
+                                        configurationName: nil, at: url,
+                                        options: opts)
     }
     
     /**

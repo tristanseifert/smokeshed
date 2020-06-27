@@ -37,6 +37,11 @@ public class ContainerHelper {
         return self.groupContainer.appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Caches", isDirectory: true)
     }
+    /// Group logs directory
+    public static var groupLogs: URL {
+        return self.groupContainer.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Logs", isDirectory: true)
+    }
     
     /**
      * Returns the group container url for the given sub-component.
@@ -67,6 +72,15 @@ public class ContainerHelper {
         let url = Self.groupContainer(component: component)
         return url.appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Caches", isDirectory: true)
+    }
+    
+    /**
+     * Returns the group logs url for the given sub-component.
+     */
+    public static func groupAppLogs(component: Component) -> URL {
+        let url = Self.groupContainer(component: component)
+        return url.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Logs", isDirectory: true)
     }
     
     
