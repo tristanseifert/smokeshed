@@ -62,7 +62,7 @@ internal class ThumbDirectory {
         self.psc = NSPersistentStoreCoordinator(managedObjectModel: self.model)
         
         // URL to the store in the app directory
-        let base = ContainerHelper.groupAppData
+        let base = ContainerHelper.groupAppData(component: .thumbHandler)
         let url = base.appendingPathComponent("ThumbDirectory.sqlite",
                                               isDirectory: false)
         

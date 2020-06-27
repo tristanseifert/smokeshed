@@ -6,7 +6,8 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>$(TeamIdentifierPrefix)SmokeShed</string>
+		<string>$(TeamIdentifierPrefix)me.tseifert.SmokeShed</string>
+		<string>$(TeamIdentifierPrefix)me.tseifert.SmokeShed.thumb</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-write</key>
 	<true/>

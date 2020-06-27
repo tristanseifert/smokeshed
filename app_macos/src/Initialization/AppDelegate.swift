@@ -22,15 +22,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
      * the actual app logic (and UI) is created.
      */
     func applicationWillFinishLaunching(_ notification: Notification) {
-        // register user defaults
-        if let url = Bundle.main.url(forResource: "Defaults",
-                                     withExtension: "plist"),
-            let defaults = NSDictionary(contentsOf: url) {
-            UserDefaults.standard.register(defaults: defaults as! [String : Any])
-        }
-        
         // load the bowl
         Bowl.Logger.setup()
+        
+        // register user defaults
+        InitialDefaults.register()
     }
 
     /**
@@ -193,6 +189,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         case unknown
     }
     
+    // MARK: - App preferences
+    /// Preferences window controller
+    private var preferences: PreferencesWindowController? = nil
+    
+    /**
+     * Opens the preferences window.
+     */
+    @IBAction func openPreferences(_ sender: Any?) {
+        // allocate preferences controller if required
+        if self.preferences == nil {
+            let sb = NSStoryboard(name: "Preferences", bundle: nil)
+            let initial = sb.instantiateInitialController()
+            
+            self.preferences = initial as? PreferencesWindowController
+        }
+        
+        // show it
+        self.preferences?.showWindow(sender)
+    }
+    
     
     // MARK: - Data store handling
     /// Currently loaded library
@@ -289,6 +305,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         ThumbHandler.shared.pushLibraryId(self.library.identifier)
     }
     
+    // MARK: Library UI
     /**
      * Presents the data store picker. A tuple of attempted URL and error can be passed to display an error
      * why a store failed to open.
@@ -303,7 +320,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         return picker.presentModal()
     }
     
-    // MARK: Errors
+    // MARK: - Errors
     enum Errors: Error {
         /// Failed to instantiate the main window controller
         case failedToMakeMainWindow

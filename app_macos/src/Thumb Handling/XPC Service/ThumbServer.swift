@@ -21,6 +21,9 @@ class ThumbServer: ThumbXPCProtocol {
     private var generator: Generator! = nil
     /// Retrieving thumbs
     private var retriever: Retriever! = nil
+    
+    /// Maintenance endpoint
+    private var maintenance: MaintenanceEndpoint! = nil
 
     // MARK: - XPC Calls
     /**
@@ -125,6 +128,19 @@ class ThumbServer: ThumbXPCProtocol {
                 reply(request, nil, error)
             }
         }
+    }
+    
+    /**
+     * Gets a reference to the maintenance endpoint.
+     */
+    func getMaintenanceEndpoint(withReply reply: @escaping (NSXPCListenerEndpoint) -> Void) {
+        // allocate endpoint if needed
+        if self.maintenance == nil {
+            self.maintenance = MaintenanceEndpoint(self.directory)
+        }
+        
+        // get the connection
+        reply(self.maintenance.endpoint)
     }
     
     // MARK: - Errors

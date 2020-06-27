@@ -155,6 +155,23 @@ import Smokeshop
      * provided by the caller. It's then provided as an IOSurface object.
      */
     func get(_ request: ThumbRequest, withReply reply: @escaping (ThumbRequest, IOSurface?, Error?) -> Void)
+    
+    
+    
+    /**
+     * Gets a reference to the maintenance endpoint.
+     */
+    func getMaintenanceEndpoint(withReply reply: @escaping (NSXPCListenerEndpoint) -> Void)
+}
+
+/**
+ * Defines the interface exposed by the maintenance endpoint.
+ */
+@objc public protocol ThumbXPCMaintenanceEndpoint {
+    /**
+     * Calculates the total disk space used to store thumbnail data.
+     */
+    func getSpaceUsed(withReply reply: @escaping (UInt, Error?) -> Void)
 }
 
 /**
@@ -195,6 +212,15 @@ class ThumbXPCProtocolHelpers {
                        for: #selector(ThumbXPCProtocol.discard(_:)),
                        argumentIndex: 0, ofReply: false)
 
+        return int
+    }
+    
+    /**
+     * Creates an interface describing the maintenance endpoint protocol.
+     */
+    public class func makeMaintenanceEndpoint() -> NSXPCInterface {
+        let int = NSXPCInterface(with: ThumbXPCMaintenanceEndpoint.self)
+        
         return int
     }
 

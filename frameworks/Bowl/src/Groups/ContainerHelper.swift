@@ -18,7 +18,7 @@ import CocoaLumberjackSwift
  */
 public class ContainerHelper {
     /// App group name, this must be hardcoded. lol sorry
-    private static let groupName = "8QDQ246B94.SmokeShed"
+    public static let groupName = "8QDQ246B94.me.tseifert.SmokeShed"
     
     /// Base URL to the group container
     public static var groupContainer: URL {
@@ -38,6 +38,37 @@ public class ContainerHelper {
             .appendingPathComponent("Caches", isDirectory: true)
     }
     
+    /**
+     * Returns the group container url for the given sub-component.
+     *
+     * The container name is formed by appending the base group name, with a dot, then the specified
+     * sub-component name.
+     */
+    public static func groupContainer(component: Component) -> URL {
+        let fm = FileManager.default
+        
+        let name = Self.groupName.appendingFormat(".%@", component.rawValue)
+        return fm.containerURL(forSecurityApplicationGroupIdentifier: name)!
+    }
+    
+    /**
+     * Returns the group app data url for the given sub-component.
+     */
+    public static func groupAppData(component: Component) -> URL {
+        let url = Self.groupContainer(component: component)
+        return url.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Application Support", isDirectory: true)
+    }
+    
+    /**
+     * Returns the group caches url for the given sub-component.
+     */
+    public static func groupAppCache(component: Component) -> URL {
+        let url = Self.groupContainer(component: component)
+        return url.appendingPathComponent("Library", isDirectory: true)
+            .appendingPathComponent("Caches", isDirectory: true)
+    }
+    
     
     
     /// Base URL of the application specific cache directory
@@ -52,15 +83,9 @@ public class ContainerHelper {
         }
     }
     
-    /// Base URL of the application specific data directory
-    public static var appData: URL? {
-        do {
-            return try FileManager.default.url(for: .applicationSupportDirectory,
-                                       in: .userDomainMask,
-                                       appropriateFor: nil, create: true)
-        } catch {
-            DDLogError("Failed to get application support dir: \(error)")
-            return nil
-        }
+    /// Container subcomponents
+    public enum Component: String {
+        /// Thumbnail handler (including XPC service)
+        case thumbHandler = "thumb"
     }
 }
