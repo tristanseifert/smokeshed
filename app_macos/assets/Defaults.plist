@@ -13,6 +13,23 @@
 	</dict>
 	<key>standard</key>
 	<dict>
+		<key>importCopyFiles</key>
+		<true/>
+		<key>gridCellSequenceNumber</key>
+		<true/>
+		<key>gridCellImageDetail</key>
+		<true/>
+		<key>gridCellImageDetailFormat</key>
+		<dict>
+			<key>title</key>
+			<integer>2</integer>
+			<key>row1</key>
+			<integer>12</integer>
+			<key>row2</key>
+			<integer>9</integer>
+		</dict>
+		<key>gridCellRatings</key>
+		<false/>
 		<key>TSLibraryPickerControllerDetailsVisible</key>
 		<false/>
 	</dict>

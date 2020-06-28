@@ -212,7 +212,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
     
     // MARK: - Data store handling
     /// Currently loaded library
-    private var library: LibraryBundle! = nil
+    private(set) internal var library: LibraryBundle! = nil
 
     /**
      * Implements the data store loading and info window logic.

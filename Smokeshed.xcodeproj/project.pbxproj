@@ -58,6 +58,8 @@
 		6A4CEF35248B62D400145E49 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */; };
 		6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A587F6E24A7F83B009696E9 /* PreferencesTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */; };
+		6A587F7024A8500E009696E9 /* PreferencesGridCellDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6F24A8500E009696E9 /* PreferencesGridCellDetailController.swift */; };
+		6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */; };
 		6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB4682498A3830007E450 /* JPEGFrame.swift */; };
 		6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */; };
 		6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BC24999C740043392E /* HuffmanTree.swift */; };
@@ -362,6 +364,8 @@
 		6A4CEF2C248B59F900145E49 /* Bowl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bowl.h; path = frameworks/Bowl/src/include/Bowl.h; sourceTree = "<group>"; };
 		6A4CEF33248B5F5500145E49 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = frameworks/Bowl/src/Logging/Logger.swift; sourceTree = "<group>"; };
 		6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesTabController.swift; path = app_macos/src/Preferences/PreferencesTabController.swift; sourceTree = "<group>"; };
+		6A587F6F24A8500E009696E9 /* PreferencesGridCellDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesGridCellDetailController.swift; path = app_macos/src/Preferences/PreferencesGridCellDetailController.swift; sourceTree = "<group>"; };
+		6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserDefaults+GridCell.swift"; path = "app_macos/src/Library View/UserDefaults+GridCell.swift"; sourceTree = "<group>"; };
 		6A6FB4682498A3830007E450 /* JPEGFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGFrame.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGFrame.swift"; sourceTree = "<group>"; };
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
 		6A7614BC24999C740043392E /* HuffmanTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HuffmanTree.swift; path = frameworks/Paper/src/Helpers/HuffmanTree.swift; sourceTree = "<group>"; };
@@ -1139,6 +1143,7 @@
 				6A9D00E824A71318007566A5 /* ThumbPreferencesViewController.swift */,
 				6A9D00F324A71F8D007566A5 /* PreferencesWindowController.swift */,
 				6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */,
+				6A587F6F24A8500E009696E9 /* PreferencesGridCellDetailController.swift */,
 				6A9D00F024A71D3E007566A5 /* Defaults */,
 			);
 			name = Preferences;
@@ -1293,6 +1298,7 @@
 				6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */,
 				6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */,
 				6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */,
+				6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */,
 			);
 			name = "Collection View Items";
 			sourceTree = "<group>";
@@ -1812,6 +1818,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A587F7024A8500E009696E9 /* PreferencesGridCellDetailController.swift in Sources */,
 				6A962C2B248F3ABC0088E1DB /* LibraryOptionsController.swift in Sources */,
 				6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */,
 				6A9D00F224A71D6A007566A5 /* InitialDefaults.swift in Sources */,
@@ -1841,6 +1848,7 @@
 				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
 				6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6AAF473B24A3229500572AB3 /* SidebarController.swift in Sources */,
+				6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */,
 				6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
