@@ -1,0 +1,130 @@
+/* 
+  InspectorMetaKeys.strings
+  Smokeshed
+
+  Localized names for `ImageMeta` keys
+ 
+  Created by Tristan Seifert on 20200628.
+  
+*/
+
+// MARK: - Root keys
+// TIFF information structure
+"root.tiff" = "TIFF";
+// EXIF information structure
+"root.exif" = "EXIF";
+// GPS information structure
+"root.gps" = "GPS";
+
+// Image size
+"root.size" = "Image Size";
+// Format for image size (1 = width, 2 = height)
+"root.size.format" = "%1$.0f × %2$.0f";
+
+// MARK: - EXIF keys
+// 1 = numerator, 2 = denominator
+"exif.exposureTime.fraction" = "%1$d⁄%2$d";
+// 1 = seconds (range 1..<60)
+"exif.exposureTime.seconds" = "%1$g sec";
+// 1 = component formatter output
+"exif.exposureTime.formatted" = "%1$@";
+
+// Exposure time
+"exif.exposureTime" = "Exposure Time";
+
+// F number format string (1 = f number as double)
+"exif.fNumber.format" = "ƒ/%1$g";
+// F number
+"exif.fNumber" = "F-Number";
+
+// Exposure bias
+"exif.exposureBias" = "Exposure Bias";
+
+// Capture date
+"exif.capturedDate" = "Captured";
+// Digitization date
+"exif.digitizedDate" = "Digitized";
+
+// Serial number of the camera body
+"exif.bodySerial" = "Body Serial";
+
+// Vendor-specific lens id
+"exif.lensId" = "Lens ID";
+// Lens make
+"exif.lensMake" = "Lens Make";
+// Lens model
+"exif.lensModel" = "Lens Model";
+// Lens serial number
+"exif.lensSerial" = "Lens Serial";
+
+// Image size format string (1 = width, 2 = height)
+"exif.size.format" = "%1$d × %2$d";
+// Image size
+"exif.size" = "Image Size";
+
+// Format string for sensitivity (1 = sensitivity as int, 2 = sensitivity type)
+"exif.sensitivity.format" = "%2$@ %1$g";
+// Sensitivity
+"exif.sensitivity" = "Sensitivity";
+
+// Exposure program type
+"exif.program" = "Exposure Program";
+
+// MARK: - GPS Keys
+// Latitude
+"gps.lat" = "Latitude";
+// Longitude
+"gps.lng" = "Longitude";
+
+// Map datum
+"gps.datum" = "Datum";
+
+// Format string for altitude (1 = altitude, in meters)
+"gps.altitude.format" = "%1$g m";
+// Altitude
+"gps.altitude" = "Altitude";
+
+// Dilution of precision
+"gps.dop" = "DoP";
+
+// UTC timestamp when the location information was retrieved
+"gps.utcTimestamp" = "UTC Timestamp";
+
+// MARK: - TIFF keys
+// Image size format string (1 = width, 2 = height)
+"tiff.size.format" = "%1$d × %2$d";
+// Image size
+"tiff.size" = "Image Size";
+
+// Recording device make
+"tiff.make" = "Make";
+// Recording device model
+"tiff.model" = "Model";
+
+// Software used to create the image
+"tiff.software" = "Software";
+// System on which the image was created
+"tiff.system" = "System";
+
+// Artist string
+"tiff.artist" = "Artist";
+// Copyright string
+"tiff.copyright" = "Copyright";
+
+// Creation date
+"tiff.created" = "Created";
+
+// Image orientation
+"tiff.orientation" = "Orientation";
+
+// Format string for resolution (1 = value, 2 = unit string)
+"tiff.resolution.format" = "%1$g %2$@";
+// Inches resolution unit
+"tiff.resolution.inch" = "DPI";
+// Centimeters resolution unit
+"tiff.resolution.centimeter" = "dots/cm";
+
+// Horizontal resolution
+"tiff.xResolution" = "X Resolution";
+// Vertical resolution
+"tiff.yResolution" = "Y Resolution";

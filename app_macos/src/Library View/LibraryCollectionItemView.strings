@@ -48,7 +48,7 @@
 // 1 = numerator, 2 = denominator
 "exposure.time.fraction" = "%1$d⁄%2$d ";
 // 1 = seconds (range 1..<60)
-"exposure.time.seconds" = "%1$g secs ";
+"exposure.time.seconds" = "%1$g sec ";
 // 1 = component formatter output
 "exposure.time.formatted" = "%1$@ ";
 // 1 = aperture
