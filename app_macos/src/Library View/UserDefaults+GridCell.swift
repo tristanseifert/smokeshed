@@ -20,10 +20,10 @@ extension UserDefaults {
     /// Do image grid cells show image detail information?
     @objc dynamic var gridCellImageDetail: Bool {
         get {
-            return self.bool(forKey: "gridCellSequenceNumber")
+            return self.bool(forKey: "gridCellImageDetail")
         }
         set {
-            set(newValue, forKey: "gridCellSequenceNumber")
+            set(newValue, forKey: "gridCellImageDetail")
         }
     }
     /// Do image grid cells show ratings?

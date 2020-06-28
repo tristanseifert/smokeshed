@@ -60,6 +60,8 @@
 		6A587F6E24A7F83B009696E9 /* PreferencesTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */; };
 		6A587F7024A8500E009696E9 /* PreferencesGridCellDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6F24A8500E009696E9 /* PreferencesGridCellDetailController.swift */; };
 		6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */; };
+		6A587F7424A861F6009696E9 /* LibraryCollectionItemView.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */; };
+		6A587F7524A86766009696E9 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
 		6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB4682498A3830007E450 /* JPEGFrame.swift */; };
 		6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */; };
 		6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BC24999C740043392E /* HuffmanTree.swift */; };
@@ -366,6 +368,7 @@
 		6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesTabController.swift; path = app_macos/src/Preferences/PreferencesTabController.swift; sourceTree = "<group>"; };
 		6A587F6F24A8500E009696E9 /* PreferencesGridCellDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesGridCellDetailController.swift; path = app_macos/src/Preferences/PreferencesGridCellDetailController.swift; sourceTree = "<group>"; };
 		6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserDefaults+GridCell.swift"; path = "app_macos/src/Library View/UserDefaults+GridCell.swift"; sourceTree = "<group>"; };
+		6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionItemView.strings; path = "app_macos/src/Library View/LibraryCollectionItemView.strings"; sourceTree = "<group>"; };
 		6A6FB4682498A3830007E450 /* JPEGFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGFrame.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGFrame.swift"; sourceTree = "<group>"; };
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
 		6A7614BC24999C740043392E /* HuffmanTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HuffmanTree.swift; path = frameworks/Paper/src/Helpers/HuffmanTree.swift; sourceTree = "<group>"; };
@@ -525,6 +528,7 @@
 				6A4CEECC248B283600145E49 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6ABD36F724971EF3005F80EE /* Cocoa.framework in Frameworks */,
 				6A4CEF2E248B5A5600145E49 /* Bowl.framework in Frameworks */,
+				6A587F7524A86766009696E9 /* UniformTypeIdentifiers.framework in Frameworks */,
 				6A4CEEE1248B2F8E00145E49 /* Smokeshop.framework in Frameworks */,
 				6A4CEECA248B283600145E49 /* CocoaLumberjack.framework in Frameworks */,
 			);
@@ -1299,6 +1303,7 @@
 				6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */,
 				6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */,
 				6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */,
+				6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */,
 			);
 			name = "Collection View Items";
 			sourceTree = "<group>";
@@ -1711,6 +1716,7 @@
 				6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */,
 				6A1C116924A3030600CD8D36 /* Map View.storyboard in Resources */,
 				6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */,
+				6A587F7424A861F6009696E9 /* LibraryCollectionItemView.strings in Resources */,
 				6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */,
 				6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
