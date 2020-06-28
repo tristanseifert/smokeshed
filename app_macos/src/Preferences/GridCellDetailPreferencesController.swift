@@ -1,5 +1,5 @@
 //
-//  PreferencesGridCellDetailController.swift
+//  GridCellDetailPreferencesController.swift
 //  Smokeshed (macOS)
 //
 //  Created by Tristan Seifert on 20200627.
@@ -13,7 +13,7 @@ import CocoaLumberjackSwift
 /**
  * Allows editing the detail information shown in the grid cells.
  */
-class PreferencesGridCellDetailController: NSViewController, NSCollectionViewDelegate, NSCollectionViewDataSource {
+class GridCellDetailPreferencesController: NSViewController, NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout {
     /**
      * Registers the cell types.
      */
@@ -91,5 +91,14 @@ class PreferencesGridCellDetailController: NSViewController, NSCollectionViewDel
         cell.representedObject = self.image
 
         return cell
+    }
+    
+    /**
+     *All items are exactly the size of the collection view.
+     */
+    func collectionView(_ collectionView: NSCollectionView, layout
+                            collectionViewLayout: NSCollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> NSSize {
+        return collectionView.bounds.size
     }
 }

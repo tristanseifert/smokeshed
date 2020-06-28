@@ -237,7 +237,7 @@ internal class SidebarImagesByDateController {
     private func updateTree() {
         DispatchQueue.main.async { [weak self] in
             self?.outline.reloadItem(self?.groupItem)
-            self?.outline.expandItem(self?.groupItem, expandChildren: true)
+            self?.outline.expandItem(self?.groupItem, expandChildren: false)
         }
     }
     

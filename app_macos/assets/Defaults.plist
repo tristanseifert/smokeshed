@@ -32,6 +32,8 @@
 		<false/>
 		<key>TSLibraryPickerControllerDetailsVisible</key>
 		<false/>
+		<key>gridCellHoverStyle</key>
+		<true/>
 	</dict>
 </dict>
 </plist>

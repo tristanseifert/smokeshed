@@ -35,6 +35,15 @@ extension UserDefaults {
             set(newValue, forKey: "gridCellImageRatings")
         }
     }
+    /// Do image cells have a hovered appearance?
+    @objc dynamic var gridCellHoverStyle: Bool {
+        get {
+            return self.bool(forKey: "gridCellHoverStyle")
+        }
+        set {
+            set(newValue, forKey: "gridCellHoverStyle")
+        }
+    }
     
     /// Format for the grid cell image detail header
     @objc dynamic var gridCellImageDetailFormat: [String: Any] {
@@ -46,3 +55,4 @@ extension UserDefaults {
         }
     }
 }
+

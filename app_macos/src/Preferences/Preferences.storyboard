@@ -117,13 +117,25 @@
                                     <segue destination="BuJ-SE-9YX" kind="sheet" id="dY2-U3-AVs"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="V76-Vq-Eha">
+                                <rect key="frame" x="226" y="171" width="204" height="18"/>
+                                <buttonCell key="cell" type="check" title="Change appearance on hover" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="DWv-0u-Ebg">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="0Qw-aA-19F" name="value" keyPath="values.gridCellHoverStyle" id="psx-FK-bor"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="V20-Wn-i5V" firstAttribute="firstBaseline" secondItem="Sqd-6q-gJr" secondAttribute="firstBaseline" id="CPQ-B8-62w"/>
                             <constraint firstItem="Mad-b0-n2s" firstAttribute="leading" secondItem="Sqd-6q-gJr" secondAttribute="leading" id="Fhi-8s-Al9"/>
+                            <constraint firstItem="V76-Vq-Eha" firstAttribute="top" secondItem="C3o-pk-cN0" secondAttribute="bottom" constant="6" symbolic="YES" id="MiL-6D-HIL"/>
                             <constraint firstItem="Sqd-6q-gJr" firstAttribute="leading" secondItem="V20-Wn-i5V" secondAttribute="trailing" constant="8" symbolic="YES" id="O0K-nd-RPQ"/>
                             <constraint firstItem="Mad-b0-n2s" firstAttribute="top" secondItem="Sqd-6q-gJr" secondAttribute="bottom" constant="6" symbolic="YES" id="Odx-YU-2W2"/>
                             <constraint firstItem="V20-Wn-i5V" firstAttribute="leading" secondItem="tMU-fF-J2u" secondAttribute="leading" constant="20" symbolic="YES" id="a6h-a9-uKs"/>
+                            <constraint firstItem="V76-Vq-Eha" firstAttribute="leading" secondItem="Sqd-6q-gJr" secondAttribute="leading" id="hVl-B3-kIu"/>
                             <constraint firstItem="C3o-pk-cN0" firstAttribute="leading" secondItem="Sqd-6q-gJr" secondAttribute="leading" id="jUN-bT-4B2"/>
                             <constraint firstItem="myu-yY-Gu5" firstAttribute="leading" secondItem="Mad-b0-n2s" secondAttribute="leading" constant="21" id="jfj-yk-g8R"/>
                             <constraint firstItem="myu-yY-Gu5" firstAttribute="firstBaseline" secondItem="Mad-b0-n2s" secondAttribute="baseline" constant="22" id="kbE-Xl-bkD"/>
@@ -140,7 +152,7 @@
         <!--Grid Cell Detail-->
         <scene sceneID="Bbl-hd-e2W">
             <objects>
-                <viewController title="Grid Cell Detail" id="BuJ-SE-9YX" customClass="PreferencesGridCellDetailController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Grid Cell Detail" id="BuJ-SE-9YX" customClass="GridCellDetailPreferencesController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vkg-iZ-GE3">
                         <rect key="frame" x="0.0" y="0.0" width="555" height="393"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -215,7 +227,7 @@ DQ
                                             <rect key="frame" x="0.0" y="0.0" width="248" height="158"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <collectionViewFlowLayout key="collectionViewLayout" id="vH7-ui-nm7">
-                                                <size key="itemSize" width="248" height="311"/>
+                                                <size key="itemSize" width="1" height="1"/>
                                             </collectionViewFlowLayout>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <connections>
@@ -355,7 +367,7 @@ DQ
                 </objectController>
                 <userDefaultsController id="Qiq-XZ-K5p"/>
             </objects>
-            <point key="canvasLocation" x="1603.5" y="-225.5"/>
+            <point key="canvasLocation" x="1597" y="-243"/>
         </scene>
         <!--Importing-->
         <scene sceneID="Fsp-j7-wV2">
@@ -683,7 +695,7 @@ DQ
                 </viewController>
                 <customObject id="PfU-EP-Fjd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="877" y="567"/>
+            <point key="canvasLocation" x="877" y="626"/>
         </scene>
     </scenes>
     <resources>

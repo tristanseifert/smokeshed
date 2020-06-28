@@ -614,7 +614,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * Mouse entered the view.
      */
     override func mouseEntered(with event: NSEvent) {
-        self.isHovering = true
+        if UserDefaults.standard.gridCellHoverStyle {
+            self.isHovering = true
+        }
     }
     /**
      * Mouse exited the view.
@@ -860,6 +862,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // header format and header visibility
         self.nameLabel.isHidden = !d.gridCellImageDetail
         self.detailLabel.isHidden = !d.gridCellImageDetail
+        
+        self.nameLabel.superlayer!.isHidden = (!d.gridCellImageDetail &&
+                                               !d.gridCellSequenceNumber)
         
         self.nameType = d.gridCellImageDetailFormat["title"] as! Int
         self.detailTypeFirst = d.gridCellImageDetailFormat["row1"] as! Int
