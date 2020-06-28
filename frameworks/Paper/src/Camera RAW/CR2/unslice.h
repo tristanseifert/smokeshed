@@ -9,6 +9,7 @@
 #define unslice_h
 
 #include <stdint.h>
+#include <stddef.h>
 
 // forward declarations
 typedef struct jpeg_decompressor jpeg_decompressor_t;

@@ -6,8 +6,7 @@
 //
 
 import Cocoa
-
-import Smokeshop
+import UniformTypeIdentifiers
 
 import Smokeshop
 import CocoaLumberjackSwift
@@ -65,18 +64,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
     // MARK: - Initialization
     /**
-     * Date formatter used to render the capture date.
-     */
-    private static var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-
-        formatter.dateStyle = .long
-        formatter.timeStyle = .medium
-
-        return formatter
-    }()
-
-    /**
      * Initializes a new library collection item view. This prepares the view for layer-based rendering and
      * also sets up these layers.
      */
@@ -86,6 +73,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.optimizeForLayer()
         self.setUpLayers()
         self.setUpTrackingArea()
+        
+        self.installDefaultsObservers()
     }
     /// Decoding this view is not supported
     required init?(coder: NSCoder) {
@@ -625,7 +614,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * Mouse entered the view.
      */
     override func mouseEntered(with event: NSEvent) {
-        self.isHovering = true
+        if UserDefaults.standard.gridCellHoverStyle {
+            self.isHovering = true
+        }
     }
     /**
      * Mouse exited the view.
@@ -667,40 +658,55 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      */
     func updateContents() {
         // Populate with information from the image
-        if let image = self.image {
-            self.nameLabel.string = image.name
-
-            self.seqNumlabel.string = String(format: "%u", self.sequenceNumber)
-
-            // format subtitle string
-            if let date = image.dateCaptured {
-                let format = NSLocalizedString("%.0f × %.0f\n%@", comment: "Library collection view item subtitle format (1 = width, 2 = height, 3 = date)")
-
-                let size = image.rotatedImageSize
-                let dateStr = LibraryCollectionItemView.dateFormatter.string(from: date)
-
-                self.detailLabel.string = String(format: format, size.width, size.height, dateStr)
-            }
-            // no information about date
-            else {
-                let format = NSLocalizedString("%.0f × %.0f", comment: "Library collection view item subtitle format without date (1 = width, 2 = height)")
-
-                let size = image.rotatedImageSize
-
-                self.detailLabel.string = String(format: format, size.width, size.height)
-            }
+        if self.image != nil {
+            let format = Self.localized("seqnum.format")
+            self.seqNumlabel.string = String(format: format,
+                                             self.sequenceNumber)
+            
+            self.updateImageDetail()
 
             // update the image
             self.resizeImageContainer()
         }
         // Otherwise, clear info
         else {
-            self.nameLabel.string = "<name>"
-            self.detailLabel.string = "<size>\n<date captured>"
+            self.nameLabel.string = ""
+            self.detailLabel.string = ""
             self.seqNumlabel.string = "?"
 
             self.imageContainer.contents = nil
         }
+    }
+    
+    // MARK: Image Detail
+    /// What's shown in the name field?
+    private var nameType: Int = 0
+    
+    /// Raw format type for the first row of detail info
+    private var detailTypeFirst: Int = 0
+    /// Raw format type for the second row of detail info
+    private var detailTypeSecond: Int = 0
+    
+    /**
+     * Updates the name and detail labels based on the user's configuration.
+     */
+    private func updateImageDetail() {
+        // what should be displayed in the name field?
+        self.nameLabel.string = self.infoString(for: self.nameType)
+        
+        // format subtitle string
+        let first = self.infoString(for: self.detailTypeFirst)
+        let second = self.infoString(for: self.detailTypeSecond)
+        
+        var format = ""
+        
+        if !first.isEmpty, !second.isEmpty {
+            format = Self.localized("detail.2rows")
+        } else if !first.isEmpty, second.isEmpty {
+            format = Self.localized("detail.1rows")
+        }
+        
+        self.detailLabel.string = String(format: format, first, second)
     }
 
     // MARK: - Thumbnail support
@@ -800,6 +806,303 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                 }
             }
         })
-
+    }
+    
+    // MARK: - Layout settings
+    /// KVOs for observing user defaults changes on layout keys
+    private var kvos: [NSKeyValueObservation] = []
+    
+    /**
+     * Registers user defaults observers to track changes.
+     */
+    private func installDefaultsObservers() {
+        let d = UserDefaults.standard
+        
+        // grid sequence number display
+        kvos.append(d.observe(\.gridCellSequenceNumber) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                self?.updateFromDefaults()
+            }
+        })
+        
+        // image detail display and format
+        kvos.append(d.observe(\.gridCellImageDetail) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                self?.updateFromDefaults()
+            }
+        })
+        kvos.append(d.observe(\.gridCellImageDetailFormat) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                self?.updateFromDefaults()
+            }
+        })
+        
+        // ratings
+        kvos.append(d.observe(\.gridCellImageRatings) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                self?.updateFromDefaults()
+            }
+        })
+        
+        // set up the initial state
+        self.updateFromDefaults()
+    }
+    
+    /**
+     * Updates the cell's layout based on the current defaults.
+     *
+     * - Note: This should be executed on the main thread ONLY
+     */
+    private func updateFromDefaults() {
+        let d = UserDefaults.standard
+        
+        // is sequence number shown?
+        self.seqNumlabel.isHidden = !d.gridCellSequenceNumber
+        
+        // header format and header visibility
+        self.nameLabel.isHidden = !d.gridCellImageDetail
+        self.detailLabel.isHidden = !d.gridCellImageDetail
+        
+        self.nameLabel.superlayer!.isHidden = (!d.gridCellImageDetail &&
+                                               !d.gridCellSequenceNumber)
+        
+        self.nameType = d.gridCellImageDetailFormat["title"] as! Int
+        self.detailTypeFirst = d.gridCellImageDetailFormat["row1"] as! Int
+        self.detailTypeSecond = d.gridCellImageDetailFormat["row2"] as! Int
+        
+        if self.image != nil {
+            self.updateImageDetail()
+        }
+        
+        // are the ratings controls shown?
+        
+        // redraw cell
+        self.setNeedsDisplay(self.bounds)
+    }
+    
+    // MARK: Format types
+    /**
+     * Date formatter used to render the capture/import date.
+     */
+    private static var dateFormatter: DateFormatter = {
+        let fmt = DateFormatter()
+        fmt.dateStyle = .long
+        fmt.timeStyle = .medium
+        return fmt
+    }()
+    
+    /**
+     * Size formatter used for file size
+     */
+    private static var sizeFormatter: ByteCountFormatter = {
+        let fmt = ByteCountFormatter()
+        fmt.countStyle = .file
+        return fmt
+    }()
+    
+    /**
+     * Date component formatter used to display exposure times
+     */
+    private static var exposureTimeFormatter: DateComponentsFormatter = {
+        let fmt = DateComponentsFormatter()
+//        fmt.calendar = nil
+        fmt.allowsFractionalUnits = true
+        fmt.collapsesLargestUnit = true
+        fmt.unitsStyle = .brief
+        fmt.formattingContext = .standalone
+        fmt.allowedUnits = [.second, .minute, .hour]
+        return fmt
+    }()
+    
+    /**
+     * Various pieces of information that may be displayed in stringified form in the cell.
+     */
+    private enum DetailType: Int {
+        /// Blank (empty string)
+        case blank = 0
+        
+        /// Image caption
+        case caption = 1
+        
+        /// Original file name
+        case fileName = 2
+        /// Original file type
+        case fileType = 3
+        /// Original file size (bytes)
+        case fileSize = 5
+        
+        /// Image dimensions (pixels)
+        case dimensions = 12
+        
+        /// Lens information
+        case lensInfo = 6
+        /// Camera
+        case cameraInfo = 7
+        /// Exposure settings
+        case exposure = 8
+        
+        /// Capture date
+        case captureDate = 9
+        /// Import date
+        case importDate = 10
+        
+        /// Geotagged location
+        case location = 11
+    }
+    
+    /**
+     * Returns a stringified version of the image detail item with the given raw value.
+     *
+     * If a `DetailType` case could not be constructed, an error string is shown.
+     */
+    private func infoString(for detail: Int) -> String {
+        // ensure the passed in detail value was allowed
+        guard let type = DetailType(rawValue: detail) else {
+            return String(format: "<unknown format %d>", detail)
+        }
+        // ensure an image was loaded
+        guard let image = self.image else {
+            return ""
+        }
+        
+        // find the appropriate string
+        switch type {
+        case.blank:
+            return ""
+            
+        case .caption:
+            return "<TODO: caption>"
+            
+        case .fileName:
+            return image.name ?? Self.localized("placeholder.fileName")
+        case .fileType:
+            let url = image.url
+            guard let info = try? url?.resourceValues(forKeys: [.typeIdentifierKey]),
+                  let utiStr = info.typeIdentifier,
+                  let uti = UTType(utiStr),
+                  let typeStr = uti.localizedDescription else {
+                return Self.localized("placeholder.fileType")
+            }
+            return typeStr
+        case .fileSize:
+            let url = image.url
+            guard let info = try? url?.resourceValues(forKeys: [.fileSizeKey]),
+                  let size = info.fileSize else {
+                return Self.localized("placeholder.fileSize")
+            }
+            
+            return Self.sizeFormatter.string(fromByteCount: Int64(size))
+            
+        case .dimensions:
+            let size = image.rotatedImageSize
+            return String(format: Self.localized("dimensions.format"),
+                          size.width, size.height)
+            
+        case .lensInfo:
+            // try to get the lens name
+            var lensName = ""
+    
+            if let lens = image.lens, let name = lens.name {
+                lensName = name
+            } else {
+                lensName = Self.localized("placeholder.lensInfo.noLens")
+            }
+            
+            // TODO: extract focal length
+            let focalLength: Double? = nil
+            
+            // format the string
+            if let focalLength = focalLength {
+                let format = Self.localized("lens.format.full")
+                return String(format: format, lensName, focalLength)
+            } else {
+                let format = Self.localized("lens.format.nameOnly")
+                return String(format: format, lensName)
+            }
+        case .cameraInfo:
+            // try to get the camera name
+            if let camera = image.camera, let name = camera.name {
+                return name
+            } else {
+                return Self.localized("placeholder.cameraInfo")
+            }
+        case .exposure:
+            // get aperture
+            var aperture: String = ""
+            
+            if let apertureVal = image.metadata?.exif?.fNumber {
+                let format = Self.localized("exposure.aperture")
+                aperture = String(format: format, apertureVal.value)
+            }
+            
+            // build string for exposure time
+            var exposure: String = ""
+            
+            if let expTime = image.metadata?.exif?.exposureTime {
+                let val = expTime.value
+                
+                // less than 1 sec? format as fraction
+                if val < 1.0 {
+                    let format = Self.localized("exposure.time.fraction")
+                    exposure = String(format: format, expTime.numerator,
+                                      expTime.denominator)
+                }
+                // between 1 and 60 seconds?
+                else if (1.0..<60.0).contains(val) {
+                    let format = Self.localized("exposure.time.seconds")
+                    exposure = String(format: format, expTime.value)
+                }
+                // format as a string (x sec, 1.5 min, 2 hours, etc)
+                else {
+                    if let str = Self.exposureTimeFormatter.string(from: val) {
+                        let format = Self.localized("exposure.time.formatted")
+                        exposure = String(format: format, str)
+                    }
+                }
+            }
+            
+            // get sensitivity/ISO (TODO: proper name) string
+            var sensitivity: String = ""
+            
+            if let sensitivityArr = image.metadata?.exif?.iso,
+               let value = sensitivityArr.first {
+                let format = Self.localized("exposure.sensitivity")
+                sensitivity = String(format: format, Double(value), "ISO")
+            }
+            
+            // ensure we've got at least some info and format
+            guard !aperture.isEmpty || !exposure.isEmpty ||
+                  !sensitivity.isEmpty else {
+                return Self.localized("exposure.none")
+            }
+            
+            return String(format: Self.localized("exposure.format"), exposure,
+                          aperture, sensitivity)
+            
+        case .captureDate:
+            guard let date = image.dateCaptured else {
+                return Self.localized("placeholder.captureDate")
+            }
+            return Self.dateFormatter.string(from: date)
+        case .importDate:
+            guard let date = image.dateImported else {
+                return Self.localized("placeholder.importDate")
+            }
+            return Self.dateFormatter.string(from: date)
+            
+        case .location:
+            return "<TODO: location>"
+        }
+    }
+    
+    /**
+     * Returns a localized string with the given identifier.
+     */
+    private static func localized(_ identifier: String) -> String {
+        return NSLocalizedString(identifier,
+                                 tableName: "LibraryCollectionItemView",
+                                 bundle: Bundle.main,
+                                 value: "",
+                                 comment: "")
     }
 }

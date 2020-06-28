@@ -17,7 +17,7 @@ import CocoaLumberjackSwift
 class LibraryHistoryManager {
     /// URL to the history file
     static var historyUrl: URL! {
-        return Bowl.ContainerHelper.appCache?.appendingPathComponent("LibraryHistory.plist", isDirectory: false)
+        return Bowl.ContainerHelper.groupCache.appendingPathComponent("LibraryHistory.plist", isDirectory: false)
     }
     
     /// set containing URLs

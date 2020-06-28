@@ -25,10 +25,6 @@ static void CopyAndApplyWB(const uint16_t *inPlane, uint16_t *outPlane,
 // Debayering algorithms
 static int InterpolateBilinear(const uint16_t *inPlane, uint16_t *outPlane, size_t width, size_t height, size_t vShift);
 
-// MARK: Constants
-/// Maps a Bayer component to output image component index, assuming RGB layout.
-static const uint8_t ColorOutputMap[] = { 0, 1, 1, 2 };
-
 // MARK: Helpers
 /**
  * Gets the bayer color for the given column and line.

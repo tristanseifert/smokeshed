@@ -38,6 +38,11 @@ class ThumbHandler {
     private var xpc: NSXPCConnection! = nil
     /// Remote thumbnail service
     private var service: ThumbXPCProtocol! = nil
+    
+    /// Connection to the maintenance endpoint
+    private var maintenance: NSXPCConnection? = nil
+    /// Maintenance endpoint object proxy
+    private var maintenanceService: ThumbXPCMaintenanceEndpoint? = nil
 
     // MARK: - Initialization
     /**
@@ -283,6 +288,40 @@ class ThumbHandler {
         })
         
         self.service!.generate(requests)
+    }
+    
+    /**
+     * Retrieve the proxy object for the maintenance endpoint.
+     */
+    public func getMaintenanceEndpoint(_ callback: @escaping (ThumbXPCMaintenanceEndpoint) -> Void) {
+        // already have an endpoint?
+        if let endpoint = self.maintenanceService {
+            return callback(endpoint)
+        }
+        // get a handle to the endpoint
+        self.service.getMaintenanceEndpoint() { endpoint in
+            // create an XPC connection
+            self.maintenance = NSXPCConnection(listenerEndpoint: endpoint)
+
+            self.maintenance!.remoteObjectInterface = ThumbXPCProtocolHelpers.makeMaintenanceEndpoint()
+            self.maintenance!.resume()
+            
+            // retrieve the remote object proxy
+            self.maintenanceService = (self.maintenance!.remoteObjectProxy as! ThumbXPCMaintenanceEndpoint)
+            callback(self.maintenanceService!)
+        }
+    }
+    
+    /**
+     * Closes the maintenance endpoint connection.
+     */
+    public func closeMaintenanceEndpoint() {
+        // clear out the service
+        self.maintenanceService = nil
+        
+        // invalidate the xpc connection
+        self.maintenance!.invalidate()
+        self.maintenance = nil
     }
 
     // MARK: Retrieval
