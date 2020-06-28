@@ -285,7 +285,7 @@ public class CR2Reader {
 
         // get version
         let data = i.value
-        let vers: UInt8 = data.read(0)
+        let _: UInt8 = data.read(0)
     }
     
     /**

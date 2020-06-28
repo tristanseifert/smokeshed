@@ -616,7 +616,7 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="232" width="19" height="28"/>
+                                <rect key="frame" x="363" y="231" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="f15-vl-KWg">

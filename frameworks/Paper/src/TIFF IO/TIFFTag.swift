@@ -119,10 +119,6 @@ extension TIFFReader {
                         } else {
                             return try TagByteSeq(ifd, fileOffset: off)
                         }
-
-                    // known, but unimplemented types
-                    default:
-                        return try TagUnknown(ifd, fileOffset: off)
                 }
             }
 
