@@ -169,9 +169,21 @@ import Smokeshop
  */
 @objc public protocol ThumbXPCMaintenanceEndpoint {
     /**
+     * Reloads all configuration.
+     *
+     * This mainly exists since KVO on shared user defaults suites either never worked or is broken.
+     */
+    func reloadConfiguration()
+    
+    /**
      * Calculates the total disk space used to store thumbnail data.
      */
     func getSpaceUsed(withReply reply: @escaping (UInt, Error?) -> Void)
+    
+    /**
+     * Retrieve the currently used path for thumbnail storage.
+     */
+    func getStorageDir(withReply reply: @escaping (URL) -> Void)
 }
 
 /**

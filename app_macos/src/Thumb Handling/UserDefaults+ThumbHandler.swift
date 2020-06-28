@@ -20,4 +20,23 @@ extension UserDefaults {
             set(newValue, forKey: "thumbChunkCacheSize")
         }
     }
+    
+    /// Should the thumbnail generator queue be sized by the system?
+    @objc dynamic var thumbWorkQueueSizeAuto: Bool {
+        get {
+            return self.bool(forKey: "thumbWorkQueueSizeAuto")
+        }
+        set {
+            set(newValue, forKey: "thumbWorkQueueSizeAuto")
+        }
+    }
+    /// If manually sized, how many threads are to be used for the generator work queue?
+    @objc dynamic var thumbWorkQueueSize: Int {
+        get {
+            return self.integer(forKey: "thumbWorkQueueSize")
+        }
+        set {
+            set(newValue, forKey: "thumbWorkQueueSize")
+        }
+    }
 }

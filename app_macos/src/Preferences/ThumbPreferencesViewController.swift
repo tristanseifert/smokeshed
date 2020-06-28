@@ -43,11 +43,26 @@ class ThumbPreferencesViewController: NSViewController {
      */
     override func viewWillDisappear() {
         super.viewWillDisappear()
+        
+        // save preferences
+        self.userDefaultsController.save(nil)
+        self.maintenance.reloadConfiguration()
     
         // invalidate management connection and any cached values
         ThumbHandler.shared.closeMaintenanceEndpoint()
         
         self.dataSpaceUsedAvailable = false
+    }
+    
+    // MARK: - Preferences
+    /// Whether the thumb generator work queue size is automatically managed
+    @objc dynamic private var autoSizeGeneratorQueue: Bool {
+        get {
+            return UserDefaults.thumbShared.thumbWorkQueueSizeAuto
+        }
+        set {
+            UserDefaults.thumbShared.thumbWorkQueueSizeAuto = newValue
+        }
     }
     
     // MARK: - Stats
@@ -76,6 +91,15 @@ class ThumbPreferencesViewController: NSViewController {
                          afterDelay: 0.2)
         } else {
             self.querySpaceUsed()
+        }
+    }
+    
+    /**
+     * Reveal the thumb storage directory.
+     */
+    @IBAction private func revealThumbStorageDir(_ sender: Any?) {
+        self.maintenance.getStorageDir() { (url) in
+            NSWorkspace.shared.activateFileViewerSelecting([url])
         }
     }
     

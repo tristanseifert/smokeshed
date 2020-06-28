@@ -99,6 +99,14 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
     
     // MARK: - External Interface
     /**
+     * Fires the "reload config" notification.
+     */
+    func reloadConfiguration() {
+        NotificationCenter.default.post(name: .reloadConfigNotification,
+                                        object: nil)
+    }
+    
+    /**
      * Calculate the total amount of disk space used by the chunk storage.
      */
     func getSpaceUsed(withReply reply: @escaping (UInt, Error?) -> Void) {
@@ -113,9 +121,21 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
         }
     }
     
+    /**
+     * Queries the chonker for its storage directory.
+     */
+    func getStorageDir(withReply reply: @escaping (URL) -> Void) {
+        reply(self.directory.chonker.chunkDir)
+    }
+    
     // MARK: - Errors
     enum MaintenanceErrors: Error {
         /// Connecting client isn't allowed
         case connectionForbidden(_ identifier: Any?)
     }
+}
+
+extension NSNotification.Name {
+    /// A client requested that we reload our configuration
+    static let reloadConfigNotification = NSNotification.Name("me.tseifert.smokeshed.hand.reloadConfigNotification")
 }

@@ -63,18 +63,47 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         
         // observe cache size changes
         let sizeObs = UserDefaults.thumbShared.observe(\.thumbChunkCacheSize,
-                                                       options: .initial) {
-            (defaults, change) in
-            let new = UserDefaults.thumbShared.thumbChunkCacheSize
-            
-            if new > (1024 * 1024 * 16) {
-                DDLogVerbose("New thumb cache size: \(new)")
-                self.chunkCache.totalCostLimit = new
-            } else {
-                DDLogWarn("Ignoring too small cache size: \(new)")
-            }
+                                                       options: [])
+        { _, _ in
+            self.refreshSettings()
         }
         self.kvos.append(sizeObs)
+        
+        // register for reload config notification
+        self.reloadConfigObs = NotificationCenter.default.addObserver(forName: .reloadConfigNotification,
+                                                                      object: nil,
+                                                                      queue: nil)
+        { [weak self] _ in
+            self?.refreshSettings()
+        }
+        
+        self.refreshSettings()
+    }
+    
+    /**
+     * Remove notification observers.
+     */
+    deinit {
+        NotificationCenter.default.removeObserver(self.reloadConfigObs!)
+    }
+    
+    // MARK: Configuration
+    /// Notification handler for config reloading
+    private var reloadConfigObs: NSObjectProtocol!
+    
+    /**
+     * Updates the size of the thumbnail cache based on configuration.
+     */
+    private func refreshSettings() {
+        // get the new cache size
+        let new = UserDefaults.thumbShared.thumbChunkCacheSize
+        
+        if new > (1024 * 1024 * 16) {
+            DDLogVerbose("New thumb cache size: \(new)")
+            self.chunkCache.totalCostLimit = new
+        } else {
+            DDLogWarn("Ignoring too small cache size: \(new)")
+        }
     }
     
     // MARK: - Public interface

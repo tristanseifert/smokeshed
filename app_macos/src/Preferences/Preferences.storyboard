@@ -9,7 +9,7 @@
         <scene sceneID="4BR-MW-SU1">
             <objects>
                 <windowController showSeguePresentationStyle="single" id="878-Oo-XwP" userLabel="Preferences Window Controller" customClass="PreferencesWindowController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Qxb-IQ-hQb">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Qxb-IQ-hQb">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <rect key="contentRect" x="-3501" y="354" width="600" height="400"/>
                         <rect key="screenRect" x="-3926" y="-108" width="2560" height="1415"/>
@@ -29,15 +29,16 @@
             </objects>
             <point key="canvasLocation" x="-566" y="-60"/>
         </scene>
-        <!--Tab View Controller-->
+        <!--Preferences Tab Controller-->
         <scene sceneID="P2A-ea-J9F">
             <objects>
-                <tabViewController selectedTabViewItemIndex="0" tabStyle="toolbar" id="Vao-Xp-xGa" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="0" tabStyle="toolbar" id="Vao-Xp-xGa" customClass="PreferencesTabController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
+                        <tabViewItem label="General" image="NSPreferencesGeneral" id="IZL-pg-GFx"/>
                         <tabViewItem label="Thumbnails" identifier="" image="rectangle.and.text.magnifyingglass" catalog="system" id="pnq-Dh-pvA"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="HoW-uU-1NE">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="500"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <font key="font" metaFont="message"/>
                         <connections>
@@ -46,12 +47,44 @@
                     </tabView>
                     <connections>
                         <outlet property="tabView" destination="HoW-uU-1NE" id="Mvp-GL-G34"/>
+                        <segue destination="8fh-SO-nJI" kind="relationship" relationship="tabItems" id="vdO-HG-yOa"/>
                         <segue destination="3zq-It-y78" kind="relationship" relationship="tabItems" id="XIB-md-kVp"/>
                     </connections>
                 </tabViewController>
                 <customObject id="7yU-it-CRY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="126" y="-57"/>
+            <point key="canvasLocation" x="140" y="20.5"/>
+        </scene>
+        <!--General-->
+        <scene sceneID="i9m-iH-df7">
+            <objects>
+                <viewController id="8fh-SO-nJI" userLabel="General" sceneMemberID="viewController">
+                    <view key="view" id="tMU-fF-J2u">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3U6-Yw-PEE">
+                                <rect key="frame" x="18" y="264" width="564" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="560" id="8T0-Gl-1B9"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="0kA-N8-N3d">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="3U6-Yw-PEE" firstAttribute="leading" secondItem="tMU-fF-J2u" secondAttribute="leading" constant="20" symbolic="YES" id="ANP-uy-bKH"/>
+                            <constraint firstItem="3U6-Yw-PEE" firstAttribute="top" secondItem="tMU-fF-J2u" secondAttribute="top" constant="20" symbolic="YES" id="Uyx-tR-sfd"/>
+                            <constraint firstAttribute="trailing" secondItem="3U6-Yw-PEE" secondAttribute="trailing" constant="20" symbolic="YES" id="epG-Uq-Dte"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="yHE-ag-fCy" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="877" y="-789"/>
         </scene>
         <!--Thumbnails-->
         <scene sceneID="ygO-j5-T50">
@@ -216,41 +249,132 @@
                                                 <real value="3.4028234663852886e+38"/>
                                             </customSpacing>
                                         </stackView>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pQb-5d-sNk">
+                                            <rect key="frame" x="83" y="31" width="167" height="27"/>
+                                            <buttonCell key="cell" type="push" title="Reveal Storage Directory…" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ikw-Hh-YVf">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="smallSystem"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="revealThumbStorageDir:" target="3zq-It-y78" id="XCv-AW-QnQ"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="pQb-5d-sNk" firstAttribute="leading" secondItem="QSc-X1-UZN" secondAttribute="leading" id="E3O-XT-kY2"/>
                                         <constraint firstItem="8be-dz-vPi" firstAttribute="leading" secondItem="QcX-1w-9hU" secondAttribute="leading" constant="15" id="PFK-Ry-7yD"/>
                                         <constraint firstItem="QSc-X1-UZN" firstAttribute="leading" secondItem="8be-dz-vPi" secondAttribute="trailing" constant="5" id="WeC-zA-uQM"/>
                                         <constraint firstItem="QSc-X1-UZN" firstAttribute="top" secondItem="8be-dz-vPi" secondAttribute="top" id="ern-Uy-aih"/>
                                         <constraint firstItem="8be-dz-vPi" firstAttribute="top" secondItem="QcX-1w-9hU" secondAttribute="top" constant="10" id="slm-OM-Xck"/>
+                                        <constraint firstItem="pQb-5d-sNk" firstAttribute="top" secondItem="QSc-X1-UZN" secondAttribute="bottom" constant="8" symbolic="YES" id="tqK-Tr-RlP"/>
                                     </constraints>
                                 </view>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="Btt-8Z-gyy"/>
                                 </constraints>
                             </box>
+                            <button toolTip="When checked, the size of the thumbnail work queue is dynamically adjusted based on the system's load." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf4-nz-Tre">
+                                <rect key="frame" x="226" y="425" width="262" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically manage work queue size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PIc-zS-nKt">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.autoSizeGeneratorQueue" id="w21-Qv-bdy">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
+                                <rect key="frame" x="363" y="393" width="19" height="28"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="f15-vl-KWg">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="Yeg-Cv-aOO"/>
+                                </connections>
+                            </stepper>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-UR-ynk">
+                                <rect key="frame" x="141" y="426" width="81" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Work queue:" id="Jgf-Zm-RKY">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l4Z-39-HBz" userLabel="Thread Count">
+                                <rect key="frame" x="311" y="397" width="50" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="PWz-U1-I5J"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="16" drawsBackground="YES" id="rsb-68-cKz">
+                                    <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="XVG-27-6FR">
+                                        <real key="minimum" value="1"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="5od-5h-x7S">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="PNc-1Q-bFN"/>
+                                </connections>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-sJ-nbr">
+                                <rect key="frame" x="247" y="400" width="58" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Threads:" id="fcb-Rg-D7h">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="NaS-7b-j0p" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="top" id="17L-ei-Ryh"/>
                             <constraint firstItem="vdh-Bq-Wij" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="42F-hV-rix"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="5Ca-Ex-hKH"/>
                             <constraint firstItem="bKl-AK-EBP" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="BUk-hX-J7k"/>
+                            <constraint firstItem="l4Z-39-HBz" firstAttribute="top" secondItem="Tf4-nz-Tre" secondAttribute="bottom" constant="8" symbolic="YES" id="C1a-vs-7QS"/>
                             <constraint firstItem="0Va-Tk-gOo" firstAttribute="top" secondItem="Mzt-gk-6Sa" secondAttribute="top" constant="20" symbolic="YES" id="Ckh-DJ-mTX"/>
                             <constraint firstAttribute="trailing" secondItem="bKl-AK-EBP" secondAttribute="trailing" constant="20" symbolic="YES" id="Esb-sT-x3v"/>
+                            <constraint firstItem="Tf4-nz-Tre" firstAttribute="top" secondItem="0Va-Tk-gOo" secondAttribute="bottom" multiplier="1.25" constant="8" symbolic="YES" id="H57-hp-UFG"/>
+                            <constraint firstItem="l4Z-39-HBz" firstAttribute="leading" secondItem="F0i-sJ-nbr" secondAttribute="trailing" constant="8" symbolic="YES" id="Hj4-qE-z0t"/>
                             <constraint firstItem="0Va-Tk-gOo" firstAttribute="leading" secondItem="vdh-Bq-Wij" secondAttribute="trailing" constant="8" symbolic="YES" id="ILO-8w-gOQ"/>
                             <constraint firstItem="3zg-l3-GgI" firstAttribute="top" secondItem="bKl-AK-EBP" secondAttribute="bottom" constant="12" symbolic="YES" id="NJK-i2-rBz"/>
                             <constraint firstAttribute="trailing" secondItem="ZO0-J4-3Tq" secondAttribute="trailing" constant="20" symbolic="YES" id="OWP-r2-znI"/>
                             <constraint firstItem="vdh-Bq-Wij" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="Q5E-Ge-qIX"/>
+                            <constraint firstItem="9IV-UR-ynk" firstAttribute="trailing" secondItem="vdh-Bq-Wij" secondAttribute="trailing" id="SVY-pO-E5F"/>
+                            <constraint firstItem="NaS-7b-j0p" firstAttribute="leading" secondItem="l4Z-39-HBz" secondAttribute="trailing" constant="5" id="T4T-0T-DYy"/>
+                            <constraint firstItem="Tf4-nz-Tre" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="X49-Bg-xjz"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="trailing" constant="8" symbolic="YES" id="bA3-p3-euu"/>
+                            <constraint firstItem="9IV-UR-ynk" firstAttribute="firstBaseline" secondItem="Tf4-nz-Tre" secondAttribute="firstBaseline" id="dpZ-NB-DFx"/>
                             <constraint firstItem="3zg-l3-GgI" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="e8O-5l-d6d"/>
+                            <constraint firstItem="F0i-sJ-nbr" firstAttribute="leading" secondItem="Tf4-nz-Tre" secondAttribute="leading" constant="21" id="edH-fA-PWd"/>
                             <constraint firstAttribute="bottom" secondItem="3zg-l3-GgI" secondAttribute="bottom" constant="20" symbolic="YES" id="q3B-fy-se1"/>
+                            <constraint firstItem="F0i-sJ-nbr" firstAttribute="firstBaseline" secondItem="l4Z-39-HBz" secondAttribute="firstBaseline" id="uxO-U0-yOk"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="PfU-EP-Fjd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="763" y="-306"/>
+            <point key="canvasLocation" x="877" y="-308"/>
         </scene>
     </scenes>
     <resources>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="NSRefreshFreestandingTemplate" width="15" height="13"/>
         <image name="rectangle.and.text.magnifyingglass" catalog="system" width="20" height="13"/>
     </resources>
