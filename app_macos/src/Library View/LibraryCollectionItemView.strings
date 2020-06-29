@@ -24,11 +24,6 @@
 // Image dimensions format string
 "dimensions.format" = "%1$.0f × %2$.0f";
 
-// Format string for detail label with one info string
-"detail.1rows" = "%1$@";
-// Format string for detail label with two info strings
-"detail.2rows" = "%1$@\n%2$@";
-
 // Sequence number format string
 "seqnum.format" = "%1$u";
 
@@ -51,17 +46,15 @@
  * them to be placed next to each other without any extra spacing required.
  */
 // 1 = numerator, 2 = denominator
-"exposure.time.fraction" = "%1$d/%2$d ";
+"exposure.time.fraction" = "%1$d/%2$d  ";
 // 1 = seconds (range 1..<60)
-"exposure.time.seconds" = "%1$g sec ";
+"exposure.time.seconds" = "%1$g sec  ";
 // 1 = component formatter output
-"exposure.time.formatted" = "%1$@ ";
+"exposure.time.formatted" = "%1$@  ";
 // 1 = aperture
-"exposure.aperture" = "ƒ/%1$g ";
+"exposure.aperture" = "ƒ/%1$g  ";
 // 1 = sensitivity value, 2 = sensitivity type
-"exposure.sensitivity" = "%2$@ %1$g ";
+"exposure.sensitivity" = "%2$@ %1$g  ";
 
-// 1 = exposure string, 2 = aperture string, 3 = sensitivity string
-"exposure.format" = "%1$@%2$@%3$@";
 // no exposure information available
 "exposure.none" = "No exposure information";

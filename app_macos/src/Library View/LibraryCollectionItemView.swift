@@ -228,7 +228,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     /// Spacing between the left and right edges of the cell, and text labels
     private static let labelHSpacing: CGFloat = 3.0
     /// Spacing between top and bottom edge of the info area and text labels
-    private static let labelVSpacing: CGFloat = 2.0
+    private static let labelVSpacing: CGFloat = 0.0
 
     /// Font for the name text
     private static let nameFont: NSFont = NSFont.systemFont(ofSize: 15, weight: .medium)
@@ -263,11 +263,29 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // create a font from the updated descriptor
         return NSFont(descriptor: desc, size: fnt.pointSize) ?? fnt
     }()
-
-    /// Shadow radius of the name label
-    private static let nameShadowRadius: CGFloat = 2
-    /// Shadow opacity for the name label
-    private static let nameShadowOpacity: Float = 0.15
+    
+    /// Attributes for the name label
+    private static let nameAttributes: [NSAttributedString.Key: Any] = {
+        // text shadow
+        let shadow = NSShadow()
+        shadow.shadowBlurRadius = 2.0
+        shadow.shadowOffset = NSSize(width: 0, height: -1)
+        shadow.shadowColor = NSColor(named: "LibraryItemNameShadow")!
+        
+        // attributes
+        return [
+            .shadow: shadow,
+            .foregroundColor: NSColor(named: "LibraryItemName")!
+        ]
+    }()
+    
+    /// Attributes for the detail label
+    private static let detailAttributes: [NSAttributedString.Key: Any] = {
+        return [
+            .shadow: NSShadow(),
+            .foregroundColor: NSColor(named: "LibraryItemInfo")!
+        ]
+    }()
 
     /**
      * Creates the top info box.
@@ -349,26 +367,18 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // File name label
         self.nameLabel.delegate = self
         self.nameLabel.name = "nameLabel"
-
-        self.nameLabel.font = Self.nameFont
-        self.nameLabel.fontSize = Self.nameFont.pointSize
-        self.nameLabel.foregroundColor = NSColor(named: "LibraryItemName")?.cgColor
-
+        self.nameLabel.masksToBounds = false
         self.nameLabel.alignmentMode = .left
         self.nameLabel.truncationMode = .end
 
-        self.nameLabel.shadowColor = NSColor(named: "LibraryItemNameShadow")?.cgColor
-        self.nameLabel.shadowRadius = Self.nameShadowRadius
-        self.nameLabel.shadowOpacity = Self.nameShadowOpacity
-
         self.nameLabel.constraints = [
-            // for 15pt font, use 18pt height
+            // for 15pt font, use 20pt height
             CAConstraint(attribute: .height, relativeTo: "superlayer",
-                         attribute: .height, scale: 0, offset: 18),
+                         attribute: .height, scale: 0, offset: 20),
             // align top edge to superlayer (with some offset)
             CAConstraint(attribute: .maxY, relativeTo: "superlayer",
                          attribute: .maxY,
-                         offset: -Self.labelVSpacing),
+                         offset: -2),
             // align right and left edges to superlayer
             CAConstraint(attribute: .maxX, relativeTo: "superlayer",
                          attribute: .maxX,
@@ -383,11 +393,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // Subtitle (aux info for image)
         self.detailLabel.delegate = self
         self.detailLabel.name = "detailLabel"
-
-        self.detailLabel.font = Self.detailFont
-        self.detailLabel.fontSize = Self.detailFont.pointSize
-        self.detailLabel.foregroundColor = NSColor(named: "LibraryItemInfo")?.cgColor
-
+        self.detailLabel.masksToBounds = false
         self.detailLabel.alignmentMode = .left
         self.detailLabel.truncationMode = .end
 
@@ -837,21 +843,27 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      */
     private func updateImageDetail() {
         // what should be displayed in the name field?
-        self.nameLabel.string = self.infoString(for: self.nameType)
+        self.nameLabel.string = self.infoString(for: self.nameType,
+                                                font: Self.nameFont,
+                                                Self.nameAttributes)
         
         // format subtitle string
-        let first = self.infoString(for: self.detailTypeFirst)
-        let second = self.infoString(for: self.detailTypeSecond)
+        let first = self.infoString(for: self.detailTypeFirst,
+                                    font: Self.detailFont,
+                                    Self.detailAttributes)
+        let second = self.infoString(for: self.detailTypeSecond,
+                                     font: Self.detailFont,
+                                     Self.detailAttributes)
         
-        var format = ""
-        
-        if !first.isEmpty, !second.isEmpty {
-            format = Self.localized("detail.2rows")
-        } else if !first.isEmpty, second.isEmpty {
-            format = Self.localized("detail.1rows")
+        if first.length > 0, second.length > 0 {
+            let line = NSMutableAttributedString(attributedString: first)
+            line.append(NSAttributedString(string: "\n"))
+            line.append(second)
+            
+            self.detailLabel.string = line
+        } else if first.length > 0, (second.length == 0) {
+            self.detailLabel.string = first
         }
-        
-        self.detailLabel.string = String(format: format, first, second)
     }
     
     // MARK: Bindings
@@ -1137,19 +1149,131 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      *
      * If a `DetailType` case could not be constructed, an error string is shown.
      */
-    private func infoString(for detail: Int) -> String {
+    private func infoString(for detail: Int, font: NSFont, _ defaultAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+        // default attributes
+        let attributes: [NSAttributedString.Key: Any] = defaultAttributes.merging([
+            .font: font,
+        ]) { $1 }
+        
         // ensure the passed in detail value was allowed
         guard let type = DetailType(rawValue: detail) else {
-            return String(format: "<unknown format %d>", detail)
+            return NSAttributedString(string: String(format: "<unknown format %d>", detail),
+                                      attributes: attributes)
         }
         // ensure an image was loaded
         guard let image = self.image else {
-            return ""
+            return NSAttributedString()
         }
         
-        // find the appropriate string
+        // can it be handled with a plain string
+        if let plain = self.infoString(for: type, image) {
+            return NSAttributedString(string: plain, attributes: attributes)
+        }
+        
+        // these are the attributed return values
         switch type {
-        case.blank:
+        case .exposure:
+            // get aperture
+            var aperture: String = ""
+            
+            if let apertureVal = image.metadata?.exif?.fNumber {
+                let format = Self.localized("exposure.aperture")
+                aperture = String(format: format, apertureVal.value)
+            }
+            
+            // build string for exposure time
+            var exposure = NSAttributedString()
+            
+            if let expTime = image.metadata?.exif?.exposureTime {
+                let val = expTime.value
+                
+                // less than 1 sec? format as fraction
+                if val < 1.0 {
+                    // get a font that creates fractions
+                    let features = [
+                        // create fractions automatically
+                        [
+                            NSFontDescriptor.FeatureKey.typeIdentifier: kFractionsType,
+                            NSFontDescriptor.FeatureKey.selectorIdentifier: kDiagonalFractionsSelector,
+                        ],
+                    ]
+                    
+                    var desc = font.fontDescriptor
+                    desc = desc.addingAttributes([
+                        .featureSettings: features
+                    ])
+                    let newFont = NSFont(descriptor: desc, size: font.pointSize) ?? font
+                    
+                    let attribs = defaultAttributes.merging([
+                        .font: newFont
+                    ]) { $1 }
+                    
+                    // format the string
+                    let format = Self.localized("exposure.time.fraction")
+                    let plain = String(format: format, expTime.numerator,
+                                       expTime.denominator)
+                    
+                    exposure = NSAttributedString(string: plain,
+                                                  attributes: attribs)
+                }
+                // between 1 and 60 seconds?
+                else if (1.0..<60.0).contains(val) {
+                    let format = Self.localized("exposure.time.seconds")
+                    let plain = String(format: format, expTime.value)
+                    
+                    exposure = NSAttributedString(string: plain, attributes: attributes)
+                }
+                // format as a string (x sec, 1.5 min, 2 hours, etc)
+                else {
+                    if let str = Self.exposureTimeFormatter.string(from: val) {
+                        let format = Self.localized("exposure.time.formatted")
+                        let plain = String(format: format, str)
+                        
+                        exposure = NSAttributedString(string: plain, attributes: attributes)
+                    }
+                }
+            }
+            
+            // get sensitivity/ISO (TODO: proper name) string
+            var sensitivity: String = ""
+            
+            if let sensitivityArr = image.metadata?.exif?.iso,
+               let value = sensitivityArr.first {
+                let format = Self.localized("exposure.sensitivity")
+                sensitivity = String(format: format, Double(value), "ISO")
+            }
+            
+            // ensure we've got at least some info and format
+            guard !aperture.isEmpty || exposure.length > 0 ||
+                  !sensitivity.isEmpty else {
+                return NSAttributedString(string: Self.localized("exposure.none"),
+                                          attributes: attributes)
+            }
+            
+            // build teh final string
+            let out = NSMutableAttributedString()
+            
+            out.append(exposure)
+            out.append(NSAttributedString(string: aperture,
+                                          attributes: attributes))
+            out.append(NSAttributedString(string: sensitivity,
+                                          attributes: attributes))
+            
+            return out
+            
+        // shouldn't get here
+        default:
+            return NSAttributedString(string: String(format: "Unhandled type %d", type.rawValue))
+        }
+    }
+    
+    /**
+     * Returns a plain info string. Most infos do not require attributes so they're implemented here with a
+     * plain string.
+     */
+    private func infoString(for type: DetailType, _ image: Image) -> String? {
+        switch type {
+        case .blank:
             return ""
             
         case .caption:
@@ -1208,58 +1332,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             } else {
                 return Self.localized("placeholder.cameraInfo")
             }
-        case .exposure:
-            // get aperture
-            var aperture: String = ""
-            
-            if let apertureVal = image.metadata?.exif?.fNumber {
-                let format = Self.localized("exposure.aperture")
-                aperture = String(format: format, apertureVal.value)
-            }
-            
-            // build string for exposure time
-            var exposure: String = ""
-            
-            if let expTime = image.metadata?.exif?.exposureTime {
-                let val = expTime.value
-                
-                // less than 1 sec? format as fraction
-                if val < 1.0 {
-                    let format = Self.localized("exposure.time.fraction")
-                    exposure = String(format: format, expTime.numerator,
-                                      expTime.denominator)
-                }
-                // between 1 and 60 seconds?
-                else if (1.0..<60.0).contains(val) {
-                    let format = Self.localized("exposure.time.seconds")
-                    exposure = String(format: format, expTime.value)
-                }
-                // format as a string (x sec, 1.5 min, 2 hours, etc)
-                else {
-                    if let str = Self.exposureTimeFormatter.string(from: val) {
-                        let format = Self.localized("exposure.time.formatted")
-                        exposure = String(format: format, str)
-                    }
-                }
-            }
-            
-            // get sensitivity/ISO (TODO: proper name) string
-            var sensitivity: String = ""
-            
-            if let sensitivityArr = image.metadata?.exif?.iso,
-               let value = sensitivityArr.first {
-                let format = Self.localized("exposure.sensitivity")
-                sensitivity = String(format: format, Double(value), "ISO")
-            }
-            
-            // ensure we've got at least some info and format
-            guard !aperture.isEmpty || !exposure.isEmpty ||
-                  !sensitivity.isEmpty else {
-                return Self.localized("exposure.none")
-            }
-            
-            return String(format: Self.localized("exposure.format"), exposure,
-                          aperture, sensitivity)
             
         case .captureDate:
             guard let date = image.dateCaptured else {
@@ -1274,6 +1346,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             
         case .location:
             return "<TODO: location>"
+            
+        default:
+            return nil
         }
     }
     
