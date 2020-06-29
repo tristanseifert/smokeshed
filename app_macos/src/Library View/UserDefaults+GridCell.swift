@@ -35,6 +35,15 @@ extension UserDefaults {
             set(newValue, forKey: "gridCellImageRatings")
         }
     }
+    /// Is the ratings control shown only on hover?
+    @objc dynamic var gridCellRatingsOnHoverOnly: Bool {
+        get {
+            return self.bool(forKey: "gridCellRatingsOnHoverOnly")
+        }
+        set {
+            set(newValue, forKey: "gridCellRatingsOnHoverOnly")
+        }
+    }
     /// Do image cells have a hovered appearance?
     @objc dynamic var gridCellHoverStyle: Bool {
         get {

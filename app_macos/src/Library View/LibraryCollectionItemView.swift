@@ -17,7 +17,7 @@ import CocoaLumberjackSwift
  */
 class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScaleDelegate {
     /// Image to display info about
-    var image: Image! = nil {
+    @objc dynamic var image: Image! = nil {
         /**
          * When the image we're representing is changed, it's important that we tell AppKit to redraw us,
          * since we earlier requested to only be redrawn when we demand it.
@@ -25,6 +25,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         didSet {
             self.refreshThumb()
             self.updateContents()
+            self.updateBindings()
             self.setNeedsDisplay(self.bounds)
         }
     }
@@ -35,6 +36,13 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
          */
         didSet {
             self.setNeedsDisplay(self.bounds)
+        }
+    }
+    
+    /// Are controls in the cell allowed to modify the image object?
+    var isEditable: Bool = true {
+        didSet {
+            self.ratings.isEditable = self.isEditable
         }
     }
 
@@ -106,6 +114,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // set up the top info area and the image area
         self.setUpTopInfoBox()
         self.setUpImageContainer()
+        
+        // lastly, the bottom info area
+        self.setUpBottomInfoBox()
     }
 
     // MARK: Borders
@@ -222,9 +233,36 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     /// Font for the name text
     private static let nameFont: NSFont = NSFont.systemFont(ofSize: 15, weight: .medium)
     /// Font for the details (subtitle) text
-    private static let detailFont: NSFont = NSFont.systemFont(ofSize: 13, weight: .medium)
+    private static let detailFont: NSFont = {
+        let fnt = NSFont.systemFont(ofSize: 13, weight: .medium)
+        return fnt
+    }()
     /// Font for the sequence number
-    private static let seqNoFont: NSFont = NSFont.monospacedDigitSystemFont(ofSize: 46, weight: .semibold)
+    private static let seqNoFont: NSFont = {
+        let fnt = NSFont.monospacedDigitSystemFont(ofSize: 46, weight: .semibold)
+        var desc = fnt.fontDescriptor
+        
+        // add some spicy attributes to the font
+        let features = [
+            // alternative 6/9
+            [
+                NSFontDescriptor.FeatureKey.typeIdentifier: kStylisticAlternativesType,
+                NSFontDescriptor.FeatureKey.selectorIdentifier: kStylisticAltOneOnSelector,
+            ],
+            // alternative 4
+            [
+                NSFontDescriptor.FeatureKey.typeIdentifier: kStylisticAlternativesType,
+                NSFontDescriptor.FeatureKey.selectorIdentifier: kStylisticAltTwoOnSelector,
+            ]
+        ]
+        
+        desc = desc.addingAttributes([
+            .featureSettings: features
+        ])
+        
+        // create a font from the updated descriptor
+        return NSFont(descriptor: desc, size: fnt.pointSize) ?? fnt
+    }()
 
     /// Shadow radius of the name label
     private static let nameShadowRadius: CGFloat = 2
@@ -250,7 +288,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                          attribute: .width, offset: -2),
             CAConstraint(attribute: .height, relativeTo: "superlayer",
                          attribute: .height, scale: 0,
-                         offset: LibraryCollectionItemView.topInfoHeight),
+                         offset: Self.topInfoHeight),
             // align top edge to superlayer (minus one for border)
             CAConstraint(attribute: .maxY, relativeTo: "superlayer",
                          attribute: .maxY, offset: -1),
@@ -286,8 +324,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.seqNumlabel.delegate = self
         self.seqNumlabel.name = "sequenceNumber"
 
-        self.seqNumlabel.font = LibraryCollectionItemView.seqNoFont
-        self.seqNumlabel.fontSize = LibraryCollectionItemView.seqNoFont.pointSize
+        self.seqNumlabel.font = Self.seqNoFont
+        self.seqNumlabel.fontSize = Self.seqNoFont.pointSize
         self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemSequence")?.cgColor
 
         self.seqNumlabel.alignmentMode = .right
@@ -299,11 +337,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             // align bottom edge to superlayer (with some offset)
             CAConstraint(attribute: .minY, relativeTo: "superlayer",
                          attribute: .minY,
-                         offset: LibraryCollectionItemView.labelHSpacing),
+                         offset: Self.labelHSpacing),
             // align right edge to superlayer
             CAConstraint(attribute: .maxX, relativeTo: "superlayer",
                          attribute: .maxX,
-                         offset: -LibraryCollectionItemView.labelHSpacing)
+                         offset: -Self.labelHSpacing)
         ]
 
         topBox.addSublayer(self.seqNumlabel)
@@ -312,16 +350,16 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.nameLabel.delegate = self
         self.nameLabel.name = "nameLabel"
 
-        self.nameLabel.font = LibraryCollectionItemView.nameFont
-        self.nameLabel.fontSize = LibraryCollectionItemView.nameFont.pointSize
+        self.nameLabel.font = Self.nameFont
+        self.nameLabel.fontSize = Self.nameFont.pointSize
         self.nameLabel.foregroundColor = NSColor(named: "LibraryItemName")?.cgColor
 
         self.nameLabel.alignmentMode = .left
         self.nameLabel.truncationMode = .end
 
         self.nameLabel.shadowColor = NSColor(named: "LibraryItemNameShadow")?.cgColor
-        self.nameLabel.shadowRadius = LibraryCollectionItemView.nameShadowRadius
-        self.nameLabel.shadowOpacity = LibraryCollectionItemView.nameShadowOpacity
+        self.nameLabel.shadowRadius = Self.nameShadowRadius
+        self.nameLabel.shadowOpacity = Self.nameShadowOpacity
 
         self.nameLabel.constraints = [
             // for 15pt font, use 18pt height
@@ -330,14 +368,14 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             // align top edge to superlayer (with some offset)
             CAConstraint(attribute: .maxY, relativeTo: "superlayer",
                          attribute: .maxY,
-                         offset: -LibraryCollectionItemView.labelVSpacing),
+                         offset: -Self.labelVSpacing),
             // align right and left edges to superlayer
             CAConstraint(attribute: .maxX, relativeTo: "superlayer",
                          attribute: .maxX,
-                         offset: -LibraryCollectionItemView.labelHSpacing),
+                         offset: -Self.labelHSpacing),
             CAConstraint(attribute: .minX, relativeTo: "superlayer",
                          attribute: .minX,
-                         offset: LibraryCollectionItemView.labelHSpacing)
+                         offset: Self.labelHSpacing)
         ]
 
         topBox.addSublayer(self.nameLabel)
@@ -346,8 +384,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.detailLabel.delegate = self
         self.detailLabel.name = "detailLabel"
 
-        self.detailLabel.font = LibraryCollectionItemView.detailFont
-        self.detailLabel.fontSize = LibraryCollectionItemView.detailFont.pointSize
+        self.detailLabel.font = Self.detailFont
+        self.detailLabel.fontSize = Self.detailFont.pointSize
         self.detailLabel.foregroundColor = NSColor(named: "LibraryItemInfo")?.cgColor
 
         self.detailLabel.alignmentMode = .left
@@ -357,21 +395,112 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             // align top edge to name, and bottom to superlayer
             CAConstraint(attribute: .maxY, relativeTo: "nameLabel",
                          attribute: .minY,
-                         offset: -LibraryCollectionItemView.labelVSpacing),
+                         offset: -Self.labelVSpacing),
             CAConstraint(attribute: .minY, relativeTo: "border",
                          attribute: .maxY,
-                         offset: LibraryCollectionItemView.labelVSpacing),
+                         offset: Self.labelVSpacing),
             // align left edge to superlayer
             CAConstraint(attribute: .minX, relativeTo: "superlayer",
                          attribute: .minX,
-                         offset: LibraryCollectionItemView.labelHSpacing),
+                         offset: Self.labelHSpacing),
             // align right edge to sequence number (with some spacing)
             CAConstraint(attribute: .maxX, relativeTo: "sequenceNumber",
                          attribute: .minX,
-                         offset: LibraryCollectionItemView.labelHSpacing)
+                         offset: Self.labelHSpacing)
         ]
 
         topBox.addSublayer(self.detailLabel)
+    }
+    
+    // MARK: - Bottom info area
+    /// Is the bottom info area being shown?
+    private var showBottomInfo: Bool = true {
+        didSet {
+            self.botBox.isHidden = !self.showBottomInfo
+        }
+    }
+    
+    /// Bottom info box layer
+    private var botBox: CALayer!
+    
+    /// Ratings control
+    private var ratings: NSLevelIndicator!
+    /// Spacing between bottom of view and ratings control
+    private static let ratingsBottomSpace: CGFloat = -10
+    /// Height of ratings area
+    private static let ratingsAreaHeight: CGFloat = 32
+        
+    private func setUpBottomInfoBox() {
+        // create a container for the bottom info stuff
+        let botBox = CALayer()
+        botBox.delegate = self
+        botBox.name = "bottomInfoBox"
+        botBox.layoutManager = CAConstraintLayoutManager()
+
+        // set the background color on the bottom layer
+        botBox.backgroundColor = NSColor(named: "LibraryItemTopInfoBackground")?.cgColor
+
+        botBox.constraints = [
+            // fill height of 32, width of superlayer
+            CAConstraint(attribute: .width, relativeTo: "superlayer",
+                         attribute: .width, offset: -2),
+            CAConstraint(attribute: .height, relativeTo: "superlayer",
+                         attribute: .height, scale: 0,
+                         offset: Self.ratingsAreaHeight),
+            // align top bottom to superlayer (minus one for border)
+            CAConstraint(attribute: .minY, relativeTo: "superlayer",
+                         attribute: .minY, offset: 1),
+            // align left edge to superlayer (plus one to fit cell border)
+            CAConstraint(attribute: .minX, relativeTo: "superlayer",
+                         attribute: .minX, offset: 1)
+        ]
+
+        self.layer!.addSublayer(botBox)
+        self.botBox = botBox
+
+        // border at the top of the box
+        let border = CALayer()
+        border.delegate = self
+        border.name = "border"
+        border.backgroundColor = NSColor(named: "LibraryItemTopInfoBorder")?.cgColor
+        border.constraints = [
+            // fill height of 1, width of superlayer
+            CAConstraint(attribute: .width, relativeTo: "superlayer",
+                         attribute: .width),
+            CAConstraint(attribute: .height, relativeTo: "superlayer",
+                         attribute: .height, scale: 0, offset: 1),
+            // align top edge to superlayer
+            CAConstraint(attribute: .maxY, relativeTo: "superlayer",
+                         attribute: .maxY),
+            // align right edge to superlayer
+            CAConstraint(attribute: .maxX, relativeTo: "superlayer",
+                         attribute: .maxX)
+        ]
+
+        botBox.addSublayer(border)
+        
+        // ratings control
+        self.ratings = NSLevelIndicator()
+        self.ratings.isEditable = true
+        self.ratings.levelIndicatorStyle = .rating
+        self.ratings.minValue = 0
+        self.ratings.maxValue = 5
+        self.ratings.placeholderVisibility = .always
+        self.ratings.ratingPlaceholderImage = NSImage(systemSymbolName: "star",
+                                                      accessibilityDescription: Self.localized("rating.unfilled.axdesc"))
+        self.ratings.ratingImage = NSImage(systemSymbolName: "star.fill",
+                                           accessibilityDescription: Self.localized("rating.filled.axdesc"))
+        self.ratings.fillColor = NSColor(named: "LibraryItemRatingFill")
+        
+        self.addSubview(self.ratings)
+        
+        self.ratings.translatesAutoresizingMaskIntoConstraints = false
+        self.ratings.controlSize = .regular
+        
+        self.ratings.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        self.ratings.bottomAnchor.constraint(equalTo: self.bottomAnchor,
+                                             constant: Self.ratingsBottomSpace).isActive = true
+        self.ratings.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
     }
 
     // MARK: - Image layer
@@ -401,7 +530,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.imageContainer.delegate = self
         self.imageContainer.name = "imageContainer"
 
-        self.imageContainer.borderWidth = LibraryCollectionItemView.imageBorderWidth
+        self.imageContainer.borderWidth = Self.imageBorderWidth
         self.imageContainer.borderColor = NSColor(named: "LibraryItemImageFrame")?.cgColor
 
         self.imageContainer.masksToBounds = true
@@ -413,9 +542,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.imageShadow.delegate = self
 
         self.imageShadow.shadowColor = NSColor(named: "LibraryItemImageShadow")?.cgColor
-        self.imageShadow.shadowRadius = LibraryCollectionItemView.imageShadowRadius
-        self.imageShadow.shadowOffset = LibraryCollectionItemView.imageShadowOffset
-        self.imageShadow.shadowOpacity = LibraryCollectionItemView.imageShadowOpacity
+        self.imageShadow.shadowRadius = Self.imageShadowRadius
+        self.imageShadow.shadowOffset = Self.imageShadowOffset
+        self.imageShadow.shadowOpacity = Self.imageShadowOpacity
 
         self.imageShadow.backgroundColor = NSColor(named: "LibraryItemImageBackground")?.cgColor
 
@@ -457,11 +586,12 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                 // spacing to top container
                 CAConstraint(attribute: .maxY, relativeTo: "topInfoBox",
                              attribute: .minY,
-                             offset: -LibraryCollectionItemView.edgeImageSpacing),
+                             offset: -Self.edgeImageSpacing),
                 // spacing to bottom of cell
-                CAConstraint(attribute: .minY, relativeTo: "bottomBorder",
+                CAConstraint(attribute: .minY,
+                             relativeTo: self.showBottomInfo ? "bottomInfoBox" : "superlayer",
                              attribute: .maxY,
-                             offset: LibraryCollectionItemView.edgeImageSpacing),
+                             offset: Self.edgeImageSpacing),
 
                 // image width ratio
                 CAConstraint(attribute: .width, relativeTo: "imageContainer",
@@ -471,19 +601,26 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // otherwise, use landscape mode calculation
         else {
             let ratio = size.height / size.width
+            
+            var yOffset: CGFloat = 0
+            
+            if self.showBottomInfo {
+                yOffset = -((Self.topInfoHeight - Self.ratingsAreaHeight)/2)
+            } else {
+                yOffset = -((Self.topInfoHeight)/2)
+            }
 
             self.imageContainer.constraints = [
                 // align to the exact center of the container
                 CAConstraint(attribute: .midY, relativeTo: "superlayer",
-                             attribute: .midY,
-                             offset: -(LibraryCollectionItemView.topInfoHeight/2)),
+                             attribute: .midY, offset: yOffset),
 
                 // spacing to left side of cell
                 CAConstraint(attribute: .minX, relativeTo: "superlayer",
-                             attribute: .minX, offset: LibraryCollectionItemView.edgeImageSpacing),
+                             attribute: .minX, offset: Self.edgeImageSpacing),
                 // spacing to right side of cell
                 CAConstraint(attribute: .maxX, relativeTo: "superlayer",
-                             attribute: .maxX, offset: -LibraryCollectionItemView.edgeImageSpacing),
+                             attribute: .maxX, offset: -Self.edgeImageSpacing),
 
                 // image height ratio
                 CAConstraint(attribute: .height, relativeTo: "imageContainer",
@@ -506,18 +643,12 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * disable implicit animations.
      */
     func action(for layer: CALayer, forKey event: String) -> CAAction? {
-        // handle image layer content changes with crossfade
-/*        if layer.name == "imageContainer" && event == "contents" {
-            let trans = CATransition()
-            trans.duration = 0.1
-            trans.type = .fade
-
-            return trans
+        guard self.defaultsChanged else {
+            return NSNull()
         }
-*/
-
-        // otherwise, no animation
-        return NSNull()
+        
+        // default animation
+        return nil
     }
 
     // MARK: - Selection
@@ -532,10 +663,13 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * Updates the colors used by the UI. This handles both the selection and mouseover (hover) states.
      */
     private func updateColors(_ display: Bool = true) {
+        // gate hover style on user's preference
+        let isHovering = (self.isHovering && UserDefaults.standard.gridCellHoverStyle)
+        
         // handle the selected cell state
         if self.isSelected {
             // selected and hovering over cell
-            if self.isHovering {
+            if isHovering {
                 self.layer?.backgroundColor = NSColor(named: "LibraryItemHoverSelectedBackground")?.cgColor
                 self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemHoverSelectedSequence")?.cgColor
             }
@@ -548,7 +682,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // handle the non-selected case
         else {
             // hovering over cell
-            if self.isHovering {
+            if isHovering {
                 self.layer?.backgroundColor = NSColor(named: "LibraryItemHoverBackground")?.cgColor
                 self.seqNumlabel.foregroundColor = NSColor(named: "LibraryItemHoverSequence")?.cgColor
             }
@@ -595,6 +729,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     private var isHovering: Bool = false {
         didSet {
             self.updateColors()
+            self.updateHoverControls()
         }
     }
 
@@ -614,15 +749,25 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * Mouse entered the view.
      */
     override func mouseEntered(with event: NSEvent) {
-        if UserDefaults.standard.gridCellHoverStyle {
-            self.isHovering = true
-        }
+        self.isHovering = true
     }
     /**
      * Mouse exited the view.
      */
     override func mouseExited(with event: NSEvent) {
         self.isHovering = false
+    }
+    
+    /**
+     * Updates the visibility of controls that are gated on mouse-over.
+     */
+    private func updateHoverControls() {
+        let d = UserDefaults.standard
+        
+        // ratings control
+        if d.gridCellRatingsOnHoverOnly {
+            self.ratings.isHidden = !self.isHovering
+        }
     }
 
 
@@ -707,6 +852,23 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         }
         
         self.detailLabel.string = String(format: format, first, second)
+    }
+    
+    // MARK: Bindings
+    /**
+     * Updates bindings between various controls and the selected image.
+     */
+    private func updateBindings() {
+        // remove old bindings
+        self.ratings.unbind(NSBindingName("intValue"))
+        
+        guard let image = self.image else {
+            return
+        }
+        
+        // bind image rating
+        self.ratings.bind(NSBindingName("intValue"), to: image,
+                          withKeyPath: #keyPath(Image.rating), options: nil)
     }
 
     // MARK: - Thumbnail support
@@ -812,6 +974,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     /// KVOs for observing user defaults changes on layout keys
     private var kvos: [NSKeyValueObservation] = []
     
+    /// Are we currently updating the UI because of user defaults changes?
+    private var defaultsChanged: Bool = false
+    
     /**
      * Registers user defaults observers to track changes.
      */
@@ -843,6 +1008,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                 self?.updateFromDefaults()
             }
         })
+        kvos.append(d.observe(\.gridCellRatingsOnHoverOnly) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                self?.updateFromDefaults()
+            }
+        })
         
         // set up the initial state
         self.updateFromDefaults()
@@ -855,6 +1025,8 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      */
     private func updateFromDefaults() {
         let d = UserDefaults.standard
+        
+        self.defaultsChanged = true
         
         // is sequence number shown?
         self.seqNumlabel.isHidden = !d.gridCellSequenceNumber
@@ -870,14 +1042,25 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.detailTypeFirst = d.gridCellImageDetailFormat["row1"] as! Int
         self.detailTypeSecond = d.gridCellImageDetailFormat["row2"] as! Int
         
+        // are the ratings controls shown?
+        if d.gridCellImageRatings && d.gridCellRatingsOnHoverOnly {
+            self.showBottomInfo = true
+            self.ratings.isHidden = !self.isHovering
+        } else {
+            self.showBottomInfo = d.gridCellImageRatings
+            self.ratings.isHidden = !d.gridCellImageRatings
+        }
+        
+        // update frames and image details
         if self.image != nil {
+            self.resizeImageContainer()
             self.updateImageDetail()
         }
         
-        // are the ratings controls shown?
-        
         // redraw cell
         self.setNeedsDisplay(self.bounds)
+        
+        self.defaultsChanged = false
     }
     
     // MARK: Format types
@@ -905,7 +1088,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      */
     private static var exposureTimeFormatter: DateComponentsFormatter = {
         let fmt = DateComponentsFormatter()
-//        fmt.calendar = nil
         fmt.allowsFractionalUnits = true
         fmt.collapsesLargestUnit = true
         fmt.unitsStyle = .brief

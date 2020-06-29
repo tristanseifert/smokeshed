@@ -118,7 +118,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="V76-Vq-Eha">
-                                <rect key="frame" x="226" y="171" width="204" height="18"/>
+                                <rect key="frame" x="226" y="149" width="204" height="18"/>
                                 <buttonCell key="cell" type="check" title="Change appearance on hover" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="DWv-0u-Ebg">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -127,11 +127,24 @@
                                     <binding destination="0Qw-aA-19F" name="value" keyPath="values.gridCellHoverStyle" id="psx-FK-bor"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kyF-rC-D5I">
+                                <rect key="frame" x="247" y="171" width="224" height="18"/>
+                                <buttonCell key="cell" type="check" title="Only when hovering over the cell" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="mk5-Lb-qU2">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="0Qw-aA-19F" name="enabled" keyPath="values.gridCellImageRatings" id="QjK-Vf-UJF"/>
+                                    <binding destination="0Qw-aA-19F" name="value" keyPath="values.gridCellRatingsOnHoverOnly" id="6wj-q1-1xC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="V76-Vq-Eha" firstAttribute="top" secondItem="kyF-rC-D5I" secondAttribute="bottom" constant="6" symbolic="YES" id="49O-Ix-btD"/>
+                            <constraint firstItem="kyF-rC-D5I" firstAttribute="top" secondItem="C3o-pk-cN0" secondAttribute="bottom" constant="6" symbolic="YES" id="CCh-fP-Wts"/>
                             <constraint firstItem="V20-Wn-i5V" firstAttribute="firstBaseline" secondItem="Sqd-6q-gJr" secondAttribute="firstBaseline" id="CPQ-B8-62w"/>
                             <constraint firstItem="Mad-b0-n2s" firstAttribute="leading" secondItem="Sqd-6q-gJr" secondAttribute="leading" id="Fhi-8s-Al9"/>
-                            <constraint firstItem="V76-Vq-Eha" firstAttribute="top" secondItem="C3o-pk-cN0" secondAttribute="bottom" constant="6" symbolic="YES" id="MiL-6D-HIL"/>
+                            <constraint firstItem="kyF-rC-D5I" firstAttribute="leading" secondItem="myu-yY-Gu5" secondAttribute="leading" id="Med-GL-QF7"/>
                             <constraint firstItem="Sqd-6q-gJr" firstAttribute="leading" secondItem="V20-Wn-i5V" secondAttribute="trailing" constant="8" symbolic="YES" id="O0K-nd-RPQ"/>
                             <constraint firstItem="Mad-b0-n2s" firstAttribute="top" secondItem="Sqd-6q-gJr" secondAttribute="bottom" constant="6" symbolic="YES" id="Odx-YU-2W2"/>
                             <constraint firstItem="V20-Wn-i5V" firstAttribute="leading" secondItem="tMU-fF-J2u" secondAttribute="leading" constant="20" symbolic="YES" id="a6h-a9-uKs"/>
@@ -260,16 +273,16 @@ DQ
                             </textField>
                             <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="O1e-oi-YWD">
                                 <rect key="frame" x="102" y="318" width="171" height="25"/>
-                                <popUpButtonCell key="cell" type="push" title="Blank" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OxU-Hz-cuW" id="stw-Se-jTn">
+                                <popUpButtonCell key="cell" type="push" title="Blank" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OxU-Hz-cuW" id="stw-Se-jTn">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="PKs-Sj-Kh1">
                                         <items>
-                                            <menuItem title="Blank" id="OxU-Hz-cuW">
+                                            <menuItem title="Blank" state="on" id="OxU-Hz-cuW">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                             <menuItem isSeparatorItem="YES" id="ORJ-ZM-HbQ"/>
-                                            <menuItem title="Caption" state="on" tag="1" id="U6y-pl-FTf"/>
+                                            <menuItem title="Caption" tag="1" id="U6y-pl-FTf"/>
                                             <menuItem isSeparatorItem="YES" id="d4q-gs-glo"/>
                                             <menuItem title="File Name" tag="2" id="wO5-Rp-in8"/>
                                             <menuItem title="File Type" tag="3" id="dCT-Ro-Qao"/>
@@ -294,14 +307,14 @@ DQ
                             </popUpButton>
                             <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Rme-Xu-tma">
                                 <rect key="frame" x="102" y="287" width="171" height="25"/>
-                                <popUpButtonCell key="cell" type="push" title="Blank" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bq2-4V-hAH" id="zlG-r2-0XO">
+                                <popUpButtonCell key="cell" type="push" title="Blank" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bq2-4V-hAH" id="zlG-r2-0XO">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="I4e-PI-KkW">
                                         <items>
-                                            <menuItem title="Blank" id="bq2-4V-hAH"/>
+                                            <menuItem title="Blank" state="on" id="bq2-4V-hAH"/>
                                             <menuItem isSeparatorItem="YES" id="UWx-wH-1H0"/>
-                                            <menuItem title="Caption" state="on" tag="1" id="kcT-3Q-uar"/>
+                                            <menuItem title="Caption" tag="1" id="kcT-3Q-uar"/>
                                             <menuItem isSeparatorItem="YES" id="7Zw-Hx-jtj"/>
                                             <menuItem title="File Name" tag="2" id="PsC-oG-h6g"/>
                                             <menuItem title="File Type" tag="3" id="ldo-O3-PdO"/>
@@ -616,15 +629,15 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="231" width="19" height="28"/>
+                                <rect key="frame" x="363" y="232" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="Yeg-Cv-aOO"/>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="f15-vl-KWg">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
                                     </binding>
-                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="Yeg-Cv-aOO"/>
                                 </connections>
                             </stepper>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-UR-ynk">
@@ -649,12 +662,12 @@ DQ
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="PNc-1Q-bFN"/>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="5od-5h-x7S">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
                                     </binding>
-                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="PNc-1Q-bFN"/>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-sJ-nbr">

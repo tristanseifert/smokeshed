@@ -39,6 +39,11 @@
 // Format string for lens info with only the lens name (1 = name)
 "lens.format.nameOnly" = "%1$@";
 
+// Accessibility description for unfilled ratings stars
+"rating.unfilled.axdesc" = "Unfilled rating star";
+// Accessibility description for filled rating stars
+"rating.filled.axdesc" = "Filled rating star";
+
 /**
  * Exposure detail format strings
  *
@@ -46,7 +51,7 @@
  * them to be placed next to each other without any extra spacing required.
  */
 // 1 = numerator, 2 = denominator
-"exposure.time.fraction" = "%1$d⁄%2$d ";
+"exposure.time.fraction" = "%1$d/%2$d ";
 // 1 = seconds (range 1..<60)
 "exposure.time.seconds" = "%1$g sec ";
 // 1 = component formatter output

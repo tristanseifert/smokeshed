@@ -87,6 +87,7 @@ class GridCellDetailPreferencesController: NSViewController, NSCollectionViewDel
         let cell = view.makeItem(withIdentifier: .libraryCollectionItem,
                                  for: path) as! LibraryCollectionItem
         
+        cell.isEditable = false
         cell.sequenceNumber = (path[1] + 1)
         cell.representedObject = self.image
 

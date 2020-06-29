@@ -171,7 +171,7 @@
 		6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD368F2495ADE0005F80EE /* LibraryViewController.stringsdict */; };
 		6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36912495AEEA005F80EE /* LibraryViewController.strings */; };
 		6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36972495C9EB005F80EE /* MainWindowController.strings */; };
-		6ABD369A2495CACE005F80EE /* LibraryCollectionItems.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */; };
+		6ABD369A2495CACE005F80EE /* LibraryCollectionHeaderView.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD36992495CACE005F80EE /* LibraryCollectionHeaderView.strings */; };
 		6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */; };
 		6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD369D2495FE9C005F80EE /* MetadataOutlineDataSource.swift */; };
 		6ABD36A52496B84C005F80EE /* LensFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36A42496B84B005F80EE /* LensFinder.swift */; };
@@ -475,7 +475,7 @@
 		6ABD36912495AEEA005F80EE /* LibraryViewController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryViewController.strings; path = "app_macos/src/Library View/LibraryViewController.strings"; sourceTree = "<group>"; };
 		6ABD36932495B404005F80EE /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		6ABD36972495C9EB005F80EE /* MainWindowController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MainWindowController.strings; path = "app_macos/src/Main Window/MainWindowController.strings"; sourceTree = "<group>"; };
-		6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionItems.strings; path = "app_macos/src/Library View/LibraryCollectionItems.strings"; sourceTree = "<group>"; };
+		6ABD36992495CACE005F80EE /* LibraryCollectionHeaderView.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionHeaderView.strings; path = "app_macos/src/Library View/LibraryCollectionHeaderView.strings"; sourceTree = "<group>"; };
 		6ABD369B2495EE6D005F80EE /* LibraryBrowserBase.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryBrowserBase.strings; path = "app_macos/src/Library View/LibraryBrowserBase.strings"; sourceTree = "<group>"; };
 		6ABD369D2495FE9C005F80EE /* MetadataOutlineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetadataOutlineDataSource.swift; path = app_macos/src/Inspectors/MetadataOutlineDataSource.swift; sourceTree = "<group>"; };
 		6ABD36A42496B84B005F80EE /* LensFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LensFinder.swift; path = frameworks/Smokeshop/src/Importing/LensFinder.swift; sourceTree = "<group>"; };
@@ -1298,10 +1298,10 @@
 			children = (
 				6A96645F2490652100F757A1 /* LibraryCollectionItem.swift */,
 				6A9664642490680500F757A1 /* LibraryCollectionItemView.swift */,
-				6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */,
-				6ABD36992495CACE005F80EE /* LibraryCollectionItems.strings */,
-				6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */,
 				6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */,
+				6A94C8AF2491CB8F008FCE90 /* LibraryCollectionHeaderView.swift */,
+				6ABD36992495CACE005F80EE /* LibraryCollectionHeaderView.strings */,
+				6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */,
 			);
 			name = "Collection View Items";
 			sourceTree = "<group>";
@@ -1706,7 +1706,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
-				6ABD369A2495CACE005F80EE /* LibraryCollectionItems.strings in Resources */,
+				6ABD369A2495CACE005F80EE /* LibraryCollectionHeaderView.strings in Resources */,
 				6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */,
 				6A9D00E524A70C9E007566A5 /* Preferences.storyboard in Resources */,
 				6A2D4D1D24A4392B002AAB53 /* Sidebar.strings in Resources */,

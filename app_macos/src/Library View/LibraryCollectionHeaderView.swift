@@ -52,7 +52,7 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
             if let sec = self.section {
                 // Section name may be empty string (null group value)
                 if sec.name.isEmpty {
-                    self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "header.title.nullPlaceholder", value: nil, table: "LibraryCollectionItems")
+                    self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "title.nullPlaceholder", value: nil, table: "LibraryCollectionHeaderView")
                     return
                 }
 
@@ -64,10 +64,10 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
                     }
 
                     if number == -1 {
-                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "header.title.unrated", value: nil, table: "LibraryCollectionItems")
+                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "title.unrated", value: nil, table: "LibraryCollectionHeaderView")
                     } else {
                         // yeah this is kind of a hack
-                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "header.title.rating.\(number)", value: nil, table: "LibraryCollectionItems")
+                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "title.rating.\(number)", value: nil, table: "LibraryCollectionItems")
 
                     }
                 } else {
@@ -159,8 +159,8 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
         self.collapse.translatesAutoresizingMaskIntoConstraints = false
         self.collapse.controlSize = .regular
 
-        self.collapse.title = Bundle.main.localizedString(forKey: "header.collapse.less", value: nil, table: "LibraryCollectionItems")
-        self.collapse.alternateTitle = Bundle.main.localizedString(forKey: "header.collapse.more", value: nil, table: "LibraryCollectionItems")
+        self.collapse.title = Bundle.main.localizedString(forKey: "collapse.less", value: nil, table: "LibraryCollectionHeaderView")
+        self.collapse.alternateTitle = Bundle.main.localizedString(forKey: "collapse.more", value: nil, table: "LibraryCollectionHeaderView")
 
         self.collapse.setButtonType(.pushOnPushOff)
         self.collapse.bezelStyle = .recessed

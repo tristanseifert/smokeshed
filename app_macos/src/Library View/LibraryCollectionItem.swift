@@ -49,6 +49,15 @@ class LibraryCollectionItem: NSCollectionViewItem {
             }
         }
     }
+    
+    /// Is the cell editable?
+    public var isEditable: Bool = true {
+        didSet {
+            if let view = self.view as? LibraryCollectionItemView {
+                view.isEditable = self.isEditable
+            }
+        }
+    }
 
     // MARK: - Initialization
     /**

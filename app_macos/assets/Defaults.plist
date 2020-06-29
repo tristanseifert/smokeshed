@@ -30,6 +30,8 @@
 		</dict>
 		<key>gridCellRatings</key>
 		<false/>
+		<key>gridCellRatingsOnHoverOnly</key>
+		<false/>
 		<key>TSLibraryPickerControllerDetailsVisible</key>
 		<false/>
 		<key>gridCellHoverStyle</key>

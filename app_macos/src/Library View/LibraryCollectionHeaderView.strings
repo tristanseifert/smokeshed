@@ -1,0 +1,23 @@
+/* 
+  LibraryCollectionItems.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200613.
+  
+*/
+
+// Header collapse button
+"collapse.less" = "Show Less";
+"collapse.more" = "Show More";
+
+// Header title placeholders
+"title.nullPlaceholder" = "Unknown";
+"title.unrated" = "Not Rated";
+
+// rating titles
+"title.rating.0" = "☆☆☆☆☆";
+"title.rating.1" = "★☆☆☆☆";
+"title.rating.2" = "★★☆☆☆";
+"title.rating.3" = "★★★☆☆";
+"title.rating.4" = "★★★★☆";
+"title.rating.5" = "★★★★★";
