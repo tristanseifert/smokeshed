@@ -62,7 +62,8 @@
 		6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */; };
 		6A587F7424A861F6009696E9 /* LibraryCollectionItemView.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */; };
 		6A587F7524A86766009696E9 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
-		6A587F7824A942E0009696E9 /* InspectorMetaKeys.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A587F7724A942E0009696E9 /* InspectorMetaKeys.strings */; };
+		6A587F7A24A98FB4009696E9 /* MetadataTypes.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A587F7924A98FB4009696E9 /* MetadataTypes.strings */; };
+		6A587F7C24A98FF9009696E9 /* MetadataTypes+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7B24A98FF9009696E9 /* MetadataTypes+Localization.swift */; };
 		6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB4682498A3830007E450 /* JPEGFrame.swift */; };
 		6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */; };
 		6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BC24999C740043392E /* HuffmanTree.swift */; };
@@ -368,7 +369,8 @@
 		6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GridCellDetailPreferencesController.swift; path = app_macos/src/Preferences/GridCellDetailPreferencesController.swift; sourceTree = "<group>"; };
 		6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserDefaults+GridCell.swift"; path = "app_macos/src/Library View/UserDefaults+GridCell.swift"; sourceTree = "<group>"; };
 		6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionItemView.strings; path = "app_macos/src/Library View/LibraryCollectionItemView.strings"; sourceTree = "<group>"; };
-		6A587F7724A942E0009696E9 /* InspectorMetaKeys.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InspectorMetaKeys.strings; path = app_macos/src/Inspectors/InspectorMetaKeys.strings; sourceTree = "<group>"; };
+		6A587F7924A98FB4009696E9 /* MetadataTypes.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MetadataTypes.strings; path = frameworks/Paper/assets/MetadataTypes.strings; sourceTree = "<group>"; };
+		6A587F7B24A98FF9009696E9 /* MetadataTypes+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MetadataTypes+Localization.swift"; path = "frameworks/Paper/src/Metadata/MetadataTypes+Localization.swift"; sourceTree = "<group>"; };
 		6A6FB4682498A3830007E450 /* JPEGFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGFrame.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGFrame.swift"; sourceTree = "<group>"; };
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
 		6A7614BC24999C740043392E /* HuffmanTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HuffmanTree.swift; path = frameworks/Paper/src/Helpers/HuffmanTree.swift; sourceTree = "<group>"; };
@@ -1276,7 +1278,6 @@
 				6ABD367D2494C54E005F80EE /* InspectorWindowController.swift */,
 				6ABD367E2494C54E005F80EE /* InspectorWindowController.xib */,
 				6ABD369D2495FE9C005F80EE /* MetadataOutlineDataSource.swift */,
-				6A587F7724A942E0009696E9 /* InspectorMetaKeys.strings */,
 			);
 			name = Inspectors;
 			sourceTree = "<group>";
@@ -1438,6 +1439,8 @@
 				6AE51ABC249D91A50091A550 /* MetadataTypes.swift */,
 				6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */,
 				6AE51AC2249EABF40091A550 /* ImageIOMetadataReader.swift */,
+				6A587F7924A98FB4009696E9 /* MetadataTypes.strings */,
+				6A587F7B24A98FF9009696E9 /* MetadataTypes+Localization.swift */,
 			);
 			name = "Metadata Support";
 			sourceTree = "<group>";
@@ -1720,7 +1723,6 @@
 				6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */,
 				6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */,
 				6AAF473824A3055A00572AB3 /* Edit View.storyboard in Resources */,
-				6A587F7824A942E0009696E9 /* InspectorMetaKeys.strings in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
 				6A1C116724A2E37E00CD8D36 /* Library View.storyboard in Resources */,
 			);
@@ -1752,6 +1754,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6AAC4574249FFDAF009B9AFF /* CamToXYZInfo.plist in Resources */,
+				6A587F7A24A98FB4009696E9 /* MetadataTypes.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1939,6 +1942,7 @@
 				6A7614C82499B53A0043392E /* BitHelpers.swift in Sources */,
 				6ABD3703249745A2005F80EE /* CR2Image.swift in Sources */,
 				6AAC4569249F3A93009B9AFF /* debayer.c in Sources */,
+				6A587F7C24A98FF9009696E9 /* MetadataTypes+Localization.swift in Sources */,
 				6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,9 +1,9 @@
 /* 
-  InspectorMetaKeys.strings
+  MetadataTypes.strings
   Smokeshed
-
-  Localized names for `ImageMeta` keys
  
+  Localized names for image metadata values
+
   Created by Tristan Seifert on 20200628.
   
 */
