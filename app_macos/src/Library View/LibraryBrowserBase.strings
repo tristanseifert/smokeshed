@@ -20,8 +20,10 @@
 
 // Title for a grouping (1 = key, 2 = order as arrow)
 "group.title" = "Group By: %2$@ %1$@";
+"group.title.none" = "Group By: %1$@";
 
 // Display names for grouping keys
+"group.key.-1" = "None";
 "group.key.1" = "Date Captured";
 "group.key.2" = "Date Imported";
 "group.key.3" = "Rating";

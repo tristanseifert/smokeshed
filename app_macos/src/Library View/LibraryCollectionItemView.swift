@@ -282,7 +282,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     /// Attributes for the detail label
     private static let detailAttributes: [NSAttributedString.Key: Any] = {
         return [
-            .shadow: NSShadow(),
             .foregroundColor: NSColor(named: "LibraryItemInfo")!
         ]
     }()
@@ -367,7 +366,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // File name label
         self.nameLabel.delegate = self
         self.nameLabel.name = "nameLabel"
-        self.nameLabel.masksToBounds = false
         self.nameLabel.alignmentMode = .left
         self.nameLabel.truncationMode = .end
 
@@ -393,9 +391,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         // Subtitle (aux info for image)
         self.detailLabel.delegate = self
         self.detailLabel.name = "detailLabel"
-        self.detailLabel.masksToBounds = false
         self.detailLabel.alignmentMode = .left
         self.detailLabel.truncationMode = .end
+        self.detailLabel.isWrapped = true
 
         self.detailLabel.constraints = [
             // align top edge to name, and bottom to superlayer
@@ -416,6 +414,24 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         ]
 
         topBox.addSublayer(self.detailLabel)
+        
+        /**
+         * Even though we set an attributed string as the contents, we still have to set the font on these
+         * labels or they won't draw properly. The truncation seems to be broken otherwise.
+         *
+         * Likewise, we need to duplicate any shadow and text colors or the elipses used for truncation
+         * won't show up right, either. shrug
+         */
+        self.nameLabel.font = Self.nameFont
+        self.nameLabel.fontSize = Self.nameFont.pointSize
+        self.nameLabel.foregroundColor = NSColor(named: "LibraryItemName")!.cgColor
+        self.nameLabel.shadowRadius = 2.0
+        self.nameLabel.shadowOffset = CGSize(width: 0, height: -1)
+        self.nameLabel.shadowColor = NSColor(named: "LibraryItemNameShadow")!.cgColor
+        
+        self.detailLabel.font = Self.detailFont
+        self.detailLabel.fontSize = Self.detailFont.pointSize
+        self.detailLabel.foregroundColor = NSColor(named: "LibraryItemInfo")!.cgColor
     }
     
     // MARK: - Bottom info area
@@ -497,6 +513,10 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         self.ratings.ratingImage = NSImage(systemSymbolName: "star.fill",
                                            accessibilityDescription: Self.localized("rating.filled.axdesc"))
         self.ratings.fillColor = NSColor(named: "LibraryItemRatingFill")
+        
+        self.ratings.isContinuous = false
+        self.ratings.target = self
+        self.ratings.action = #selector(LibraryCollectionItemView.setRating(_:))
         
         self.addSubview(self.ratings)
         
@@ -581,7 +601,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         }
 
         // should we use the portrait mode calculations?
-        if size.height > size.width {
+        if size.height >= size.width {
             let ratio = size.width / size.height
 
             self.imageContainer.constraints = [
@@ -611,9 +631,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             var yOffset: CGFloat = 0
             
             if self.showBottomInfo {
-                yOffset = -((Self.topInfoHeight - Self.ratingsAreaHeight)/2)
+                yOffset = -((Self.topInfoHeight - Self.ratingsAreaHeight)/2) + ((Self.edgeImageSpacing) / 2)
             } else {
-                yOffset = -((Self.topInfoHeight)/2)
+                yOffset = -((Self.topInfoHeight)/2) + (Self.edgeImageSpacing / 2)
             }
 
             self.imageContainer.constraints = [
@@ -866,21 +886,43 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         }
     }
     
-    // MARK: Bindings
+    // MARK: Ratings
+    /// KVO observer on image's rating
+    private var ratingsObserver: NSKeyValueObservation?
+    
     /**
-     * Updates bindings between various controls and the selected image.
+     * Ensures the ratings control stays in sync with the image by means of a KVO observer.
      */
     private func updateBindings() {
-        // remove old bindings
-        self.ratings.unbind(NSBindingName("intValue"))
+        // remove old observer
+        self.ratingsObserver = nil
         
         guard let image = self.image else {
             return
         }
         
-        // bind image rating
-        self.ratings.bind(NSBindingName("intValue"), to: image,
-                          withKeyPath: #keyPath(Image.rating), options: nil)
+        // observe ratings
+        self.ratingsObserver = image.observe(\.rating, options: .initial)
+        { image, _ in
+            guard self.image == image else {
+                return
+            }
+            
+            self.ratings.intValue = Int32(image.rating)
+        }
+    }
+    
+    /**
+     * Updates the rating of the current image.
+     */
+    @IBAction private func setRating(_ sender: Any) {
+        guard let image = self.image,
+              let indicator = sender as? NSLevelIndicator else {
+            DDLogWarn("Invalid image (\(String(describing: self.image))) or sender (\(sender)): \(self)")
+            return
+        }
+        
+        image.rating = Int16(min(5, max(0, indicator.intValue)))
     }
 
     // MARK: - Thumbnail support

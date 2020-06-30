@@ -154,7 +154,16 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
     @objc dynamic private var groupMenuTitle: String {
         get {
             let order = (self.groupOrder == .ascending) ? "↑" : "↓"
-            let fmt = Bundle.main.localizedString(forKey: "group.title", value: nil, table: "LibraryBrowserBase")
+            var fmt = ""
+            
+            if self.groupBy == .none {
+                fmt = Bundle.main.localizedString(forKey: "group.title.none", value: nil,
+                                                  table: "LibraryBrowserBase")
+            } else {
+                fmt = Bundle.main.localizedString(forKey: "group.title", value: nil,
+                                                  table: "LibraryBrowserBase")
+            }
+            
             return String.localizedStringWithFormat(fmt,
                     self.groupBy.localizedName, order)
         }

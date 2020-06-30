@@ -398,6 +398,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Group By" id="TBG-WS-80h">
                                     <items>
+                                        <menuItem title="None" tag="-1" keyEquivalent="0" id="HcX-CP-ehz">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="setLibraryGroupKey:" target="-1" id="gZV-Mz-pMe"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Date Captured" tag="1" keyEquivalent="1" id="NdI-kr-rr8">
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES" command="YES"/>
                                             <connections>

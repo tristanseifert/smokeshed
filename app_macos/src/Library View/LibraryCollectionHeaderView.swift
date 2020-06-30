@@ -67,7 +67,7 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
                         self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "title.unrated", value: nil, table: "LibraryCollectionHeaderView")
                     } else {
                         // yeah this is kind of a hack
-                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "title.rating.\(number)", value: nil, table: "LibraryCollectionItems")
+                        self.nameLabel.stringValue = Bundle.main.localizedString(forKey: "title.rating.\(number)", value: nil, table: "LibraryCollectionHeaderView")
 
                     }
                 } else {

@@ -101,7 +101,7 @@
                                             </popUpButton>
                                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HIz-kV-s3O" userLabel="Group">
                                                 <rect key="frame" x="72" y="6" width="82" height="19"/>
-                                                <popUpButtonCell key="cell" type="recessed" title="Group By" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="06n-VD-hzB" id="dP5-NR-kqu">
+                                                <popUpButtonCell key="cell" type="recessed" title="Group By" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" id="dP5-NR-kqu">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                     <font key="font" metaFont="systemBold" size="12"/>
                                                     <menu key="menu" id="Chq-hS-Zbu">
@@ -111,10 +111,16 @@
                                                                     <binding destination="zIe-Iq-sJe" name="title" keyPath="self.groupMenuTitle" id="i6g-hg-Bd1"/>
                                                                 </connections>
                                                             </menuItem>
-                                                            <menuItem title="Date Captured" tag="1" id="q9d-Cs-kdQ">
+                                                            <menuItem title="None" tag="-1" id="q9d-Cs-kdQ">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                                                 <connections>
                                                                     <action selector="setLibraryGroupKey:" target="zIe-Iq-sJe" id="lvx-72-QuG"/>
+                                                                </connections>
+                                                            </menuItem>
+                                                            <menuItem title="Date Captured" tag="1" id="CBt-8T-J44">
+                                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <connections>
+                                                                    <action selector="setLibraryGroupKey:" target="zIe-Iq-sJe" id="VRO-i1-gN6"/>
                                                                 </connections>
                                                             </menuItem>
                                                             <menuItem title="Date Imported" tag="2" id="KR5-R7-qlC">

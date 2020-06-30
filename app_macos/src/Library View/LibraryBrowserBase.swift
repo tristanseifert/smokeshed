@@ -238,7 +238,9 @@ NSFetchedResultsControllerDelegate {
     internal var fetchReqCtrl: NSFetchedResultsController<Image>! = nil
     /// Has the fetch request been changed since the last time? (Used to invalidate cache)
     internal var fetchReqChanged: Bool = false
-
+    /// Does the fetch controller specifically need to be recreated (e.g. because section changes?)
+    internal var recreateFetchRequest: Bool = false
+    
     /**
      * Initializes the fetch request.
      */
@@ -264,12 +266,14 @@ NSFetchedResultsControllerDelegate {
             // it's important the cache is cleared in this case
             NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: self.fetchCacheName)
 
-            if self.fetchReqCtrl == nil {
+            if self.fetchReqCtrl == nil || self.recreateFetchRequest {
                 self.fetchReqCtrl = NSFetchedResultsController(fetchRequest: self.fetchReq,
                                        managedObjectContext: self.ctx,
                                        sectionNameKeyPath: self.groupBy.keyPath,
                                        cacheName: self.fetchCacheName)
                 self.fetchReqCtrl.delegate = self
+                
+                self.recreateFetchRequest = false
             }
 
             // clear the flag
@@ -326,14 +330,17 @@ NSFetchedResultsControllerDelegate {
     }
 
     @objc internal enum GroupByKey: Int {
+        case none = -1
         case dateCaptured = 1
         case dateImported = 2
         case rating = 3
 
         /// Key path to use for grouping
-        var keyPath: String {
+        var keyPath: String? {
             get {
                 switch self {
+                    case .none:
+                        return nil
                     case .dateCaptured:
                         return #keyPath(Image.dayCaptured)
                     case .dateImported:
@@ -345,9 +352,11 @@ NSFetchedResultsControllerDelegate {
         }
 
         /// Key path to use for sorting
-        var sortKeyPath: String {
+        var sortKeyPath: String? {
             get {
                 switch self {
+                    case .none:
+                        return nil
                     case .dateCaptured:
                         return #keyPath(Image.dateCaptured)
                     case .dateImported:
@@ -403,6 +412,18 @@ NSFetchedResultsControllerDelegate {
                 self.sortByOrder = self.groupOrder
                 self.suppressOrderKeySet = false
             }
+            
+            // hide headers if no grouping, show otherwise
+            guard let l = self.collection!.collectionViewLayout,
+                  let layout = l as? NSCollectionViewFlowLayout else {
+                    return
+            }
+            
+            if self.groupBy == .none {
+                layout.headerReferenceSize = .zero
+            } else {
+                layout.headerReferenceSize = NSSize(width: 0, height: 30)
+            }
         }
     }
     /// Grouping order
@@ -425,22 +446,24 @@ NSFetchedResultsControllerDelegate {
      * Updates the sort descriptors based on the sort properties and grouping keys.
      */
     private func updateSortDescriptors() {
-        if self.groupBy.rawValue == self.sortByKey.rawValue {
-            self.fetchReq.sortDescriptors = [
-                NSSortDescriptor(key: self.groupBy.sortKeyPath,
-                                 ascending: (self.groupOrder == .ascending)),
-            ]
-        } else {
-            self.fetchReq.sortDescriptors = [
-                NSSortDescriptor(key: self.groupBy.sortKeyPath,
-                                 ascending: (self.groupOrder == .ascending)),
-                NSSortDescriptor(key: self.sortByKey.keyPath,
-                                 ascending: (self.sortByOrder == .ascending))
-            ]
-
+        // default: just use the sort by keys
+        var sortDescs = [
+            NSSortDescriptor(key: self.sortByKey.keyPath,
+                             ascending: (self.sortByOrder == .ascending)),
+        ]
+        
+        // ensure the group by and sort by keys are different
+        if self.groupBy.rawValue != self.sortByKey.rawValue {
+            // if we've a valid group sort key, sort by that first
+            if let groupByKey = self.groupBy.sortKeyPath {
+                let desc = NSSortDescriptor(key: groupByKey,
+                                            ascending: (self.groupOrder == .ascending))
+                sortDescs.insert(desc, at: 0)
+            }
         }
 
         // ensure fetch controller is updated
+        self.fetchReq.sortDescriptors = sortDescs
         self.fetchReqChanged = true
     }
     /**
@@ -461,6 +484,8 @@ NSFetchedResultsControllerDelegate {
 
         self.updateSortDescriptors()
         self.fetch()
+        
+        self.invalidateRestorableState()
     }
     /**
      * Sets the sort order based on the tag of the sender.
@@ -480,6 +505,8 @@ NSFetchedResultsControllerDelegate {
 
         self.updateSortDescriptors()
         self.fetch()
+        
+        self.invalidateRestorableState()
     }
 
     /**
@@ -497,10 +524,13 @@ NSFetchedResultsControllerDelegate {
 
         // update sort descriptor
         self.groupBy = key
+        self.recreateFetchRequest = true
 
         self.updateSortDescriptors()
         self.setUpDataSource()
         self.fetch()
+        
+        self.invalidateRestorableState()
     }
     /**
      * Sets the sort order for the result grouping..
@@ -520,6 +550,8 @@ NSFetchedResultsControllerDelegate {
 
         self.updateSortDescriptors()
         self.fetch()
+        
+        self.invalidateRestorableState()
     }
 
     // MARK: - Collection data source
@@ -556,6 +588,10 @@ NSFetchedResultsControllerDelegate {
         self.dataSource.supplementaryViewProvider = { (view, kind, path) in
             guard kind == NSCollectionView.elementKindSectionHeader else {
                 DDLogError("Unsupported supplementary item kind '\(kind)' for path \(path)")
+                return nil
+            }
+            // ensure we want grouping (otherwise we get a single ugly 'unknown' header)
+            guard self.groupBy != .none else {
                 return nil
             }
 
@@ -686,7 +722,7 @@ NSFetchedResultsControllerDelegate {
         // group sort order
         if menuItem.action == #selector(setLibraryGroupOrder(_:)) {
             menuItem.state = (menuItem.tag == self.groupOrder.rawValue) ? .on : .off
-            return true
+            return (self.groupBy != .none)
         }
         // group by key
         if menuItem.action == #selector(setLibraryGroupKey(_:)) {

@@ -7,6 +7,8 @@
 
 import Cocoa
 
+import CocoaLumberjackSwift
+
 /**
  * Provides some custom behaviors required for the library view
  */
@@ -38,6 +40,40 @@ class LibraryCollectionView: NSCollectionView {
 
         // return the final menu
         return menu
+    }
+    
+    // MARK: - Keyboard events
+    /**
+     * Inspects the pressed key to see if we handle it.
+     *
+     * This function handles Page Up/Down as well as Home/End.
+     */
+    override func keyDown(with event: NSEvent) {
+        // we only care about function keys
+        guard event.modifierFlags.contains(.function),
+              let str = event.charactersIgnoringModifiers,
+              str.count == 1 else {
+            return
+        }
+        
+        // check out what character it is
+        switch str.first! {
+        case Character(Unicode.Scalar(NSPageUpFunctionKey)!):
+            self.enclosingScrollView?.pageUp(self)
+            
+        case Character(Unicode.Scalar(NSPageDownFunctionKey)!):
+            self.enclosingScrollView?.pageDown(self)
+            
+        case Character(Unicode.Scalar(NSHomeFunctionKey)!):
+            self.enclosingScrollView?.documentView?.scroll(.zero)
+            
+        case Character(Unicode.Scalar(NSEndFunctionKey)!):
+            let doc = self.enclosingScrollView!.documentView!
+            doc.scroll(NSPoint(x: 0, y: doc.bounds.height))
+            
+        default:
+            return
+        }
     }
 }
 
