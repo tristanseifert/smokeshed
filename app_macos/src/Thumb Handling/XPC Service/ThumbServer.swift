@@ -21,6 +21,8 @@ class ThumbServer: ThumbXPCProtocol {
     private var generator: Generator! = nil
     /// Retrieving thumbs
     private var retriever: Retriever! = nil
+    /// Prefetching thumbnail data
+    private var prefetcher: Prefetcher! = nil
     
     /// Maintenance endpoint
     private var maintenance: MaintenanceEndpoint! = nil
@@ -36,6 +38,7 @@ class ThumbServer: ThumbXPCProtocol {
                 self.directory = try ThumbDirectory()
                 self.generator = Generator(self.directory)
                 self.retriever = Retriever(self.directory)
+                self.prefetcher = Prefetcher(self.directory)
             } catch {
                 DDLogError("Failed to open thumb directory: \(error)")
                 return reply(error)
@@ -95,12 +98,22 @@ class ThumbServer: ThumbXPCProtocol {
     }
     
     /**
+     * Prefetch data for the provided images. This serves as a hint that thumbnails for them will likely be requested soon.
+     *
+     * In this implementation, we call through to the prefetch handler, which will fault in information for each of the chunks, and then try
+     * to warm up the chunk cache for them as well.
+     */
+    func prefetch(_ requests: [ThumbRequest]) {
+        self.prefetcher.prefetch(requests)
+    }
+    
+    /**
      * Discards thumbnail data for all images specified.
      *
      * Images are identified only by their library id and image id; the URL and orientation are ignored.
      */
     func discard(_ requests: [ThumbRequest]) {
-        self.generator?.discard(requests)
+        self.generator.discard(requests)
     }
 
     /**

@@ -51,9 +51,7 @@ public class ContainerHelper {
      */
     public static func groupContainer(component: Component) -> URL {
         let fm = FileManager.default
-        
-        let name = Self.groupName.appendingFormat(".%@", component.rawValue)
-        return fm.containerURL(forSecurityApplicationGroupIdentifier: name)!
+        return fm.containerURL(forSecurityApplicationGroupIdentifier: Self.groupName)!
     }
     
     /**
@@ -63,6 +61,7 @@ public class ContainerHelper {
         let url = Self.groupContainer(component: component)
         return url.appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Application Support", isDirectory: true)
+            .appendingPathComponent(component.rawValue, isDirectory: true)
     }
     
     /**
@@ -72,6 +71,7 @@ public class ContainerHelper {
         let url = Self.groupContainer(component: component)
         return url.appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Caches", isDirectory: true)
+            .appendingPathComponent(component.rawValue, isDirectory: true)
     }
     
     /**
@@ -81,6 +81,7 @@ public class ContainerHelper {
         let url = Self.groupContainer(component: component)
         return url.appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Logs", isDirectory: true)
+            .appendingPathComponent(component.rawValue, isDirectory: true)
     }
     
     
@@ -99,7 +100,7 @@ public class ContainerHelper {
     
     /// Container subcomponents
     public enum Component: String {
-        /// Thumbnail handler (including XPC service)
-        case thumbHandler = "thumb"
+        /// Thumbnail  XPC service
+        case thumbHandler = "me.tseifert.smokeshed.xpc.hand"
     }
 }

@@ -626,7 +626,7 @@ NSFetchedResultsControllerDelegate {
      * it is not already available.
      */
     func collectionView(_ collectionView: NSCollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        ThumbHandler.shared.generate(indexPaths.map({ (path) in
+        ThumbHandler.shared.prefetch(indexPaths.map({ (path) in
             return self.fetchReqCtrl.object(at: path)
         }))
     }

@@ -13,7 +13,6 @@ import Foundation
 extension UserDefaults {
     /// Thumbnail preferences
     public static var thumbShared: UserDefaults {
-        let suite = String(format: "%@.thumb", ContainerHelper.groupName)
-        return UserDefaults(suiteName: suite)!
+        return UserDefaults(suiteName: ContainerHelper.groupName)!
     }
 }

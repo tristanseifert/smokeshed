@@ -245,6 +245,17 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         // TODO: implement
     }
     
+    /**
+     * Fetches the given chunk from disk into the cache, if it is not already there.
+     */
+    internal func preloadChunk(_ chunkId: UUID) throws {
+        // bail if already in cache
+        guard self.chunkCache.object(forKey: chunkId as NSUUID) == nil else { return }
+        
+        // read but discard result
+        let _ = try self.getChunk(withId: chunkId, true)
+    }
+    
     // MARK: - Cache support
     /// Cache containing chunk refs that have been decoded from disk
     private var chunkCache = NSCache<NSUUID, ChunkRef>()

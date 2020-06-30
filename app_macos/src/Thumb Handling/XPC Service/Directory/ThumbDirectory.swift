@@ -61,8 +61,19 @@ internal class ThumbDirectory {
         // create the PSC
         self.psc = NSPersistentStoreCoordinator(managedObjectModel: self.model)
         
-        // URL to the store in the app directory
+        // create data directory if needed
         let base = ContainerHelper.groupAppData(component: .thumbHandler)
+        if !FileManager.default.fileExists(atPath: base.path) {
+            do {
+                try FileManager.default.createDirectory(at: base,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+            } catch {
+                DDLogError("Failed to create thumb container at '\(base)': \(error)")
+            }
+        }
+        
+        // URL to the store in the app directory
         let url = base.appendingPathComponent("ThumbDirectory.sqlite",
                                               isDirectory: false)
         

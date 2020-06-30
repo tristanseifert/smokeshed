@@ -149,7 +149,12 @@ import Smokeshop
      * As with thumbnail generation, this request runs asynchronously in the background in the service.
      */
     func discard(_ requests: [ThumbRequest])
-
+    
+    /**
+     * Prefetch data for the images identified by these requests.
+     */
+    func prefetch(_ requests: [ThumbRequest])
+    
     /**
      * Retrieves a thumbnail for an image. The image is identified by its library id and some other properties
      * provided by the caller. It's then provided as an IOSurface object.
@@ -222,6 +227,9 @@ class ThumbXPCProtocolHelpers {
                        argumentIndex: 0, ofReply: false)
         int.setClasses(thumbReqClass,
                        for: #selector(ThumbXPCProtocol.discard(_:)),
+                       argumentIndex: 0, ofReply: false)
+        int.setClasses(thumbReqClass,
+                       for: #selector(ThumbXPCProtocol.prefetch(_:)),
                        argumentIndex: 0, ofReply: false)
 
         return int

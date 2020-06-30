@@ -20,6 +20,7 @@
 		6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47B248B696A0044B433 /* Defaults.plist */; };
 		6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */; };
 		6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */; };
+		6A12942024AB0DB9001D5D97 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A12941F24AB0DB9001D5D97 /* Prefetcher.swift */; };
 		6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116224A2C74300CD8D36 /* Main.storyboard */; };
 		6A1C116524A2D6B800CD8D36 /* MainWindowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */; };
 		6A1C116724A2E37E00CD8D36 /* Library View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116624A2E37E00CD8D36 /* Library View.storyboard */; };
@@ -325,6 +326,7 @@
 		6A0EE47B248B696A0044B433 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = app_macos/assets/Defaults.plist; sourceTree = "<group>"; };
 		6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryPickerController.swift; path = "app_macos/src/Library UI/LibraryPickerController.swift"; sourceTree = "<group>"; };
 		6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryPickerController.xib; path = "app_macos/src/Library UI/LibraryPickerController.xib"; sourceTree = "<group>"; };
+		6A12941F24AB0DB9001D5D97 /* Prefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Prefetcher.swift; path = "app_macos/src/Thumb Handling/XPC Service/Prefetcher.swift"; sourceTree = "<group>"; };
 		6A1C116224A2C74300CD8D36 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Main.storyboard; path = "app_macos/src/Main Window/Main.storyboard"; sourceTree = "<group>"; };
 		6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowViewController.swift; path = "app_macos/src/Main Window/MainWindowViewController.swift"; sourceTree = "<group>"; };
 		6A1C116624A2E37E00CD8D36 /* Library View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Library View.storyboard"; path = "app_macos/src/Library View/Library View.storyboard"; sourceTree = "<group>"; };
@@ -989,6 +991,7 @@
 				6A9315922493122F00A9F9B4 /* ThumbServer.swift */,
 				6A9D00DB24A69781007566A5 /* Generator.swift */,
 				6A9D00DE24A6D677007566A5 /* Retriever.swift */,
+				6A12941F24AB0DB9001D5D97 /* Prefetcher.swift */,
 			);
 			name = "Thumb Handler";
 			sourceTree = "<group>";
@@ -1806,6 +1809,7 @@
 				6A9D00EF24A71B9E007566A5 /* UserDefaults+ThumbHandler.swift in Sources */,
 				6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */,
 				6A9D00FA24A72D43007566A5 /* XPCCSHelpers.swift in Sources */,
+				6A12942024AB0DB9001D5D97 /* Prefetcher.swift in Sources */,
 				6AAC458824A0621A009B9AFF /* ThumbDirectory.swift in Sources */,
 				6AAC459424A07C21009B9AFF /* Thumbnail+CoreDataClass.swift in Sources */,
 				6AAC459C24A08152009B9AFF /* ChunkRef.swift in Sources */,
