@@ -1,0 +1,24 @@
+/* 
+  ThumbPreferencesViewController.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200630.
+  
+*/
+
+// new storage directory open panel title
+"picker.title" = "Move Thumbnail Storage";
+// button text for the new storage directory open panel
+"picker.prompt" = "Move Thumbnails";
+// default file name
+"picker.name.default" = "Thumbnails";
+
+// title for confirmation of moving thumbs to default location
+"reset.confirm.title" = "Are you sure you want to move thumbnail data to the default location?";
+// informative text for moving thumbs to default location
+"reset.confirm.detail" = "All thumbnail data will be copied, and the old thumbnail bundle will not be deleted.";
+
+// confirm moving thumbs back to default location
+"reset.confirm.btn.move" = "Move";
+// abort reset to default url
+"reset.confirm.btn.cancel" = "Cancel";

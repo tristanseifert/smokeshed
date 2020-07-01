@@ -189,6 +189,11 @@ import Smokeshop
      * Retrieve the currently used path for thumbnail storage.
      */
     func getStorageDir(withReply reply: @escaping (URL) -> Void)
+    
+    /**
+     * Moves thumbnail storage.
+     */
+    func moveThumbStorage(to: URL, copyExisting: Bool, deleteExisting: Bool, withReply reply: @escaping(Error?) -> Void)
 }
 
 /**

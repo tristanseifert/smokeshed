@@ -20,8 +20,11 @@ import CocoaLumberjackSwift
 internal class ChunkManager: NSObject, NSCacheDelegate {
     /// Managed object context specifically for the chunk manager
     private var ctx: NSManagedObjectContext!
+    
+    /// Thumbnail storage bundle
+    private(set) internal var thumbBundle: URL!
     /// Base URL to the chunk directory
-    private(set) internal var chunkDir: URL
+    private(set) internal var chunkDir: URL!
     
     // MARK: - Initialization
     /// Observers on user defaults keys related to chunks
@@ -41,25 +44,30 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         
         self.ctx = ctx
         
-        // get chunk directory
-        let cache = ContainerHelper.groupAppCache(component: .thumbHandler)
-        let url = cache.appendingPathComponent("Chonkery", isDirectory: true)
-        
-        if !FileManager.default.fileExists(atPath: url.path) {
-            try FileManager.default.createDirectory(at: url,
-                                                    withIntermediateDirectories: true,
-                                                    attributes: nil)
-        }
-        
-        self.chunkDir = url
-        
         // allocate super
         super.init()
+        
+        // get chunk directory
+        try self.setChunkDir(UserDefaults.thumbShared.thumbStorageUrl)
         
         // configure cache
         self.chunkCache.totalCostLimit = Self.maxChunkCacheSize
         self.chunkCache.evictsObjectsWithDiscardedContent = true
         self.chunkCache.delegate = self
+        
+        // register for the chunk url change
+        let urlObs = UserDefaults.thumbShared.observe(\.thumbStorageUrl, options: [])
+        { _, _ in
+            do {
+                let newUrl = UserDefaults.thumbShared.thumbStorageUrl
+                
+                DDLogInfo("New thumb storage url: \(newUrl)")
+                try self.setChunkDir(newUrl)
+            } catch {
+                DDLogError("Failed to update chunk url: \(error)")
+            }
+        }
+        self.kvos.append(urlObs)
         
         // observe cache size changes
         let sizeObs = UserDefaults.thumbShared.observe(\.thumbChunkCacheSize,
@@ -87,9 +95,31 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         NotificationCenter.default.removeObserver(self.reloadConfigObs!)
     }
     
+    /**
+     * Sets the internal chunk directory values given the url of a `smokethumbs` bundle
+     */
+    private func setChunkDir(_ bundleUrl: URL) throws {
+        self.thumbBundle = bundleUrl
+        
+        let url = bundleUrl.appendingPathComponent("Contents", isDirectory: true)
+                           .appendingPathComponent("Chonkery", isDirectory: true)
+        DDLogInfo("Using chunk storage at '\(url)'")
+        
+        if !FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.createDirectory(at: url,
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
+        }
+        
+        self.chunkDir = url
+    }
+    
     // MARK: Configuration
     /// Notification handler for config reloading
     private var reloadConfigObs: NSObjectProtocol!
+    
+    /// Access to chunks is blocked due to some internal operation
+    private var ioBlocked: Bool = false
     
     /**
      * Updates the size of the thumbnail cache based on configuration.
@@ -104,6 +134,28 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         } else {
             DDLogWarn("Ignoring too small cache size: \(new)")
         }
+    }
+    
+    /**
+     * Flushes all dirty chunks out to disk, in preparation for the chunk directory being moved.
+     */
+    internal func beginMoveTransaction() {
+        self.ioBlocked = true
+        self.chunkCache.removeAllObjects()
+    }
+    
+    /**
+     * Allows clients to access chunks again once the move has completed.
+     */
+    internal func endMoveTransaction() {
+        // set the new chunk directory
+        do {
+            try self.setChunkDir(UserDefaults.thumbShared.thumbStorageUrl)
+        } catch {
+            DDLogError("Failed to update chunk dir: \(error)")
+        }
+        
+        self.ioBlocked = false
     }
     
     // MARK: - Public interface
@@ -231,7 +283,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         }
         
         // delete this chunk from the filesystem
-        let url = try self.urlForChunk(withId: id)
+        let url = try self.urlForChunk(withId: id, false)
         
         if FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.removeItem(at: url)
@@ -359,7 +411,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             let data = try encoder.encode(chunk)
             
             // write it out to file
-            let url = try self.urlForChunk(withId: chunk.identifier)
+            let url = try self.urlForChunk(withId: chunk.identifier, true)
             try data.write(to: url, options: .atomic)
         } catch {
             // ensure chunk lock is released
@@ -379,7 +431,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      */
     private func readChunk(withId id: UUID) throws -> ChunkRef {
         // read data
-        let url = try self.urlForChunk(withId: id)
+        let url = try self.urlForChunk(withId: id, false)
         let data = try Data(contentsOf: url)
         
         // decode it
@@ -401,7 +453,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      * Chunk urls are made up of a first-level directory (the first byte of the uuid, converted to an uppercase
      * hex string) followed by the full UUID as the filename.
      */
-    private func urlForChunk(withId id: UUID) throws -> URL {
+    private func urlForChunk(withId id: UUID, _ createDirectories: Bool) throws -> URL {
         let fm = FileManager.default
         
         // get the first byte of the uuid
@@ -411,7 +463,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         // get container directory url (and create dir if needed)
         let dir = self.chunkDir.appendingPathComponent(first, isDirectory: true)
         
-        if !fm.fileExists(atPath: dir.path) {
+        if !fm.fileExists(atPath: dir.path), createDirectories {
             try fm.createDirectory(at: dir, withIntermediateDirectories: true,
                                    attributes: nil)
         }

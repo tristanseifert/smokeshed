@@ -39,6 +39,8 @@
 		6A2D4D1D24A4392B002AAB53 /* Sidebar.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A2D4D1C24A4392B002AAB53 /* Sidebar.strings */; };
 		6A2D4D1F24A47692002AAB53 /* SidebarShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2D4D1E24A47692002AAB53 /* SidebarShortcutsController.swift */; };
 		6A2D4D2124A532A6002AAB53 /* SidebarImagesByDateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */; };
+		6A46D0D424AC0BBF001AE6FE /* ThumbPreferencesViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A46D0D324AC0BBF001AE6FE /* ThumbPreferencesViewController.strings */; };
+		6A46D0D624AC3453001AE6FE /* MaintenanceProgress.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A46D0D524AC3453001AE6FE /* MaintenanceProgress.strings */; };
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
@@ -345,6 +347,8 @@
 		6A2D4D1C24A4392B002AAB53 /* Sidebar.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Sidebar.strings; path = app_macos/src/Sidebar/Sidebar.strings; sourceTree = "<group>"; };
 		6A2D4D1E24A47692002AAB53 /* SidebarShortcutsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarShortcutsController.swift; path = app_macos/src/Sidebar/SidebarShortcutsController.swift; sourceTree = "<group>"; };
 		6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarImagesByDateController.swift; path = app_macos/src/Sidebar/SidebarImagesByDateController.swift; sourceTree = "<group>"; };
+		6A46D0D324AC0BBF001AE6FE /* ThumbPreferencesViewController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ThumbPreferencesViewController.strings; path = app_macos/src/Preferences/ThumbPreferencesViewController.strings; sourceTree = "<group>"; };
+		6A46D0D524AC3453001AE6FE /* MaintenanceProgress.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MaintenanceProgress.strings; path = "app_macos/src/Thumb Handling/XPC Service/MaintenanceProgress.strings"; sourceTree = "<group>"; };
 		6A4CEE9A248B259500145E49 /* SmokeShed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmokeShed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEB6248B272300145E49 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Icons.xcassets; path = app_macos/assets/Icons.xcassets; sourceTree = "<group>"; };
 		6A4CEEBA248B273D00145E49 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenu.xib; path = app_macos/assets/UI/MainMenu.xib; sourceTree = "<group>"; };
@@ -698,6 +702,14 @@
 				6AAF473C24A3230C00572AB3 /* MainWindowTabController.swift */,
 			);
 			name = "Main Window";
+			sourceTree = "<group>";
+		};
+		6A46D0D224AC0B9C001AE6FE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6A46D0D324AC0BBF001AE6FE /* ThumbPreferencesViewController.strings */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		6A4CEE8F248B229F00145E49 = {
@@ -1152,6 +1164,7 @@
 				6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */,
 				6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */,
 				6A9D00F024A71D3E007566A5 /* Defaults */,
+				6A46D0D224AC0B9C001AE6FE /* Resources */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1169,6 +1182,7 @@
 			isa = PBXGroup;
 			children = (
 				6A9D00F724A726C5007566A5 /* MaintenanceEndpoint.swift */,
+				6A46D0D524AC3453001AE6FE /* MaintenanceProgress.strings */,
 			);
 			name = Maintenance;
 			sourceTree = "<group>";
@@ -1701,6 +1715,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A46D0D624AC3453001AE6FE /* MaintenanceProgress.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1711,6 +1726,7 @@
 				6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */,
 				6ABD369A2495CACE005F80EE /* LibraryCollectionHeaderView.strings in Resources */,
 				6ABD36802494C54E005F80EE /* InspectorWindowController.xib in Resources */,
+				6A46D0D424AC0BBF001AE6FE /* ThumbPreferencesViewController.strings in Resources */,
 				6A9D00E524A70C9E007566A5 /* Preferences.storyboard in Resources */,
 				6A2D4D1D24A4392B002AAB53 /* Sidebar.strings in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,

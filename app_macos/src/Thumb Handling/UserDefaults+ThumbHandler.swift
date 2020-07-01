@@ -39,4 +39,14 @@ extension UserDefaults {
             set(newValue, forKey: "thumbWorkQueueSize")
         }
     }
+    
+    /// Where is thumbnail data stored?
+    @objc dynamic var thumbStorageUrl: URL {
+        get {
+            return self.url(forKey: "thumbStorageUrl")!
+        }
+        set {
+            set(newValue, forKey: "thumbStorageUrl")
+        }
+    }
 }

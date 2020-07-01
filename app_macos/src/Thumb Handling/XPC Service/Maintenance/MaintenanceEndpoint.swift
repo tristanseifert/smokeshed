@@ -111,7 +111,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
      */
     func getSpaceUsed(withReply reply: @escaping (UInt, Error?) -> Void) {
         // get chunk directory url
-        let url = self.directory.chonker.chunkDir
+        let url = self.directory.chonker.chunkDir!
         
         do {
             let size = try FileManager.default.directorySize(url)
@@ -125,7 +125,101 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
      * Queries the chonker for its storage directory.
      */
     func getStorageDir(withReply reply: @escaping (URL) -> Void) {
-        reply(self.directory.chonker.chunkDir)
+        reply(self.directory.chonker.thumbBundle)
+    }
+    
+    
+    /**
+     * Requests thumbnail data to be moved to the specified url.
+     *
+     * The callback is executed at least once indicating any setup errors or a progress object on which the move can be tracked.
+     */
+    func moveThumbStorage(to: URL, copyExisting: Bool, deleteExisting: Bool, withReply reply: @escaping(Error?) -> Void) {
+        // bail if old url is the same as new
+        guard to != UserDefaults.thumbShared.thumbStorageUrl else {
+            DDLogInfo("Ignoring moveThunbStorage request; origin and destination are identical")
+            return reply(nil)
+        }
+        
+        do {
+            let fm = FileManager.default
+            let old = UserDefaults.thumbShared.thumbStorageUrl
+            let main = Progress(totalUnitCount: 2)
+            
+            self.directory.chonker.beginMoveTransaction()
+            
+            // if old thumb directory is inaccessible, just move directly to using the new one
+            if !fm.fileExists(atPath: old.path) {
+                main.becomeCurrent(withPendingUnitCount: 2)
+                
+                // create the new directory
+                if !fm.fileExists(atPath: to.path) {
+                    try fm.createDirectory(at: to, withIntermediateDirectories: true, attributes: nil)
+                }
+                
+                // save the new location
+                UserDefaults.thumbShared.thumbStorageUrl = to
+
+                main.completedUnitCount += 2
+                main.resignCurrent()
+            }
+            // otherwise, move and/or delete old data
+            else {
+                // do we need to copy the files?
+                main.becomeCurrent(withPendingUnitCount: 1)
+                if copyExisting {
+                    let progress = Progress(totalUnitCount: 1)
+                    progress.localizedDescription = Self.localized("thumb.copy")
+                    progress.becomeCurrent(withPendingUnitCount: 1)
+                    
+                    try fm.copyItem(at: old, to: to)
+                    progress.completedUnitCount += 1
+        
+                    progress.resignCurrent()
+                }
+                main.resignCurrent()
+                
+                // create directory if needed
+                if !fm.fileExists(atPath: to.path) {
+                    try fm.createDirectory(at: to, withIntermediateDirectories: true, attributes: nil)
+                }
+                
+                // update the storage url
+                UserDefaults.thumbShared.thumbStorageUrl = to
+                
+                // should the original files be deleted?
+                main.becomeCurrent(withPendingUnitCount: 1)
+                if deleteExisting {
+                    let progress = Progress(totalUnitCount: 1)
+                    progress.localizedDescription = Self.localized("thumb.trash")
+                    progress.becomeCurrent(withPendingUnitCount: 1)
+                    
+                    try fm.trashItem(at: old, resultingItemURL: nil)
+                    progress.completedUnitCount += 1
+                    
+                    progress.resignCurrent()
+                }
+                main.resignCurrent()
+            }
+            
+            // run success callback
+            reply(nil)
+        } catch {
+            DDLogError("Failed to move thumb storage to '\(to)': \(error)")
+            reply(error)
+        }
+        
+        // we always must resume chonkery
+        self.directory.chonker.endMoveTransaction()
+    }
+    
+    // MARK: - Helpers
+    /**
+     * Returns a localized string.
+     */
+    private static func localized(_ key: String) -> String {
+        let bundle = Bundle(for: Self.self)
+        return bundle.localizedString(forKey: key, value: nil, table: "MaintenanceProgress")
     }
     
     // MARK: - Errors

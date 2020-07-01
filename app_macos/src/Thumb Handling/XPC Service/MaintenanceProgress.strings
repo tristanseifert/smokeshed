@@ -1,0 +1,16 @@
+/* 
+  MaintenanceProgress.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200630.
+  
+*/
+
+// Thumbnail moving, initialization phase
+"thumb.setup" = "Preparing to move thumbnails";
+
+// Copying thumbnails to new location
+"thumb.copy" = "Copying thumbnail data";
+
+// Removing old thumbnails
+"thumb.trash" = "Removing old thumbnails";

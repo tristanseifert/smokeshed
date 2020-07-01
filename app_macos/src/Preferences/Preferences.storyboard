@@ -451,7 +451,7 @@ DQ
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider toolTip="Change the size of the cache holding undecoded thumbnail data as read from disk." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Va-Tk-gOo">
+                            <slider toolTip="Change the size of the in-memory cache holding undecoded thumbnail data as read from disk." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Va-Tk-gOo">
                                 <rect key="frame" x="220" y="292" width="289" height="28"/>
                                 <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="134217728" maxValue="1073741824" doubleValue="440401920" tickMarkPosition="above" numberOfTickMarks="15" sliderType="linear" id="dGT-kk-grj"/>
                                 <connections>
@@ -629,7 +629,7 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="232" width="19" height="28"/>
+                                <rect key="frame" x="363" y="233" width="19" height="26"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="Yeg-Cv-aOO"/>
@@ -678,14 +678,64 @@ DQ
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="90L-k4-Pul">
+                                <rect key="frame" x="18" y="209" width="204" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="fi4-cs-Wt8"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Storage location:" id="LL5-nI-5dW">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <pathControl verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zfV-0V-amW">
+                                <rect key="frame" x="228" y="205" width="352" height="22"/>
+                                <pathCell key="cell" selectable="YES" alignment="left" id="n6e-8u-uEi">
+                                    <font key="font" metaFont="system"/>
+                                    <url key="url" string="file://localhost/Applications/"/>
+                                </pathCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.storageLocation" id="x8E-vH-hfM"/>
+                                </connections>
+                            </pathControl>
+                            <button toolTip="Move thumbnail data to a different location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ReY-Dp-MOk">
+                                <rect key="frame" x="222" y="174" width="128" height="27"/>
+                                <buttonCell key="cell" type="push" title="Change Directory…" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LG8-Gq-oVj">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="smallSystem"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="changeStorageLocation:" target="3zq-It-y78" id="56m-tm-Af2"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Move thumbnail data back to its default location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mTa-eg-UPV">
+                                <rect key="frame" x="346" y="174" width="113" height="27"/>
+                                <buttonCell key="cell" type="push" title="Reset to Default" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RIP-YD-s9o">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="smallSystem"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="resetStorageLocation:" target="3zq-It-y78" id="rCq-0m-HAQ"/>
+                                    <binding destination="3zq-It-y78" name="hidden" keyPath="self.optPressed" id="ArQ-3F-cEO">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="NaS-7b-j0p" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="top" id="17L-ei-Ryh"/>
                             <constraint firstItem="vdh-Bq-Wij" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="42F-hV-rix"/>
+                            <constraint firstItem="ReY-Dp-MOk" firstAttribute="top" secondItem="zfV-0V-amW" secondAttribute="bottom" constant="8" symbolic="YES" id="503-aj-Oji"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="5Ca-Ex-hKH"/>
+                            <constraint firstItem="90L-k4-Pul" firstAttribute="trailing" secondItem="vdh-Bq-Wij" secondAttribute="trailing" id="5Th-H4-ShT"/>
+                            <constraint firstItem="90L-k4-Pul" firstAttribute="width" secondItem="vdh-Bq-Wij" secondAttribute="width" id="7d8-sM-DBA"/>
+                            <constraint firstItem="90L-k4-Pul" firstAttribute="firstBaseline" secondItem="zfV-0V-amW" secondAttribute="firstBaseline" id="9r0-4I-ERN"/>
                             <constraint firstItem="bKl-AK-EBP" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="BUk-hX-J7k"/>
-                            <constraint firstItem="bKl-AK-EBP" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="bottom" multiplier="2" constant="8" symbolic="YES" id="Bo6-Mt-BSs"/>
                             <constraint firstItem="l4Z-39-HBz" firstAttribute="top" secondItem="Tf4-nz-Tre" secondAttribute="bottom" constant="8" symbolic="YES" id="C1a-vs-7QS"/>
+                            <constraint firstItem="zfV-0V-amW" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="CSd-2A-rRw"/>
                             <constraint firstItem="0Va-Tk-gOo" firstAttribute="top" secondItem="Mzt-gk-6Sa" secondAttribute="top" constant="20" symbolic="YES" id="Ckh-DJ-mTX"/>
                             <constraint firstAttribute="trailing" secondItem="bKl-AK-EBP" secondAttribute="trailing" constant="20" symbolic="YES" id="Esb-sT-x3v"/>
                             <constraint firstItem="Tf4-nz-Tre" firstAttribute="top" secondItem="0Va-Tk-gOo" secondAttribute="bottom" multiplier="1.25" constant="8" symbolic="YES" id="H57-hp-UFG"/>
@@ -695,18 +745,177 @@ DQ
                             <constraint firstAttribute="trailing" secondItem="ZO0-J4-3Tq" secondAttribute="trailing" constant="20" symbolic="YES" id="OWP-r2-znI"/>
                             <constraint firstItem="vdh-Bq-Wij" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="Q5E-Ge-qIX"/>
                             <constraint firstItem="9IV-UR-ynk" firstAttribute="trailing" secondItem="vdh-Bq-Wij" secondAttribute="trailing" id="SVY-pO-E5F"/>
+                            <constraint firstItem="9IV-UR-ynk" firstAttribute="width" secondItem="vdh-Bq-Wij" secondAttribute="width" multiplier="0.385" id="Syv-ad-5XR"/>
                             <constraint firstItem="NaS-7b-j0p" firstAttribute="leading" secondItem="l4Z-39-HBz" secondAttribute="trailing" constant="5" id="T4T-0T-DYy"/>
+                            <constraint firstItem="ReY-Dp-MOk" firstAttribute="leading" secondItem="zfV-0V-amW" secondAttribute="leading" id="UXI-Qn-TLC"/>
                             <constraint firstItem="Tf4-nz-Tre" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="X49-Bg-xjz"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="trailing" constant="4" id="bA3-p3-euu"/>
                             <constraint firstItem="9IV-UR-ynk" firstAttribute="firstBaseline" secondItem="Tf4-nz-Tre" secondAttribute="firstBaseline" id="dpZ-NB-DFx"/>
                             <constraint firstItem="3zg-l3-GgI" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="e8O-5l-d6d"/>
                             <constraint firstItem="F0i-sJ-nbr" firstAttribute="leading" secondItem="Tf4-nz-Tre" secondAttribute="leading" constant="21" id="edH-fA-PWd"/>
+                            <constraint firstItem="mTa-eg-UPV" firstAttribute="firstBaseline" secondItem="ReY-Dp-MOk" secondAttribute="firstBaseline" id="eki-Mr-daD"/>
+                            <constraint firstItem="mTa-eg-UPV" firstAttribute="leading" secondItem="ReY-Dp-MOk" secondAttribute="trailing" constant="8" symbolic="YES" id="es4-Rb-dru"/>
+                            <constraint firstItem="zfV-0V-amW" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="bottom" constant="8" symbolic="YES" id="jXs-Y3-Jmk"/>
                             <constraint firstAttribute="bottom" secondItem="3zg-l3-GgI" secondAttribute="bottom" constant="20" symbolic="YES" id="q3B-fy-se1"/>
+                            <constraint firstAttribute="trailing" secondItem="zfV-0V-amW" secondAttribute="trailing" constant="20" symbolic="YES" id="snj-fD-0mM"/>
                             <constraint firstItem="F0i-sJ-nbr" firstAttribute="firstBaseline" secondItem="l4Z-39-HBz" secondAttribute="firstBaseline" id="uxO-U0-yOk"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="progressWindow" destination="38d-WL-rhi" id="9Y7-xe-AWR"/>
+                        <outlet property="storageOpenPanelAccessory" destination="pOF-7a-xkW" id="uUz-aa-ayO"/>
+                    </connections>
                 </viewController>
                 <customObject id="PfU-EP-Fjd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="pOF-7a-xkW" userLabel="Open panel accessory">
+                    <rect key="frame" x="0.0" y="0.0" width="420" height="148"/>
+                    <subviews>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="Lje-E4-T9z" userLabel="Containeyboi">
+                            <rect key="frame" x="23" y="20" width="375" height="108"/>
+                            <subviews>
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vL9-Iw-dDk">
+                                    <rect key="frame" x="-2" y="91" width="274" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Copy existing thumbnails to new location" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="KtV-Ou-QvK">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <binding destination="3zq-It-y78" name="value" keyPath="self.shouldCopyThumbData" id="U4r-bp-WJq"/>
+                                    </connections>
+                                </button>
+                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Xpf-oB-0XL">
+                                    <rect key="frame" x="18" y="58" width="359" height="32"/>
+                                    <textFieldCell key="cell" selectable="YES" title="When unchecked, existing thumbnail data is discarded, and will need to be regenerated from scratch." id="ylq-ic-F9g">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rSc-De-eQK">
+                                    <rect key="frame" x="-2" y="33" width="198" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Trash source thumbnail data" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FEk-HW-BfF">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <binding destination="3zq-It-y78" name="value" keyPath="self.shouldTrashOldThumbData" id="6Et-Zr-0Mc"/>
+                                    </connections>
+                                </button>
+                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="jo5-90-JGM">
+                                    <rect key="frame" x="18" y="0.0" width="359" height="32"/>
+                                    <textFieldCell key="cell" selectable="YES" title="Moves thumbnail files from the old location to the trash after copying them to the new location." id="owf-da-BpZ">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Xpf-oB-0XL" secondAttribute="trailing" id="EOC-nq-Hc5"/>
+                                <constraint firstAttribute="bottom" secondItem="jo5-90-JGM" secondAttribute="bottom" id="HR3-Bb-fRe"/>
+                                <constraint firstItem="jo5-90-JGM" firstAttribute="leading" secondItem="Xpf-oB-0XL" secondAttribute="leading" id="Hx0-2L-xgF"/>
+                                <constraint firstItem="vL9-Iw-dDk" firstAttribute="top" secondItem="Lje-E4-T9z" secondAttribute="top" id="Jzd-Sp-LgE"/>
+                                <constraint firstItem="Xpf-oB-0XL" firstAttribute="top" secondItem="vL9-Iw-dDk" secondAttribute="bottom" constant="2" id="Kul-ti-NE7"/>
+                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jo5-90-JGM" secondAttribute="trailing" id="XYW-Fh-Q3l"/>
+                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="375" id="iNF-vE-5AD"/>
+                                <constraint firstItem="vL9-Iw-dDk" firstAttribute="leading" secondItem="Lje-E4-T9z" secondAttribute="leading" id="lVu-cL-M1r"/>
+                                <constraint firstItem="Xpf-oB-0XL" firstAttribute="leading" secondItem="vL9-Iw-dDk" secondAttribute="leading" constant="20" id="qDD-V3-cIc"/>
+                                <constraint firstItem="jo5-90-JGM" firstAttribute="top" secondItem="rSc-De-eQK" secondAttribute="bottom" constant="2" id="rKt-rt-KEQ"/>
+                                <constraint firstItem="rSc-De-eQK" firstAttribute="top" secondItem="Xpf-oB-0XL" secondAttribute="bottom" constant="8" symbolic="YES" id="sae-wd-nNq"/>
+                                <constraint firstItem="rSc-De-eQK" firstAttribute="leading" secondItem="vL9-Iw-dDk" secondAttribute="leading" id="v02-te-fpM"/>
+                            </constraints>
+                        </customView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="Lje-E4-T9z" firstAttribute="top" secondItem="pOF-7a-xkW" secondAttribute="top" constant="20" symbolic="YES" id="DYI-27-R1q"/>
+                        <constraint firstItem="Lje-E4-T9z" firstAttribute="centerX" secondItem="pOF-7a-xkW" secondAttribute="centerX" id="P4d-mx-gj6"/>
+                        <constraint firstAttribute="bottom" secondItem="Lje-E4-T9z" secondAttribute="bottom" constant="20" symbolic="YES" id="e9c-rY-LFd"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="210" id="nvO-VB-Asi"/>
+                    </constraints>
+                </customView>
+                <window title="Thumb Move Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="38d-WL-rhi" userLabel="Progress Sheet">
+                    <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                    <rect key="contentRect" x="-2135" y="318" width="375" height="178"/>
+                    <rect key="screenRect" x="-2560" y="-144" width="2560" height="1415"/>
+                    <value key="minSize" type="size" width="375" height="178"/>
+                    <view key="contentView" id="E0c-GG-6dn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="128"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lac-C5-9QQ">
+                                <rect key="frame" x="18" y="92" width="262" height="16"/>
+                                <textFieldCell key="cell" title="Changing thumbnail storage directory…" id="bno-jV-i4o">
+                                    <font key="font" metaFont="systemBold"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <progressIndicator verticalHuggingPriority="1000" maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="iyb-ut-KLB">
+                                <rect key="frame" x="20" y="41" width="335" height="20"/>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="animate" keyPath="self.progressWindowAnimating" id="V9u-og-qcz"/>
+                                    <binding destination="3zq-It-y78" name="isIndeterminate" keyPath="self.moveProgress.isIndeterminate" previousBinding="V9u-og-qcz" id="Nkw-nO-rks">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.moveProgressPercent" id="CsY-gK-eue">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </progressIndicator>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="UFe-AY-mIZ">
+                                <rect key="frame" x="18" y="20" width="339" height="14"/>
+                                <textFieldCell key="cell" controlSize="small" selectable="YES" title="Progress additional text text" id="hRR-9G-Dpm">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.moveProgress.localizedAdditionalDescription" id="2DJ-r6-msd"/>
+                                </connections>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="pdv-3S-4eh">
+                                <rect key="frame" x="18" y="68" width="122" height="16"/>
+                                <textFieldCell key="cell" selectable="YES" title="Progress detail text" id="zKZ-K5-pRH">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.moveProgress.localizedDescription" id="Sho-Fo-hPf">
+                                        <dictionary key="options">
+                                            <string key="NSNullPlaceholder">Initializing…</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="pdv-3S-4eh" secondAttribute="trailing" constant="20" symbolic="YES" id="0Xq-Ks-qcc"/>
+                            <constraint firstItem="Lac-C5-9QQ" firstAttribute="top" secondItem="E0c-GG-6dn" secondAttribute="top" constant="20" symbolic="YES" id="1jI-oT-C2V"/>
+                            <constraint firstItem="pdv-3S-4eh" firstAttribute="top" secondItem="Lac-C5-9QQ" secondAttribute="bottom" constant="8" symbolic="YES" id="8Ip-HV-xMx"/>
+                            <constraint firstItem="pdv-3S-4eh" firstAttribute="leading" secondItem="Lac-C5-9QQ" secondAttribute="leading" id="IKc-LK-Zdv"/>
+                            <constraint firstAttribute="bottom" secondItem="UFe-AY-mIZ" secondAttribute="bottom" constant="20" symbolic="YES" id="QBu-hJ-5qS"/>
+                            <constraint firstItem="iyb-ut-KLB" firstAttribute="leading" secondItem="E0c-GG-6dn" secondAttribute="leading" constant="20" symbolic="YES" id="R4N-2X-gXy"/>
+                            <constraint firstAttribute="trailing" secondItem="iyb-ut-KLB" secondAttribute="trailing" constant="20" symbolic="YES" id="R6g-OX-C1C"/>
+                            <constraint firstItem="UFe-AY-mIZ" firstAttribute="trailing" secondItem="iyb-ut-KLB" secondAttribute="trailing" id="XMA-qF-tWe"/>
+                            <constraint firstItem="iyb-ut-KLB" firstAttribute="top" secondItem="pdv-3S-4eh" secondAttribute="bottom" constant="8" symbolic="YES" id="evv-VK-l0r"/>
+                            <constraint firstItem="Lac-C5-9QQ" firstAttribute="leading" secondItem="E0c-GG-6dn" secondAttribute="leading" constant="20" symbolic="YES" id="fHc-fH-sQN"/>
+                            <constraint firstItem="UFe-AY-mIZ" firstAttribute="top" secondItem="iyb-ut-KLB" secondAttribute="bottom" constant="8" symbolic="YES" id="iq3-kU-TqX"/>
+                            <constraint firstItem="UFe-AY-mIZ" firstAttribute="leading" secondItem="iyb-ut-KLB" secondAttribute="leading" id="sDd-6E-DQB"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Lac-C5-9QQ" secondAttribute="trailing" constant="20" symbolic="YES" id="wT6-J2-CvM"/>
+                        </constraints>
+                    </view>
+                </window>
             </objects>
             <point key="canvasLocation" x="877" y="626"/>
         </scene>
