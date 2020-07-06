@@ -174,13 +174,6 @@ import Smokeshop
  */
 @objc public protocol ThumbXPCMaintenanceEndpoint {
     /**
-     * Reloads all configuration.
-     *
-     * This mainly exists since KVO on shared user defaults suites either never worked or is broken.
-     */
-    func reloadConfiguration()
-    
-    /**
      * Calculates the total disk space used to store thumbnail data.
      */
     func getSpaceUsed(withReply reply: @escaping (UInt, Error?) -> Void)
@@ -194,6 +187,30 @@ import Smokeshop
      * Moves thumbnail storage.
      */
     func moveThumbStorage(to: URL, copyExisting: Bool, deleteExisting: Bool, withReply reply: @escaping(Error?) -> Void)
+    
+    /**
+     * Gets the current xpc service configuration.
+     */
+    func getConfig(withReply reply: @escaping([String: Any]) -> Void)
+    
+    /**
+     * Sets the current xpc service configuration.
+     */
+    func setConfig(_ config: [String: Any])
+}
+
+/**
+ * String dictionary keys for the XPC service configuration
+ */
+public enum ThumbXPCConfigKey: String {
+    /// Is the thumbnail processing queue dynamically sized?
+    case workQueueSizeAuto = "thumbWorkQueueSizeAuto"
+    /// If the thumb work queue is statically sized, number of threads to allocate
+    case workQueueSize = "thumbWorkQueueSize"
+    /// How big the in memory chunk cache is, in bytes
+    case chunkCacheSize = "thumbChunkCacheSize"
+    /// Where is thumbnail data stored?
+    case storageUrl = "thumbStorageUrl"
 }
 
 /**

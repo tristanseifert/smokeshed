@@ -39,28 +39,19 @@ internal class Generator {
         self.directory = directory
         
         // observe the work queue size and auto sizing keys
-        let autoObs = UserDefaults.thumbShared.observe(\.thumbWorkQueueSizeAuto,
-                                                       options: [])
+        let autoObs = UserDefaults.standard.observe(\.thumbWorkQueueSizeAuto)
         { _, _ in
             self.refreshSettings()
         }
         self.kvos.append(autoObs)
         
-        let sizeObs = UserDefaults.thumbShared.observe(\.thumbWorkQueueSize,
-                                                       options: .initial)
+        let sizeObs = UserDefaults.standard.observe(\.thumbWorkQueueSize)
         { _, _ in
             self.refreshSettings()
         }
         self.kvos.append(sizeObs)
         
         // register for reload config notification
-        self.reloadConfigObs = NotificationCenter.default.addObserver(forName: .reloadConfigNotification,
-                                                                      object: nil,
-                                                                      queue: nil)
-        { [weak self] _ in
-            self?.refreshSettings()
-        }
-        
         self.refreshSettings()
     }
     
@@ -70,26 +61,21 @@ internal class Generator {
     deinit {
         self.queue.cancelAllOperations()
         self.kvos.removeAll()
-        
-        NotificationCenter.default.removeObserver(self.reloadConfigObs!)
     }
     
     // MARK: Configuration
-    /// Notification handler for config reloading
-    private var reloadConfigObs: NSObjectProtocol!
-    
     /**
      * Reads the user's settings out of the user defaults and applies them to the thumb queue.
      */
     private func refreshSettings() {        
         // should the queue be sized automatically?
-        if UserDefaults.thumbShared.thumbWorkQueueSizeAuto {
+        if UserDefaults.standard.thumbWorkQueueSizeAuto {
             DDLogDebug("Switched to automatic generator queue sizing")
             self.queue.maxConcurrentOperationCount = OperationQueue.defaultMaxConcurrentOperationCount
         }
         // use an user-configured size
         else {
-            let workers = abs(UserDefaults.thumbShared.thumbWorkQueueSize)
+            let workers = abs(UserDefaults.standard.thumbWorkQueueSize)
             DDLogDebug("User-defined generator queue size: \(workers)")
             
             self.queue.maxConcurrentOperationCount = workers

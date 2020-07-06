@@ -48,7 +48,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         super.init()
         
         // get chunk directory
-        try self.setChunkDir(UserDefaults.thumbShared.thumbStorageUrl)
+        try self.setChunkDir(UserDefaults.standard.thumbStorageUrl)
         
         // configure cache
         self.chunkCache.totalCostLimit = Self.maxChunkCacheSize
@@ -56,10 +56,10 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         self.chunkCache.delegate = self
         
         // register for the chunk url change
-        let urlObs = UserDefaults.thumbShared.observe(\.thumbStorageUrl, options: [])
+        let urlObs = UserDefaults.standard.observe(\.thumbStorageUrl)
         { _, _ in
             do {
-                let newUrl = UserDefaults.thumbShared.thumbStorageUrl
+                let newUrl = UserDefaults.standard.thumbStorageUrl
                 
                 DDLogInfo("New thumb storage url: \(newUrl)")
                 try self.setChunkDir(newUrl)
@@ -70,29 +70,14 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         self.kvos.append(urlObs)
         
         // observe cache size changes
-        let sizeObs = UserDefaults.thumbShared.observe(\.thumbChunkCacheSize,
-                                                       options: [])
+        let sizeObs = UserDefaults.standard.observe(\.thumbChunkCacheSize)
         { _, _ in
             self.refreshSettings()
         }
         self.kvos.append(sizeObs)
         
         // register for reload config notification
-        self.reloadConfigObs = NotificationCenter.default.addObserver(forName: .reloadConfigNotification,
-                                                                      object: nil,
-                                                                      queue: nil)
-        { [weak self] _ in
-            self?.refreshSettings()
-        }
-        
         self.refreshSettings()
-    }
-    
-    /**
-     * Remove notification observers.
-     */
-    deinit {
-        NotificationCenter.default.removeObserver(self.reloadConfigObs!)
     }
     
     /**
@@ -115,9 +100,6 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
     }
     
     // MARK: Configuration
-    /// Notification handler for config reloading
-    private var reloadConfigObs: NSObjectProtocol!
-    
     /// Access to chunks is blocked due to some internal operation
     private var ioBlocked: Bool = false
     
@@ -126,7 +108,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      */
     private func refreshSettings() {
         // get the new cache size
-        let new = UserDefaults.thumbShared.thumbChunkCacheSize
+        let new = UserDefaults.standard.thumbChunkCacheSize
         
         if new > (1024 * 1024 * 16) {
             DDLogVerbose("New thumb cache size: \(new)")
@@ -150,7 +132,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
     internal func endMoveTransaction() {
         // set the new chunk directory
         do {
-            try self.setChunkDir(UserDefaults.thumbShared.thumbStorageUrl)
+            try self.setChunkDir(UserDefaults.standard.thumbStorageUrl)
         } catch {
             DDLogError("Failed to update chunk dir: \(error)")
         }

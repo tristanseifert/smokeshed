@@ -434,7 +434,7 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3zg-l3-GgI">
-                                <rect key="frame" x="18" y="16" width="24" height="25"/>
+                                <rect key="frame" x="17.5" y="16" width="25" height="25"/>
                                 <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PdJ-ab-r9w">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -455,7 +455,8 @@ DQ
                                 <rect key="frame" x="220" y="292" width="289" height="28"/>
                                 <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="134217728" maxValue="1073741824" doubleValue="440401920" tickMarkPosition="above" numberOfTickMarks="15" sliderType="linear" id="dGT-kk-grj"/>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbChunkCacheSize" id="zIN-Z6-CFJ"/>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="tPU-q0-jgJ"/>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.chunkCacheSize" id="BBf-ED-c3T"/>
                                 </connections>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZO0-J4-3Tq">
@@ -470,7 +471,7 @@ DQ
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbChunkCacheSize" id="3ez-yH-r8J"/>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.chunkCacheSize" id="8Y5-ap-Ovg"/>
                                 </connections>
                             </textField>
                             <box verticalHuggingPriority="500" title="Statistics" translatesAutoresizingMaskIntoConstraints="NO" id="bKl-AK-EBP">
@@ -617,6 +618,7 @@ DQ
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="k0p-Fk-70i"/>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.autoSizeGeneratorQueue" id="w21-Qv-bdy">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="1"/>
@@ -629,15 +631,15 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="233" width="19" height="26"/>
+                                <rect key="frame" x="363" y="232" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="Yeg-Cv-aOO"/>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="f15-vl-KWg">
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="EBQ-TV-p8A">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.generatorQueueThreads" id="PNq-Kt-KKi"/>
                                 </connections>
                             </stepper>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-UR-ynk">
@@ -662,12 +664,12 @@ DQ
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="value" keyPath="self.userDefaultsController.values.thumbWorkQueueSize" id="PNc-1Q-bFN"/>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.userDefaultsController.values.thumbWorkQueueSizeAuto" id="5od-5h-x7S">
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="55a-in-VHZ">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.generatorQueueThreads" id="4Pa-ZE-x6e"/>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-sJ-nbr">
@@ -696,6 +698,16 @@ DQ
                                     <url key="url" string="file://localhost/Applications/"/>
                                 </pathCell>
                                 <connections>
+                                    <binding destination="3zq-It-y78" name="enabled2" keyPath="self.storageLocation" previousBinding="RCI-Mw-Xst" id="lhn-Pe-cq2">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                            <integer key="NSNullPlaceholder" value="-1"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="RCI-Mw-Xst"/>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.storageLocation" id="x8E-vH-hfM"/>
                                 </connections>
                             </pathControl>
@@ -707,6 +719,11 @@ DQ
                                 </buttonCell>
                                 <connections>
                                     <action selector="changeStorageLocation:" target="3zq-It-y78" id="56m-tm-Af2"/>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.storageLocation" id="wf9-1S-6Mz">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </button>
                             <button toolTip="Move thumbnail data back to its default location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mTa-eg-UPV">
@@ -717,7 +734,12 @@ DQ
                                 </buttonCell>
                                 <connections>
                                     <action selector="resetStorageLocation:" target="3zq-It-y78" id="rCq-0m-HAQ"/>
-                                    <binding destination="3zq-It-y78" name="hidden" keyPath="self.optPressed" id="ArQ-3F-cEO">
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.storageLocation" id="GVe-2f-lyo">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="3zq-It-y78" name="hidden" keyPath="self.optPressed" previousBinding="GVe-2f-lyo" id="DwF-bk-ize">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
@@ -836,7 +858,7 @@ DQ
                 <window title="Thumb Move Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="38d-WL-rhi" userLabel="Progress Sheet">
                     <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                     <rect key="contentRect" x="-2135" y="318" width="375" height="178"/>
-                    <rect key="screenRect" x="-2560" y="-144" width="2560" height="1415"/>
+                    <rect key="screenRect" x="-1440" y="-290" width="1440" height="2535"/>
                     <value key="minSize" type="size" width="375" height="178"/>
                     <view key="contentView" id="E0c-GG-6dn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="128"/>
@@ -853,7 +875,6 @@ DQ
                             <progressIndicator verticalHuggingPriority="1000" maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="iyb-ut-KLB">
                                 <rect key="frame" x="20" y="41" width="335" height="20"/>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="animate" keyPath="self.progressWindowAnimating" id="V9u-og-qcz"/>
                                     <binding destination="3zq-It-y78" name="isIndeterminate" keyPath="self.moveProgress.isIndeterminate" previousBinding="V9u-og-qcz" id="Nkw-nO-rks">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="1"/>
@@ -870,6 +891,7 @@ DQ
                                             <integer key="NSNullPlaceholder" value="0"/>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="3zq-It-y78" name="animate" keyPath="self.progressWindowAnimating" id="V9u-og-qcz"/>
                                 </connections>
                             </progressIndicator>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="UFe-AY-mIZ">

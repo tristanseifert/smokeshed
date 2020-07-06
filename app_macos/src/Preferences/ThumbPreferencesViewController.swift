@@ -12,14 +12,6 @@ import Bowl
 import CocoaLumberjackSwift
 
 class ThumbPreferencesViewController: NSViewController {
-    /// User defaults controller bound to the thumb shared defaults
-    @objc dynamic lazy var userDefaultsController: NSUserDefaultsController = {
-        let c = NSUserDefaultsController(defaults: UserDefaults.thumbShared,
-                                         initialValues: nil)
-        c.appliesImmediately = true
-        return c
-    }()
-    
     /// Maintenance endpoint of the thumb service
     @objc dynamic weak private var maintenance: ThumbXPCMaintenanceEndpoint!
     
@@ -38,8 +30,7 @@ class ThumbPreferencesViewController: NSViewController {
             self.maintenance = ep
             
             // get the storage directory and update used space
-            self.updateStoragePath(nil)
-            self.getSpaceUsed(nil)
+            self.getServicePrefs(nil)
         }
         
         // register the event handler for handling the option key
@@ -67,8 +58,7 @@ class ThumbPreferencesViewController: NSViewController {
         self.optPressed = false
         
         // save preferences
-        self.userDefaultsController.save(nil)
-        self.maintenance.reloadConfiguration()
+        self.saveServicePrefs(nil)
     
         // invalidate management connection and any cached values
         ThumbHandler.shared.closeMaintenanceEndpoint()
@@ -103,14 +93,54 @@ class ThumbPreferencesViewController: NSViewController {
     }
     
     // MARK: - Preferences
+    /// Are thumbnail preferences accessible? If not, assume we're loading them
+    @objc dynamic private var xpcPrefsAvailable: Bool = false
+    
+    /// Size of the chunk cache in bytes
+    @objc dynamic private var chunkCacheSize: Int64 = 0
     /// Whether the thumb generator work queue size is automatically managed
-    @objc dynamic private var autoSizeGeneratorQueue: Bool {
-        get {
-            return UserDefaults.thumbShared.thumbWorkQueueSizeAuto
+    @objc dynamic private var autoSizeGeneratorQueue: Bool = true
+    /// Number of threads in the work queue
+    @objc dynamic private var generatorQueueThreads: Int64 = 0
+    
+    /**
+     * Gets the preferences dictionary from the thumbs endpoint.
+     */
+    private func getServicePrefs(_ sender: Any?) {
+        DispatchQueue.main.async {
+            self.xpcPrefsAvailable = false
         }
-        set {
-            UserDefaults.thumbShared.thumbWorkQueueSizeAuto = newValue
+        
+        // TODO
+        self.maintenance!.getConfig()
+        { config in
+            // update the ui
+            DispatchQueue.main.async {
+                self.chunkCacheSize = config[ThumbXPCConfigKey.chunkCacheSize.rawValue] as! Int64
+                self.autoSizeGeneratorQueue = config[ThumbXPCConfigKey.workQueueSizeAuto.rawValue] as! Bool
+                self.generatorQueueThreads = config[ThumbXPCConfigKey.workQueueSize.rawValue] as! Int64
+                
+                self.xpcPrefsAvailable = true
+            }
+            
+            // get the rest of the values
+            self.updateStoragePath(nil)
+            self.getSpaceUsed(nil)
         }
+    }
+    
+    /**
+     * Saves the preferences back to the xpc service.
+     */
+    private func saveServicePrefs(_ sender: Any?) {
+        // create a settings dict
+        let dict: [String: Any] = [
+            ThumbXPCConfigKey.chunkCacheSize.rawValue: self.chunkCacheSize,
+            ThumbXPCConfigKey.workQueueSizeAuto.rawValue: self.autoSizeGeneratorQueue,
+            ThumbXPCConfigKey.workQueueSize.rawValue: self.generatorQueueThreads
+        ]
+        
+        self.maintenance.setConfig(dict)
     }
     
     // MARK: - Stats

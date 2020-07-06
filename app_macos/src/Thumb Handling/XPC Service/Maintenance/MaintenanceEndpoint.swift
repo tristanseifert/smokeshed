@@ -99,11 +99,26 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
     
     // MARK: - External Interface
     /**
-     * Fires the "reload config" notification.
+     * Gets the current XPC service configuration.
      */
-    func reloadConfiguration() {
-        NotificationCenter.default.post(name: .reloadConfigNotification,
-                                        object: nil)
+    func getConfig(withReply reply: @escaping ([String : Any]) -> Void) {
+        var rep = UserDefaults.standard.dictionaryRepresentation()
+        rep = rep.filter({
+            return (ThumbXPCConfigKey(rawValue: $0.key) != nil)
+        })
+        
+        reply(rep)
+    }
+    
+    /**
+     * Updates the xpc service configuration.
+     */
+    func setConfig(_ config: [String : Any]) {
+        let values = config.filter({
+            return (ThumbXPCConfigKey(rawValue: $0.key) != nil)
+        })
+        
+        UserDefaults.standard.setValuesForKeys(values)
     }
     
     /**
@@ -136,14 +151,14 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
      */
     func moveThumbStorage(to: URL, copyExisting: Bool, deleteExisting: Bool, withReply reply: @escaping(Error?) -> Void) {
         // bail if old url is the same as new
-        guard to != UserDefaults.thumbShared.thumbStorageUrl else {
+        guard to != UserDefaults.standard.thumbStorageUrl else {
             DDLogInfo("Ignoring moveThunbStorage request; origin and destination are identical")
             return reply(nil)
         }
         
         do {
             let fm = FileManager.default
-            let old = UserDefaults.thumbShared.thumbStorageUrl
+            let old = UserDefaults.standard.thumbStorageUrl
             let main = Progress(totalUnitCount: 2)
             
             self.directory.chonker.beginMoveTransaction()
@@ -158,7 +173,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
                 }
                 
                 // save the new location
-                UserDefaults.thumbShared.thumbStorageUrl = to
+                UserDefaults.standard.thumbStorageUrl = to
 
                 main.completedUnitCount += 2
                 main.resignCurrent()
@@ -185,7 +200,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
                 }
                 
                 // update the storage url
-                UserDefaults.thumbShared.thumbStorageUrl = to
+                UserDefaults.standard.thumbStorageUrl = to
                 
                 // should the original files be deleted?
                 main.becomeCurrent(withPendingUnitCount: 1)
@@ -227,9 +242,4 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
         /// Connecting client isn't allowed
         case connectionForbidden(_ identifier: Any?)
     }
-}
-
-extension NSNotification.Name {
-    /// A client requested that we reload our configuration
-    static let reloadConfigNotification = NSNotification.Name("me.tseifert.smokeshed.hand.reloadConfigNotification")
 }

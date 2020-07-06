@@ -28,17 +28,6 @@ internal class InitialDefaults {
         // register the shared defaults
         let standard = defaults["standard"] as! [String: Any]
         UserDefaults.standard.register(defaults: standard)
-        
-        // thumb service defaults
-        let thumb = defaults["thumb"] as! [String: Any]
-        UserDefaults.thumbShared.register(defaults: thumb)
-        
-        // register default thumb path if required
-        if UserDefaults.thumbShared.object(forKey: "thumbStorageUrl") == nil {
-            let thumbDir = ContainerHelper.groupAppCache(component: .thumbHandler)
-            let bundleUrl = thumbDir.appendingPathComponent("Thumbs.smokethumbs", isDirectory: true)
-            UserDefaults.thumbShared.thumbStorageUrl = bundleUrl
-        }
     }
     
     // MARK: - Initial values

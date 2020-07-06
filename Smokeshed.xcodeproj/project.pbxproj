@@ -41,6 +41,7 @@
 		6A2D4D2124A532A6002AAB53 /* SidebarImagesByDateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */; };
 		6A46D0D424AC0BBF001AE6FE /* ThumbPreferencesViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A46D0D324AC0BBF001AE6FE /* ThumbPreferencesViewController.strings */; };
 		6A46D0D624AC3453001AE6FE /* MaintenanceProgress.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A46D0D524AC3453001AE6FE /* MaintenanceProgress.strings */; };
+		6A4AE88424B2DCFE000F93F1 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A4AE88324B2DCFE000F93F1 /* Defaults.plist */; };
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
@@ -131,7 +132,6 @@
 		6A9D00E524A70C9E007566A5 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00E424A70C9E007566A5 /* Preferences.storyboard */; };
 		6A9D00E924A71318007566A5 /* ThumbPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00E824A71318007566A5 /* ThumbPreferencesViewController.swift */; };
 		6A9D00EB24A71397007566A5 /* UserDefaults+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00EA24A71397007566A5 /* UserDefaults+Shared.swift */; };
-		6A9D00EE24A71B9E007566A5 /* UserDefaults+ThumbHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00ED24A71B9E007566A5 /* UserDefaults+ThumbHandler.swift */; };
 		6A9D00EF24A71B9E007566A5 /* UserDefaults+ThumbHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00ED24A71B9E007566A5 /* UserDefaults+ThumbHandler.swift */; };
 		6A9D00F224A71D6A007566A5 /* InitialDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00F124A71D6A007566A5 /* InitialDefaults.swift */; };
 		6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00F324A71F8D007566A5 /* PreferencesWindowController.swift */; };
@@ -349,6 +349,7 @@
 		6A2D4D2024A532A6002AAB53 /* SidebarImagesByDateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarImagesByDateController.swift; path = app_macos/src/Sidebar/SidebarImagesByDateController.swift; sourceTree = "<group>"; };
 		6A46D0D324AC0BBF001AE6FE /* ThumbPreferencesViewController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ThumbPreferencesViewController.strings; path = app_macos/src/Preferences/ThumbPreferencesViewController.strings; sourceTree = "<group>"; };
 		6A46D0D524AC3453001AE6FE /* MaintenanceProgress.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MaintenanceProgress.strings; path = "app_macos/src/Thumb Handling/XPC Service/MaintenanceProgress.strings"; sourceTree = "<group>"; };
+		6A4AE88324B2DCFE000F93F1 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = "app_macos/src/Thumb Handling/XPC Service/Defaults.plist"; sourceTree = "<group>"; };
 		6A4CEE9A248B259500145E49 /* SmokeShed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmokeShed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEB6248B272300145E49 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Icons.xcassets; path = app_macos/assets/Icons.xcassets; sourceTree = "<group>"; };
 		6A4CEEBA248B273D00145E49 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenu.xib; path = app_macos/assets/UI/MainMenu.xib; sourceTree = "<group>"; };
@@ -629,6 +630,7 @@
 				6A9D00F524A721C3007566A5 /* ThumbHandler.entitlements */,
 				6A93159B249315B200A9F9B4 /* ThumbHandler-Bridging-Header.h */,
 				6A020D4B24920B16006F5093 /* Info.plist */,
+				6A4AE88324B2DCFE000F93F1 /* Defaults.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1715,6 +1717,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A4AE88424B2DCFE000F93F1 /* Defaults.plist in Resources */,
 				6A46D0D624AC3453001AE6FE /* MaintenanceProgress.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1854,7 +1857,6 @@
 				6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */,
 				6A2D4D1F24A47692002AAB53 /* SidebarShortcutsController.swift in Sources */,
 				6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */,
-				6A9D00EE24A71B9E007566A5 /* UserDefaults+ThumbHandler.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */,
 				6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */,
