@@ -20,6 +20,7 @@ NSString *PAPColorSpaceConverterErrorDomain = @"PAPColorSpaceConverterErrorDomai
 @interface PAPColorSpaceConverter ()
 
 @property (nonatomic) NSDictionary *camToXyzInfo;
+@property (nonatomic) NSDictionary *aliases;
 
 - (NSError *) errorForCode:(NSInteger) code;
 
@@ -40,6 +41,11 @@ NSString *PAPColorSpaceConverterErrorDomain = @"PAPColorSpaceConverterErrorDomai
         NSURL *url = [b URLForResource:@"CamToXYZInfo" withExtension:@"plist"];
         
         self.camToXyzInfo = [NSDictionary dictionaryWithContentsOfURL:url];
+        DDAssert(self.camToXyzInfo != nil, @"Failed to load XYZ matrices from %@", url);
+        
+        url = [b URLForResource:@"CamToXYZAliases" withExtension:@"plist"];
+        self.aliases = [NSDictionary dictionaryWithContentsOfURL:url];
+        DDAssert(self.aliases != nil, @"Failed to load alias info from %@", url);
     }
     
     return self;
@@ -62,10 +68,17 @@ NSString *PAPColorSpaceConverterErrorDomain = @"PAPColorSpaceConverterErrorDomai
 /**
  * Converts pixel data to the working color space, in place. The conversion matrix is read for the given model.
  */
-- (void) convert:(NSMutableData *) pixels withModel:(NSString *) modelName
+- (void) convert:(NSMutableData *) pixels withModel:(NSString *) inModelName
             size:(CGSize) size andError:(NSError **) error {
     long err;
     double camXyz[3][3];
+    
+    // look up alias for model name if needed
+    NSString *modelName = inModelName;
+    
+    if(self.aliases[inModelName]) {
+        modelName = self.aliases[inModelName];
+    }
     
     // read conversion info and make matrix
     NSDictionary *info = self.camToXyzInfo[modelName];

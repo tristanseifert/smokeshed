@@ -2,6 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Canon EOS 600D</key>
+	<dict>
+		<key>black</key>
+		<integer>0</integer>
+		<key>maximum</key>
+		<integer>13584</integer>
+		<key>matrix</key>
+		<array>
+			<integer>6461</integer>
+			<integer>-907</integer>
+			<integer>-882</integer>
+			<integer>-4300</integer>
+			<integer>12184</integer>
+			<integer>2378</integer>
+			<integer>-819</integer>
+			<integer>1944</integer>
+			<integer>5931</integer>
+			<integer>0</integer>
+			<integer>0</integer>
+			<integer>0</integer>
+		</array>
+	</dict>
 	<key>Canon EOS 6D Mark II</key>
 	<dict>
 		<key>black</key>

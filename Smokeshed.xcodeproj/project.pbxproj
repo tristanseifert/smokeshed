@@ -61,6 +61,10 @@
 		6A4CEF34248B5F5500145E49 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEF33248B5F5500145E49 /* Logger.swift */; };
 		6A4CEF35248B62D400145E49 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */; };
 		6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
+		6A4DEE2B24BA33C300F734F0 /* Paper-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4DEE2A24BA33BF00F734F0 /* Paper-Swift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6A4DEE2D24BA35BE00F734F0 /* froge.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */; };
+		6A4DEE2F24BA3F2D00F734F0 /* CamToXYZAliases.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */; };
+		6A4DEE3124BA408E00F734F0 /* meow.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3024BA408E00F734F0 /* meow.cr2 */; };
 		6A587F6E24A7F83B009696E9 /* PreferencesTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */; };
 		6A587F7024A8500E009696E9 /* GridCellDetailPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */; };
 		6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */; };
@@ -372,6 +376,10 @@
 		6A4CEF2B248B59F000145E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = frameworks/Bowl/assets/Info.plist; sourceTree = "<group>"; };
 		6A4CEF2C248B59F900145E49 /* Bowl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bowl.h; path = frameworks/Bowl/src/include/Bowl.h; sourceTree = "<group>"; };
 		6A4CEF33248B5F5500145E49 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = frameworks/Bowl/src/Logging/Logger.swift; sourceTree = "<group>"; };
+		6A4DEE2A24BA33BF00F734F0 /* Paper-Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Paper-Swift.h"; path = "frameworks/Paper/src/Paper-Swift.h"; sourceTree = "<group>"; };
+		6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = froge.cr2; path = tests/data/froge.cr2; sourceTree = "<group>"; };
+		6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = CamToXYZAliases.plist; path = "frameworks/Paper/src/Color Conversions/CamToXYZAliases.plist"; sourceTree = "<group>"; };
+		6A4DEE3024BA408E00F734F0 /* meow.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = meow.cr2; path = tests/data/meow.cr2; sourceTree = "<group>"; };
 		6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesTabController.swift; path = app_macos/src/Preferences/PreferencesTabController.swift; sourceTree = "<group>"; };
 		6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GridCellDetailPreferencesController.swift; path = app_macos/src/Preferences/GridCellDetailPreferencesController.swift; sourceTree = "<group>"; };
 		6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserDefaults+GridCell.swift"; path = "app_macos/src/Library View/UserDefaults+GridCell.swift"; sourceTree = "<group>"; };
@@ -1152,6 +1160,8 @@
 		6A9D00D624A5D3AF007566A5 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				6A4DEE3024BA408E00F734F0 /* meow.cr2 */,
+				6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */,
 				6A9D00D724A5D3B9007566A5 /* birb.cr2 */,
 			);
 			name = Data;
@@ -1237,6 +1247,7 @@
 				6AAC457C24A0033A009B9AFF /* colorspace.c */,
 				6AAC457F24A0130F009B9AFF /* PAPColorSpaceConverter.h */,
 				6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */,
+				6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */,
 			);
 			name = "Color space, gamma";
 			sourceTree = "<group>";
@@ -1363,6 +1374,7 @@
 			children = (
 				6ABD36C22496D251005F80EE /* Info.plist */,
 				6A9E8280249AF1E9004BE66A /* SwiftBridging.h */,
+				6A4DEE2A24BA33BF00F734F0 /* Paper-Swift.h */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1497,6 +1509,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6AAC456C249F48C0009B9AFF /* PAPDebayerer.h in Headers */,
+				6A4DEE2B24BA33C300F734F0 /* Paper-Swift.h in Headers */,
 				6A961B87249C5A8100FE4D5E /* unslice.h in Headers */,
 				6A9E8283249AF9FB004BE66A /* CJPEGDecompressor.h in Headers */,
 				6A9E827D249AED35004BE66A /* huffman.h in Headers */,
@@ -1777,6 +1790,7 @@
 			files = (
 				6AAC4574249FFDAF009B9AFF /* CamToXYZInfo.plist in Resources */,
 				6A587F7A24A98FB4009696E9 /* MetadataTypes.strings in Resources */,
+				6A4DEE2F24BA3F2D00F734F0 /* CamToXYZAliases.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1787,7 +1801,9 @@
 				6A9D00D824A5D3B9007566A5 /* birb.cr2 in Resources */,
 				6A9D00C424A5CF05007566A5 /* mri.tif in Resources */,
 				6A9D00C324A5CF05007566A5 /* forest.tif in Resources */,
+				6A4DEE2D24BA35BE00F734F0 /* froge.cr2 in Resources */,
 				6A9D00D524A5D250007566A5 /* yenrail.jpg in Resources */,
+				6A4DEE3124BA408E00F734F0 /* meow.cr2 in Resources */,
 				6A9D00C224A5CF05007566A5 /* leaves.tif in Resources */,
 				6A9D00C524A5CF05007566A5 /* f14.tif in Resources */,
 			);

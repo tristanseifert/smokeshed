@@ -72,6 +72,9 @@ internal class JPEGDecoder {
     }
 
     // MARK: - Markers
+    /// All decoded frames
+    private(set) internal var frames: [JPEGFrame] = []
+    
     /// All markers decoded out of this image
     private var markers: [BaseMarker] = []
     /// Whether we reached the end of the JPEG stream (encountered EOI marker)
@@ -120,8 +123,10 @@ internal class JPEGDecoder {
             case .frameStartLossless:
                 let frame = JPEGFrame(self)
                 outOffset = try frame.readMarker(atOffset: inOff)
+                
                 self.currentFrame = frame
-
+                self.frames.append(frame)
+                
             // start of scan marker: next byte is image data
             case .scanStart:
                 let scan = JPEGScan(self)

@@ -189,6 +189,17 @@ public class CR2Reader {
         try self.decodeColorData()
         try self.readDustRecords()
     }
+    
+    /**
+     * Updates the EXIF dictionary with some information from the MakerNote field.
+     */
+    private func updateExif() throws {
+        // camera settings
+        if let settings = self.canon.getTag(byId: 0x0001) as? TIFFReader.TagUnsignedArray {
+            // lens ID is at index 22
+            self.image.meta.exif!.lensId = UInt(settings.value[22])
+        }
+    }
 
     /**
      * Identifies the camera based on the model ID value in the maker notes. This will validate that the
@@ -200,8 +211,8 @@ public class CR2Reader {
             throw RawError.missingTag(0x0010)
         }
 
-        // only 6Dii is supported atm
-        guard idTag.value == 0x80000406 else {
+        // check whether the camera model is supported
+        guard Self.supportedModels.contains(idTag.value) else {
             throw RawError.unsupportedModel(idTag.value)
         }
     }
@@ -235,6 +246,7 @@ public class CR2Reader {
         self.sensor = sensor
     }
 
+    // MARK: Color data
     /**
      * Attempts to read the color data information; the value contains the version of the record.
      */
@@ -244,14 +256,44 @@ public class CR2Reader {
             throw RawError.missingTag(0x4001)
         }
 
-        // get version
+        // get version and decode appropriately
         let vers = tag.value[0]
         
-        guard vers == 15 else {
-            DDLogWarn("Unsupported ColorData version: \(vers)")
-            return
+        switch vers {
+        case 10:
+            self.color = try self.decodeColorData6(tag)
+        case 12...15:
+            self.color = try self.decodeColorData8(tag)
+        default:
+            throw RawError.unsupportedColorData(vers)
         }
-        
+    }
+    
+    /**
+     * Decodes a ColorData6 structure.
+     *
+     * The version field will be 10 (600D/1200D).
+     *
+     * Note that there is a ColorData7 structure that also has version 10 that has more data, but we don't currently read any of it. This
+     * would later require inspecting the camera model to check whether version 10 is a ColorData6 or ColorData7 blob.
+     */
+    private func decodeColorData6(_ tag: TIFFReader.TagUnsignedArray) throws -> ColorInfo {
+        return try self.decodeColorDataGeneric(tag)
+    }
+    
+    /**
+     * Decodes a ColorData8 structure.
+     *
+     * The version field will be either 12 (5DS/5DSr), 13 (80D), 14 (1300D/2000D/4000D) or 15 (6DMkII/77D/200D/800D)
+     */
+    private func decodeColorData8(_ tag: TIFFReader.TagUnsignedArray) throws -> ColorInfo {
+        return try self.decodeColorDataGeneric(tag)
+    }
+    
+    /**
+     * Generic color data decoder that reads the RGBB levels (as shot) from offsets [63, 66]
+     */
+    private func decodeColorDataGeneric(_ tag: TIFFReader.TagUnsignedArray) throws -> ColorInfo {
         var color = ColorInfo()
         
         // read the WB_RGGBLevelsAsShot field (4 signed 16 bit ints)
@@ -265,15 +307,16 @@ public class CR2Reader {
          * this by finding the lowest value, and setting that to be 1.0, then
          * simply calculating the ratio between them.
          */
-        let min = Double(color.wbRggbLevelsAsShot.min()!)        
+        let min = Double(color.wbRggbLevelsAsShot.min()!)
         self.image.rawWbMultiplier = color.wbRggbLevelsAsShot.map({
             Double($0) / min
         })
         
         // done
-        self.color = color
+        return color
     }
 
+    // MARK: Dust records
     /**
      * Reads the dust records table
      */
@@ -286,17 +329,6 @@ public class CR2Reader {
         // get version
         let data = i.value
         let _: UInt8 = data.read(0)
-    }
-    
-    /**
-     * Updates the EXIF dictionary with some information from the MakerNote field.
-     */
-    private func updateExif() throws {
-        // camera settings
-        if let settings = self.canon.getTag(byId: 0x0001) as? TIFFReader.TagUnsignedArray {
-            // lens ID is at index 22
-            self.image.meta.exif!.lensId = UInt(settings.value[22])
-        }
     }
 
     // MARK: - Thumbnails
@@ -368,16 +400,12 @@ public class CR2Reader {
             throw RawError.unsupportedCompression(compression.value)
         }
 
-        // read the raw image size
-        guard let width = ifd.getTag(byId: 0x0100) as? TIFFReader.TagUnsigned else {
-            throw RawError.missingTag(0x0100)
+        // read the raw image size (if it exists as a tag)
+        if let width = ifd.getTag(byId: 0x0100) as? TIFFReader.TagUnsigned,
+           let height = ifd.getTag(byId: 0x0101) as? TIFFReader.TagUnsigned {
+            self.image.rawSize = CGSize(width: Int(width.value),
+                                        height: Int(height.value))
         }
-        guard let height = ifd.getTag(byId: 0x0101) as? TIFFReader.TagUnsigned else {
-            throw RawError.missingTag(0x0101)
-        }
-
-        self.image.rawSize = CGSize(width: Int(width.value),
-                                    height: Int(height.value))
 
         // bail out if we don't actually want raw data decompressed
         guard self.shouldDecodeRaw else {
@@ -402,7 +430,7 @@ public class CR2Reader {
                                    length: Int(length.value))
 
         // allocate output buffer and unslice image
-        let bytes = Int(width.value * height.value * 2)
+        let bytes = Int(self.image.rawSize.width * self.image.rawSize.height * 2)
         self.unsliceBuf = NSMutableData(length: bytes)
 
         try self.unslice(slices.value)
@@ -426,6 +454,24 @@ public class CR2Reader {
     private func decompressRawData(_ offset: Int, length: Int) throws {
         self.jpeg = try JPEGDecoder(withData: &self.data, offset: offset)
         try self.jpeg.decode()
+        
+        // get the raw decoded image size
+        guard let frame = self.jpeg.frames.first,
+              self.jpeg.frames.count == 1 else {
+            throw RawError.failedToGetJPEGFrame
+        }
+        
+        let rawSize = CGSize(width: Int(frame.samplesPerLine) * frame.components.count,
+                             height: Int(frame.numLines))
+        
+        if self.image.rawSize == .zero {
+            self.image.rawSize = rawSize
+        }
+        
+        // this would _probably_ be good to have but *shrugs*
+//        guard self.image.rawSize == rawSize else {
+//            throw RawError.invalidSize(self.image.rawSize, rawSize)
+//        }
     }
 
     /**
@@ -522,6 +568,12 @@ public class CR2Reader {
         case unsupportedCompression(_ method: UInt32)
         /// The camera model is not supported
         case unsupportedModel(_ modelId: UInt32)
+        /// Failed to get decoded jpeg frame
+        case failedToGetJPEGFrame
+        /// Raw image size from jpeg and raw metadata do not match
+        case invalidSize(_ metadataSize: CGSize, _ rawSize: CGSize)
+        /// Color data could not be decoded because the structure version is not understood
+        case unsupportedColorData(_ version: UInt32)
     }
 
     // MARK: - File offsets
@@ -533,4 +585,15 @@ public class CR2Reader {
     static let minVersionOffset: Int = 11
     /// File offset to the RAW image IFD
     static let rawIfdAddressOffset: Int = 12
+    
+    // MARK: - Constants
+    /**
+     * Array of supported camera types
+     */
+    private static let supportedModels: [UInt32] = [
+        // EOS 6D Mk II
+        0x80000406,
+        // EOS Rebel T3i / 600D
+        0x80000286
+    ]
 }

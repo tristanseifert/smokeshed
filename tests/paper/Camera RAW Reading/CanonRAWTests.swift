@@ -34,6 +34,8 @@ class CanonRAWTests: XCTestCase {
     // MARK: - Reading tests
     /**
      * Reads in the `birb.cr2` RAW file once and ensures the read data matches what we expect.
+     *
+     * This image was created on a Canon EOS 6D Mk II.
      */
     func testCr2Birb() throws {
         let url = Bundle(for: type(of: self)).url(forResource: "birb",
@@ -45,6 +47,23 @@ class CanonRAWTests: XCTestCase {
         DDLogInfo("Metadata: \(String(describing: image.meta))")
         DDLogInfo("CR2 image: \(image)")
 //        self.saveResults(image)
+    }
+    
+    /**
+     * Reads in the `froge.cr2` RAW file once and ensures the read data matches what we expect.
+     *
+     * This image was created on a Canon T3i.
+     */
+    func testCr2Froge() throws {
+        let url = Bundle(for: type(of: self)).url(forResource: "froge",
+                                                  withExtension: "cr2")!
+
+        let reader = try CR2Reader(fromUrl: url, decodeRawData: true, decodeThumbs: true)
+        let image = try reader.decode()
+        
+        DDLogInfo("Metadata: \(String(describing: image.meta))")
+        DDLogInfo("CR2 image: \(image)")
+        self.saveResults(image)
     }
 
     /**
