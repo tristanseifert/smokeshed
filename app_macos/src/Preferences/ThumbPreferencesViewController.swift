@@ -140,7 +140,7 @@ class ThumbPreferencesViewController: NSViewController {
             ThumbXPCConfigKey.workQueueSize.rawValue: self.generatorQueueThreads
         ]
         
-        self.maintenance.setConfig(dict)
+        self.maintenance?.setConfig(dict)
     }
     
     // MARK: - Stats

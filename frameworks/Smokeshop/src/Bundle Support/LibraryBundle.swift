@@ -14,7 +14,7 @@ import CocoaLumberjackSwift
  */
 public class LibraryBundle {
     /// URL on disk of the bundle. May or may not exist
-    private var url: URL! = nil
+    private(set) public var url: URL! = nil
     /// File wrapper around the library bundle
     private var wrapper: FileWrapper! = nil
 
@@ -30,6 +30,9 @@ public class LibraryBundle {
 
     /// Library metdata
     private var meta: LibraryMeta = LibraryMeta()
+    
+    /// Do we need to stop access to the url for the library bundle when closing?
+    private var relinquishSecurityScope: Bool = false
 
     // MARK: - Initialization
     /**
@@ -40,6 +43,7 @@ public class LibraryBundle {
      * exception is raised.
      */
     public init(_ url: URL, shouldOpenStore openStore: Bool = false) throws {
+        self.relinquishSecurityScope = url.startAccessingSecurityScopedResource()
         self.url = url
         
         let b = Bundle(for: LibraryBundle.self)
@@ -77,6 +81,15 @@ public class LibraryBundle {
         // open data store if requested
         if openStore {
             try self.openStore()
+        }
+    }
+    
+    /**
+     * Relinquish security scoped access on dealloc.
+     */
+    deinit {
+        if self.relinquishSecurityScope {
+            self.url.stopAccessingSecurityScopedResource()
         }
     }
 

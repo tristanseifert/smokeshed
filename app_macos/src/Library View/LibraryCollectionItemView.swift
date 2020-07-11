@@ -50,6 +50,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     private var surface: IOSurface! = nil
     /// Identifier of the image for which this surface contains the thumbnail.
     private var surfaceImageId: UUID! = nil
+    
+    /// URL to the library that contains images being displayed
+    internal var libraryUrl: URL? = nil
 
     // MARK: View render behaviors
     /// Ensure the layer is drawn as opaque so we get font smoothing.
@@ -1324,7 +1327,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         case .fileName:
             return image.name ?? Self.localized("placeholder.fileName")
         case .fileType:
-            let url = image.url
+            let url = image.getUrl(relativeTo: self.libraryUrl)
             guard let info = try? url?.resourceValues(forKeys: [.typeIdentifierKey]),
                   let utiStr = info.typeIdentifier,
                   let uti = UTType(utiStr),
@@ -1333,7 +1336,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             }
             return typeStr
         case .fileSize:
-            let url = image.url
+            let url = image.getUrl(relativeTo: self.libraryUrl)
             guard let info = try? url?.resourceValues(forKeys: [.fileSizeKey]),
                   let size = info.fileSize else {
                 return Self.localized("placeholder.fileSize")

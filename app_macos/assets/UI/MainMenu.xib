@@ -453,6 +453,12 @@ CA
                                     <action selector="removeSelectedImages:" target="-1" id="o9f-PF-zek"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Update Thumbnails" keyEquivalent="u" id="GLR-4x-gva">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="updateThumbs:" target="-1" id="qhA-An-NXs"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

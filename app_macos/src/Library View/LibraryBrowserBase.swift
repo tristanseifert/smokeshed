@@ -579,6 +579,7 @@ NSFetchedResultsControllerDelegate {
             let cell = view.makeItem(withIdentifier: .libraryCollectionItem,
                                      for: path) as! LibraryCollectionItem
             cell.sequenceNumber = (path[1] + 1)
+            cell.libraryUrl = self.library.url
             cell.representedObject = self.fetchReqCtrl.object(at: path)
 
             return cell

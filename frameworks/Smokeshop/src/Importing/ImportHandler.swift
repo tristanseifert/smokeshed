@@ -98,6 +98,10 @@ public class ImportHandler {
 
         // perform flattening on background queue
         let op = BlockOperation(block: {
+            urls.forEach({
+                $0.startAccessingSecurityScopedResource()
+            })
+            
             do {
                 let flattened = try self.flattenUrls(urls)
 
@@ -111,9 +115,13 @@ public class ImportHandler {
                 flattened.forEach({ (url) in
                     self.queue.addOperation({
                         do {
-                            _ = url.startAccessingSecurityScopedResource()
+                            let relinquish = url.startAccessingSecurityScopedResource()
+                            
                             try self.importSingle(url, importDate: importDate)
-                            url.stopAccessingSecurityScopedResource()
+                            
+                            if relinquish {
+                                url.stopAccessingSecurityScopedResource()
+                            }
                         } catch {
                             // TODO: signal this error somehow
                             DDLogError("Failed to import '\(url)': \(error)")
@@ -133,6 +141,10 @@ public class ImportHandler {
                 // TODO: signal this error somehow
                 DDLogError("Failed to flatten URLs: \(error)")
             }
+            
+            urls.forEach({
+                $0.stopAccessingSecurityScopedResource()
+            })
         })
         op.name = "FlattenURLs"
 
@@ -146,14 +158,14 @@ public class ImportHandler {
         // get IDs and URLs on calling thread
         let imageIdentifiers = images.compactMap({$0.identifier})
         let objectIds = images.map({$0.objectID})
-        let urls = images.compactMap({$0.url})
+        let urls = images.compactMap({$0.getUrl(relativeTo: self.library?.url)})
 
         // create the "remove files" operation
         let removeFiles = BlockOperation(block: {
             let m = FileManager.default
 
             urls.forEach {
-                _ = $0.startAccessingSecurityScopedResource()
+                let relinquish = $0.startAccessingSecurityScopedResource()
 
                 do {
                     try m.trashItem(at: $0, resultingItemURL: nil)
@@ -161,7 +173,9 @@ public class ImportHandler {
                     DDLogError("Failed to delete image '\($0)' from disk: \(error)")
                 }
 
-                $0.stopAccessingSecurityScopedResource()
+                if relinquish {
+                    $0.stopAccessingSecurityScopedResource()
+                }
             }
 
             if let handler = completion {
@@ -327,8 +341,8 @@ public class ImportHandler {
                 image.metadata = meta
 
                 // save image url and a bookmark to it
+                try image.setUrlBookmark(url, relativeTo: self.library!.url)
                 image.originalUrl = url
-                try image.setUrlBookmark(url)
 
                 // store other precomputed properties
                 image.dateCaptured = captureDate

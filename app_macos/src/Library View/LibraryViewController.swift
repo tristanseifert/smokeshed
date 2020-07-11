@@ -279,6 +279,16 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
     func openEditorForImages(_ images: [Image]) {
         DDLogDebug("Switching to editor for: \(images)")
     }
+    
+    /**
+     * Updates thumbnails for all selected images.
+     */
+    @IBAction func updateThumbs(_ sender: Any?) {
+        let paths = self.collection.selectionIndexPaths
+        let images = paths.map(self.fetchReqCtrl.object)
+    
+        ThumbHandler.shared.generate(images)
+    }
 
     // MARK: - Menu item handling
     /**
@@ -293,6 +303,12 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
         // allow open/remove/edit options if there's a selection
         if menuItem.action == #selector(removeSelectedImages(_:)) ||
             menuItem.action == #selector(editSelectedImages(_:)) {
+            return !self.collection!.selectionIndexPaths.isEmpty
+        }
+        
+        // thumb specific options are always available
+        if menuItem.action == #selector(updateThumbs(_:)) {
+            // but for now only when there's a selection
             return !self.collection!.selectionIndexPaths.isEmpty
         }
 

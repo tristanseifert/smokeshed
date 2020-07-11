@@ -115,32 +115,66 @@ internal class Generator {
             }
             
             // create operations for each new image
+            self.inFlightSem.wait()
+            
             for request in new {
+                // ensure it's not already being generated
+                if self.inFlight.contains(where: {
+                    ($0.imageId == request.imageId) && ($0.libraryId == request.libraryId)
+                }) {
+                    continue
+                }
+                
+                // create the operation
                 let flight = InFlightInfo(request)
+                
                 self.inFlight.append(flight)
                 
                 self.queue.addOperation {
+                    // start accessing the bookmark data
+                    let relinquish = request.imageUrl.startAccessingSecurityScopedResource()
+                    
+                    // generate image
                     do {
                         try self.generateNew(request)
                     } catch {
                         DDLogError("Creating new thumb for \(request) failed: \(error)")
                     }
                     
+                    // relinquish access to bookmark if needed
+                    if relinquish {
+                        request.imageUrl.stopAccessingSecurityScopedResource()
+                    }
+                    
                     // remove the in-flight info
+                    self.inFlightSem.wait()
+                    
                     self.inFlight.removeAll(where: {
                         $0.libraryId == request.libraryId &&
                         $0.imageId == request.imageId
                     })
+                    
+                    self.inFlightSem.signal()
                 }
             }
+            
+            self.inFlightSem.signal()
             
             // update the existing thumbs
             for thumb in existing {
                 self.queue.addOperation {
+                    // start accessing the bookmark data
+                    let relinquish = thumb.1.imageUrl.startAccessingSecurityScopedResource()
+                    
                     do {
                         try self.updateExisting(thumb.0, thumb.1)
                     } catch {
                         DDLogError("Updating thumb for \(thumb) failed: \(error)")
+                    }
+                    
+                    // relinquish access to bookmark if needed
+                    if relinquish {
+                        thumb.1.imageUrl.stopAccessingSecurityScopedResource()
                     }
                 }
             }
@@ -222,6 +256,8 @@ internal class Generator {
     
     /// All in flight requests
     private var inFlight: [InFlightInfo] = []
+    /// Semaphore protecting in flight info
+    private var inFlightSem = DispatchSemaphore(value: 1)
     
     /**
      * Creates a new thumbnail for the given request.

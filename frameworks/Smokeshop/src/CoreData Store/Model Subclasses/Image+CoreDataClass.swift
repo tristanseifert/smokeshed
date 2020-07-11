@@ -81,23 +81,26 @@ public class Image: NSManagedObject {
 
     // MARK: URL bookmark support
     /**
-     * Returns the actual URL to use in accessing the file. If it's currently inaccessible, nil is returned.
+     * Decodes the url bookmark for the image.
      */
-    @objc dynamic public var url: URL? {
-        // resolve bookmark
+    public func getUrl(relativeTo base: URL?) -> URL? {
+        // have we got a bookmark?
         if let bookmark = self.urlBookmark {
-            var isStale = false
-            let resolved = try? URL(resolvingBookmarkData: bookmark, bookmarkDataIsStale: &isStale)
+            do {
+                var isStale = false
+                let url = try URL(resolvingBookmarkData: bookmark,
+                                  options: [.withSecurityScope, .withoutUI],
+                                  relativeTo: base, bookmarkDataIsStale: &isStale)
 
-            if let url = resolved {
-                // update if stale
+                // update bookmark if stale
                 if isStale {
-                    try? self.setUrlBookmark(url)
+                    DDLogWarn("TODO: implement updating stale bookmark (url \(url), base \(String(describing: base))")
                 }
 
+                // return the url
                 return url
-            } else {
-                DDLogWarn("Failed to resolve bookmark data: \(bookmark)")
+            } catch {
+                DDLogError("Failed to decode bookmark data (\(bookmark), base \(String(describing: base))) for image \(self.objectID): \(error)")
             }
         }
 
@@ -113,10 +116,10 @@ public class Image: NSManagedObject {
     /**
      * Generates and sets the bookmark data field with the given URL.
      */
-    func setUrlBookmark(_ url: URL) throws {
+    func setUrlBookmark(_ url: URL, relativeTo base: URL) throws {
         self.urlBookmark = try url.bookmarkData(options: [.withSecurityScope],
                                             includingResourceValuesForKeys: nil,
-                                            relativeTo: nil)
+                                            relativeTo: base)
     }
 
     // MARK: Transient variables

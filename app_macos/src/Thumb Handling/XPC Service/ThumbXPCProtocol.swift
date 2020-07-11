@@ -10,6 +10,7 @@ import CoreGraphics
 import Cocoa
 
 import Smokeshop
+import CocoaLumberjackSwift
 
 /**
  * Represents a thumbnail request (either to generate or retrieve)
@@ -23,14 +24,19 @@ import Smokeshop
     }
     
     /// Identifier of the library this image is associated with
-    public var libraryId: UUID
+    private(set) public var libraryId: UUID
     /// Identifier of the image
-    public var imageId: UUID
+    private(set) public var imageId: UUID
     /// URL of the image on disk
-    public var imageUrl: URL!
+    private(set) public var imageUrl: URL!
     /// Image orientation
-    public var orientation: Image.ImageOrientation = .unknown
+    private(set) public var orientation: Image.ImageOrientation = .unknown
 
+    /// Url to which the bookmark is relative to
+    private var imageUrlBase: URL? = nil
+    /// Bookmark data for the image url
+    private var imageUrlBookmark: Data?
+    
     /// Size of the thumbnail that's desired
     public var size: CGSize? = nil
 
@@ -38,29 +44,43 @@ import Smokeshop
     /**
      * Creates an unpopulated thumb request.
      */
-    public init?(libraryId: UUID, image: Image, withDetails: Bool) {
+    public init?(libraryId: UUID, libraryUrl: URL, image: Image, withDetails: Bool) {
         self.libraryId = libraryId
 
         guard let imageId = image.identifier else {
             return nil
         }
         self.imageId = imageId
+        
+        self.orientation = image.orientation
 
+        // include url if requested
         if withDetails {
-            guard let url = image.url else {
+            self.imageUrlBase = libraryUrl
+            
+            // get the raw url
+            guard let url = image.getUrl(relativeTo: self.imageUrlBase) else {
                 return nil
             }
             self.imageUrl = url
-
-            self.orientation = image.orientation
+            
+            // create bookmark
+            let relinquish = url.startAccessingSecurityScopedResource()
+            
+            do {
+                let bm = try url.bookmarkData(options: .minimalBookmark,
+                                              includingResourceValuesForKeys: nil,
+                                              relativeTo: self.imageUrlBase)
+                self.imageUrlBookmark = bm
+            
+            } catch {
+                DDLogError("Failed to create bookmark for \(url): \(error)")
+            }
+            
+            if relinquish {
+                url.stopAccessingSecurityScopedResource()
+            }
         }
-    }
-    
-    /**
-     * Creates an unpopulated thumb request.
-     */
-    public convenience init?(libraryId: UUID, image: Image) {
-        self.init(libraryId: libraryId, image: image, withDetails: true)
     }
 
     // MARK: Encoding
@@ -75,7 +95,10 @@ import Smokeshop
         coder.encode(self.imageId, forKey: "imageId")
         coder.encode(Int(self.orientation.rawValue), forKey: "orientation")
         
-        if let url = self.imageUrl {
+        if let bookmark = self.imageUrlBookmark {
+            coder.encode(bookmark, forKey: "imageUrlBookmark")
+            coder.encode(self.imageUrlBase, forKey: "imageUrlBase")
+        } else if let url = self.imageUrl {
             coder.encode(url, forKey: "imageUrl")
         }
 
@@ -90,6 +113,25 @@ import Smokeshop
      * Decodes a thumb request.
      */
     public required init?(coder: NSCoder) {
+        // attempt to decode the url by resolving the bookmark or just taking the raw url value
+        if let bookmark = coder.decodeObject(forKey: "imageUrlBookmark") as? Data {
+            do {
+                let base = coder.decodeObject(forKey: "imageUrlBase") as? URL
+                
+                var isStale: Bool = false
+                let url = try URL(resolvingBookmarkData: bookmark,
+                                  options: [.withoutUI],
+                                  relativeTo: base, bookmarkDataIsStale: &isStale)
+                self.imageUrl = url
+            } catch {
+                DDLogError("Failed to decode url bookmark data (\(bookmark)): \(error)")
+                return nil
+            }
+        } else if let url = coder.decodeObject(forKey: "imageUrl") as? URL {
+            self.imageUrl = url
+        }
+        
+        // decode library id and image id
         guard let libraryId = coder.decodeObject(forKey: "libraryId") as? UUID else {
             return nil
         }
@@ -100,16 +142,14 @@ import Smokeshop
         }
         self.imageId = imageId
 
-        if let url = coder.decodeObject(forKey: "imageUrl") as? URL {
-            self.imageUrl = url
-        }
-
+        // get image orientation
         let rawOrientation = Int16(coder.decodeInteger(forKey: "orientation"))
         guard let orientation = Image.ImageOrientation(rawValue: rawOrientation) else {
             return nil
         }
         self.orientation = orientation
 
+        // lastly, size
         if coder.decodeBool(forKey: "hasSize") {
             self.size = coder.decodeSize(forKey: "size")
         }
@@ -225,8 +265,8 @@ class ThumbXPCProtocolHelpers {
 
         // set up the get() request
         let thumbReqClass = NSSet(array: [
-            ThumbRequest.self, NSDictionary.self, NSArray.self,
-            NSUUID.self, NSURL.self, NSString.self, NSNumber.self,
+            ThumbRequest.self, NSDictionary.self, NSArray.self, NSUUID.self, NSURL.self,
+            NSString.self, NSNumber.self, NSData.self,
         ]) as! Set<AnyHashable>
         let imageClass = NSSet(array: [
             NSImage.self, IOSurface.self

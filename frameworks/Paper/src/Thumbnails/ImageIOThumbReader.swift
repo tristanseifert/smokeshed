@@ -23,18 +23,48 @@ internal class ImageIOThumbReader: ThumbReaderImpl {
      * Creates an image source for the given file.
      */
     public required init(withFileAt url: URL) throws {
+        // get type of the file and provide an identifier hint
+        let resVals = try url.resourceValues(forKeys: [.typeIdentifierKey])
+
+        guard let uti = resVals.typeIdentifier else {
+            throw ImageIOThumbErrors.failedToGetType
+        }
+        
         // create source
-        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+        let opts: [CFString: Any] = [
+            // provide the UTI of the file
+            kCGImageSourceTypeIdentifierHint: uti,
+            // cache decoded image
+            kCGImageSourceShouldCache: true
+        ]
+        
+        guard let src = CGImageSourceCreateWithURL(url as CFURL, opts as CFDictionary) else {
             throw ImageIOThumbErrors.imageSourceCreateFailed
         }
         self.source = src
+        
+        guard CGImageSourceGetStatus(src) == .statusComplete else {
+            throw ImageIOThumbErrors.invalidStatus(CGImageSourceGetStatus(src).rawValue)
+        }
+        
+        // get the index of the main image
+        self.primaryIndex = CGImageSourceGetPrimaryImageIndex(self.source)
     }
     
     /**
      * Decode ImageIO thumbnails. This is a no-op.
      */
     public func decode() throws {
-        // nothing :)
+        // get the image size
+        guard let props = CGImageSourceCopyPropertiesAtIndex(self.source, self.primaryIndex, nil)
+                as? [CFString: Any] else {
+            throw ImageIOThumbErrors.imagePropertiesFailed
+        }
+        
+        let width = (props[kCGImagePropertyPixelWidth] as! NSNumber).intValue
+        let height = (props[kCGImagePropertyPixelHeight] as! NSNumber).intValue
+        
+        self.originalImageSize = CGSize(width: width, height: height)
     }
     
     /**
@@ -48,11 +78,13 @@ internal class ImageIOThumbReader: ThumbReaderImpl {
             // maximum size
             kCGImageSourceThumbnailMaxPixelSize: size,
             // create thumbnail if required
-            kCGImageSourceCreateThumbnailFromImageIfAbsent: true
+            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+            // scale it proportionally and remember orientation
+            kCGImageSourceCreateThumbnailWithTransform: true
         ]
         
         // get the thumb
-        return CGImageSourceCreateThumbnailAtIndex(self.source, 0,
+        return CGImageSourceCreateThumbnailAtIndex(self.source, self.primaryIndex,
                                                    opts as CFDictionary)
     }
     
@@ -66,18 +98,20 @@ internal class ImageIOThumbReader: ThumbReaderImpl {
     /**
      * Return the decoded image size
      */
-    var originalImageSize: CGSize {
-        let props = CGImageSourceCopyPropertiesAtIndex(self.source, 0, nil) as! [CFString: Any]
-        
-        let width = (props[kCGImagePropertyPixelWidth] as! NSNumber).intValue
-        let height = (props[kCGImagePropertyPixelHeight] as! NSNumber).intValue
-        
-        return CGSize(width: width, height: height)
-    }
+    private(set) var originalImageSize: CGSize = .zero
+    
+    /// Primary image index
+    private var primaryIndex: Int
     
     // MARK: - Errors
     enum ImageIOThumbErrors: Error {
+        /// Couldn't determine the type of the input image
+        case failedToGetType
         /// Failed to create an image source
         case imageSourceCreateFailed
+        /// Failed to get properties for the image source
+        case imagePropertiesFailed
+        /// Invalid image source status
+        case invalidStatus(_ status: Int32)
     }
 }

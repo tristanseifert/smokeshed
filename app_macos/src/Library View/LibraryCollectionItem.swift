@@ -58,6 +58,15 @@ class LibraryCollectionItem: NSCollectionViewItem {
             }
         }
     }
+    
+    /// Library url
+    internal var libraryUrl: URL? = nil {
+        didSet {
+            if let view = self.view as? LibraryCollectionItemView {
+                view.libraryUrl = self.libraryUrl
+            }
+        }
+    }
 
     // MARK: - Initialization
     /**

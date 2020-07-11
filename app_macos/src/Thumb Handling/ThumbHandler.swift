@@ -215,7 +215,7 @@ class ThumbHandler {
                 // create thumb requests on the context queue
                 ctx.perform {
                     let req = deleted.compactMap({
-                        return ThumbRequest(libraryId: libraryId, image: $0,
+                        return ThumbRequest(libraryId: libraryId, libraryUrl: self.library!.url, image: $0,
                                             withDetails: false)
                     })
                     guard !req.isEmpty else { return }
@@ -235,7 +235,7 @@ class ThumbHandler {
                 // create thumb requests on the context queue
                 ctx.perform {
                     let req = inserted.compactMap({
-                        return ThumbRequest(libraryId: libraryId, image: $0,
+                        return ThumbRequest(libraryId: libraryId, libraryUrl: self.library!.url, image: $0,
                                             withDetails: true)
                     })
                     guard !req.isEmpty else { return }
@@ -282,7 +282,7 @@ class ThumbHandler {
      */
     public func prefetch(_ libraryId: UUID, _ images: [Image]) {
         let requests = images.compactMap({ image in
-            return ThumbRequest(libraryId: libraryId, image: image)
+            return ThumbRequest(libraryId: libraryId, libraryUrl: self.library!.url, image: image, withDetails: false)
         })
         
         self.service?.prefetch(requests)
@@ -314,7 +314,7 @@ class ThumbHandler {
     public func generate(_ libraryId: UUID, _ images: [Image]) {
         // convert images to requests
         let requests = images.compactMap({ image in
-            return ThumbRequest(libraryId: libraryId, image: image)
+            return ThumbRequest(libraryId: libraryId, libraryUrl: self.library!.url, image: image, withDetails: true)
         })
         
         self.service!.generate(requests)
@@ -338,7 +338,7 @@ class ThumbHandler {
      */
     public func get(_ libraryId: UUID, _ image: Image, _ size: CGSize, _ handler: @escaping GetCallback) {
         // prepare a request
-        guard let req = ThumbRequest(libraryId: libraryId, image: image) else {
+        guard let req = ThumbRequest(libraryId: libraryId, libraryUrl: self.library!.url, image: image, withDetails: false) else {
             handler(image.identifier!, .failure(ThumbError.failedToCreateRequest))
             return
         }
