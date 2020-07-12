@@ -48,6 +48,9 @@ public class ImportHandler {
             self.cameraFinder.context = self.context
         }
     }
+    
+    /// Number of images after which to save the context
+    private var importBlockSize: UInt = 12
 
     /// General metadata helpers
     private var metaHelper = MetaHelper()
@@ -64,7 +67,7 @@ public class ImportHandler {
     public init() {
         // set up the queue. we allow some concurrency
         self.queue.name = "ImportHandler"
-        self.queue.qualityOfService = .default
+        self.queue.qualityOfService = .utility
         self.queue.maxConcurrentOperationCount = 8
     }
 
@@ -99,12 +102,14 @@ public class ImportHandler {
         // perform flattening on background queue
         let op = BlockOperation(block: {
             urls.forEach({
-                $0.startAccessingSecurityScopedResource()
+                _ = $0.startAccessingSecurityScopedResource()
             })
+            DDLogDebug("Import input urls: \(urls)")
             
             do {
                 let flattened = try self.flattenUrls(urls)
-
+                DDLogDebug("Flattened to \(flattened.count) URLs")
+                
                 // if no URLs returned, complete job
                 if flattened.isEmpty {
                     // TODO: implement
@@ -112,29 +117,31 @@ public class ImportHandler {
                 }
 
                 // prepare an import job for each URL
-                flattened.forEach({ (url) in
+                for (i, url) in flattened.enumerated() {
                     self.queue.addOperation({
+                        let relinquish = url.startAccessingSecurityScopedResource()
+                        
                         do {
-                            let relinquish = url.startAccessingSecurityScopedResource()
-                            
                             try self.importSingle(url, importDate: importDate)
-                            
-                            if relinquish {
-                                url.stopAccessingSecurityScopedResource()
-                            }
                         } catch {
                             // TODO: signal this error somehow
                             DDLogError("Failed to import '\(url)': \(error)")
                         }
+                        
+                        if relinquish {
+                            url.stopAccessingSecurityScopedResource()
+                        }
                     })
-                })
-                
-                // after all imports complete, save context
-                self.queue.addBarrierBlock {
-                    do {
-                        try self.context.save()
-                    } catch {
-                        DDLogError("Failed to save context after import: \(error)")
+                    
+                    // every N images, add a barrier block to save the context
+                    if UInt(i) % self.importBlockSize == 0 {
+                        self.queue.addBarrierBlock {
+                            do {
+                                try self.context.save()
+                            } catch {
+                                DDLogError("Failed to save context after import: \(error)")
+                            }
+                        }
                     }
                 }
             } catch {
@@ -142,9 +149,19 @@ public class ImportHandler {
                 DDLogError("Failed to flatten URLs: \(error)")
             }
             
-            urls.forEach({
-                $0.stopAccessingSecurityScopedResource()
-            })
+            // after all imports complete, save context
+            self.queue.addBarrierBlock {
+                do {
+                    try self.context.save()
+                } catch {
+                    DDLogError("Failed to save context after import: \(error)")
+                }
+                
+                // relinquish access to the URLs
+                urls.forEach({
+                    $0.stopAccessingSecurityScopedResource()
+                })
+            }
         })
         op.name = "FlattenURLs"
 

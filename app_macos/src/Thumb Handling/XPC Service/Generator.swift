@@ -115,21 +115,20 @@ internal class Generator {
             }
             
             // create operations for each new image
-            self.inFlightSem.wait()
+            self.newInFlightSem.wait()
             
             for request in new {
                 // ensure it's not already being generated
-                if self.inFlight.contains(where: {
+                if self.newInFlight.contains(where: {
                     ($0.imageId == request.imageId) && ($0.libraryId == request.libraryId)
                 }) {
                     continue
                 }
                 
-                // create the operation
                 let flight = InFlightInfo(request)
-                
-                self.inFlight.append(flight)
-                
+                self.newInFlight.append(flight)
+               
+                // create operation
                 self.queue.addOperation {
                     // start accessing the bookmark data
                     let relinquish = request.imageUrl.startAccessingSecurityScopedResource()
@@ -147,21 +146,32 @@ internal class Generator {
                     }
                     
                     // remove the in-flight info
-                    self.inFlightSem.wait()
-                    
-                    self.inFlight.removeAll(where: {
+                    self.newInFlightSem.wait()
+                    self.newInFlight.removeAll(where: {
                         $0.libraryId == request.libraryId &&
                         $0.imageId == request.imageId
                     })
-                    
-                    self.inFlightSem.signal()
+                    self.newInFlightSem.signal()
                 }
             }
             
-            self.inFlightSem.signal()
+            self.newInFlightSem.signal()
             
             // update the existing thumbs
+            self.updateInFlightSem.wait()
+            
             for thumb in existing {
+                // skip if already being updated; if not, insert into the in flight array
+                if self.updateInFlight.contains(where: {
+                    ($0.imageId == thumb.1.imageId) && ($0.libraryId == thumb.1.libraryId)
+                }) {
+                    continue
+                }
+                
+                let flight = InFlightInfo(thumb.1)
+                self.updateInFlight.append(flight)
+                
+                // create the operation
                 self.queue.addOperation {
                     // start accessing the bookmark data
                     let relinquish = thumb.1.imageUrl.startAccessingSecurityScopedResource()
@@ -176,8 +186,18 @@ internal class Generator {
                     if relinquish {
                         thumb.1.imageUrl.stopAccessingSecurityScopedResource()
                     }
+                    
+                    // remove the in-flight info
+                    self.updateInFlightSem.wait()
+                    self.updateInFlight.removeAll(where: {
+                        $0.libraryId == thumb.1.libraryId &&
+                        $0.imageId == thumb.1.imageId
+                    })
+                    self.updateInFlightSem.signal()
                 }
             }
+            
+            self.updateInFlightSem.signal()
             
             // save after all of these have completed
             self.queue.addBarrierBlock {
@@ -234,7 +254,7 @@ internal class Generator {
      * Determines if there is a generation request in-flight for the image identified in the thumb request.
      */
     internal func isInFlight(_ request: ThumbRequest) -> Bool {
-        return self.inFlight.contains(where: {
+        return self.newInFlight.contains(where: {
             $0.libraryId == request.libraryId &&
             $0.imageId == request.imageId
         })
@@ -254,10 +274,15 @@ internal class Generator {
         }
     }
     
-    /// All in flight requests
-    private var inFlight: [InFlightInfo] = []
-    /// Semaphore protecting in flight info
-    private var inFlightSem = DispatchSemaphore(value: 1)
+    /// All in flight requests to generate new thumbs
+    private var newInFlight: [InFlightInfo] = []
+    /// Semaphore protecting in flight info for thumbs to be generated
+    private var newInFlightSem = DispatchSemaphore(value: 1)
+    
+    /// All in flight requests to update existing thumbs
+    private var updateInFlight: [InFlightInfo] = []
+    /// Semaphore protecting in flight info for thumbs to be updated
+    private var updateInFlightSem = DispatchSemaphore(value: 1)
     
     /**
      * Creates a new thumbnail for the given request.
