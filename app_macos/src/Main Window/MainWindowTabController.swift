@@ -102,6 +102,7 @@ class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
             }
         }
         
+        DDLogVerbose("Encoded state for these controllers: \(encodedIdentifiers)")
         coder.encode(encodedIdentifiers, forKey: StateKeys.encodedControllers)
     }
     
@@ -113,6 +114,8 @@ class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
         
         // restore each controller's state
         if let encodedIds = coder.decodeObject(forKey: StateKeys.encodedControllers) as? [String] {
+            DDLogVerbose("Decoding state for these controllers: \(encodedIds)")
+            
             for item in self.tabViewItems {
                 if encodedIds.contains(item.identifier as! String), let vc = item.viewController {
                     vc.restoreState(with: coder)

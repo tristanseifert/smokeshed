@@ -1,6 +1,6 @@
 //
 //  XPCCSHelpers.swift
-//  ThumbHandler
+//  Bowl
 //
 //  Created by Tristan Seifert on 20200627.
 //
@@ -11,12 +11,12 @@ import Security
 /**
  * Provides helpers to check a remote XPC connection's code signature.
  */
-internal class XPCCSHelpers {
+public class XPCCSHelpers {
     // MARK: - Signature retrieval
     /**
      * Gets a reference to the Security code signature guest that's attempting to connect.
      */
-    internal static func getXpcGuest(_ connection: NSXPCConnection) throws -> SecCode {
+    public static func getXpcGuest(_ connection: NSXPCConnection) throws -> SecCode {
         // extract the audit token
         var token = connection.auditToken
         let tokenData = NSData(bytes: &token, length: MemoryLayout.size(ofValue: token))
@@ -39,7 +39,7 @@ internal class XPCCSHelpers {
     /**
      * Retrieves signing information for the specified guest.
      */
-    internal static func getSigningInfo(_ inCode: SecCode) throws -> [String: Any] {
+    public static func getSigningInfo(_ inCode: SecCode) throws -> [String: Any] {
         /*
          * We need to do a pretty disgusting hack to get a SecStaticCodeRef,
          * since that's what the SecCodeCopySigningInformation() call expects;
@@ -75,7 +75,7 @@ internal class XPCCSHelpers {
      * Note that for debug builds of the XPC service, these requirements are relaxed to require that the
      * client only implements the hardened runtime.
      */
-    internal static func validateSignatureState(_ info: [String: Any]) throws {
+    public static func validateSignatureState(_ info: [String: Any]) throws {
         #if DEBUG
         let required: SecCodeStatus = [.hardenedRuntime]
         #else
@@ -95,7 +95,7 @@ internal class XPCCSHelpers {
      * Validates the signing identity used to sign the code. It must have been signed with an Apple-issued
      * certificate, matching the expected developer ID.
      */
-    internal static func validateSignature(_ code: SecCode) throws {
+    public static func validateSignature(_ code: SecCode) throws {
         // build the requirements
         let reqStr = "anchor apple generic and certificate leaf[subject.OU] = \"8QDQ246B94\""
 
@@ -123,7 +123,7 @@ internal class XPCCSHelpers {
     /**
      * Indicates potential errors that may take place during the connection process.
      */
-    internal enum ConnectionError: Error {
+    public enum ConnectionError: Error {
         /// We could not get a reference to the caller's code signature.
         case failedToCopyGuest(_ secErr: OSStatus)
         /// Something went wrong getting a reference to the static on-disk code object.
@@ -144,9 +144,9 @@ internal class XPCCSHelpers {
  */
 extension SecCodeStatus {
     /// Library validation is required for the process.
-    internal static var libraryValidation = SecCodeStatus(rawValue: 0x2000)
+    fileprivate static var libraryValidation = SecCodeStatus(rawValue: 0x2000)
     /// The code is using the hardened runtime.
-    internal static var hardenedRuntime = SecCodeStatus(rawValue: 0x10000)
+    fileprivate static var hardenedRuntime = SecCodeStatus(rawValue: 0x10000)
     /// Debugging of the process is prohibited.
-    internal static var noDebugging = SecCodeStatus(rawValue: 0x800)
+    fileprivate static var noDebugging = SecCodeStatus(rawValue: 0x800)
 }

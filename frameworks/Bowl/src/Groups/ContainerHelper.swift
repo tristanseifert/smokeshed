@@ -102,5 +102,7 @@ public class ContainerHelper {
     public enum Component: String {
         /// Thumbnail  XPC service
         case thumbHandler = "me.tseifert.smokeshed.xpc.hand"
+        /// Rendering XPC service
+        case renderer = "me.tseifert.smokeshed.xpc.renderer"
     }
 }

@@ -73,25 +73,33 @@ class ThumbHandler {
 
         self.xpc.remoteObjectInterface = ThumbXPCProtocolHelpers.make()
         self.xpc.resume()
+        
+        // when invalidated, print a message and retry
+        self.xpc.invalidationHandler = {
+            DDLogWarn("Thumb XPC connection invalidated")
+            self.xpc = nil
+        }
+        
+        // on interruption, attempt to get the service again
+        self.xpc.interruptionHandler = {
+            DDLogWarn("Thumb connection interrupted; reconnecting")
+            self.getService()
+        }
+        
+        // connect that shit and get service
+        self.xpc.resume()
 
-        // then, get the service object
+        self.getService()
+        self.wakeXpcService()
+    }
+    
+    /**
+     * Gets a handle to the remote XPC object.
+     */
+    private func getService() {
         self.service = self.xpc.remoteObjectProxyWithErrorHandler { error in
             DDLogError("Failed to get remote object proxy: \(error)")
-
-            if let xpc = self.xpc {
-                xpc.invalidate()
-                self.xpc = nil
-            }
-            
-            // attempt to automatically re-establish connection later
-            self.service = nil
-            DispatchQueue.main.async {
-                self.establishXpcConnection()
-            }
         } as? ThumbXPCProtocol
-
-        // once connection is initialized, the XPC service itself must init
-        self.wakeXpcService()
     }
 
     /**
