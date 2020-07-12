@@ -925,7 +925,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             return
         }
         
-        image.rating = Int16(min(5, max(0, indicator.intValue)))
+        let newRating = Int16(min(5, max(0, indicator.intValue)))
+        
+        if image.rating != newRating {
+            image.rating = newRating
+        }
     }
 
     // MARK: - Thumbnail support

@@ -254,10 +254,14 @@ internal class Generator {
      * Determines if there is a generation request in-flight for the image identified in the thumb request.
      */
     internal func isInFlight(_ request: ThumbRequest) -> Bool {
-        return self.newInFlight.contains(where: {
+        self.newInFlightSem.wait()
+        let inFlight = self.newInFlight.contains(where: {
             $0.libraryId == request.libraryId &&
             $0.imageId == request.imageId
         })
+        self.newInFlightSem.signal()
+        
+        return inFlight
     }
     
     // MARK: - Generation

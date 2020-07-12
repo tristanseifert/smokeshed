@@ -82,6 +82,12 @@ class ThumbHandler {
                 xpc.invalidate()
                 self.xpc = nil
             }
+            
+            // attempt to automatically re-establish connection later
+            self.service = nil
+            DispatchQueue.main.async {
+                self.establishXpcConnection()
+            }
         } as? ThumbXPCProtocol
 
         // once connection is initialized, the XPC service itself must init
