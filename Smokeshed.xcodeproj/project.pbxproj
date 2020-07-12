@@ -65,6 +65,7 @@
 		6A4DEE2D24BA35BE00F734F0 /* froge.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */; };
 		6A4DEE2F24BA3F2D00F734F0 /* CamToXYZAliases.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */; };
 		6A4DEE3124BA408E00F734F0 /* meow.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3024BA408E00F734F0 /* meow.cr2 */; };
+		6A4DEE3424BAD13800F734F0 /* EditSecondaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3324BAD13800F734F0 /* EditSecondaryViewController.swift */; };
 		6A587F6E24A7F83B009696E9 /* PreferencesTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */; };
 		6A587F7024A8500E009696E9 /* GridCellDetailPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */; };
 		6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */; };
@@ -380,6 +381,7 @@
 		6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = froge.cr2; path = tests/data/froge.cr2; sourceTree = "<group>"; };
 		6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = CamToXYZAliases.plist; path = "frameworks/Paper/src/Color Conversions/CamToXYZAliases.plist"; sourceTree = "<group>"; };
 		6A4DEE3024BA408E00F734F0 /* meow.cr2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = meow.cr2; path = tests/data/meow.cr2; sourceTree = "<group>"; };
+		6A4DEE3324BAD13800F734F0 /* EditSecondaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditSecondaryViewController.swift; path = "app_macos/src/Edit View/EditSecondaryViewController.swift"; sourceTree = "<group>"; };
 		6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesTabController.swift; path = app_macos/src/Preferences/PreferencesTabController.swift; sourceTree = "<group>"; };
 		6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GridCellDetailPreferencesController.swift; path = app_macos/src/Preferences/GridCellDetailPreferencesController.swift; sourceTree = "<group>"; };
 		6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserDefaults+GridCell.swift"; path = "app_macos/src/Library View/UserDefaults+GridCell.swift"; sourceTree = "<group>"; };
@@ -989,6 +991,14 @@
 			name = Logging;
 			sourceTree = "<group>";
 		};
+		6A4DEE3224BAD0E600F734F0 /* Secondary View */ = {
+			isa = PBXGroup;
+			children = (
+				6A4DEE3324BAD13800F734F0 /* EditSecondaryViewController.swift */,
+			);
+			name = "Secondary View";
+			sourceTree = "<group>";
+		};
 		6A903FC6248B8DF900BD1602 /* UI State Handling */ = {
 			isa = PBXGroup;
 			children = (
@@ -1460,6 +1470,7 @@
 			children = (
 				6AAF473724A3055A00572AB3 /* Edit View.storyboard */,
 				6AD8CFE4248E0A79009AF452 /* EditViewController.swift */,
+				6A4DEE3224BAD0E600F734F0 /* Secondary View */,
 			);
 			name = "Edit View";
 			sourceTree = "<group>";
@@ -1885,6 +1896,7 @@
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
 				6A2D4D2124A532A6002AAB53 /* SidebarImagesByDateController.swift in Sources */,
 				6ABD368E24958E15005F80EE /* LibraryBrowserBase.swift in Sources */,
+				6A4DEE3424BAD13800F734F0 /* EditSecondaryViewController.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
 				6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */,
 				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,

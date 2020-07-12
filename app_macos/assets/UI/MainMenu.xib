@@ -336,6 +336,13 @@
                                     <action selector="changeAppMode:" target="-1" id="6dR-PR-dSO"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="5yr-Ng-MMj"/>
+                            <menuItem title="Show Secondary View" keyEquivalent="\" id="IH5-st-P00">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleSecondaryView:" target="-1" id="F3b-os-lPy"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="SCO-mC-opI"/>
                             <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
