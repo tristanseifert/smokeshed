@@ -1,0 +1,19 @@
+/* 
+  Sidebar.strings
+  Smokeshed
+
+  Localizable strings for the sidebar view of the main window
+ 
+  Created by Tristan Seifert on 20200624.
+  
+*/
+
+/// Albums group title
+"albums.group.title" = "Albums";
+
+/// All images item
+"images.all.title" = "All Images";
+/// Last import item
+"images.last_import.title" = "Last Import";
+/// Images group title
+"images.group.title" = "Images";

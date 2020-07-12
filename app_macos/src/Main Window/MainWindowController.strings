@@ -1,0 +1,14 @@
+/* 
+  MainWindowController.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200613.
+  
+*/
+
+// Import directory
+"import.dir.prompt" = "Import";
+
+// Show/hide inspector menu items
+"menu.inspector.show" = "Show Inspector";
+"menu.inspector.hide" = "Hide Inspector";

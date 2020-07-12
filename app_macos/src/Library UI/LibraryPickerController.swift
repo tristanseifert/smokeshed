@@ -7,6 +7,7 @@
 
 import Cocoa
 
+import Smokeshop
 import CocoaLumberjackSwift
 
 /**
@@ -15,6 +16,8 @@ import CocoaLumberjackSwift
 class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableViewDelegate, NSMenuItemValidation {
     /// URL of the library to open
     private var pickedUrl: URL! = nil
+    /// Has the error been presented yet?
+    private var hasPresentedError = false
     
     /**
      * Provide the nib name.
@@ -30,6 +33,7 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
         super.windowDidLoad()
         
         self.loadHistory()
+        self.restoreDisclosureState()
     }
     
     // MARK: - General UI
@@ -47,7 +51,6 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
     
         // was the "open selected" option chosen?
         if resp == .OK {
-            DDLogVerbose("Library picked: \(self.pickedUrl!)")
             return self.pickedUrl
         }
         // no URL was decided on
@@ -61,8 +64,10 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
      * that as a sheet.
      */
     func windowDidChangeOcclusionState(_ notification: Notification) {
-        if self.window!.occlusionState.contains(.visible) {
+        if self.window!.occlusionState.contains(.visible)
+            && !self.hasPresentedError {
             self.presentErrorInfo()
+            self.hasPresentedError = true
         }
     }
     
@@ -72,7 +77,9 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
     func windowWillClose(_ notification: Notification) {
         NSApp.stopModal(withCode: .cancel)
     }
-    
+
+    /// Disclosure triangle button
+    @IBOutlet var detailsButton: NSButton! = nil
     /// Box containing detail info
     @IBOutlet var detailsBox: NSBox! = nil
     /// Layout constraint for box height
@@ -84,6 +91,7 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
     @IBAction func detailsDisclosure(_ sender: NSButton) {
         // show details view
         if sender.state == .on {
+            detailsBox.alphaValue = 0.0
             detailsBox.isHidden = false
             
             NSAnimationContext.runAnimationGroup({ (ctx) in
@@ -108,6 +116,31 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
                 self.detailsBox.isHidden = true
             })
         }
+
+        // save the disclosure state
+        self.saveDisclosureState()
+    }
+
+    /**
+     * Restores the state of the details disclosure button.
+     */
+    private func restoreDisclosureState() {
+        let shown = UserDefaults.standard.bool(forKey: "TSLibraryPickerControllerDetailsVisible")
+
+        if !shown {
+            detailsHeightConstraint.constant = 0
+            self.detailsBox.isHidden = true
+        }
+
+        self.detailsButton.state = (shown ? .on : .off)
+    }
+
+    /**
+     * Saves the state of the details disclosure button.
+     */
+    private func saveDisclosureState() {
+        UserDefaults.standard.set((self.detailsButton.state == .on),
+            forKey: "TSLibraryPickerControllerDetailsVisible")
     }
     
     /**
@@ -142,23 +175,56 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
                 
                 // also, get the icon
                 self.icon = NSWorkspace.shared.icon(forFile: url.path)
+
+                // last… try to read the library bundle
+                self.bundle = try? LibraryBundle(url)
             } catch {
                 // ignore errors
             }
+        }
+
+        /// Date last opened
+        @objc dynamic private var lastOpened: Date! = nil
+        /// Date created
+        private var created: Date! = nil
+
+        /// String for the "created" text field
+        @objc dynamic var createdString: String {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .long
+            formatter.timeStyle = .short
+
+            // use file creation date if unable to get bundle/metadata key
+            guard let b = self.bundle, let created = b.getMetadata().createdOn else {
+                return formatter.string(from: self.created)
+            }
+            // use just the metadata created key if no attribution info
+            guard let who = b.getMetadata().creatorName else {
+                let fmt = NSLocalizedString("On %@",
+                                            comment: "Library picker created date format")
+                return String(format: fmt, formatter.string(from: created))
+            }
+
+            // format it as a string with the creator name
+            let fmt = NSLocalizedString("On %@, by %@",
+                                        comment: "Library picker created date format with user")
+            return String(format: fmt, formatter.string(from: created), who)
         }
         
         /// An icon for the file; this will probably just be the file type icon
         @objc dynamic var icon: NSImage! = NSImage(named: NSImage.cautionName)
         /// Full URL of the library file
         @objc dynamic var fullUrl: URL! = nil
-        /// Date last opened
-        @objc dynamic var lastOpened: Date! = nil
-        /// Date created
-        @objc dynamic var created: Date! = nil
         /// Filesize (of library by itself)
         @objc dynamic var filesize: UInt = 0
         /// Number of photos in library
-        @objc dynamic var numPhotos: UInt = 0
+        @objc dynamic var numPhotos: NSNumber! {
+            guard let b = self.bundle,
+                  let count = b.getMetadata().numItems else {
+                return nil
+            }
+            return NSNumber(value: count)
+        }
         /// Whether this library is accessible
         @objc dynamic var accessible: Bool = false
         
@@ -190,6 +256,9 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
             
             return url.lastPathComponent
         }
+
+        /// Reference to the library bundle (if loaded)
+        private var bundle: LibraryBundle! = nil
     }
     
     /**
@@ -216,6 +285,25 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
         
         self.historyArray = entries
     }
+
+    /**
+     * Handles double-clicking on a table row. If the row represents an accessible library, it is opened.
+     */
+    @IBAction func historyDoubleClickOpen(_ sender: Any) {
+        // ensure the selection is valid
+        guard self.historyTable.clickedRow != -1 else {
+            return
+        }
+
+        let entry = self.historyArray[self.historyTable.clickedRow]
+        guard entry.accessible else {
+            return
+        }
+
+        // use it
+        self.pickedUrl = entry.fullUrl
+        NSApp.stopModal(withCode: .OK)
+    }
     
     /**
      * Opens the library that is currently selected.
@@ -227,8 +315,6 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
             // no selection :(
             return
         }
-        
-        DDLogDebug("Selected history entry: \(selected)")
         
         // use it
         self.pickedUrl = selected.fullUrl
@@ -378,11 +464,13 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
         guard let info = self.errorInfo else {
             return
         }
+
+        DDLogWarn("Previous library error: \(info.1) (url \(info.0))")
         
         // build the alert
         let alert = NSAlert(error: info.1)
         
-        alert.informativeText = "\(alert.informativeText)\n\nLibrary path: \(info.0.path)"
+        alert.informativeText = "Library path: \(info.0.path)"
         
         alert.addButton(withTitle: NSLocalizedString("OK", comment: "LibraryPickerController error info dismiss button"))
         

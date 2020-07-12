@@ -1,0 +1,29 @@
+/* 
+  LibraryBrowserBase.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200613.
+  
+*/
+
+// Title for a sort+order label (1 = key, 2 = order as arrow)
+"sort.title" = "Sort By: %2$@ %1$@";
+
+// Display names for sorting keys
+"sort.key.1" = "Date Captured";
+"sort.key.2" = "Date Imported";
+"sort.key.3" = "Rating";
+
+// Display names for sort order
+"sort.order.1" = "Ascending";
+"sort.order.2" = "Descending";
+
+// Title for a grouping (1 = key, 2 = order as arrow)
+"group.title" = "Group By: %2$@ %1$@";
+"group.title.none" = "Group By: %1$@";
+
+// Display names for grouping keys
+"group.key.-1" = "None";
+"group.key.1" = "Date Captured";
+"group.key.2" = "Date Imported";
+"group.key.3" = "Rating";

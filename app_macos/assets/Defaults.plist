@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-   Defaults.plist
-   Smokeshed
-
-   Created by Tristan Seifert on 20200605.
-   Copyright (c) 2020 ___ORGANIZATIONNAME___. All rights reserved.
--->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict>
-    
-    </dict>
+<dict>
+	<key>thumb</key>
+	<dict>
+		<key>thumbChunkCacheSize</key>
+		<integer>262144000</integer>
+		<key>thumbWorkQueueSize</key>
+		<integer>16</integer>
+		<key>thumbWorkQueueSizeAuto</key>
+		<true/>
+	</dict>
+	<key>standard</key>
+	<dict>
+		<key>importCopyFiles</key>
+		<true/>
+		<key>gridCellSequenceNumber</key>
+		<true/>
+		<key>gridCellImageDetail</key>
+		<true/>
+		<key>gridCellImageDetailFormat</key>
+		<dict>
+			<key>title</key>
+			<integer>2</integer>
+			<key>row1</key>
+			<integer>12</integer>
+			<key>row2</key>
+			<integer>9</integer>
+		</dict>
+		<key>gridCellRatings</key>
+		<false/>
+		<key>gridCellRatingsOnHoverOnly</key>
+		<false/>
+		<key>TSLibraryPickerControllerDetailsVisible</key>
+		<false/>
+		<key>gridCellHoverStyle</key>
+		<true/>
+	</dict>
+</dict>
 </plist>

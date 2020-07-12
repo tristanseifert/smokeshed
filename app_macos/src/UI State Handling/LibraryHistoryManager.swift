@@ -17,7 +17,7 @@ import CocoaLumberjackSwift
 class LibraryHistoryManager {
     /// URL to the history file
     static var historyUrl: URL! {
-        return Bowl.ContainerHelper.appCache?.appendingPathComponent("LibraryHistory.plist", isDirectory: false)
+        return Bowl.ContainerHelper.groupCache.appendingPathComponent("LibraryHistory.plist", isDirectory: false)
     }
     
     /// set containing URLs
@@ -92,5 +92,23 @@ class LibraryHistoryManager {
         }
         
         return self.urls.array as! [URL]
+    }
+
+    /**
+     * Returns the most recently opened library URL, or nil if there is none.
+     */
+    static func getMostRecentlyOpened() -> URL! {
+        // attempt to load if no urls
+        if self.urls.count == 0 {
+            self.loadHistory()
+        }
+
+        // if there's STILL no URLs, abort
+        if self.urls.count == 0 {
+            return nil
+        }
+
+        // get the first one's URL
+        return self.urls.firstObject as? URL
     }
 }
