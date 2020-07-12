@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="j9g-cF-0uh">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -35,9 +36,9 @@
         <!--Secondary Window Controller-->
         <scene sceneID="037-ag-kza">
             <objects>
-                <windowController storyboardIdentifier="secondaryWindowController" id="Fi8-ZM-ql7" userLabel="Secondary Window Controller" sceneMemberID="viewController">
-                    <window key="window" title="Secondary View" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="KZr-0m-V9n" customClass="NSPanel">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES" HUD="YES" fullSizeContentView="YES"/>
+                <windowController storyboardIdentifier="secondaryWindowController" id="Fi8-ZM-ql7" userLabel="Secondary Window Controller" customClass="EditSecondaryWindowController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Secondary View" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" appearanceType="darkAqua" frameAutosaveName="" animationBehavior="default" id="KZr-0m-V9n" customClass="NSPanel">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES" nonactivatingPanel="YES" HUD="YES" fullSizeContentView="YES"/>
                         <rect key="contentRect" x="425" y="473" width="640" height="480"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1440"/>
                         <value key="minSize" type="size" width="640" height="480"/>
@@ -62,13 +63,13 @@
         <scene sceneID="C2d-HZ-cwy">
             <objects>
                 <viewController id="j7r-ht-wfY" customClass="EditSecondaryViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="5nb-Fs-7BW">
+                    <view key="view" appearanceType="darkAqua" id="5nb-Fs-7BW">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Uc-Nj-ekp">
                                 <rect key="frame" x="0.0" y="32" width="640" height="448"/>
-                                <clipView key="contentView" id="X8M-eA-s0i">
+                                <clipView key="contentView" drawsBackground="NO" id="X8M-eA-s0i">
                                     <rect key="frame" x="0.0" y="0.0" width="640" height="448"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -79,7 +80,7 @@
                                                 <size key="itemSize" width="50" height="50"/>
                                                 <size key="headerReferenceSize" width="0.0" height="30"/>
                                             </collectionViewFlowLayout>
-                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="primaryBackgroundColor" name="LibraryViewPrimaryBackground"/>
                                         </collectionView>
                                     </subviews>
                                 </clipView>
@@ -96,13 +97,13 @@
                                 <rect key="frame" x="0.0" y="0.0" width="640" height="32"/>
                                 <subviews>
                                     <customView horizontalHuggingPriority="500" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Yen-YE-rPr" userLabel="Sort/Group">
-                                        <rect key="frame" x="0.0" y="0.0" width="164" height="32"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="167" height="32"/>
                                         <subviews>
                                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YBw-9q-thJ">
-                                                <rect key="frame" x="10" y="6" width="52" height="19"/>
-                                                <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="3hg-qS-95v" id="Awz-0y-AaT">
+                                                <rect key="frame" x="10" y="6" width="54" height="19"/>
+                                                <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="3hg-qS-95v" id="Awz-0y-AaT">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                    <font key="font" metaFont="systemBold" size="12"/>
+                                                    <font key="font" metaFont="system"/>
                                                     <menu key="menu" id="sjt-3J-9cz">
                                                         <items>
                                                             <menuItem title="Sort" state="on" tag="-1" hidden="YES" id="3hg-qS-95v"/>
@@ -142,10 +143,10 @@
                                                 </popUpButtonCell>
                                             </popUpButton>
                                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yr9-WL-cKM" userLabel="Group">
-                                                <rect key="frame" x="72" y="6" width="82" height="19"/>
+                                                <rect key="frame" x="74" y="6" width="83" height="19"/>
                                                 <popUpButtonCell key="cell" type="recessed" title="Group By" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" tag="-1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" preferredEdge="maxY" selectedItem="cUG-Q4-WQn" id="B8J-2y-jzO">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                    <font key="font" metaFont="systemBold" size="12"/>
+                                                    <font key="font" metaFont="system"/>
                                                     <menu key="menu" id="P4y-Uj-NfF">
                                                         <items>
                                                             <menuItem title="Group By" state="on" tag="-1" hidden="YES" id="cUG-Q4-WQn"/>
@@ -200,7 +201,7 @@
                                         </constraints>
                                     </customView>
                                     <customView horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="3gw-r8-qRQ" userLabel="Spacer">
-                                        <rect key="frame" x="166" y="0.0" width="337" height="32"/>
+                                        <rect key="frame" x="169" y="0.0" width="334" height="32"/>
                                     </customView>
                                     <slider toolTip="Change how many images are shown per row." horizontalHuggingPriority="500" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hI4-4D-a7e">
                                         <rect key="frame" x="499" y="6" width="137" height="20"/>
@@ -248,4 +249,9 @@
             <point key="canvasLocation" x="692" y="413"/>
         </scene>
     </scenes>
+    <resources>
+        <namedColor name="LibraryViewPrimaryBackground">
+            <color white="0.25" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
+    </resources>
 </document>

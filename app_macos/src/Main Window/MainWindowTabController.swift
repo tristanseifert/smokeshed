@@ -69,6 +69,70 @@ class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
         
         // perform superclass implementation
         super.tabView(tabView, willSelect: tabViewItem)
+        
+        self.invalidateRestorableState()
+    }
+    
+    // MARK: - State restoration
+    struct StateKeys {
+        /// Identifier of the selected view controller
+        static let selectedControllerId = "MainWindowTabController.selectedControllerId"
+        /// An array of identifiers of tab items whose state was encoded
+        static let encodedControllers = "MainWindowTabController.encodedControllers"
+    }
+    
+    /**
+     * Encodes the identifier of the currently selected view controller.
+     */
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        
+        // get identifier of child controller and encode it
+        if let id = self.tabViewItems[self.selectedTabViewItemIndex].identifier as? String {
+            coder.encode(id, forKey: StateKeys.selectedControllerId)
+        }
+        
+        // encode each child controller's state (except the selected one)
+        var encodedIdentifiers: [String] = []
+        
+        for (idx, item) in self.tabViewItems.enumerated() {
+            if idx != self.selectedTabViewItemIndex, let vc = item.viewController {
+                encodedIdentifiers.append(item.identifier as! String)
+                vc.encodeRestorableState(with: coder)
+            }
+        }
+        
+        coder.encode(encodedIdentifiers, forKey: StateKeys.encodedControllers)
+    }
+    
+    /**
+     * Decode the identifier of the view controller that was selected and restore it.
+     */
+    override func restoreState(with coder: NSCoder) {
+        super.restoreState(with: coder)
+        
+        // restore each controller's state
+        if let encodedIds = coder.decodeObject(forKey: StateKeys.encodedControllers) as? [String] {
+            for item in self.tabViewItems {
+                if encodedIds.contains(item.identifier as! String), let vc = item.viewController {
+                    vc.restoreState(with: coder)
+                }
+            }
+        }
+        
+        // is there an identifier of the last selection?
+        if let selectedId = coder.decodeObject(forKey: StateKeys.selectedControllerId) as? String {
+            // get index of the controller with that id
+            if let idx = self.tabViewItems.firstIndex(where: { item in
+                if let id = item.identifier as? String {
+                    return (id == selectedId)
+                }
+                
+                return false
+            }) {
+                self.selectedTabViewItemIndex = Int(idx)
+            }
+        }
     }
     
     // MARK: - Child message handling

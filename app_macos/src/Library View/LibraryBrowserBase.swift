@@ -581,6 +581,9 @@ NSFetchedResultsControllerDelegate {
             cell.sequenceNumber = (path[1] + 1)
             cell.libraryUrl = self.library.url
             cell.representedObject = self.fetchReqCtrl.object(at: path)
+            
+            // ensure the selection status is remembered
+            cell.isSelected = view.selectionIndexPaths.contains(path)
 
             return cell
         })

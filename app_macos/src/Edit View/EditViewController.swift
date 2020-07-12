@@ -52,10 +52,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     override func viewWillAppear() {
         // restore secondary view if desired
-        if self.shouldOpenSecondaryView {
-            self.shouldOpenSecondaryView = false
-            self.toggleSecondaryView(self)
-        }
+        self.restoreSecondaryState()
     }
 
     /**
@@ -76,6 +73,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     struct StateKeys {
         /// Whether the secondary view  is open
         static let secondaryVisible = "EditViewController.secondaryVisible"
+        /// Reference to secondary window controller
+        static let secondaryWC = "EditViewController.secondaryWC"
     }
     
     /**
@@ -87,7 +86,14 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         // secondary view
         if let secondary = self.secondaryWc, let window = secondary.window {
             secondary.encodeRestorableState(with: coder)
-            coder.encode(window.isVisible, forKey: StateKeys.secondaryVisible)
+            
+            if self.view.superview != nil {
+                coder.encode(window.isVisible, forKey: StateKeys.secondaryVisible)
+                DDLogVerbose("View is in hierarchy, using window visible flag: \(window.isVisible)")
+            } else {
+                coder.encode(self.shouldOpenSecondaryView, forKey: StateKeys.secondaryVisible)
+                DDLogVerbose("View not in hierarchy, should open: \(self.shouldOpenSecondaryView)")
+            }
         }
     }
     
@@ -97,30 +103,27 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     override func restoreState(with coder: NSCoder) {
         // re-open inspector if it was open last time
         if coder.decodeBool(forKey: StateKeys.secondaryVisible) {
-            self.loadSecondaryController()
-            self.secondaryWc!.restoreState(with: coder)
-            
+            self.secondaryWc?.restoreState(with: coder)
             self.shouldOpenSecondaryView = true
         }
 
         super.restoreState(with: coder)
+        
+        // re-open the secondary view if visible
+        if self.view.superview != nil {
+            self.restoreSecondaryState()
+        }
     }
     
     // MARK: - Secondary view
     /// Window controller for the secondary view controller
-    private var secondaryWc: NSWindowController? = nil
-    
-    /**
-     * Loads the secondary window controller from the storyboard.
-     */
-    private func loadSecondaryController() {
+    private lazy var secondaryWc: NSWindowController? = {
         // get the window controller
         guard let sb = self.storyboard,
               let wc = sb.instantiateController(withIdentifier: "secondaryWindowController") as? NSWindowController else {
-            return
+            DDLogError("Failed to instantiate secondary window controller")
+            return nil
         }
-        
-        self.secondaryWc = wc
         
         // set up some initial state of the secondary controller
         if let vc = wc.contentViewController as? EditSecondaryViewController {
@@ -131,22 +134,32 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             vc.bind(NSBindingName(rawValue: "sidebarFilters"), to: self,
                     withKeyPath: #keyPath(EditViewController.sidebarFilters), options: nil)
         }
-    }
+        
+        // done!
+        return wc
+    }()
     
     /**
      * Toggles display of the secondary window controller.
      */
     @IBAction func toggleSecondaryView(_ sender: Any?) {
-        // load the window controller if needed
-        if self.secondaryWc == nil {
-            self.loadSecondaryController()
-        }
-        
         // toggle window
-        if (self.secondaryWc?.window?.isVisible ?? false) {
+        if self.secondaryWc != nil, (self.secondaryWc?.window?.isVisible ?? false) {
             self.secondaryWc?.close()
         } else {
             self.secondaryWc?.showWindow(sender)
+        }
+        
+        self.invalidateRestorableState()
+    }
+    
+    /**
+     * If the secondary view needs to be shown, this handles that.
+     */
+    private func restoreSecondaryState() {
+        if self.shouldOpenSecondaryView {
+            self.secondaryWc?.showWindow(self)
+            self.shouldOpenSecondaryView = false
         }
     }
     

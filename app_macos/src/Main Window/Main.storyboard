@@ -588,9 +588,9 @@
             <objects>
                 <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="6QJ-um-eAH" userLabel="Content Tab Controller" customClass="MainWindowTabController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem id="tho-5A-PY4"/>
-                        <tabViewItem id="kgl-3n-YSU"/>
-                        <tabViewItem id="ou3-f0-fqT"/>
+                        <tabViewItem identifier="library" id="tho-5A-PY4"/>
+                        <tabViewItem identifier="map" id="kgl-3n-YSU"/>
+                        <tabViewItem identifier="edit" id="ou3-f0-fqT"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="EuZ-b5-aY1">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
