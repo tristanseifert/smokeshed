@@ -36,20 +36,6 @@ class XPCDelegate: NSObject, NSXPCListenerDelegate {
     public func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
         DDLogVerbose("Received connection request from \(newConnection)")
 
-        // attempt to validate the connecting client
-        do {
-            // get a reference to its code signature and its info
-            let code = try XPCCSHelpers.getXpcGuest(newConnection)
-            let info = try XPCCSHelpers.getSigningInfo(code)
-
-            // ensure the signature satisfies our checks
-            try XPCCSHelpers.validateSignatureState(info)
-            try XPCCSHelpers.validateSignature(code)
-        } catch {
-            DDLogError("Failed to validate connecting client (\(newConnection)): \(error)")
-            return false
-        }
-
         // if we get here, the connection should proceed
         newConnection.exportedInterface = ThumbXPCProtocolHelpers.make()
         newConnection.exportedObject = self.handler

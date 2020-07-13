@@ -36,6 +36,8 @@ import CocoaLumberjackSwift
     private var imageUrlBase: URL? = nil
     /// Bookmark data for the image url
     private var imageUrlBookmark: Data?
+    /// Bookmark data for the base url
+    private var imageUrlBaseBookmark: Data?
     
     /// Size of the thumbnail that's desired
     public var size: CGSize? = nil
@@ -64,15 +66,30 @@ import CocoaLumberjackSwift
             }
             self.imageUrl = url
             
-            // create bookmark
-            let relinquish = url.startAccessingSecurityScopedResource()
+            // create bookmark for library
+            var relinquish = libraryUrl.startAccessingSecurityScopedResource()
             
             do {
-                let bm = try url.bookmarkData(options: .minimalBookmark,
+                let bm = try libraryUrl.bookmarkData(options: [.minimalBookmark],
+                                                     includingResourceValuesForKeys: nil,
+                                                     relativeTo: nil)
+                self.imageUrlBaseBookmark = bm
+            } catch {
+                DDLogError("Failed to create bookmark for library url \(libraryUrl): \(error)")
+            }
+            
+            if relinquish {
+                libraryUrl.stopAccessingSecurityScopedResource()
+            }
+            
+            // create bookmark for the image url
+            relinquish = url.startAccessingSecurityScopedResource()
+            
+            do {
+                let bm = try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess],
                                               includingResourceValuesForKeys: nil,
                                               relativeTo: self.imageUrlBase)
                 self.imageUrlBookmark = bm
-            
             } catch {
                 DDLogError("Failed to create bookmark for \(url): \(error)")
             }
@@ -98,6 +115,10 @@ import CocoaLumberjackSwift
         if let bookmark = self.imageUrlBookmark {
             coder.encode(bookmark, forKey: "imageUrlBookmark")
             coder.encode(self.imageUrlBase, forKey: "imageUrlBase")
+            
+            if let data = self.imageUrlBaseBookmark {
+                coder.encode(data, forKey: "imageUrlBaseBookmark")
+            }
         } else if let url = self.imageUrl {
             coder.encode(url, forKey: "imageUrl")
         }
@@ -116,11 +137,25 @@ import CocoaLumberjackSwift
         // attempt to decode the url by resolving the bookmark or just taking the raw url value
         if let bookmark = coder.decodeObject(forKey: "imageUrlBookmark") as? Data {
             do {
-                let base = coder.decodeObject(forKey: "imageUrlBase") as? URL
+                // decode base url bookmark or read it
+                var base: URL! = coder.decodeObject(forKey: "imageUrlBase") as? URL
+                
+                if let data = coder.decodeObject(forKey: "imageUrlBaseBookmark") as? Data {
+                    // this is just a minimal bookmark
+                    do {
+                        var isStale: Bool = false
+                        let url = try URL(resolvingBookmarkData: data, options: [.withoutUI],
+                                          relativeTo: nil, bookmarkDataIsStale: &isStale)
+                        base = url
+                    } catch {
+                        DDLogError("Failed to decode base url bookmark data (\(data)): \(error)")
+                        return nil
+                    }
+                }
                 
                 var isStale: Bool = false
                 let url = try URL(resolvingBookmarkData: bookmark,
-                                  options: [.withoutUI],
+                                  options: [.withoutUI, .withSecurityScope],
                                   relativeTo: base, bookmarkDataIsStale: &isStale)
                 self.imageUrl = url
             } catch {

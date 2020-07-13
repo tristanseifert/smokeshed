@@ -72,7 +72,6 @@ class ThumbHandler {
         self.xpc = NSXPCConnection(serviceName: "me.tseifert.smokeshed.xpc.hand")
 
         self.xpc.remoteObjectInterface = ThumbXPCProtocolHelpers.make()
-        self.xpc.resume()
         
         // when invalidated, print a message and retry
         self.xpc.invalidationHandler = {
