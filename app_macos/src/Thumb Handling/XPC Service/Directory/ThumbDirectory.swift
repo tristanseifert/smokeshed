@@ -217,6 +217,7 @@ internal class ThumbDirectory {
                     NSPredicate(format: "%K == %@", "library.identifier", libraryId as CVarArg)
                 ])
                 req.fetchLimit = 1
+                req.includesPendingChanges = true
                 req.relationshipKeyPathsForPrefetching = ["chunk"]
                 
                 let res = try self.mainCtx.fetch(req)
@@ -254,6 +255,7 @@ internal class ThumbDirectory {
                     NSPredicate(format: "%K == %@", "library", lib)
                 ])
                 req.fetchLimit = 1
+                req.includesPendingChanges = true
                 req.resultType = .countResultType
                 
                 let count = (try self.mainCtx.fetch(req).first as? NSNumber)?.intValue
@@ -266,6 +268,9 @@ internal class ThumbDirectory {
                 
                 thumb.imageIdentifier = request.imageId
                 thumb.library = lib
+                
+                // obtain permanent id
+                try self.mainCtx.obtainPermanentIDs(for: [thumb])
                 
                 result = .success(thumb)
             } catch {
@@ -291,6 +296,7 @@ internal class ThumbDirectory {
                     NSPredicate(format: "%K == %@", "identifier", id as CVarArg),
                 ])
                 req.fetchLimit = 1
+                req.includesPendingChanges = true
                 
                 let res = try self.mainCtx.fetch(req)
                 
@@ -304,6 +310,7 @@ internal class ThumbDirectory {
                 
                 new.identifier = id
                 
+                // obtain permanent id
                 try self.mainCtx.obtainPermanentIDs(for: [new])
                 
                 result = .success(new)

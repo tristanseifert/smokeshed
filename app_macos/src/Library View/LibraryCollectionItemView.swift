@@ -801,6 +801,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
 
     // MARK: - State updating
+    /// Token for the thumbnail observer
+    private var thumbObserverToken: UUID? = nil
+    
     /**
      * View is about to appear; finalize the UI prior to display.
      */
@@ -943,6 +946,12 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * 3. If no image is set, clear any existing surface.
      */
     private func refreshThumb() {
+        // remove old thumb observer
+        if let token = self.thumbObserverToken {
+            ThumbHandler.shared.removeThumbObserver(token)
+            self.thumbObserverToken = nil
+        }
+        
         // release surface if image is nil
         guard let image = self.image else {
             if let surface = self.surface {
@@ -955,6 +964,18 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
             return
         }
 
+        // add thumb observer
+        self.thumbObserverToken = ThumbHandler.shared.addThumbObserver(imageId: image.identifier!)
+        { [weak self, weak image] (libId, imageId) in
+            DDLogVerbose("Thumb updated for \(imageId)")
+            
+            if let image = image, let cell = self {
+                DispatchQueue.main.async {
+                    cell.requestThumb(image)
+                }
+            }
+        }
+        
         // if no surface, request a thumb
         if self.surface == nil {
             return self.requestThumb(image)
@@ -984,8 +1005,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in
             // bail if image id doesn't match or the image was clared out
             if imageId != image.identifier! || self.image == nil || self.image?.identifier != imageId {
-                DDLogWarn("Received thumbnail for \(imageId) in cell for \(String(describing: self.image?.identifier!))")
-
                 // release the surface
                 do {
                     let surface = try result.get()
@@ -1024,7 +1043,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
                     // set a… caution icon ig
                     DispatchQueue.main.async {
-                        self.imageContainer.contents = NSImage(named: NSImage.cautionName)
+                        self.imageContainer.contents = nil
                         self.setNeedsDisplay(self.bounds)
                 }
             }

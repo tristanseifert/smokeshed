@@ -194,11 +194,11 @@ import CocoaLumberjackSwift
 /**
  * Defines the interface implemented by the thumbnail XPC service.
  */
-@objc public protocol ThumbXPCProtocol {
+@objc protocol ThumbXPCProtocol {
     /**
      * Initializes the XPC service and load the thumbnail directory.
      */
-    func wakeUp(withReply reply: @escaping (Error?) -> Void)
+    func wakeUp(handler: ThumbXPCHandler, withReply reply: @escaping (Error?) -> Void)
     
     /**
      * Opens a library.
@@ -247,7 +247,7 @@ import CocoaLumberjackSwift
 /**
  * Defines the interface exposed by the maintenance endpoint.
  */
-@objc public protocol ThumbXPCMaintenanceEndpoint {
+@objc protocol ThumbXPCMaintenanceEndpoint {
     /**
      * Calculates the total disk space used to store thumbnail data.
      */
@@ -275,6 +275,16 @@ import CocoaLumberjackSwift
 }
 
 /**
+ * Interface of the app-side event handler for the thumb server.
+ */
+@objc protocol ThumbXPCHandler {
+    /**
+     * Thumbnail data for the given (libraryId, imageId) tuple was changed.
+     */
+    func thumbChanged(inLibrary library: UUID, _ imageId: UUID)
+}
+
+/**
  * String dictionary keys for the XPC service configuration
  */
 public enum ThumbXPCConfigKey: String {
@@ -291,11 +301,11 @@ public enum ThumbXPCConfigKey: String {
 /**
  * Some helper functions for working with the XPC protocol
  */
-class ThumbXPCProtocolHelpers {
+internal class ThumbXPCProtocolHelpers {
     /**
      * Creates a reference to the thumb XPC protocol, with all functions configured as needed.
      */
-    public class func make() -> NSXPCInterface {
+    class func make() -> NSXPCInterface {
         let int = NSXPCInterface(with: ThumbXPCProtocol.self)
 
         // set up the get() request
@@ -318,7 +328,7 @@ class ThumbXPCProtocolHelpers {
                        for: #selector(ThumbXPCProtocol.get(_:withReply:)),
                        argumentIndex: 1, ofReply: true)
         
-
+        // generate, discard, prefetch
         int.setClasses(thumbReqClass,
                        for: #selector(ThumbXPCProtocol.generate(_:)),
                        argumentIndex: 0, ofReply: false)
@@ -329,14 +339,28 @@ class ThumbXPCProtocolHelpers {
                        for: #selector(ThumbXPCProtocol.prefetch(_:)),
                        argumentIndex: 0, ofReply: false)
 
+        // handler interface
+        int.setInterface(Self.makeHandler(),
+                         for: #selector(ThumbXPCProtocol.wakeUp(handler:withReply:)),
+                         argumentIndex: 0, ofReply: false)
+        
         return int
     }
     
     /**
      * Creates an interface describing the maintenance endpoint protocol.
      */
-    public class func makeMaintenanceEndpoint() -> NSXPCInterface {
+    class func makeMaintenanceEndpoint() -> NSXPCInterface {
         let int = NSXPCInterface(with: ThumbXPCMaintenanceEndpoint.self)
+        
+        return int
+    }
+    
+    /**
+     * Creates an interface describing the maintenance endpoint protocol.
+     */
+    public class func makeHandler() -> NSXPCInterface {
+        let int = NSXPCInterface(with: ThumbXPCHandler.self)
         
         return int
     }

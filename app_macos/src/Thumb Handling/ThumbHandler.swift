@@ -24,7 +24,7 @@ import CocoaLumberjackSwift
  * You can choose to generate thumbnails ahead of time (for example, for prefetching) but they will also be
  * created if they do not exist at retrieval time.
  */
-class ThumbHandler {
+class ThumbHandler: ThumbXPCHandler {
     /// Shared thumb handler instance
     public static var shared = ThumbHandler()
 
@@ -45,6 +45,9 @@ class ThumbHandler {
     private var maintenanceService: ThumbXPCMaintenanceEndpoint? = nil
 
     // MARK: - Initialization
+    /// Observer for quit notification
+    private var quitObs: NSObjectProtocol? = nil
+    
     /**
      * Creates a new thumb handler instance. This establishes a connection to the thumb generator XPC
      * service and tells it about our state.
@@ -55,6 +58,17 @@ class ThumbHandler {
         self.observerQueue.maxConcurrentOperationCount = 1
         
         self.establishXpcConnection()
+        
+        // subscribe for the quit notification
+        self.quitObs = NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification,
+                                                              object: nil, queue: nil) { _ in
+            // on quit, save thumb status
+            self.service.save() {
+                if let error = $0 {
+                    DDLogError("Failed to save thumb service state: \(error)")
+                }
+            }
+        }
     }
     
     /**
@@ -62,6 +76,10 @@ class ThumbHandler {
      */
     deinit {
         self.removeImageObservers()
+        
+        if let obs = self.quitObs {
+            NotificationCenter.default.removeObserver(obs)            
+        }
     }
 
     /**
@@ -105,7 +123,7 @@ class ThumbHandler {
      * Tells the XPC service to initialize itself.
      */
     private func wakeXpcService() {
-        self.service!.wakeUp(withReply: { error in
+        self.service!.wakeUp(handler: self, withReply: { error in
             // handle errors… not much we can do but invalidate connection
             guard error == nil else {
                 DDLogError("Failed to wake thumb service: \(error!)")
@@ -435,6 +453,102 @@ class ThumbHandler {
         // invalidate the xpc connection
         self.maintenance!.invalidate()
         self.maintenance = nil
+    }
+    
+    // MARK: - Event callbacks
+    /// Map of observer id -> callback. This allows us to remove it later
+    private var thumbCallbacks: [UUID: ((UUID, UUID) -> Void)] = [:]
+    /// Protect access to the thumb callbacks dict
+    private var thumbCallbacksSem = DispatchSemaphore(value: 1)
+    
+    /// Observers for thumb changes (key is image id, value is a set of callback UUIDs)
+    private var thumbCallbacksMap: [UUID: Set<UUID>] = [:]
+    /// Protect access to the thumb callbacks map dict
+    private var thumbCallbacksMapSem = DispatchSemaphore(value: 1)
+    
+    /**
+     * Post a notification indicating that the thumbnail for this image has changed.
+     */
+    func thumbChanged(inLibrary library: UUID, _ imageId: UUID) {
+//        DDLogInfo("Thumb changed: library id \(library), image id \(imageId)")
+        
+        // fire all observers for the image id
+        self.thumbCallbacksMapSem.wait()
+        
+        if let callbacks = self.thumbCallbacksMap[imageId] {
+//            DDLogVerbose("Callbacks for \(imageId): \(callbacks)")
+            
+            // invoke each handler
+            self.thumbCallbacksSem.wait()
+            
+            for callbackId in callbacks {
+                if let callback = self.thumbCallbacks[callbackId] {
+                    callback(library, imageId)
+                }
+            }
+            
+            self.thumbCallbacksSem.signal()
+        }
+        
+        self.thumbCallbacksMapSem.signal()
+    }
+    
+    /**
+     * Adds a thumbnail observer callback.
+     *
+     * - Returns: A token (a UUID) that can be used to remove this observer later.
+     */
+    public func addThumbObserver(imageId: UUID, _ observer: @escaping (UUID, UUID) -> Void) -> UUID {
+        // insert the observer
+        let token = UUID()
+        
+        self.thumbCallbacksSem.wait()
+        self.thumbCallbacks[token] = observer
+        self.thumbCallbacksSem.signal()
+        
+        // add it to the callback map
+        self.thumbCallbacksMapSem.wait()
+        
+        if let set = self.thumbCallbacksMap[imageId] {
+            var newSet = set
+            newSet.insert(token)
+            
+            self.thumbCallbacksMap[imageId] = newSet
+        } else {
+            // create a set
+            self.thumbCallbacksMap[imageId] = Set([token])
+        }
+        
+        self.thumbCallbacksMapSem.signal()
+        
+//        DDLogVerbose("Added observer for image \(imageId): token is \(token)")
+        
+        // return the token
+        return token
+    }
+    
+    /**
+     * Removes a thumbnail observer callback based on a previously issued token.
+     */
+    public func removeThumbObserver(_ token: UUID) {
+//        DDLogVerbose("Removing observer for token \(token)")
+        
+        // search the callbacks map for this token
+        self.thumbCallbacksMapSem.wait()
+        
+        for var set in self.thumbCallbacksMap.values {
+            if set.contains(token) {
+                set.remove(token)
+                break
+            }
+        }
+        
+        self.thumbCallbacksMapSem.signal()
+    
+        // remove the actual callback
+        self.thumbCallbacksSem.wait()
+        self.thumbCallbacks.removeValue(forKey: token)
+        self.thumbCallbacksSem.signal()
     }
 
     // MARK: - Errors
