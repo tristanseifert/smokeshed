@@ -46,12 +46,27 @@ import Foundation
  * disk, etc.) that process data differently and present their results in different ways, but they all implement the same interface.
  */
 @objc protocol RendererInstanceXPCProtocol {
-    
+    /**
+     * Kicks off a render job with the given description. The reply block is called with any errors that took place during the
+     * setup phase of the render, or an identifier by which the job can be tracked. All requests made to the handler object
+     * contain this identifier.
+     *
+     * This method supports progress reporting (via `Progress`)
+     */
+    func render(_ jobDescriptor: [AnyHashable: Any], withReply reply: @escaping (Error?, UUID?) -> Void)
 }
 
 /**
  * App-side handler interface that each dispensed renderer calls into with progress and completion of requests.
  */
 @objc protocol RendererHandlerXPCProtocol {
-    
+    /**
+     * A render job failed.
+     */
+    func jobFailed(_ jobId: UUID, _ error: Error)
+
+    /**
+     * Render job completed successfully. The renderer's output information (result) is provided as a dictionary.
+     */
+    func jobCompleted(_ jobId: UUID, _ result: [AnyHashable: Any])
 }

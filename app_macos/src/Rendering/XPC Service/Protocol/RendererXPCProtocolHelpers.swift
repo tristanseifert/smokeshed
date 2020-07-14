@@ -34,6 +34,19 @@ internal class RendererXPCProtocolHelpers {
      */
     static private func makeHandler() -> NSXPCInterface {
         let int = NSXPCInterface(with: RendererHandlerXPCProtocol.self)
+        
+        // request UUIDs
+        let uuidClass = NSSet(array: [
+            NSUUID.self
+        ]) as! Set<AnyHashable>
+
+        int.setClasses(uuidClass,
+                       for: #selector(RendererHandlerXPCProtocol.jobCompleted(_:_:)),
+                       argumentIndex: 0, ofReply: false)
+
+        int.setClasses(uuidClass,
+                       for: #selector(RendererHandlerXPCProtocol.jobFailed(_:_:)),
+                       argumentIndex: 0, ofReply: false)
 
         return int
     }
@@ -43,6 +56,15 @@ internal class RendererXPCProtocolHelpers {
      */
     static private func makeInstance() -> NSXPCInterface {
         let int = NSXPCInterface(with: RendererInstanceXPCProtocol.self)
+
+        // request UUIDs
+        let uuidClass = NSSet(array: [
+            NSUUID.self
+        ]) as! Set<AnyHashable>
+
+        int.setClasses(uuidClass,
+                       for: #selector(RendererInstanceXPCProtocol.render(_:withReply:)),
+                       argumentIndex: 1, ofReply: true)
 
         return int
     }

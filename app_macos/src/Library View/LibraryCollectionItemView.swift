@@ -91,6 +91,14 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     required init?(coder: NSCoder) {
         return nil
     }
+    
+    /**
+     * Remove observers on deinit.
+     */
+    deinit {
+        // remove old thumb observer
+        self.removeThumbObserver()
+    }
 
     // MARK: - Layer setup
     /**
@@ -827,6 +835,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         }
         self.image = nil
 
+        self.removeThumbObserver()
         self.refreshThumb()
     }
 
@@ -946,12 +955,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
      * 3. If no image is set, clear any existing surface.
      */
     private func refreshThumb() {
-        // remove old thumb observer
-        if let token = self.thumbObserverToken {
-            ThumbHandler.shared.removeThumbObserver(token)
-            self.thumbObserverToken = nil
-        }
-        
         // release surface if image is nil
         guard let image = self.image else {
             if let surface = self.surface {
@@ -961,19 +964,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                 self.surface = nil
             }
 
-            return
-        }
-
-        // add thumb observer
-        self.thumbObserverToken = ThumbHandler.shared.addThumbObserver(imageId: image.identifier!)
-        { [weak self, weak image] (libId, imageId) in
-            DDLogVerbose("Thumb updated for \(imageId)")
+            self.removeThumbObserver()
             
-            if let image = image, let cell = self {
-                DispatchQueue.main.async {
-                    cell.requestThumb(image)
-                }
-            }
+            return
         }
         
         // if no surface, request a thumb
@@ -988,9 +981,39 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     }
 
     /**
+     * Removes an existing thumb observer.
+     */
+    private func removeThumbObserver() {
+        if let token = self.thumbObserverToken {
+            ThumbHandler.shared.removeThumbObserver(token)
+            self.thumbObserverToken = nil
+        }
+    }
+    
+    /**
+     * Adds a thumb observer for the given image.
+     */
+    private func addThumbObserver(_ image: Image) {
+        self.thumbObserverToken = ThumbHandler.shared.addThumbObserver(imageId: image.identifier!)
+        { [weak self, weak image] (libId, imageId) in
+            DDLogVerbose("Thumb updated for \(imageId)")
+            
+            if let image = image, let cell = self {
+                DispatchQueue.main.async {
+                    cell.requestThumb(image)
+                }
+            }
+        }
+    }
+    
+    /**
      * Actually performs the request for a new thumbnail image.
      */
     private func requestThumb(_ image: Image) {
+        // set up an observer
+        self.removeThumbObserver()
+        self.addThumbObserver(image)
+        
         // calculate the pixel size needed
         var thumbSize = self.imageContainer.bounds.size
         thumbSize.width = thumbSize.width * self.imageContainer.contentsScale

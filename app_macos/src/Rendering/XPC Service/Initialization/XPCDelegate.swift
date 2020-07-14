@@ -19,7 +19,6 @@ class XPCDelegate: NSObject, NSXPCListenerDelegate {
      */
     override init() {
         super.init()
-        
         self.registerDefaults()
     }
 
