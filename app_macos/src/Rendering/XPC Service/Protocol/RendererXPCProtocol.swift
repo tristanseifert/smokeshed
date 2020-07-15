@@ -37,6 +37,9 @@ import Foundation
 @objc protocol RendererXPCProtocol {
     /**
      * Gets a renderer object of the given type with the given handler.
+     *
+     * - Note: Once the renderer is no longer needed, you _must_ release it. Otherwise, expensive resources will leak until the
+     * XPC service terminates.
      */
     func dispense(_ type: RendererType, handler: RendererHandlerXPCProtocol, withReply reply: @escaping (Error?, RendererInstanceXPCProtocol?) -> Void)
 }
@@ -47,13 +50,27 @@ import Foundation
  */
 @objc protocol RendererInstanceXPCProtocol {
     /**
-     * Kicks off a render job with the given description. The reply block is called with any errors that took place during the
-     * setup phase of the render, or an identifier by which the job can be tracked. All requests made to the handler object
-     * contain this identifier.
+     * Kicks off a render job with the given description. The reply block is called with any errors that took place during the setup phase
+     * of the render, or an identifier by which the job can be tracked. All requests made to the handler object contain this identifier.
      *
      * This method supports progress reporting (via `Progress`)
      */
     func render(_ jobDescriptor: [AnyHashable: Any], withReply reply: @escaping (Error?, UUID?) -> Void)
+    
+    /**
+     * Gets the current properties of the renderer.
+     */
+    func getProperties(withReply reply: ([AnyHashable: Any]) -> Void)
+    
+    /**
+     * Updates the renderer's internal settings from the provided dictionary. The value of any existing keys is overwritten.
+     */
+    func setProperties(_ props: [AnyHashable: Any])
+    
+    /**
+     * Indicates that this renderer is no longer needed, thus releasing all of its resources.
+     */
+    func invalidate(withReply callback: @escaping(Error?) -> Void)
 }
 
 /**

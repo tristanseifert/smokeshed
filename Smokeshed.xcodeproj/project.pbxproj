@@ -73,6 +73,7 @@
 		6A587F7524A86766009696E9 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
 		6A587F7A24A98FB4009696E9 /* MetadataTypes.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A587F7924A98FB4009696E9 /* MetadataTypes.strings */; };
 		6A587F7C24A98FF9009696E9 /* MetadataTypes+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7B24A98FF9009696E9 /* MetadataTypes+Localization.swift */; };
+		6A661E8324BEA0FC00D78F0A /* RenderServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A661E8224BEA0FC00D78F0A /* RenderServer.swift */; };
 		6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB4682498A3830007E450 /* JPEGFrame.swift */; };
 		6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */; };
 		6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BC24999C740043392E /* HuffmanTree.swift */; };
@@ -441,6 +442,7 @@
 		6A587F7324A861F6009696E9 /* LibraryCollectionItemView.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = LibraryCollectionItemView.strings; path = "app_macos/src/Library View/LibraryCollectionItemView.strings"; sourceTree = "<group>"; };
 		6A587F7924A98FB4009696E9 /* MetadataTypes.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = MetadataTypes.strings; path = frameworks/Paper/assets/MetadataTypes.strings; sourceTree = "<group>"; };
 		6A587F7B24A98FF9009696E9 /* MetadataTypes+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MetadataTypes+Localization.swift"; path = "frameworks/Paper/src/Metadata/MetadataTypes+Localization.swift"; sourceTree = "<group>"; };
+		6A661E8224BEA0FC00D78F0A /* RenderServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderServer.swift; path = "app_macos/src/Rendering/XPC Service/Render Server/RenderServer.swift"; sourceTree = "<group>"; };
 		6A6FB4682498A3830007E450 /* JPEGFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGFrame.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGFrame.swift"; sourceTree = "<group>"; };
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
 		6A7614BC24999C740043392E /* HuffmanTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HuffmanTree.swift; path = frameworks/Paper/src/Helpers/HuffmanTree.swift; sourceTree = "<group>"; };
@@ -1081,6 +1083,14 @@
 			name = "Secondary View";
 			sourceTree = "<group>";
 		};
+		6A661E8124BEA06700D78F0A /* Render Server */ = {
+			isa = PBXGroup;
+			children = (
+				6A661E8224BEA0FC00D78F0A /* RenderServer.swift */,
+			);
+			name = "Render Server";
+			sourceTree = "<group>";
+		};
 		6A8729B924BBC9C600D50C49 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
@@ -1094,6 +1104,7 @@
 			isa = PBXGroup;
 			children = (
 				6A8729F924BBCF2000D50C49 /* Protocol */,
+				6A661E8124BEA06700D78F0A /* Render Server */,
 				6A8729ED24BBCCC300D50C49 /* Initialization */,
 				6A8729E624BBCC6800D50C49 /* Resources */,
 			);
@@ -2141,6 +2152,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A661E8324BEA0FC00D78F0A /* RenderServer.swift in Sources */,
 				6A872A0624BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */,
 				6A872A0324BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */,
 				6A8729F424BBCDBF00D50C49 /* XPCDelegate.swift in Sources */,

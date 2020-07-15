@@ -13,7 +13,10 @@ import CocoaLumberjackSwift
 /**
  * Implements the XPC listener delegate.
  */
-class XPCDelegate: NSObject, NSXPCListenerDelegate {
+internal class XPCDelegate: NSObject, NSXPCListenerDelegate {
+    /// Render server
+    private var server = RenderServer()
+    
     /**
      * Perform some basic initialization of the renderer.
      */
@@ -45,7 +48,7 @@ class XPCDelegate: NSObject, NSXPCListenerDelegate {
 
         // if we get here, the connection should proceed
         newConnection.exportedInterface = RendererXPCProtocolHelpers.makeRemote()
-        newConnection.exportedObject = self // TODO: change
+        newConnection.exportedObject = self.server
         newConnection.resume()
 
         return true
