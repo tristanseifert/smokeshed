@@ -156,6 +156,9 @@ internal class SidebarShortcutsController {
             return
         }
         
+        // whether the previous and new "latest import" were different
+        var dateChanged = false
+        
         // get the latest import date
         do {
             let res = try self.mainCtx.fetch(self.mostRecentlyImportedFetchReq)
@@ -164,6 +167,11 @@ internal class SidebarShortcutsController {
                 DDLogError("Failed to convert results for latest import date: \(res)")
                 return
             }
+            
+            if self.mostRecentImport != obj.dateImported {
+                dateChanged = true
+            }
+            
             self.mostRecentImport = obj.dateImported
         } catch {
             DDLogError("Failed to retrieve latest import date: \(error)")
@@ -179,6 +187,16 @@ internal class SidebarShortcutsController {
             return
         }
         
+        self.lastImportItem.predicate = NSPredicate(format: "%K == %@",
+                                                    "dateImported",
+                                                    date as CVarArg)
+        
+        // force selection update if needed
+        if dateChanged {
+            NotificationCenter.default.post(name: .sidebarItemUpdated, object: self.lastImportItem)
+        }
+        
+        // count number of images and update badge
         let req: NSFetchRequest<NSFetchRequestResult> = Image.fetchRequest()
         req.resultType = .countResultType
         req.predicate = NSPredicate(format: "%K == %@", "dateImported",
@@ -190,13 +208,11 @@ internal class SidebarShortcutsController {
                 self?.lastImportItem?.badgeValue = count as! Int
             }
         } catch {
+            DispatchQueue.main.async { [weak self] in
+                self?.lastImportItem?.badgeValue = 0
+            }
             DDLogError("Failed to count images in last import: \(error)")
             return
         }
-        
-        // set the predicate to find images imported on this date
-        self.lastImportItem.predicate = NSPredicate(format: "%K == %@",
-                                                    "dateImported",
-                                                    date as CVarArg)
     }
 }

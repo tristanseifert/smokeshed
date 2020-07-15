@@ -39,6 +39,13 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
     
     // MARK: - Initialization
     /**
+     * Remove observers for notifications on dealloc.
+     */
+    deinit {
+        self.tearDownNotifications()
+    }
+    
+    /**
      * Creates the default items for the sidebar.
      */
     override func viewDidLoad() {
@@ -99,6 +106,9 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         
         // update the view
         self.outline.reloadData()
+        
+        // install the notification observers
+        self.setUpNotifications()
     }
 
     /**
@@ -220,7 +230,7 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
     /**
      * The outline view's selection changed; build a new compound predicate.
      */
-    func outlineViewSelectionDidChange(_ notification: Notification) {
+    func outlineViewSelectionDidChange(_: Notification) {
         var predicates: [NSPredicate] = []
         
         // get all selected items and their predicates
@@ -252,6 +262,50 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         let view = outline.makeView(withIdentifier: ident, owner: self) as? NSTableCellView
         view?.objectValue = value
         return view
+    }
+    
+    // MARK: - Notifications
+    /// Installed notification observers
+    private var noteObservers: [NSObjectProtocol] = []
+    
+    /**
+     * Installs notification handlers.
+     */
+    private func setUpNotifications() {
+        let nc = NotificationCenter.default
+        
+        // sidebar item updated
+        let o1 = nc.addObserver(forName: .sidebarItemUpdated, object: nil, queue: nil,
+                                using: self.handleItemChangedNotif(_:))
+        self.noteObservers.append(o1)
+    }
+    
+    /**
+     * Tears down all notification handlers we previously installed.
+     */
+    private func tearDownNotifications() {
+        for observer in self.noteObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    /**
+     * Notification handler for "sidebar item updated" notification. The object of the notification is the item, if any.
+     */
+    private func handleItemChangedNotif(_ note: Notification) {
+        guard let updated = note.object as? OutlineItem else {
+            return
+        }
+        
+        // see if there is an intersection between the selected items and the changed item
+        let selected = self.outline.selectedRowIndexes.compactMap({
+            return self.outline.item(atRow: $0) as? OutlineItem
+        })
+        
+        if selected.contains(updated) {
+            // if so, force an update of the current filters
+            self.outlineViewSelectionDidChange(note)
+        }
     }
     
     // MARK: - Types
@@ -329,5 +383,14 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
             self.badgeValue = self.children.reduce(0, { $0 + $1.badgeValue })
         }
     }
+}
+
+extension Notification.Name {
+    /**
+     * A sidebar item was modified.
+     *
+     * The sidebar filters will be updated accordingly if the item is currently selected.
+     */
+    internal static let sidebarItemUpdated = Notification.Name("me.tseifert.smokeshed.sidebar.item.updated")
 }
 

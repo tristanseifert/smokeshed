@@ -194,6 +194,7 @@ internal class SidebarImagesByDateController {
      */
     @discardableResult private func updateChildren(_ parent: YearItem, _ childDates: [Date]) -> Bool {
         var changedStructure = false
+        var createdOrRemoved = false
         
         // check if we've an item for each of the dates
         for date in childDates {
@@ -213,6 +214,7 @@ internal class SidebarImagesByDateController {
             else {
                 self.createDayItemFor(date: date, parent)
                 changedStructure = true
+                createdOrRemoved = true
             }
         }
         
@@ -224,6 +226,11 @@ internal class SidebarImagesByDateController {
                 return $0.title < $1.title
             }
         })
+        
+        // post notification
+        if createdOrRemoved {
+            NotificationCenter.default.post(name: .sidebarItemUpdated, object: parent)
+        }
         
         // update badge count
         parent.updateCountFromChildren()
