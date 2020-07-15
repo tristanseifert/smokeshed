@@ -14,10 +14,35 @@ import CocoaLumberjackSwift
  * instances.
  */
 internal class RenderServer: RendererXPCProtocol {
+    // MARK: - XPC Interface
+    
+    // MARK: Renderer instantiation
     /**
-     * Instantiates a renderer for the given type and returns a reference to it.
+     * Creates a renderer that writes to files.
      */
-    func dispense(_ type: RendererType, handler: RendererHandlerXPCProtocol, withReply reply: @escaping (Error?, RendererInstanceXPCProtocol?) -> Void) {
-        
-    }    
+    func getFileRenderer(withReply callback: @escaping (Error?, RendererFileXPCProtocol?) -> Void) {
+        // TODO: implement
+    }
+    
+    /**
+     * Creates a bitmap renderer. The best device is automatically chosen.
+     */
+    func getBitmapRenderer(withReply callback: @escaping (Error?, RendererBitmapXPCProtocol?) -> Void) {
+        // TODO: implement
+    }
+    
+    /**
+     * Try to create a display renderer on the given device.
+     */
+    func getDisplayRenderer(_ deviceRegistryId: UInt64, withReply callback: @escaping (Error?, RendererUserInteractiveXPCProtocol?) -> Void) {
+        // TODO: implement
+    }
+    
+    // MARK: Management
+    /**
+     * Allocates the maintenance endpoint, if needed, and returns a reference to it.
+     */
+    func getMaintenanceEndpoint(withReply reply: @escaping (NSXPCListenerEndpoint) -> Void) {
+        // TODO: implement
+    }
 }

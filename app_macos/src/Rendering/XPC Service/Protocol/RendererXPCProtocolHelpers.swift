@@ -17,54 +17,54 @@ internal class RendererXPCProtocolHelpers {
     static internal func makeRemote() -> NSXPCInterface {
         let int = NSXPCInterface(with: RendererXPCProtocol.self)
 
-        // set up the dispense() request
-        int.setInterface(Self.makeHandler(),
-                         for: #selector(RendererXPCProtocol.dispense(_:handler:withReply:)),
-                         argumentIndex: 1, ofReply: false)
+        // renderer type dispensers
+        int.setInterface(Self.makeUserInteractive(),
+                         for: #selector(RendererXPCProtocol.getDisplayRenderer(_:withReply:)),
+                         argumentIndex: 1, ofReply: true)
         
-        int.setInterface(Self.makeInstance(),
-                         for: #selector(RendererXPCProtocol.dispense(_:handler:withReply:)),
+        int.setInterface(Self.makeBitmap(),
+                         for: #selector(RendererXPCProtocol.getBitmapRenderer(withReply:)),
+                         argumentIndex: 1, ofReply: true)
+        
+        int.setInterface(Self.makeFile(),
+                         for: #selector(RendererXPCProtocol.getFileRenderer(withReply:)),
                          argumentIndex: 1, ofReply: true)
 
         return int
     }
     
     /**
-     * Creates an XPC interface for app-side handler objects.
+     * Creates an XPC interface for a display renderer.
      */
-    static private func makeHandler() -> NSXPCInterface {
-        let int = NSXPCInterface(with: RendererHandlerXPCProtocol.self)
-        
-        // request UUIDs
-        let uuidClass = NSSet(array: [
-            NSUUID.self
-        ]) as! Set<AnyHashable>
-
-        int.setClasses(uuidClass,
-                       for: #selector(RendererHandlerXPCProtocol.jobCompleted(_:_:)),
-                       argumentIndex: 0, ofReply: false)
-
-        int.setClasses(uuidClass,
-                       for: #selector(RendererHandlerXPCProtocol.jobFailed(_:_:)),
-                       argumentIndex: 0, ofReply: false)
+    static private func makeUserInteractive() -> NSXPCInterface {
+        let int = NSXPCInterface(with: RendererUserInteractiveXPCProtocol.self)
 
         return int
     }
     
     /**
-     * Creates an XPC interface for remote side renderer instance.
+     * Creates an XPC interface for a bitmap renderer.
      */
-    static private func makeInstance() -> NSXPCInterface {
-        let int = NSXPCInterface(with: RendererInstanceXPCProtocol.self)
+    static private func makeBitmap() -> NSXPCInterface {
+        let int = NSXPCInterface(with: RendererBitmapXPCProtocol.self)
 
-        // request UUIDs
-        let uuidClass = NSSet(array: [
-            NSUUID.self
-        ]) as! Set<AnyHashable>
+        return int
+    }
+    
+    /**
+     * Creates an XPC interface for a file renderer.
+     */
+    static private func makeFile() -> NSXPCInterface {
+        let int = NSXPCInterface(with: RendererFileXPCProtocol.self)
 
-        int.setClasses(uuidClass,
-                       for: #selector(RendererInstanceXPCProtocol.render(_:withReply:)),
-                       argumentIndex: 1, ofReply: true)
+        return int
+    }
+    
+    /**
+     * Create the XPC interface for the maintenance endpoint.
+     */
+    static internal func makeMaintenanceEp() -> NSXPCInterface {
+        let int = NSXPCInterface(with: RendererMaintenanceXPCProtocol.self)
 
         return int
     }
