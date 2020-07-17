@@ -82,6 +82,10 @@
 		6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C52499AE590043392E /* JPEGBitstream.swift */; };
 		6A7614C82499B53A0043392E /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
 		6A7614C92499DDFD0043392E /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
+		6A7F226824C116B80051438F /* RenderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7F226724C116B80051438F /* RenderManager.swift */; };
+		6A7F226A24C123EB0051438F /* RenderPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7F226924C123EB0051438F /* RenderPreferencesViewController.swift */; };
+		6A7F226D24C126AC0051438F /* MaintenanceEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7F226C24C126AC0051438F /* MaintenanceEndpoint.swift */; };
+		6A7F226F24C130290051438F /* RenderPreferencesViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A7F226E24C130290051438F /* RenderPreferencesViewController.strings */; };
 		6A8729B824BB801B00D50C49 /* EditSecondaryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8729B724BB801B00D50C49 /* EditSecondaryWindowController.swift */; };
 		6A8729BC24BBCAA300D50C49 /* ImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8729BB24BBCAA300D50C49 /* ImageRenderer.swift */; };
 		6A8729D724BBCBA200D50C49 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
@@ -449,6 +453,10 @@
 		6A7614BE2499A1020043392E /* Bitstream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Bitstream.swift; path = frameworks/Paper/src/Helpers/Bitstream.swift; sourceTree = "<group>"; };
 		6A7614C52499AE590043392E /* JPEGBitstream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGBitstream.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGBitstream.swift"; sourceTree = "<group>"; };
 		6A7614C72499B53A0043392E /* BitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BitHelpers.swift; path = frameworks/Paper/src/Helpers/BitHelpers.swift; sourceTree = "<group>"; };
+		6A7F226724C116B80051438F /* RenderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderManager.swift; path = app_macos/src/Rendering/RenderManager.swift; sourceTree = "<group>"; };
+		6A7F226924C123EB0051438F /* RenderPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderPreferencesViewController.swift; path = app_macos/src/Preferences/RenderPreferencesViewController.swift; sourceTree = "<group>"; };
+		6A7F226C24C126AC0051438F /* MaintenanceEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceEndpoint.swift; path = "app_macos/src/Rendering/XPC Service/Render Server/MaintenanceEndpoint.swift"; sourceTree = "<group>"; };
+		6A7F226E24C130290051438F /* RenderPreferencesViewController.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = RenderPreferencesViewController.strings; path = app_macos/src/Preferences/RenderPreferencesViewController.strings; sourceTree = "<group>"; };
 		6A8729B724BB801B00D50C49 /* EditSecondaryWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditSecondaryWindowController.swift; path = "app_macos/src/Edit View/EditSecondaryWindowController.swift"; sourceTree = "<group>"; };
 		6A8729BB24BBCAA300D50C49 /* ImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageRenderer.swift; path = app_macos/src/Rendering/ImageRenderer.swift; sourceTree = "<group>"; };
 		6A8729E324BBCBA200D50C49 /* Renderer.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = Renderer.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -799,6 +807,7 @@
 			isa = PBXGroup;
 			children = (
 				6A46D0D324AC0BBF001AE6FE /* ThumbPreferencesViewController.strings */,
+				6A7F226E24C130290051438F /* RenderPreferencesViewController.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1087,8 +1096,17 @@
 			isa = PBXGroup;
 			children = (
 				6A661E8224BEA0FC00D78F0A /* RenderServer.swift */,
+				6A7F226B24C1268D0051438F /* Maintenance */,
 			);
 			name = "Render Server";
+			sourceTree = "<group>";
+		};
+		6A7F226B24C1268D0051438F /* Maintenance */ = {
+			isa = PBXGroup;
+			children = (
+				6A7F226C24C126AC0051438F /* MaintenanceEndpoint.swift */,
+			);
+			name = Maintenance;
 			sourceTree = "<group>";
 		};
 		6A8729B924BBC9C600D50C49 /* Rendering */ = {
@@ -1096,6 +1114,7 @@
 			children = (
 				6A8729BB24BBCAA300D50C49 /* ImageRenderer.swift */,
 				6A8729BA24BBC9D700D50C49 /* XPC Service */,
+				6A7F226724C116B80051438F /* RenderManager.swift */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -1336,6 +1355,7 @@
 			isa = PBXGroup;
 			children = (
 				6A9D00E424A70C9E007566A5 /* Preferences.storyboard */,
+				6A7F226924C123EB0051438F /* RenderPreferencesViewController.swift */,
 				6A9D00E824A71318007566A5 /* ThumbPreferencesViewController.swift */,
 				6A9D00F324A71F8D007566A5 /* PreferencesWindowController.swift */,
 				6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */,
@@ -1944,6 +1964,7 @@
 				6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */,
 				6A1C116924A3030600CD8D36 /* Map View.storyboard in Resources */,
 				6A962C2C248F3ABC0088E1DB /* LibraryOptionsController.xib in Resources */,
+				6A7F226F24C130290051438F /* RenderPreferencesViewController.strings in Resources */,
 				6A587F7424A861F6009696E9 /* LibraryCollectionItemView.strings in Resources */,
 				6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */,
 				6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */,
@@ -2088,9 +2109,11 @@
 				6A2C5F63248CC83E009EA409 /* MainWindowController.swift in Sources */,
 				6A2D4D2124A532A6002AAB53 /* SidebarImagesByDateController.swift in Sources */,
 				6ABD368E24958E15005F80EE /* LibraryBrowserBase.swift in Sources */,
+				6A7F226824C116B80051438F /* RenderManager.swift in Sources */,
 				6A4DEE3424BAD13800F734F0 /* EditSecondaryViewController.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
 				6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */,
+				6A7F226A24C123EB0051438F /* RenderPreferencesViewController.swift in Sources */,
 				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,
 				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
 				6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */,
@@ -2156,6 +2179,7 @@
 				6A872A0624BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */,
 				6A872A0324BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */,
 				6A8729F424BBCDBF00D50C49 /* XPCDelegate.swift in Sources */,
+				6A7F226D24C126AC0051438F /* MaintenanceEndpoint.swift in Sources */,
 				6A8729EF24BBCCD800D50C49 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -179,6 +179,18 @@ import Metal
 }
 
 /**
+ * String dictionary keys for the XPC service configuration
+ */
+public enum RendererXPCConfigKey: String {
+    /// Whether the GPU for offline rendering is selected automatically
+    case autoselectOfflineRenderDevice = "autoselectOfflineRenderDevice"
+    /// Registry id of the GPU to use for offline rendering, if not autoselected
+    case offlineRenderDeviceId = "offlineRenderDeviceId"
+    /// Whether the GPU used for rendering the display view is the same as the one driving the view
+    case matchDisplayDevice = "matchDisplayDevice"
+}
+
+/**
  * Defines the interface exposed by the maintenance endpoint.
  */
 @objc protocol RendererMaintenanceXPCProtocol {

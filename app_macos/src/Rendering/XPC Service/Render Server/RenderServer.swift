@@ -15,6 +15,8 @@ import CocoaLumberjackSwift
  */
 internal class RenderServer: RendererXPCProtocol {
     // MARK: - XPC Interface
+    /// Maintenance endpoint (lazily allocated in response to the `getMaintenanceEndpoint()` call
+    private var maintenance: MaintenanceEndpoint! = nil
     
     // MARK: Renderer instantiation
     /**
@@ -43,6 +45,12 @@ internal class RenderServer: RendererXPCProtocol {
      * Allocates the maintenance endpoint, if needed, and returns a reference to it.
      */
     func getMaintenanceEndpoint(withReply reply: @escaping (NSXPCListenerEndpoint) -> Void) {
-        // TODO: implement
+        // allocate endpoint if needed
+        if self.maintenance == nil {
+            self.maintenance = MaintenanceEndpoint()
+        }
+        
+        // get the connection
+        reply(self.maintenance.endpoint)
     }
 }
