@@ -451,7 +451,7 @@ class ThumbHandler: ThumbXPCHandler {
         self.maintenanceService = nil
         
         // invalidate the xpc connection
-        self.maintenance!.invalidate()
+        self.maintenance?.invalidate()
         self.maintenance = nil
     }
     

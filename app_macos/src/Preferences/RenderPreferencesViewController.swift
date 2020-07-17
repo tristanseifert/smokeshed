@@ -77,21 +77,30 @@ class RenderPreferencesViewController: NSViewController {
     /// Display names for each GPU device.
     @objc dynamic private var gpuDeviceNames: [String] = []
     
+    /// Display name for the system default GPU
+    @objc dynamic private var defaultGpuName: String? = nil
+    
     /// Currently selected offline rendering GPU index
     @objc dynamic private var offlineRenderDeviceIdx: NSNumber? = nil {
         didSet {
-            // ensure there is an index
-            guard let index = self.offlineRenderDeviceIdx?.intValue else {
+            // ensure there is a valid index
+            guard let index = self.offlineRenderDeviceIdx?.intValue,
+                  index < self.gpuDevices.count else {
                 return
             }
-            
-            DDLogVerbose("Index: \(index)")
-            guard index < self.gpuDevices.count else {
+            self.offlineRenderDeviceId = self.gpuDevices[index].registryID
+        }
+    }
+    
+    /// Currently selected display rendering GPU index
+    @objc dynamic private var displayRenderDeviceIdx: NSNumber? = nil {
+        didSet {
+            // ensure there is a valid index
+            guard let index = self.displayRenderDeviceIdx?.intValue,
+                  index < self.gpuDevices.count else {
                 return
             }
-            
-            let device = self.gpuDevices[index]
-            self.offlineRenderDeviceId = device.registryID
+            self.displayRenderDeviceId = self.gpuDevices[index].registryID
         }
     }
     
@@ -120,8 +129,20 @@ class RenderPreferencesViewController: NSViewController {
         
         self.gpuObserver = obs
     
-        // process each installed device
+        // process each installed device and select the system default device by default
         self.updateGpuDisplayList(devices)
+
+        DispatchQueue.main.async {
+            if let id = MTLCreateSystemDefaultDevice()?.registryID,
+               let index = self.gpuDevices.firstIndex(where: { $0.registryID == id}) {
+                if self.offlineRenderDeviceIdx == nil {
+                    self.offlineRenderDeviceIdx = NSNumber(value: index)
+                }
+                if self.displayRenderDeviceIdx == nil {
+                    self.displayRenderDeviceIdx = NSNumber(value: index)
+                }
+            }
+        }
     }
     
     /**
@@ -137,6 +158,7 @@ class RenderPreferencesViewController: NSViewController {
      * Updates the display list of GPUs.
      */
     private func updateGpuDisplayList(_ devices: [MTLDevice]) {
+        // get display names for all GPUs
         var names: [String] = []
         
         for device in devices {
@@ -148,6 +170,14 @@ class RenderPreferencesViewController: NSViewController {
         DispatchQueue.main.async {
             self.gpuDeviceNames = names
             self.gpuDevices = devices
+        }
+        
+        // then for the system main device
+        if let device = MTLCreateSystemDefaultDevice() {
+            let name = self.displayStringForGpu(device)
+            DispatchQueue.main.async {
+                self.defaultGpuName = name
+            }
         }
     }
     
@@ -180,6 +210,26 @@ class RenderPreferencesViewController: NSViewController {
                       device.isHeadless ? "✅" : "❌")
     }
     
+    /**
+     * Selects the default gpu for the offline device.
+     */
+    @IBAction private func selectDefaultForOfflineGpu(_ sender: Any?) {
+        if let id = MTLCreateSystemDefaultDevice()?.registryID,
+            let index = self.gpuDevices.firstIndex(where: { $0.registryID == id}) {
+             self.offlineRenderDeviceIdx = NSNumber(value: index)
+         }
+    }
+    
+    /**
+     * Selects the default gpu for the display device.
+     */
+    @IBAction private func selectDefaultForDisplayGpu(_ sender: Any?) {
+        if let id = MTLCreateSystemDefaultDevice()?.registryID,
+            let index = self.gpuDevices.firstIndex(where: { $0.registryID == id}) {
+             self.displayRenderDeviceIdx = NSNumber(value: index)
+         }
+    }
+    
     // MARK: - Preferences
     /// Are thumbnail preferences accessible? If not, assume we're loading them
     @objc dynamic private var xpcPrefsAvailable: Bool = false
@@ -191,28 +241,47 @@ class RenderPreferencesViewController: NSViewController {
     
     /// Registry id of the offline render device. Ignored if autoselection is enabled
     @objc dynamic private var offlineRenderDeviceId: UInt64 = 0
+    /// Registry id of the display render device. Ignored if matching the display GPU
+    @objc dynamic private var displayRenderDeviceId: UInt64 = 0
     
     /**
      * Gets the preferences dictionary from the thumbs endpoint.
      */
     private func getServicePrefs(_ sender: Any?) {
+        // mark prefs as unavailable
         DispatchQueue.main.async {
             self.xpcPrefsAvailable = false
         }
         
-        // TODO
+        // request the new config
         self.maintenance!.getConfig()
         { config in
             // update the ui
             DispatchQueue.main.async {
+                // offline renderer options
                 self.autoselectOfflineRenderDevice = config[RendererXPCConfigKey.autoselectOfflineRenderDevice.rawValue] as! Bool
-                self.matchDisplayDevice = config[RendererXPCConfigKey.matchDisplayDevice.rawValue] as! Bool
-                
-                if let id = config[RendererXPCConfigKey.offlineRenderDeviceId.rawValue] as? UInt64,
-                   let index = self.gpuDevices.firstIndex(where: { $0.registryID == id }) {
-                    self.offlineRenderDeviceIdx = NSNumber(value: index)
+                if let id = config[RendererXPCConfigKey.offlineRenderDeviceId.rawValue] as? UInt64 {
+                    // if that GPU already exists, select it
+                    if let index = self.gpuDevices.firstIndex(where: { $0.registryID == id }) {
+                        self.offlineRenderDeviceIdx = NSNumber(value: index)
+                    }
+                    // TODO: handle the case where it no longer exists
+                    // for now, we fall back to the default item being selected
+                    DDLogError("offline rendering GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                 }
                 
+                // user interactive (display) renderer options
+                self.matchDisplayDevice = config[RendererXPCConfigKey.matchDisplayDevice.rawValue] as! Bool
+                if let id = config[RendererXPCConfigKey.displayRenderDeviceId.rawValue] as? UInt64 {
+                    // if that GPU already exists, select it
+                    if let index = self.gpuDevices.firstIndex(where: { $0.registryID == id }) {
+                        self.displayRenderDeviceIdx = NSNumber(value: index)
+                    }
+                    // TODO: handle the case where it no longer exists
+                    DDLogError("display GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
+                }
+                
+                // mark properties as available
                 self.xpcPrefsAvailable = true
             }
         }
@@ -222,12 +291,19 @@ class RenderPreferencesViewController: NSViewController {
      * Saves the preferences back to the xpc service.
      */
     @IBAction private func saveServicePrefs(_ sender: Any?) {
-        // create a settings dict
-        let dict: [String: Any] = [
+        // basic settings that don't change based on state
+        var dict: [String: Any] = [
             RendererXPCConfigKey.autoselectOfflineRenderDevice.rawValue: self.autoselectOfflineRenderDevice,
-            RendererXPCConfigKey.offlineRenderDeviceId.rawValue: self.offlineRenderDeviceId,
             RendererXPCConfigKey.matchDisplayDevice.rawValue: self.matchDisplayDevice,
         ]
+        
+        // offline and display render device id's
+        if !self.autoselectOfflineRenderDevice {
+            dict[RendererXPCConfigKey.offlineRenderDeviceId.rawValue] = self.offlineRenderDeviceId
+        }
+        if !self.matchDisplayDevice {
+            dict[RendererXPCConfigKey.displayRenderDeviceId.rawValue] = self.displayRenderDeviceId
+        }
         
         self.maintenance?.setConfig(dict)
     }

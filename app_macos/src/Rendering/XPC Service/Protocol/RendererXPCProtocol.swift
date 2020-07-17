@@ -188,6 +188,8 @@ public enum RendererXPCConfigKey: String {
     case offlineRenderDeviceId = "offlineRenderDeviceId"
     /// Whether the GPU used for rendering the display view is the same as the one driving the view
     case matchDisplayDevice = "matchDisplayDevice"
+    /// Registry id of the GPU to use for display rendering, if not always matching the display device
+    case displayRenderDeviceId = "displayRenderDeviceId"
 }
 
 /**
