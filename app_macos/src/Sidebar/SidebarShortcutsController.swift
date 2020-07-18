@@ -49,6 +49,42 @@ internal class SidebarShortcutsController {
         self.removeMOCObservers()
     }
     
+    /**
+     * Creates the shortcut items and adds them to the specified item.
+     *
+     * This allows the `SidebarController` to call us to create them, even though we add them to the root of the tree instead of
+     * our own root.
+     */
+    internal func createItems(_ root: inout [SidebarController.OutlineItem]) {
+        typealias OutlineItem = SidebarController.OutlineItem
+        let imageCountType = NSUserInterfaceItemIdentifier(rawValue: "ImageCountItem")
+        
+        // all images item
+        let allImages = OutlineItem()
+        allImages.viewIdentifier = imageCountType
+        allImages.title = Bundle.main.localizedString(forKey: "images.all.title",
+                                                      value: nil, table: "Sidebar")
+        allImages.icon = NSImage(systemSymbolName: "photo.on.rectangle.angled",
+                                accessibilityDescription: "All photos icon")
+        allImages.allowsMultipleSelect = false
+        allImages.selectionIdentifier = "SidebarShortcuts.allImages"
+        
+        root.append(allImages)
+        self.allItem = allImages
+        
+        // last import
+        let last = OutlineItem()
+        last.viewIdentifier = imageCountType
+        last.title = Bundle.main.localizedString(forKey: "images.last_import.title",
+                                                 value: nil, table: "Sidebar")
+        last.icon = NSImage(systemSymbolName: "clock.arrow.circlepath",
+                                accessibilityDescription: "Last Import icon")
+        last.selectionIdentifier = "SidebarShortcuts.lastImport"
+        
+        root.append(last)
+        self.lastImportItem = last
+    }
+    
     // MARK: - Change observing
     /// Observers we've registered for queue changes
     private var observers: [NSObjectProtocol] = []

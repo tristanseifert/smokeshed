@@ -17,7 +17,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES" nonactivatingPanel="YES" HUD="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenAuxiliary="YES"/>
             <rect key="contentRect" x="-2676" y="299" width="350" height="500"/>
-            <rect key="screenRect" x="-2806" y="-240" width="1366" height="946"/>
+            <rect key="screenRect" x="-1440" y="-290" width="1440" height="2535"/>
             <value key="minSize" type="size" width="350" height="500"/>
             <view key="contentView" id="Nsy-tW-fGV">
                 <rect key="frame" x="0.0" y="0.0" width="350" height="500"/>

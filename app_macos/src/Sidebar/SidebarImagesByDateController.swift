@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 
+import Bowl
 import Smokeshop
 import CocoaLumberjackSwift
 
@@ -21,13 +22,22 @@ internal class SidebarImagesByDateController {
     internal var library: LibraryBundle! {
         didSet {
             self.removeMOCObservers()
+            self.dayCountCache.removeAll()
+            self.updateCacheUrl()
             
-            // set up fetch request
+            // set up for getting library info if non-nil
             if self.library != nil {
                 self.addMOCObservers()
                 
-                self.mainCtx.perform {
-                    self.fetchCaptureDays()
+                // read date cache; if invalid, fetch data
+                if !self.readDatesCache() {
+                    self.mainCtx.perform {
+                        self.fetchCaptureDays()
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            self.saveCache()
+                        }
+                    }
                 }
             }
         }
@@ -102,6 +112,10 @@ internal class SidebarImagesByDateController {
                 // run the functions in the context queue
                 self?.mainCtx.perform {
                     self?.fetchCaptureDays()
+                    
+                    DispatchQueue.global(qos: .background).async {
+                        self?.saveCache()
+                    }
                 }
             }
         }
@@ -155,7 +169,127 @@ internal class SidebarImagesByDateController {
         self.updateTreeWithDates(dates)
     }
     
+    // MARK: Cache
+    /// URL of the cache file for the current library
+    private var cacheUrl: URL? = nil
+    
+    /**
+     * Structure serialized to disk in sidebar caches
+     */
+    private struct CacheRoot: Codable {
+        /// Cache version
+        var version: UInt = Self.currentVersion
+        /// When the cache was last modified
+        var lastUpdated: Date? = Date()
+        
+        /// An array of dates (ignoring time component) on which this library has images
+        var dates: [Date] = []
+        /// Map of dates to counts
+        var counts: [Date: Int] = [:]
+        
+        
+        /// Current cache version
+        static let currentVersion: UInt = 1
+    }
+    
+    /**
+     * Updates the cache url for the given library.
+     */
+    private func updateCacheUrl() {
+        // get handle to the library
+        guard let library = self.library else {
+            self.cacheUrl = nil
+            return
+        }
+        
+        let name = String(format: "SidebarImagesByDateController-%@.plist", library.identifier.uuidString)
+        let url = ContainerHelper.appCache?.appendingPathComponent(name, isDirectory: false)
+        
+        self.cacheUrl = url
+    }
+    
+    /**
+     * Attempts to load the capture dates cache from disk.
+     *
+     * - Returns: Whether the dates cache was loaded.
+     */
+    private func readDatesCache() -> Bool {
+        // does the cache file exist?
+        guard let url = self.cacheUrl,
+              FileManager.default.fileExists(atPath: url.path) else {
+            DDLogDebug("Not loading sidebar dates cache because cache doesn't exist (url \(String(describing: self.cacheUrl)))")
+            return false
+        }
+        
+        // read cache and decode it
+        var cache: CacheRoot! = nil
+        
+        do {
+            let data = try Data(contentsOf: url)
+            
+            let reader = PropertyListDecoder()
+            cache = try reader.decode(CacheRoot.self, from: data)
+        } catch {
+            DDLogError("Failed to read/decode cache from \(url): \(error)")
+            return false
+        }
+        
+        // validate the read data and copy what we can
+        guard cache.version == CacheRoot.currentVersion else {
+            DDLogWarn("Ignoring cache file '\(url)' due to invalid version \(cache.version) (expected \(CacheRoot.currentVersion)")
+            return false
+        }
+        
+        guard cache.dates.count > 0 else {
+            DDLogWarn("Ignoring cache file '\(url)' because date count is 0")
+            return false
+        }
+        
+        if cache.counts.count > 0 {
+            self.dayCountCache = cache.counts
+        }
+        
+        // update the tree
+        self.updateTreeWithDates(cache.dates)
+        
+        return true
+    }
+    
+    /**
+     * Save the sidebar cache.
+     */
+    private func saveCache() {
+        // ensure there's a cache url
+        guard let url = self.cacheUrl else {
+            DDLogError("Request to save sidebar cache with no url (library \(String(describing: self.library)))")
+            return
+        }
+        
+        // create a cache struct
+        var cache = CacheRoot()
+        cache.dates = self.dates
+        cache.counts = self.dayCountCache
+        
+        // encode data and write to disk
+        do {
+            // encode as a bplist
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .binary
+            
+            let data = try encoder.encode(cache)
+            
+            // then, write the data blob to disk
+            try data.write(to: url, options: .atomic)
+        } catch {
+            DDLogError("Failed to write sidebar cache to \(url): \(error)")
+            return
+        }
+    }
+    
     // MARK: - Tree management
+    /// Dates on which we have images
+    private var dates: [Date] = []
+    
     /// Calendar for working with date components
     private var calendar: Calendar = {
         var cal = Calendar.autoupdatingCurrent
@@ -167,6 +301,8 @@ internal class SidebarImagesByDateController {
      * Given an array of unique dates, build the tree of images for it.
      */
     private func updateTreeWithDates(_ dates: [Date]) {
+        self.dates = dates
+        
         // get unique years
         let years = Set(dates.compactMap({
             return self.calendar.component(.year, from: $0)
@@ -242,9 +378,13 @@ internal class SidebarImagesByDateController {
      * Updates the entire tree.
      */
     private func updateTree() {
-        DispatchQueue.main.async { [weak self] in
-            self?.outline.reloadItem(self?.groupItem)
-            self?.outline.expandItem(self?.groupItem, expandChildren: false)
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.updateTree()
+            }
+        } else {
+            self.outline.reloadItem(self.groupItem)
+            self.outline.expandItem(self.groupItem, expandChildren: false)
         }
     }
     
@@ -407,6 +547,9 @@ internal class SidebarImagesByDateController {
         @objc dynamic var year: Date! {
             didSet {
                 self.title = Self.yearFormatter.string(from: self.year)
+                
+                self.selectionIdentifier = String(format: "SidebarImagesByDate.YearItem.%.0f",
+                                                  self.year.timeIntervalSinceReferenceDate)
             }
         }
         
@@ -434,6 +577,9 @@ internal class SidebarImagesByDateController {
         @objc dynamic var date: Date! {
             didSet {
                 self.title = Self.dateFormatter.string(from: self.date)
+                
+                self.selectionIdentifier = String(format: "SidebarImagesByDate.DayItem.%.0f",
+                                                  self.date.timeIntervalSinceReferenceDate)
             }
         }
         
