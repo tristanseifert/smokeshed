@@ -279,11 +279,11 @@ class ThumbHandler: ThumbXPCHandler {
             }
         }
         
-        // TODO: for changed objects… lmao yikes
+        // updated images should get their thumbs updated (unless only metadata changed)
         if let objects = changes[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
             let updated = objects.compactMap({ $0 as? Image })
             if !updated.isEmpty {
-                DDLogInfo("Modified images: \(updated)")
+                // TODO: handle this
             }
         }
     }

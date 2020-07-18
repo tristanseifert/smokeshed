@@ -73,7 +73,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="640" height="448"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView selectable="YES" id="nvA-Kv-1fc" customClass="LibraryCollectionView" customModule="SmokeShed" customModuleProvider="target">
+                                        <collectionView selectable="YES" allowsEmptySelection="NO" id="nvA-Kv-1fc" customClass="LibraryCollectionView" customModule="SmokeShed" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="640" height="158"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <collectionViewFlowLayout key="collectionViewLayout" sectionHeadersPinToVisibleBounds="YES" id="WSh-VI-giu">
@@ -81,6 +81,9 @@
                                                 <size key="headerReferenceSize" width="0.0" height="30"/>
                                             </collectionViewFlowLayout>
                                             <color key="primaryBackgroundColor" name="LibraryViewPrimaryBackground"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="j7r-ht-wfY" id="Xbk-JJ-BYn"/>
+                                            </connections>
                                         </collectionView>
                                     </subviews>
                                 </clipView>

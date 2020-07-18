@@ -289,7 +289,21 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
      * inspector.
      */
     func openEditorForImages(_ images: [Image]) {
-        DDLogDebug("Switching to editor for: \(images)")
+        guard !images.isEmpty,
+              let tabs = self.parent as? MainWindowTabController,
+              let editItem = tabs.tabViewItems.first(where: { item in
+                if let str = item.identifier as? String {
+                    return str == "edit"
+                }
+                return false
+              }),
+              let edit = editItem.viewController as? EditViewController else {
+            return
+        }
+        
+        // enter the editor
+        edit.openImage(images.first!)
+        tabs.selectedTabViewItemIndex = tabs.tabViewItems.firstIndex(of: editItem)!
     }
     
     /**

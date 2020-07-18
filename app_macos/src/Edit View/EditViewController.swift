@@ -26,12 +26,13 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     override var representedObject: Any? {
         didSet {
             // new image was set
-            if let image = self.representedObject as? Image {
-                
+            if let images = self.representedObject as? [Image],
+               let image = images.first {
+                DDLogVerbose("Image for editing: \(image)")
             }
             // no selection
             else {
-                
+                DDLogVerbose("No image for editing")
             }
         }
     }
@@ -64,6 +65,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         
         if secondaryVisible {
             self.secondaryWc?.close()
+            self.removeSecondarySelectionObservers()
         }
         
         self.shouldOpenSecondaryView = secondaryVisible
@@ -115,7 +117,23 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         }
     }
     
+    // MARK: - Editing entry
+    /// If the secondary view is getting restored, this is the image that will be selected in it.
+    private var secondaryImageToSelect: Image? = nil
+    
+    /**
+     * Prepares the editing view to edit the given image.
+     */
+    internal func openImage(_ image: Image) {
+        // ensure secondary view is updated appropriately
+        self.secondaryImageToSelect = image
+        self.representedObject = [image]
+    }
+    
     // MARK: - Secondary view
+    /// Selection observer
+    private var secondarySelectionObs: NSKeyValueObservation? = nil
+    
     /// Window controller for the secondary view controller
     private lazy var secondaryWc: NSWindowController? = {
         // get the window controller
@@ -133,6 +151,11 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             vc.sidebarFilters = self.sidebarFilters
             vc.bind(NSBindingName(rawValue: "sidebarFilters"), to: self,
                     withKeyPath: #keyPath(EditViewController.sidebarFilters), options: nil)
+            
+            // propagate initial selection
+            if let images = self.representedObject as? [Image] {
+                vc.select(images)
+            }
         }
         
         // done!
@@ -146,7 +169,9 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         // toggle window
         if self.secondaryWc != nil, (self.secondaryWc?.window?.isVisible ?? false) {
             self.secondaryWc?.close()
+            self.removeSecondarySelectionObservers()
         } else {
+            self.observeSecondarySelection()
             self.secondaryWc?.showWindow(sender)
         }
         
@@ -158,9 +183,43 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     private func restoreSecondaryState() {
         if self.shouldOpenSecondaryView {
+            // prepare some state on the secondary view
+            if let vc = self.secondaryWc?.contentViewController as? EditSecondaryViewController {
+                // restore the image selection if needed
+                if let image = self.secondaryImageToSelect {
+                    vc.select([image])
+                    self.secondaryImageToSelect = nil
+                }
+            }
+            
+            // add observers and show
+            self.observeSecondarySelection()
+            
             self.secondaryWc?.showWindow(self)
             self.shouldOpenSecondaryView = false
         }
+    }
+    
+    /**
+     * Adds observers for the selection of the secondary view.
+     */
+    private func observeSecondarySelection() {
+        if let vc = self.secondaryWc?.contentViewController as? EditSecondaryViewController {
+            self.secondarySelectionObs = vc.observe(\.representedObject, options: []) { _, _ in
+                if let images = vc.representedObject as? [Image],
+                   let image = images.first {
+                    // this ensures there's always only one selection
+                    self.representedObject = [image]
+                }
+            }
+        }
+    }
+    
+    /**
+     * Removes secondary selection observers.
+     */
+    private func removeSecondarySelectionObservers() {
+        self.secondarySelectionObs = nil
     }
     
     // MARK: - Menu item handling
