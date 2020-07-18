@@ -41,7 +41,7 @@
                                         </connections>
                                     </searchField>
                                 </searchToolbarItem>
-                                <toolbarItem implicitItemIdentifier="B6329813-2A09-42F0-88A9-551AFC75AB28" label="Actions" paletteLabel="Actions" image="NSActionTemplate" sizingBehavior="auto" navigational="YES" id="gQO-nN-uOH">
+                                <toolbarItem implicitItemIdentifier="B6329813-2A09-42F0-88A9-551AFC75AB28" label="Actions" paletteLabel="Actions" image="NSActionTemplate" sizingBehavior="auto" id="gQO-nN-uOH">
                                     <nil key="toolTip"/>
                                     <popUpButton key="view" toolTip="Opens a menu with various shortcuts" verticalHuggingPriority="750" id="zx4-eP-Otv">
                                         <rect key="frame" x="4" y="14" width="39" height="0.0"/>
@@ -63,20 +63,20 @@
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="CXi-8b-iaZ"/>
-                                                    <menuItem title="Active View" enabled="NO" id="YM8-RM-gGD">
+                                                    <menuItem title="Active View" tag="-1" enabled="NO" id="YM8-RM-gGD">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
-                                                    <menuItem title="Library" tag="1" keyEquivalent="1" indentationLevel="1" id="4d6-Nt-jhn">
+                                                    <menuItem title="Library" tag="1" indentationLevel="1" id="4d6-Nt-jhn">
                                                         <connections>
                                                             <action selector="changeAppMode:" target="0c5-tG-9me" id="VcA-GA-y3s"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Map" tag="2" keyEquivalent="2" indentationLevel="1" id="Zt1-49-CQz">
+                                                    <menuItem title="Map" tag="2" indentationLevel="1" id="Zt1-49-CQz">
                                                         <connections>
                                                             <action selector="changeAppMode:" target="0c5-tG-9me" id="IHJ-19-8ud"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Edit" tag="3" keyEquivalent="3" indentationLevel="1" id="LxJ-fh-BIj">
+                                                    <menuItem title="Edit" tag="3" indentationLevel="1" id="LxJ-fh-BIj">
                                                         <connections>
                                                             <action selector="changeAppMode:" target="0c5-tG-9me" id="72R-1T-LAT"/>
                                                         </connections>
@@ -102,8 +102,8 @@
                                 </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
-                                <toolbarItem reference="we8-2L-WRJ"/>
                                 <toolbarItem reference="gQO-nN-uOH"/>
+                                <toolbarItem reference="we8-2L-WRJ"/>
                                 <toolbarItem reference="nmp-vn-Jqu"/>
                                 <searchToolbarItem reference="ZCs-IT-9s1"/>
                             </defaultToolbarItems>
