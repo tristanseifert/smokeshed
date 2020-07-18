@@ -443,7 +443,7 @@ DQ
                                 </buttonCell>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vdh-Bq-Wij">
-                                <rect key="frame" x="18" y="301" width="204" height="16"/>
+                                <rect key="frame" x="18" y="302" width="204" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="vsu-q2-NwD"/>
                                 </constraints>
@@ -454,15 +454,19 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <slider toolTip="Change the size of the in-memory cache holding undecoded thumbnail data as read from disk." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Va-Tk-gOo">
-                                <rect key="frame" x="220" y="292" width="289" height="28"/>
+                                <rect key="frame" x="220" y="268" width="289" height="28"/>
                                 <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="134217728" maxValue="1073741824" doubleValue="440401920" tickMarkPosition="above" numberOfTickMarks="15" sliderType="linear" id="dGT-kk-grj"/>
                                 <connections>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeChunkCache" id="kUC-Bk-Dfx">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.chunkCacheSize" id="BBf-ED-c3T"/>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="tPU-q0-jgJ"/>
                                 </connections>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZO0-J4-3Tq">
-                                <rect key="frame" x="503" y="301" width="79" height="16"/>
+                                <rect key="frame" x="503" y="277" width="79" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="75" id="hot-9h-89n"/>
                                 </constraints>
@@ -619,7 +623,7 @@ DQ
                                 </view>
                             </box>
                             <button toolTip="When checked, the size of the thumbnail work queue is dynamically adjusted based on the system's load." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf4-nz-Tre">
-                                <rect key="frame" x="226" y="262.5" width="262" height="18.5"/>
+                                <rect key="frame" x="226" y="248.5" width="262" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Automatically manage work queue size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PIc-zS-nKt">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -638,7 +642,7 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="230" width="19" height="28"/>
+                                <rect key="frame" x="363" y="216" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="EBQ-TV-p8A">
@@ -650,7 +654,7 @@ DQ
                                 </connections>
                             </stepper>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-UR-ynk">
-                                <rect key="frame" x="141" y="264" width="81" height="16"/>
+                                <rect key="frame" x="141" y="250" width="81" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Work queue:" id="Jgf-Zm-RKY">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -658,7 +662,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l4Z-39-HBz" userLabel="Thread Count">
-                                <rect key="frame" x="311" y="234" width="50" height="21"/>
+                                <rect key="frame" x="311" y="220" width="50" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="PWz-U1-I5J"/>
                                 </constraints>
@@ -680,7 +684,7 @@ DQ
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-sJ-nbr">
-                                <rect key="frame" x="247" y="237" width="58" height="16"/>
+                                <rect key="frame" x="247" y="223" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Threads:" id="fcb-Rg-D7h">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -688,7 +692,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="90L-k4-Pul">
-                                <rect key="frame" x="18" y="208" width="204" height="16"/>
+                                <rect key="frame" x="18" y="194" width="204" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="fi4-cs-Wt8"/>
                                 </constraints>
@@ -699,7 +703,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <pathControl verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zfV-0V-amW">
-                                <rect key="frame" x="228" y="204" width="352" height="22"/>
+                                <rect key="frame" x="228" y="190" width="352" height="22"/>
                                 <pathCell key="cell" selectable="YES" alignment="left" id="n6e-8u-uEi">
                                     <font key="font" metaFont="system"/>
                                     <url key="url" string="file://localhost/Applications/"/>
@@ -719,7 +723,7 @@ DQ
                                 </connections>
                             </pathControl>
                             <button toolTip="Move thumbnail data to a different location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ReY-Dp-MOk">
-                                <rect key="frame" x="222" y="173" width="128" height="27"/>
+                                <rect key="frame" x="222" y="159" width="128" height="27"/>
                                 <buttonCell key="cell" type="push" title="Change Directory…" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LG8-Gq-oVj">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -734,7 +738,7 @@ DQ
                                 </connections>
                             </button>
                             <button toolTip="Move thumbnail data back to its default location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mTa-eg-UPV">
-                                <rect key="frame" x="346" y="173" width="113" height="27"/>
+                                <rect key="frame" x="346" y="159" width="113" height="27"/>
                                 <buttonCell key="cell" type="push" title="Reset to Default" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RIP-YD-s9o">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -787,10 +791,29 @@ DQ
                                     <binding destination="3zq-It-y78" name="hidden" keyPath="self.xpcPrefsAvailable" id="ONt-Iw-BA1"/>
                                 </connections>
                             </stackView>
+                            <button toolTip="Allow Smokeshed to automatically manage the size of the chunk cache." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iEq-Cc-aAY">
+                                <rect key="frame" x="226" y="301" width="176" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically size cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UHg-4H-DRJ">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="S5J-Ok-LJ3"/>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.autoSizeChunkCache" id="sUr-pA-0KL">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="NaS-7b-j0p" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="top" id="17L-ei-Ryh"/>
-                            <constraint firstItem="vdh-Bq-Wij" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="42F-hV-rix"/>
+                            <constraint firstItem="iEq-Cc-aAY" firstAttribute="leading" secondItem="vdh-Bq-Wij" secondAttribute="trailing" constant="8" symbolic="YES" id="4rC-sR-PMt"/>
                             <constraint firstItem="ReY-Dp-MOk" firstAttribute="top" secondItem="zfV-0V-amW" secondAttribute="bottom" constant="8" symbolic="YES" id="503-aj-Oji"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="5Ca-Ex-hKH"/>
                             <constraint firstItem="90L-k4-Pul" firstAttribute="trailing" secondItem="vdh-Bq-Wij" secondAttribute="trailing" id="5Th-H4-ShT"/>
@@ -799,9 +822,8 @@ DQ
                             <constraint firstItem="bKl-AK-EBP" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="BUk-hX-J7k"/>
                             <constraint firstItem="l4Z-39-HBz" firstAttribute="top" secondItem="Tf4-nz-Tre" secondAttribute="bottom" constant="8" symbolic="YES" id="C1a-vs-7QS"/>
                             <constraint firstItem="zfV-0V-amW" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="CSd-2A-rRw"/>
-                            <constraint firstItem="0Va-Tk-gOo" firstAttribute="top" secondItem="Mzt-gk-6Sa" secondAttribute="top" constant="20" symbolic="YES" id="Ckh-DJ-mTX"/>
                             <constraint firstAttribute="trailing" secondItem="bKl-AK-EBP" secondAttribute="trailing" constant="20" symbolic="YES" id="Esb-sT-x3v"/>
-                            <constraint firstItem="Tf4-nz-Tre" firstAttribute="top" secondItem="0Va-Tk-gOo" secondAttribute="bottom" multiplier="1.25" constant="8" symbolic="YES" id="H57-hp-UFG"/>
+                            <constraint firstItem="Tf4-nz-Tre" firstAttribute="top" secondItem="0Va-Tk-gOo" secondAttribute="bottom" constant="8" symbolic="YES" id="H57-hp-UFG"/>
                             <constraint firstItem="l4Z-39-HBz" firstAttribute="leading" secondItem="F0i-sJ-nbr" secondAttribute="trailing" constant="8" symbolic="YES" id="Hj4-qE-z0t"/>
                             <constraint firstItem="0Va-Tk-gOo" firstAttribute="leading" secondItem="vdh-Bq-Wij" secondAttribute="trailing" constant="8" symbolic="YES" id="ILO-8w-gOQ"/>
                             <constraint firstItem="8kB-u6-8Bz" firstAttribute="centerY" secondItem="3zg-l3-GgI" secondAttribute="centerY" id="L7w-W5-cPu"/>
@@ -813,6 +835,7 @@ DQ
                             <constraint firstItem="NaS-7b-j0p" firstAttribute="leading" secondItem="l4Z-39-HBz" secondAttribute="trailing" constant="5" id="T4T-0T-DYy"/>
                             <constraint firstItem="ReY-Dp-MOk" firstAttribute="leading" secondItem="zfV-0V-amW" secondAttribute="leading" id="UXI-Qn-TLC"/>
                             <constraint firstItem="Tf4-nz-Tre" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="X49-Bg-xjz"/>
+                            <constraint firstItem="0Va-Tk-gOo" firstAttribute="top" secondItem="iEq-Cc-aAY" secondAttribute="bottom" constant="8" symbolic="YES" id="aWI-1n-XwB"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="trailing" constant="4" id="bA3-p3-euu"/>
                             <constraint firstItem="9IV-UR-ynk" firstAttribute="firstBaseline" secondItem="Tf4-nz-Tre" secondAttribute="firstBaseline" id="dpZ-NB-DFx"/>
                             <constraint firstItem="3zg-l3-GgI" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="e8O-5l-d6d"/>
@@ -824,6 +847,8 @@ DQ
                             <constraint firstAttribute="trailing" secondItem="zfV-0V-amW" secondAttribute="trailing" constant="20" symbolic="YES" id="snj-fD-0mM"/>
                             <constraint firstItem="8kB-u6-8Bz" firstAttribute="leading" secondItem="3zg-l3-GgI" secondAttribute="trailing" constant="12" symbolic="YES" id="t56-Gc-FPT"/>
                             <constraint firstItem="F0i-sJ-nbr" firstAttribute="firstBaseline" secondItem="l4Z-39-HBz" secondAttribute="firstBaseline" id="uxO-U0-yOk"/>
+                            <constraint firstItem="iEq-Cc-aAY" firstAttribute="top" secondItem="Mzt-gk-6Sa" secondAttribute="top" constant="20" symbolic="YES" id="vF5-mX-jwS"/>
+                            <constraint firstItem="vdh-Bq-Wij" firstAttribute="firstBaseline" secondItem="iEq-Cc-aAY" secondAttribute="firstBaseline" id="vlv-ZW-PdH"/>
                         </constraints>
                     </view>
                     <connections>

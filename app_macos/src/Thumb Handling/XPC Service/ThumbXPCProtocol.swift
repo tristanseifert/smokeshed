@@ -292,6 +292,8 @@ public enum ThumbXPCConfigKey: String {
     case workQueueSizeAuto = "thumbWorkQueueSizeAuto"
     /// If the thumb work queue is statically sized, number of threads to allocate
     case workQueueSize = "thumbWorkQueueSize"
+    /// Should the chunk cache be sized automatically?
+    case chunkCacheSizeAuto = "thumbChunkCacheSizeAuto"
     /// How big the in memory chunk cache is, in bytes
     case chunkCacheSize = "thumbChunkCacheSize"
     /// Where is thumbnail data stored?

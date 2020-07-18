@@ -96,6 +96,8 @@ class ThumbPreferencesViewController: NSViewController {
     /// Are thumbnail preferences accessible? If not, assume we're loading them
     @objc dynamic private var xpcPrefsAvailable: Bool = false
     
+    /// Automatically size the thumb chunk cache
+    @objc dynamic private var autoSizeChunkCache: Bool = false
     /// Size of the chunk cache in bytes
     @objc dynamic private var chunkCacheSize: Int64 = 0
     /// Whether the thumb generator work queue size is automatically managed
@@ -116,7 +118,9 @@ class ThumbPreferencesViewController: NSViewController {
         { config in
             // update the ui
             DispatchQueue.main.async {
+                self.autoSizeChunkCache = config[ThumbXPCConfigKey.chunkCacheSizeAuto.rawValue] as! Bool
                 self.chunkCacheSize = config[ThumbXPCConfigKey.chunkCacheSize.rawValue] as! Int64
+                
                 self.autoSizeGeneratorQueue = config[ThumbXPCConfigKey.workQueueSizeAuto.rawValue] as! Bool
                 self.generatorQueueThreads = config[ThumbXPCConfigKey.workQueueSize.rawValue] as! Int64
                 
@@ -135,6 +139,7 @@ class ThumbPreferencesViewController: NSViewController {
     private func saveServicePrefs(_ sender: Any?) {
         // create a settings dict
         let dict: [String: Any] = [
+            ThumbXPCConfigKey.chunkCacheSizeAuto.rawValue: self.autoSizeChunkCache,
             ThumbXPCConfigKey.chunkCacheSize.rawValue: self.chunkCacheSize,
             ThumbXPCConfigKey.workQueueSizeAuto.rawValue: self.autoSizeGeneratorQueue,
             ThumbXPCConfigKey.workQueueSize.rawValue: self.generatorQueueThreads
