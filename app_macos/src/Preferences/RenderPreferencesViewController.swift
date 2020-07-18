@@ -49,7 +49,6 @@ class RenderPreferencesViewController: NSViewController {
                 self.getServicePrefs(self)
             }
         }
-        self.xpcPrefsAvailable = true
     }
     
     /**
@@ -165,8 +164,6 @@ class RenderPreferencesViewController: NSViewController {
             names.append(self.displayStringForGpu(device))
         }
         
-        DDLogVerbose("Device names: \(names)")
-        
         DispatchQueue.main.async {
             self.gpuDeviceNames = names
             self.gpuDevices = devices
@@ -264,10 +261,11 @@ class RenderPreferencesViewController: NSViewController {
                     // if that GPU already exists, select it
                     if let index = self.gpuDevices.firstIndex(where: { $0.registryID == id }) {
                         self.offlineRenderDeviceIdx = NSNumber(value: index)
+                    } else {
+                        // TODO: handle the case where it no longer exists
+                        // for now, we fall back to the default item being selected
+                        DDLogError("offline rendering GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                     }
-                    // TODO: handle the case where it no longer exists
-                    // for now, we fall back to the default item being selected
-                    DDLogError("offline rendering GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                 }
                 
                 // user interactive (display) renderer options
@@ -276,9 +274,10 @@ class RenderPreferencesViewController: NSViewController {
                     // if that GPU already exists, select it
                     if let index = self.gpuDevices.firstIndex(where: { $0.registryID == id }) {
                         self.displayRenderDeviceIdx = NSNumber(value: index)
+                    } else {
+                        // TODO: handle the case where it no longer exists
+                        DDLogError("display GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                     }
-                    // TODO: handle the case where it no longer exists
-                    DDLogError("display GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                 }
                 
                 // mark properties as available
