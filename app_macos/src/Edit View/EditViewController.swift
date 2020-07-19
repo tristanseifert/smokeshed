@@ -258,6 +258,9 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * things until the renderer draws a full size image.
      */
     private func updateDisplay(_ image: Image) {
+        // request render
+        self.renderView.image = image
+        
         // get a thumb image to show blurred while loading
         ThumbHandler.shared.get(image) { imageId, res in
             switch res {
@@ -265,15 +268,12 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                 DDLogWarn("Failed to get edit view thumb: \(err)")
                 
             case .success(let surface):
-                DDLogInfo("Got thumb surface: \(surface)")
-                self.renderView.thumbSurface = surface
+                self.renderView.updateThumb(surface)
             }
         }
         
         // display loading indicator
         self.isLoading = true
-        
-        // request render
     }
     
     /**

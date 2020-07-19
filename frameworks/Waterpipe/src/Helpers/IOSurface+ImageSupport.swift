@@ -19,10 +19,12 @@ import CocoaLumberjackSwift
 extension IOSurface {
     /**
      * Creates an IOSurface that contains the given image.
+     *
+     * TODO: This should really use a 16-bit pixel format (since ProPhoto is so wide) but yes
      */
     public class func fromImage(_ image: CGImage) -> IOSurface? {
-        // the surface will be 32bpp, RGBA
-        let surfaceBitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue).union(.byteOrder32Big).rawValue
+        // the surface will be 32bpp, RGBA, ignoring the alpha component
+        let surfaceBitmapInfo = CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
 
         let props: [IOSurfacePropertyKey: Any] = [
             .width: image.width,
@@ -40,18 +42,13 @@ extension IOSurface {
         surface.lock(options: [], seed: nil)
         let surfaceData = surface.baseAddress
 
-        // determine color space: sRGB is fallback
-        var colorSpace = image.colorSpace
-
-        if colorSpace == nil {
-            colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
-        }
-
-        guard let ctx = CGContext(data: surfaceData, width: surface.width,
+        // create a context with the ProPhoto (ROMM) color space
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.rommrgb),
+              let ctx = CGContext(data: surfaceData, width: surface.width,
                             height: surface.height,
                             bitsPerComponent: 8,
                             bytesPerRow: surface.bytesPerRow,
-                            space: CGColorSpaceCreateDeviceRGB(),
+                            space: colorSpace,
                             bitmapInfo: surfaceBitmapInfo) else {
             return nil
         }

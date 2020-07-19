@@ -26,24 +26,12 @@ class ImageRenderView: MTKView {
         didSet {
             // clear state if image was reset
             if self.image == nil {
-                self.thumbSurface = nil
                 self.thumbTexture = nil
             }
 
             // redraw UI, starting with the thumb image
             self.drawThumb = true
             self.needsDisplay = true
-        }
-    }
-    
-    /**
-     * Thumbnail image to draw while waiting for the renderer to complete its first pass
-     */
-    internal var thumbSurface: IOSurface? = nil {
-        didSet {
-            // update the background texture
-            self.updateThumbTexture()
-            // do not force re-display; this happens once the new texture is computed
         }
     }
     
@@ -104,7 +92,10 @@ class ImageRenderView: MTKView {
         // release command queues and buffers
         self.queue = nil
         
-        // cached textures
+        // thumbnail data
+        self.thumbIndexBuf = nil
+        self.thumbVertexBuf = nil
+        self.thumbUniformBuf = nil
         self.thumbTexture = nil
     }
     
@@ -122,65 +113,10 @@ class ImageRenderView: MTKView {
         
         // create library for shader code
         self.library = self.device!.makeDefaultLibrary()!
-    }
-    
-    /**
-     * Updates the thumbnail texture
-     */
-    private func updateThumbTexture() {
-        // release the old texture
-        self.thumbTexture = nil
         
-        guard let surface = self.thumbSurface else {
-            DispatchQueue.main.async {
-                self.needsDisplay = true
-            }
-            return
-        }
-        
-        // create a texture descriptor based on the surface
-        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm,
-                                                            width: surface.width,
-                                                            height: surface.height,
-                                                            mipmapped: false)
-
-        // create a metal texture from that surface
-        guard let surfaceTex = self.device?.makeTexture(descriptor: desc, 
-                                                        iosurface: surface.surfaceRef,
-                                                        plane: 0) else {
-            DDLogError("Failed to create thumb texture from surface \(surface) (desc \(desc))")
-            return
-        }
-
-        // create a new output texture (that will contain the blurred version)
-        guard let output = self.device?.makeTexture(descriptor: desc) else {
-            DDLogError("Failed to create thumb output texture (desc \(desc))")
-            return
-        }
-
-        // build the blur pass command buffer
-        guard let buffer = self.queue.makeCommandBuffer() else {
-            DDLogError("Failed to get command buffer from \(String(describing: self.queue))")
-            return
-        }
-        buffer.pushDebugGroup("ThumbSurfaceBlur")
-        
-        let blur = MPSImageGaussianBlur(device: self.device!, sigma: 15)
-        blur.encode(commandBuffer: buffer, sourceTexture: surfaceTex,
-                    destinationTexture: output)
-
-        // add a completion handler
-        buffer.addCompletedHandler() { _ in
-            // set the thumb texture
-            self.thumbTexture = output
-            DispatchQueue.main.async {
-                self.needsDisplay = true
-            }
-        }
-    
-        // execute the buffer
-        buffer.popDebugGroup()
-        buffer.commit()
+        // thumbnail stuff
+        self.createThumbIndexBuf()
+        self.updateThumbUniforms()
     }
     
     // MARK: - Device changes
@@ -220,7 +156,6 @@ class ImageRenderView: MTKView {
         self.device = newDevice
         
         self.createMetalResources()
-        self.updateThumbTexture()
         
         // we need to re-display the view
         self.needsDisplay = true
@@ -241,9 +176,6 @@ class ImageRenderView: MTKView {
     }
 
     // MARK: - Drawing
-    /// Should the thumbnail image be drawn? This is cleared once the renderer returns.
-    private var drawThumb: Bool = true
-    
     /**
      * Requests that the view draws itself.
      */
@@ -262,12 +194,18 @@ class ImageRenderView: MTKView {
             return
         }
         
-        // set up render state
-        self.setupBackgroundThumb(encoder)
-        
-        // draw
+        // draw thumbnail
         if self.thumbTexture != nil, self.drawThumb {
             self.drawBackgroundThumb(encoder)
+        }
+        
+        // if in live resize, draw blurred viewport texture
+        if self.inLiveResize {
+            
+        }
+        // otherwise, draw as-is
+        else {
+            
         }
         
         // finish encoding the pass and present it
@@ -281,12 +219,204 @@ class ImageRenderView: MTKView {
         buffer.commit()
     }
     
-    // MARK: Thumbnail
+    // MARK: - Thumbnail
+    /// Index buffer for triangle coordinates of the thumb
+    private var thumbIndexBuf: MTLBuffer? = nil
+    /// Vertex coordinate buffer for thumbnail
+    private var thumbVertexBuf: MTLBuffer? = nil
+    /// Uniform buffer for thumb rendering
+    private var thumbUniformBuf: MTLBuffer? = nil
+    
+    /// Should the thumbnail image be drawn? This is cleared once the renderer returns.
+    private var drawThumb: Bool = true
+    
     /**
-     * Perform setup for drawing the background thumbnail
+     * Updates the thumbnail to the given surface.
      */
-    private func setupBackgroundThumb(_ encoder: MTLRenderCommandEncoder) {
+    internal func updateThumb(_ surface: IOSurface) {
+        // create the input texture from the surface
+        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm,
+                                                            width: surface.width,
+                                                            height: surface.height,
+                                                            mipmapped: false)
+        guard let surfaceTex = self.device?.makeTexture(descriptor: desc,
+                                                        iosurface: surface.surfaceRef,
+                                                        plane: 0) else {
+            DDLogError("Failed to create thumb texture from surface \(surface) (desc \(desc))")
+            return
+        }
         
+        // defer to the texture based creation logic
+        self.updateThumb(surfaceTex)
+    }
+    
+    /**
+     * Updates the thumb given a generic texture as the input; an output texture is allocated.
+     */
+    internal func updateThumb(_ texture: MTLTexture) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            // create a new output texture (that will contain the blurred version)
+            let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                                width: texture.width,
+                                                                height: texture.height,
+                                                                mipmapped: false)
+            desc.usage.insert(.shaderWrite)
+            desc.storageMode = .private
+            
+            guard let output = self.device?.makeTexture(descriptor: desc) else {
+                DDLogError("Failed to create thumb output texture (desc \(desc))")
+                return
+            }
+            
+            // update vertex buffer and render the texture
+            self.updateThumbUniforms()
+            self.updateThumbVertexBuf(input: texture)
+            self.updateThumbTexture(input: texture, output: output)
+        }
+    }
+    
+    /**
+     * Updates the thumbnail texture
+     */
+    private func updateThumbTexture(input: MTLTexture, output: MTLTexture) {
+        // release the old texture
+        self.thumbTexture = nil
+
+        // build the blur pass command buffer
+        guard let buffer = self.queue.makeCommandBuffer() else {
+            DDLogError("Failed to get command buffer from \(String(describing: self.queue))")
+            return
+        }
+        buffer.pushDebugGroup("ThumbSurfaceBlur")
+        
+        let blur = MPSImageGaussianBlur(device: self.device!, sigma: 5)
+        blur.edgeMode = .clamp
+        blur.encode(commandBuffer: buffer, sourceTexture: input,
+                    destinationTexture: output)
+
+        // add a completion handler
+        buffer.addCompletedHandler() { _ in
+            // set the thumb texture
+            self.thumbTexture = output
+            
+            DispatchQueue.main.async {
+                self.needsDisplay = true
+            }
+        }
+    
+        // execute the buffer
+        buffer.popDebugGroup()
+        buffer.commit()
+    }
+    
+    /**
+     * Creates the thumbnail index buffer.
+     */
+    private func createThumbIndexBuf() {
+        self.thumbIndexBuf = nil
+        
+        var indexData = [UInt32]()
+        
+        // first triangle: top left, bottom left, top right (CCW)
+        indexData.append(0)
+        indexData.append(1)
+        indexData.append(2)
+        
+        // second triangle: top right, bottom left, bottom right (CCW)
+        indexData.append(2)
+        indexData.append(1)
+        indexData.append(3)
+        
+        // create buffer
+        let bufSize = indexData.count * MemoryLayout<UInt32>.stride
+        self.thumbIndexBuf = self.device?.makeBuffer(bytes: indexData, length: bufSize)!
+    }
+    
+    /**
+     * Updates the vertex buffer for the image thumbnail quad.
+     *
+     * The coordinates are set such that the short edge of the image is 0.05 from the edge of the screen, and the long edge is
+     * proportionally scaled. This preserves a semi-correct appearance when the actual rendered image comes in.
+     */
+    private func updateThumbVertexBuf(input: MTLTexture) {
+        // deallocate previous buffer
+        self.thumbVertexBuf = nil
+        
+        var vertexData = [Vertex]()
+        
+        // texture coordinates are always constant
+        let textureCoords = [
+            SIMD2<Float>(0, 0),
+            SIMD2<Float>(0, 1),
+            SIMD2<Float>(1, 0),
+            SIMD2<Float>(1, 1),
+        ]
+        
+        var vertexCoords = [SIMD4<Float>]()
+        
+        // landscape images (width >= height)
+        if input.width >= input.height {
+            let edge = Float(0.9)
+            let ratio = (Float(input.height) / Float(input.width)) * edge
+            
+            vertexCoords.append(SIMD4<Float>(-edge, ratio, 0, 1))
+            vertexCoords.append(SIMD4<Float>(-edge, -ratio, 0, 1))
+            vertexCoords.append(SIMD4<Float>(edge, ratio, 0, 1))
+            vertexCoords.append(SIMD4<Float>(edge, -ratio, 0, 1))
+        }
+        // portrait images (height > width)
+        else {
+            let edge = Float(0.9)
+            let ratio = (Float(input.width) / Float(input.height)) * edge
+            
+            vertexCoords.append(SIMD4<Float>(-ratio, edge, 0, 1))
+            vertexCoords.append(SIMD4<Float>(-ratio, -edge, 0, 1))
+            vertexCoords.append(SIMD4<Float>(ratio, edge, 0, 1))
+            vertexCoords.append(SIMD4<Float>(ratio, -edge, 0, 1))
+        }
+        
+        // fill vertex data
+        for i in 0..<4 {
+            vertexData.append(Vertex(position: vertexCoords[i],
+                                          textureCoord: textureCoords[i]))
+        }
+        
+        // create buffer
+        let bufSize = vertexData.count * MemoryLayout<Vertex>.stride
+        self.thumbVertexBuf = self.device?.makeBuffer(bytes: vertexData, length: bufSize)!
+    }
+    
+    /**
+     * Update thumbnail uniform buffer. Any time the view is resized, this is performed.
+     */
+    private func updateThumbUniforms() {
+        // ensure this is always run on main thread (due to reading bounds)
+        if !Thread.isMainThread {
+            return DispatchQueue.main.sync {
+                self.updateThumbUniforms()
+            }
+        }
+        
+        // create an identity matrix
+        var uniforms = Uniform()
+        uniforms.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
+        
+        // correct for aspect ratio (x/y scale)
+        uniforms.projection.columns.0[0] = 1 / Float(self.bounds.width / self.bounds.height)
+        
+        // compensate for the top inset from the titel bar
+        if let safeArea = self.window?.contentView?.safeAreaInsets {
+            let screenSpaceOffset = Float(safeArea.top / self.bounds.height)
+            uniforms.projection.columns.1[3] = -screenSpaceOffset // translate
+            uniforms.projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
+        }
+        
+        DDLogVerbose("Projection matrix: \(uniforms.projection)")
+        
+        // create buffer
+        let bufSize = MemoryLayout<Uniform>.stride
+        self.thumbUniformBuf = self.device?.makeBuffer(bytes: &uniforms,
+                                                      length: bufSize)!
     }
     
     /**
@@ -296,11 +426,25 @@ class ImageRenderView: MTKView {
         // create pipeline descriptor
         let desc = MTLRenderPipelineDescriptor()
         desc.sampleCount = 1
-        desc.colorAttachments[0].pixelFormat = .rgba8Unorm
-        desc.depthAttachmentPixelFormat = .invalid
+        desc.colorAttachments[0].pixelFormat = self.colorPixelFormat
+        desc.depthAttachmentPixelFormat = self.depthStencilPixelFormat
     
-        desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")
-        desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")
+        desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")!
+        desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")!
+        
+        let vertexDesc = MTLVertexDescriptor()
+        
+        vertexDesc.attributes[0].format = .float4
+        vertexDesc.attributes[0].bufferIndex = 0
+        vertexDesc.attributes[0].offset = 0
+        
+        vertexDesc.attributes[1].format = .float2
+        vertexDesc.attributes[1].bufferIndex = 0
+        vertexDesc.attributes[1].offset = MemoryLayout<SIMD4<Float>>.stride
+        
+        vertexDesc.layouts[0].stride = MemoryLayout<Vertex>.stride
+        
+        desc.vertexDescriptor = vertexDesc
     
         // create pipeline state and encode draw commands
         do {
@@ -311,13 +455,36 @@ class ImageRenderView: MTKView {
             encoder.pushDebugGroup("RenderThumb")
             
             encoder.setRenderPipelineState(state)
-            encoder.setFragmentTexture(self.thumbTexture, index: 0)
-            encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, 
-                                   vertexCount: 4, instanceCount: 1)
+            encoder.setFragmentTexture(self.thumbTexture!, index: 0)
+            
+            encoder.setVertexBuffer(self.thumbVertexBuf!, offset: 0, index: 0)
+            encoder.setVertexBuffer(self.thumbUniformBuf!, offset: 0, index: 1)
+            
+            encoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint32,
+                                          indexBuffer: self.thumbIndexBuf!, indexBufferOffset: 0)
             
             encoder.popDebugGroup()
         } catch {
             DDLogError("Failed to draw thumb quad: \(error)")
         }
+    }
+
+    // MARK: - Types
+    /**
+     * Texture map vertex buffer type
+     */
+    private struct Vertex {
+        /// Screen position (x, y, z, W) of the vertex
+        var position = SIMD4<Float>()
+        /// Texture coordinate (x, y)
+        var textureCoord = SIMD2<Float>()
+    }
+    
+    /**
+     * Texture map vertex uniforms
+     */
+    private struct Uniform {
+        /// Projection matrix
+        var projection = simd_float4x4()
     }
 }

@@ -103,8 +103,8 @@ internal class Retriever {
         
         // try to find the most suitable image
         if size == .zero {
-            // get the first image
-            guard let image = CGImageSourceCreateImageAtIndex(src, 0,
+            // get the first non-square image
+            guard let image = CGImageSourceCreateImageAtIndex(src, 2,
                                   Self.createImageOptions as CFDictionary) else {
                 throw RetrieverErrors.imageCreateFailed(0)
             }
