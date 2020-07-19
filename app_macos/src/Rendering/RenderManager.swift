@@ -125,6 +125,36 @@ class RenderManager {
         }
     }
     
+    // MARK: - Renderers
+    /**
+     * Gets a display renderer.
+     *
+     * This renderer will run on the device specified, or the system default device otherwise.
+     */
+    public func getDisplayRenderer(_ device: MTLDevice?, callback: @escaping (Result<DisplayImageRenderer?, Error>) -> Void) {
+        // get the registry id for the device
+        var registryId = device?.registryID ?? 0
+        
+        if registryId == 0 {
+            registryId = MTLCreateSystemDefaultDevice()!.registryID
+        }
+        
+        // ask the service to make a renderer
+        self.renderer.getDisplayRenderer(registryId) { err, proxy in
+            precondition((err != nil) || (proxy != nil), "Invalid xpc response")
+            
+            // was there an error?
+            if let err = err {
+                return callback(.failure(err))
+            }
+            // did we get a proxy?
+            else if let proxy = proxy {
+                let renderer = DisplayImageRenderer(proxy)
+                return callback(.success(renderer))
+            }
+        }
+    }
+    
     // MARK: - Errors
     enum MaintenanceErrors: Error {
         /// The remote proxy of the maintenance endpoint does not implement the expected protocol

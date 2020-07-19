@@ -69,7 +69,7 @@ import Metal
  *
  * - Note: This renderer will not update the contents of the output texture until `redraw(withReply:)` is called.
  */
-@objc protocol RendererUserInteractiveXPCProtocol {
+@objc(RendererUserInteractiveXPCProtocol) protocol RendererUserInteractiveXPCProtocol {
     /**
      * Sets the render descriptor describing the render.
      *
@@ -77,8 +77,9 @@ import Metal
      * from previous renders. Otherwise, a full re-render is performed.
      *
      * - Parameter descriptor: Render descriptor to use for any subsequent render passes
+     * - Parameter error: If non-nil, the render descriptor was not applied because of this error.
      */
-    func setRenderDescriptor(_ descriptor: [AnyHashable: Any])
+    func setRenderDescriptor(_ descriptor: [AnyHashable: Any], withReply reply: @escaping (_ error: Error?) -> Void)
     
     /**
      * Updates the viewport being displayed.
@@ -88,8 +89,9 @@ import Metal
      * - Note: If the size of the viewport is smaller than the output texture, the image is centered in the texture.
      *
      * - Parameter visible: Rect describing the part of the image that is drawn into the output texture
+     * - Parameter error: If non-nil, the viewport could not be updated because of this error.
      */
-    func setViewport(_ visible: CGRect)
+    func setViewport(_ visible: CGRect, withReply reply: @escaping (_ error: Error?) -> Void)
     
     /**
      * Resizes the output texture.
@@ -126,7 +128,7 @@ import Metal
      * You must discontinue use of any resources previously provided by the renderer (such as output textures) prior to making this call,
      * or the results are undefined.
      */
-    func release()
+    func destroy()
 }
 
 /**
@@ -136,7 +138,7 @@ import Metal
  * settings. Since bitmaps are going to be consumed by the CPU almost exclusively, the Metal device selected may not necessarily be the
  * same device as is displaying the interface.
  */
-@objc protocol RendererBitmapXPCProtocol {
+@objc(RendererBitmapXPCProtocol) protocol RendererBitmapXPCProtocol {
     /**
      * Queues the given render descriptor to be rendered to a bitmap.
      *
@@ -160,7 +162,7 @@ import Metal
  * This is a specialization of the bitmap renderer, but instead of sending the output as a bitmap to the app, it's written directly to a file. This
  * allows for much lower overhead if exporting images.
  */
-@objc protocol RendererFileXPCProtocol {
+@objc(RendererFileXPCProtocol) protocol RendererFileXPCProtocol {
     /**
      * Queues the given render descriptor to be rendered to a file.
      *

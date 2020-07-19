@@ -268,7 +268,11 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                 DDLogWarn("Failed to get edit view thumb: \(err)")
                 
             case .success(let surface):
-                self.renderView.updateThumb(surface)
+                do {
+                    try self.renderView.updateThumb(surface)
+                } catch {
+                    DDLogError("Failed to update thumb: \(error)")
+                }
             }
         }
         

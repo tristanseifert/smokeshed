@@ -36,6 +36,9 @@ class ImageRenderView: MTKView {
     }
     
     // MARK: - Setup
+    /// Notification observer on app quit
+    private var quitObs: NSObjectProtocol? = nil
+    
     /**
      * Decodes the view from an IB file.
      */
@@ -72,6 +75,27 @@ class ImageRenderView: MTKView {
         self.colorspace = CGColorSpace(name: CGColorSpace.rommrgb)
         
         self.autoResizeDrawable = true
+        
+        // resizing
+        self.setUpSizeChangeObserver()
+        
+        // install a quit observer to properly release renderer (XPC service handle)
+        self.quitObs = NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification,
+                                                              object: nil, queue: nil) { [weak self] _ in
+            self?.renderer = nil
+        }
+    }
+    
+    /**
+     * Cleans up various observers and previously allocated resources on dealloc.
+     */
+    deinit {
+        self.invalidateMetalResources()
+        self.cleanUpSizeChangeObserver()
+        
+        if let obs = self.quitObs {
+            NotificationCenter.default.removeObserver(obs)
+        }
     }
     
     // MARK: - Metal resources
@@ -79,24 +103,34 @@ class ImageRenderView: MTKView {
     private var queue: MTLCommandQueue! = nil
     /// Shader library
     private var library: MTLLibrary! = nil
-
-    /// Texture for the thumbnail image
-    private var thumbTexture: MTLTexture? = nil
+    
+    /// Index buffer for triangle coordinates of the thumb
+    private var quadIndexBuf: MTLBuffer? = nil
+    /// Uniform buffer for thumb rendering
+    private var quadUniformBuf: MTLBuffer? = nil
     
     /**
      * Invalidates all existing Metal resources.
      */
     private func invalidateMetalResources() {
-        DDLogVerbose("Invalidating Metal state")
-        
         // release command queues and buffers
         self.queue = nil
+        self.library = nil
+        
+        self.quadIndexBuf = nil
+        self.quadUniformBuf = nil
         
         // thumbnail data
-        self.thumbIndexBuf = nil
         self.thumbVertexBuf = nil
-        self.thumbUniformBuf = nil
         self.thumbTexture = nil
+        
+        // viewport
+        self.viewportUniformBuf = nil
+        self.viewportVertexBuf = nil
+        self.viewportTexture = nil
+        
+        // renderer
+        self.renderer = nil
     }
     
     /**
@@ -105,8 +139,6 @@ class ImageRenderView: MTKView {
     private func createMetalResources() {
         precondition(self.device != nil, "Render device must be set")
         
-        DDLogVerbose("Creating Metal state")
-        
         // create command queue
         self.queue = self.device!.makeCommandQueue()!
         self.queue.label = String(format: "ImageRenderView-%@", self)
@@ -114,9 +146,129 @@ class ImageRenderView: MTKView {
         // create library for shader code
         self.library = self.device!.makeDefaultLibrary()!
         
-        // thumbnail stuff
-        self.createThumbIndexBuf()
-        self.updateThumbUniforms()
+        // index buffer for drawing full screen quad
+        self.createQuadIndexBuf()
+        self.createQuadUniforms()
+        
+        // viewport
+        self.createViewportBufs()
+        
+        // renderer
+        self.createRenderer()
+    }
+    
+    /**
+     * Creates an index buffer for drawing a full screen quad.
+     */
+    private func createQuadIndexBuf() {
+        let indexData: [UInt32] = [
+            // first triangle: top left, bottom left, top right (CCW)
+            0, 1, 2,
+            // second triangle: top right, bottom left, bottom right (CCW)
+            2, 1, 3
+        ]
+        
+        let indexBufSz = indexData.count * MemoryLayout<UInt32>.stride
+        self.quadIndexBuf = self.device?.makeBuffer(bytes: indexData, length: indexBufSz)!
+    }
+    
+    /**
+     * Update thumbnail uniform buffer. Any time the view is resized, this is performed.
+     */
+    private func createQuadUniforms() {
+        // ensure this is always run on main thread (due to reading bounds)
+        if !Thread.isMainThread {
+            return DispatchQueue.main.sync {
+                self.createQuadUniforms()
+            }
+        }
+        
+        // create an identity matrix
+        var uniforms = Uniform()
+        uniforms.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
+        
+        // correct for aspect ratio (x/y scale)
+        uniforms.projection.columns.0[0] = 1 / Float(self.bounds.width / self.bounds.height)
+        
+        // compensate for the top inset from the title bar
+        if let safeArea = self.window?.contentView?.safeAreaInsets {
+            let screenSpaceOffset = Float(safeArea.top / self.bounds.height)
+            uniforms.projection.columns.1[3] = -screenSpaceOffset // translate
+            uniforms.projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
+        }
+        
+        DDLogVerbose("Projection matrix: \(uniforms.projection)")
+        
+        // create buffer
+        let bufSize = MemoryLayout<Uniform>.stride
+        self.quadUniformBuf = self.device?.makeBuffer(bytes: &uniforms,
+                                                      length: bufSize)!
+    }
+    
+    // MARK: - Size changes
+    /// Size notification observer
+    private var sizeObs: NSObjectProtocol? = nil
+    
+    /**
+     * Sets up the size change notifications.
+     */
+    private func setUpSizeChangeObserver() {
+        // remove old observer
+        self.cleanUpSizeChangeObserver()
+        
+        // add observer and enable the notification
+        self.sizeObs = NotificationCenter.default.addObserver(forName: NSView.frameDidChangeNotification,
+                                                              object: self, queue: nil) { note in
+            // update uniforms (projection matrix) always
+            self.createQuadUniforms()
+            
+            // resize viewport if not in live resize
+            if !self.inLiveResize {
+                self.updateViewportSize()
+            }
+        }
+        self.postsFrameChangedNotifications = true
+    }
+    
+    /**
+     * Cleans up any old notifications.
+     */
+    private func cleanUpSizeChangeObserver() {
+        // disable notifications
+        self.postsFrameChangedNotifications = false
+        
+        // remove observer
+        if let obs = self.sizeObs {
+            NotificationCenter.default.removeObserver(obs)
+            self.sizeObs = nil
+        }
+    }
+    
+    /**
+     * When the view is added to a view hierarchy, ensure the viewport size is updated.
+     */
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        
+        if self.frame.size != .zero {
+            self.updateViewportSize()
+        }
+    }
+
+    /**
+     * When the view has ended live resizing, ensure the viewport texture is sized properly.
+     */
+    override func viewDidEndLiveResize() {
+        super.viewDidEndLiveResize()
+        
+        // update uniforms (projection matrix)
+        self.createQuadUniforms()
+        
+        // resize the texture
+        self.updateViewportSize()
+        
+        // redraw immediately
+        self.needsDisplay = true
     }
     
     // MARK: - Device changes
@@ -180,52 +332,50 @@ class ImageRenderView: MTKView {
      * Requests that the view draws itself.
      */
     override func draw(_ dirtyRect: NSRect) {
-        // set up the render descriptor, command buffer and encoder
-        guard let descriptor = self.currentRenderPassDescriptor else {
-            DDLogError("Failed to get render pass descriptor for \(self)")
-            return
-        }
-        guard let buffer = self.queue.makeCommandBuffer() else {
-            DDLogError("Failed to get command buffer from \(String(describing: self.queue))")
-            return
-        }
-        guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
-            DDLogError("Failed to get command encoder from \(String(describing: buffer))")
-            return
-        }
-        
-        // draw thumbnail
-        if self.thumbTexture != nil, self.drawThumb {
-            self.drawBackgroundThumb(encoder)
-        }
-        
-        // if in live resize, draw blurred viewport texture
-        if self.inLiveResize {
+        do {
+            // set up the render descriptor, command buffer and encoder
+            guard let descriptor = self.currentRenderPassDescriptor else {
+                throw Errors.noRenderPassDescriptor
+            }
+            guard let buffer = self.queue.makeCommandBuffer() else {
+                throw Errors.makeCommandBufferFailed
+            }
+            guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
+                throw Errors.makeRenderCommandEncoderFailed(descriptor)
+            }
             
-        }
-        // otherwise, draw as-is
-        else {
+            // draw thumbnail
+            if self.thumbTexture != nil, self.drawThumb {
+                try self.drawBackgroundThumb(encoder)
+            }
             
+            // if in live resize, draw blurred viewport texture
+            if self.inLiveResize {
+                
+            }
+            // otherwise, draw as-is
+            else {
+                try self.drawViewport(encoder)
+            }
+            
+            // finish encoding the pass and present it
+            encoder.endEncoding()
+            
+            if let drawable = self.currentDrawable {
+                buffer.present(drawable)
+            }
+            
+            buffer.commit()
+        } catch {
+            DDLogError("ImageRenderView draw(_:) failed: \(error)")
         }
-        
-        // finish encoding the pass and present it
-        encoder.endEncoding()
-        
-        if let drawable = self.currentDrawable {
-            buffer.present(drawable)
-        }
-        
-        // commit the buffer to display
-        buffer.commit()
     }
     
     // MARK: - Thumbnail
-    /// Index buffer for triangle coordinates of the thumb
-    private var thumbIndexBuf: MTLBuffer? = nil
     /// Vertex coordinate buffer for thumbnail
     private var thumbVertexBuf: MTLBuffer? = nil
-    /// Uniform buffer for thumb rendering
-    private var thumbUniformBuf: MTLBuffer? = nil
+    /// Texture for the thumbnail image
+    private var thumbTexture: MTLTexture? = nil
     
     /// Should the thumbnail image be drawn? This is cleared once the renderer returns.
     private var drawThumb: Bool = true
@@ -233,7 +383,7 @@ class ImageRenderView: MTKView {
     /**
      * Updates the thumbnail to the given surface.
      */
-    internal func updateThumb(_ surface: IOSurface) {
+    internal func updateThumb(_ surface: IOSurface) throws {
         // create the input texture from the surface
         let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm,
                                                             width: surface.width,
@@ -242,50 +392,47 @@ class ImageRenderView: MTKView {
         guard let surfaceTex = self.device?.makeTexture(descriptor: desc,
                                                         iosurface: surface.surfaceRef,
                                                         plane: 0) else {
-            DDLogError("Failed to create thumb texture from surface \(surface) (desc \(desc))")
-            return
+            throw Errors.makeTextureFailed
         }
         
         // defer to the texture based creation logic
-        self.updateThumb(surfaceTex)
+        try self.updateThumb(surfaceTex)
     }
     
     /**
      * Updates the thumb given a generic texture as the input; an output texture is allocated.
      */
-    internal func updateThumb(_ texture: MTLTexture) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            // create a new output texture (that will contain the blurred version)
-            let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                                width: texture.width,
-                                                                height: texture.height,
-                                                                mipmapped: false)
-            desc.usage.insert(.shaderWrite)
-            desc.storageMode = .private
-            
-            guard let output = self.device?.makeTexture(descriptor: desc) else {
-                DDLogError("Failed to create thumb output texture (desc \(desc))")
-                return
-            }
-            
-            // update vertex buffer and render the texture
-            self.updateThumbUniforms()
-            self.updateThumbVertexBuf(input: texture)
-            self.updateThumbTexture(input: texture, output: output)
+    internal func updateThumb(_ texture: MTLTexture) throws {
+        // create a new output texture (that will contain the blurred version)
+        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                            width: texture.width,
+                                                            height: texture.height,
+                                                            mipmapped: false)
+        desc.usage.insert(.shaderWrite)
+        desc.storageMode = .private
+        
+        guard let output = self.device?.makeTexture(descriptor: desc) else {
+            throw Errors.makeTextureFailed
         }
+        
+        // update vertex buffer and render the texture
+        self.updateThumbVertexBuf(input: texture)
+        try self.updateThumbTexture(input: texture, output: output)
     }
     
     /**
      * Updates the thumbnail texture
+     *
+     * This blurs the provided input thumbnail into the output texture. Once the rendering completes, the output texture is stored as the
+     * thumb texture and the view is displayed.
      */
-    private func updateThumbTexture(input: MTLTexture, output: MTLTexture) {
+    private func updateThumbTexture(input: MTLTexture, output: MTLTexture) throws {
         // release the old texture
         self.thumbTexture = nil
 
         // build the blur pass command buffer
         guard let buffer = self.queue.makeCommandBuffer() else {
-            DDLogError("Failed to get command buffer from \(String(describing: self.queue))")
-            return
+            throw Errors.makeCommandBufferFailed
         }
         buffer.pushDebugGroup("ThumbSurfaceBlur")
         
@@ -307,29 +454,6 @@ class ImageRenderView: MTKView {
         // execute the buffer
         buffer.popDebugGroup()
         buffer.commit()
-    }
-    
-    /**
-     * Creates the thumbnail index buffer.
-     */
-    private func createThumbIndexBuf() {
-        self.thumbIndexBuf = nil
-        
-        var indexData = [UInt32]()
-        
-        // first triangle: top left, bottom left, top right (CCW)
-        indexData.append(0)
-        indexData.append(1)
-        indexData.append(2)
-        
-        // second triangle: top right, bottom left, bottom right (CCW)
-        indexData.append(2)
-        indexData.append(1)
-        indexData.append(3)
-        
-        // create buffer
-        let bufSize = indexData.count * MemoryLayout<UInt32>.stride
-        self.thumbIndexBuf = self.device?.makeBuffer(bytes: indexData, length: bufSize)!
     }
     
     /**
@@ -387,42 +511,9 @@ class ImageRenderView: MTKView {
     }
     
     /**
-     * Update thumbnail uniform buffer. Any time the view is resized, this is performed.
-     */
-    private func updateThumbUniforms() {
-        // ensure this is always run on main thread (due to reading bounds)
-        if !Thread.isMainThread {
-            return DispatchQueue.main.sync {
-                self.updateThumbUniforms()
-            }
-        }
-        
-        // create an identity matrix
-        var uniforms = Uniform()
-        uniforms.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
-        
-        // correct for aspect ratio (x/y scale)
-        uniforms.projection.columns.0[0] = 1 / Float(self.bounds.width / self.bounds.height)
-        
-        // compensate for the top inset from the titel bar
-        if let safeArea = self.window?.contentView?.safeAreaInsets {
-            let screenSpaceOffset = Float(safeArea.top / self.bounds.height)
-            uniforms.projection.columns.1[3] = -screenSpaceOffset // translate
-            uniforms.projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
-        }
-        
-        DDLogVerbose("Projection matrix: \(uniforms.projection)")
-        
-        // create buffer
-        let bufSize = MemoryLayout<Uniform>.stride
-        self.thumbUniformBuf = self.device?.makeBuffer(bytes: &uniforms,
-                                                      length: bufSize)!
-    }
-    
-    /**
      * Draw the blurred background texture
      */
-    private func drawBackgroundThumb(_ encoder: MTLRenderCommandEncoder) {
+    private func drawBackgroundThumb(_ encoder: MTLRenderCommandEncoder) throws {
         // create pipeline descriptor
         let desc = MTLRenderPipelineDescriptor()
         desc.sampleCount = 1
@@ -446,27 +537,211 @@ class ImageRenderView: MTKView {
         
         desc.vertexDescriptor = vertexDesc
     
-        // create pipeline state and encode draw commands
-        do {
-            // create the pipeline state
-            let state = try encoder.device.makeRenderPipelineState(descriptor: desc)
+        // create the pipeline state
+        let state = try encoder.device.makeRenderPipelineState(descriptor: desc)
+    
+        // encode draw command
+        encoder.pushDebugGroup("RenderThumb")
         
-            // encode draw command
-            encoder.pushDebugGroup("RenderThumb")
-            
-            encoder.setRenderPipelineState(state)
-            encoder.setFragmentTexture(self.thumbTexture!, index: 0)
-            
-            encoder.setVertexBuffer(self.thumbVertexBuf!, offset: 0, index: 0)
-            encoder.setVertexBuffer(self.thumbUniformBuf!, offset: 0, index: 1)
-            
-            encoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint32,
-                                          indexBuffer: self.thumbIndexBuf!, indexBufferOffset: 0)
-            
-            encoder.popDebugGroup()
-        } catch {
-            DDLogError("Failed to draw thumb quad: \(error)")
+        encoder.setRenderPipelineState(state)
+        encoder.setFragmentTexture(self.thumbTexture!, index: 0)
+        
+        encoder.setVertexBuffer(self.thumbVertexBuf!, offset: 0, index: 0)
+        encoder.setVertexBuffer(self.quadUniformBuf!, offset: 0, index: 1)
+        
+        encoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint32,
+                                      indexBuffer: self.quadIndexBuf!, indexBufferOffset: 0)
+        
+        encoder.popDebugGroup()
+    }
+    
+    // MARK: Viewport
+    /// Uniform buffer for viewport drawing
+    private var viewportUniformBuf: MTLBuffer? = nil
+    /// Vertex coordinate buffer for viewport
+    private var viewportVertexBuf: MTLBuffer? = nil
+    /// Texture for the viewport image image
+    private var viewportTexture: MTLTexture? = nil
+    
+    /// Current viewport rect
+    private var viewport: CGRect = .zero
+    
+    /**
+     * Updates the vertex buffer used to draw the viewport texture.
+     */
+    private func createViewportBufs() {
+        // create vertex buffer
+        let vertices: [Vertex] = [
+            Vertex(position: SIMD4<Float>(-1, 1, 0, 1), textureCoord: SIMD2<Float>(0, 0)),
+            Vertex(position: SIMD4<Float>(-1, -1, 0, 1), textureCoord: SIMD2<Float>(0, 1)),
+            Vertex(position: SIMD4<Float>(1, 1, 0, 1), textureCoord: SIMD2<Float>(1, 0)),
+            Vertex(position: SIMD4<Float>(1, -1, 0, 1), textureCoord: SIMD2<Float>(1, 1)),
+        ]
+        
+        let vertexBufSz = vertices.count * MemoryLayout<Vertex>.stride
+        self.viewportVertexBuf = self.device?.makeBuffer(bytes: vertices, length: vertexBufSz)!
+        
+        // also, allocate the uniforms buffer
+        var uniformViewport = Uniform()
+        uniformViewport.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
+        
+        self.viewportUniformBuf = self.device?.makeBuffer(bytes: &uniformViewport,
+                                                          length: MemoryLayout<Uniform>.stride)!
+    }
+    
+    /**
+     * Draw the viewport texture
+     */
+    private func drawViewport(_ encoder: MTLRenderCommandEncoder) throws {
+        guard self.viewportTexture != nil else {
+            return
         }
+        
+        // create pipeline descriptor
+        let desc = MTLRenderPipelineDescriptor()
+        desc.sampleCount = 1
+        desc.colorAttachments[0].pixelFormat = .bgr10a2Unorm
+        desc.depthAttachmentPixelFormat = .invalid
+    
+        desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")!
+        desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")!
+        
+        let vertexDesc = MTLVertexDescriptor()
+        
+        vertexDesc.attributes[0].format = .float4
+        vertexDesc.attributes[0].bufferIndex = 0
+        vertexDesc.attributes[0].offset = 0
+        
+        vertexDesc.attributes[1].format = .float2
+        vertexDesc.attributes[1].bufferIndex = 0
+        vertexDesc.attributes[1].offset = MemoryLayout<SIMD4<Float>>.stride
+        
+        vertexDesc.layouts[0].stride = MemoryLayout<Vertex>.stride
+        
+        desc.vertexDescriptor = vertexDesc
+    
+        // create the pipeline state
+        let state = try encoder.device.makeRenderPipelineState(descriptor: desc)
+    
+        // encode draw command
+        encoder.pushDebugGroup("RenderViewport")
+        
+        encoder.setRenderPipelineState(state)
+        encoder.setFragmentTexture(self.viewportTexture!, index: 0)
+        
+        encoder.setVertexBuffer(self.viewportVertexBuf!, offset: 0, index: 0)
+        encoder.setVertexBuffer(self.viewportUniformBuf!, offset: 0, index: 1)
+        
+        encoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint32,
+                                      indexBuffer: self.quadIndexBuf!, indexBufferOffset: 0)
+        
+        encoder.popDebugGroup()
+    }
+    
+    /**
+     * Updates the current viewport rect.
+     */
+    func setViewport(_ viewport: CGRect, _ callback: @escaping (Result<Void, Error>) -> Void) {
+        self.viewport = viewport
+        
+        // ensure there is a renderer
+        guard self.renderer != nil else {
+            return callback(.success(Void()))
+        }
+        
+        // request resize from renderer
+        self.renderer!.setViewport(self.viewport) {
+            callback($0)
+            
+            // force re-display of view
+            DispatchQueue.main.async {
+                self.needsDisplay = true
+            }
+        }
+    }
+    
+    /**
+     * Creates the viewport texture from a shared texture handle.
+     */
+    private func makeViewportTex(_ handle: MTLSharedTextureHandle) throws {
+        // create the texture
+        guard let texture = self.device?.makeSharedTexture(handle: handle) else {
+            throw Errors.makeSharedTextureFailed
+        }
+        
+        self.viewportTexture = texture
+    }
+    
+    // MARK: - Renderer
+    /// Renderer instance currently being used
+    private var renderer: DisplayImageRenderer? = nil
+    
+    /**
+     * Instantiates a new renderer for the current Metal device.
+     */
+    private func createRenderer() {
+        self.renderer = nil
+        
+        RenderManager.shared.getDisplayRenderer(self.device) { [weak self] res in
+            do {
+                // get the renderer
+                let renderer = try res.get()
+                self?.renderer = renderer
+                
+                // prepare it for display
+                DispatchQueue.main.async {
+                    self?.updateViewportSize()
+                }
+            } catch {
+                DDLogError("Failed to get renderer: \(error)")
+            }
+        }
+    }
+    
+    /**
+     * Resize the viewport texture to fill the view.
+     */
+    private func updateViewportSize() {
+        // calculate new size (including title bar insets, at backing store pixel scale)
+        let newSize = self.frame.size
+    
+//        if let safeArea = self.window?.contentView?.safeAreaInsets {
+//            newSize.height -= safeArea.top
+//        }
+        
+        let scaledSize = self.convertToBacking(newSize)
+        
+        DDLogDebug("Resizing viewport to: \(newSize) (scaled \(scaledSize))")
+        
+        // ensure the viewport actually changed
+        if scaledSize.width == CGFloat(self.viewportTexture?.width ?? 0),
+           scaledSize.height == CGFloat(self.viewportTexture?.height ?? 0) {
+            return
+        }
+        
+        // request renrerer resizes viewport (if different than current viewport texture size)
+        self.renderer?.getOutputTexture(scaledSize, viewport: self.viewport) {
+            do {
+                let handle = try $0.get()
+                try self.makeViewportTex(handle)
+            } catch {
+                DDLogError("Failed to update viewport size: \(error)")
+            }
+        }
+    }
+    
+    // MARK: - Errors
+    enum Errors: Error {
+        /// No current render descriptor
+        case noRenderPassDescriptor
+        /// Failled to create a texture
+        case makeTextureFailed
+        /// Could not create a local texture handle from an existing shared texture
+        case makeSharedTextureFailed
+        /// Failed to create a command buffer
+        case makeCommandBufferFailed
+        /// Failed to create a command encoder with the given descriptor
+        case makeRenderCommandEncoderFailed(_ desc: MTLRenderPassDescriptor)
     }
 
     // MARK: - Types
