@@ -24,15 +24,22 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     
     /// Image currently being edited
     override var representedObject: Any? {
-        didSet {
+        didSet(oldValue) {
+            // clear out old state
+            self.clearDisplay()
+            
             // new image was set
             if let images = self.representedObject as? [Image],
                let image = images.first {
-                DDLogVerbose("Image for editing: \(image)")
+                self.noSelectionVisible = false
+                self.updateNoSelection()
+                
+                self.updateDisplay(image)
             }
             // no selection
             else {
-                DDLogVerbose("No image for editing")
+                self.noSelectionVisible = true
+                self.updateNoSelection()
             }
         }
     }
@@ -46,6 +53,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.setUpLoadingUI()
     }
 
     /**
@@ -210,6 +219,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                    let image = images.first {
                     // this ensures there's always only one selection
                     self.representedObject = [image]
+                } else {
+                    self.representedObject = nil
                 }
             }
         }
@@ -234,6 +245,70 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         }
         
         return false
+    }
+    
+    // MARK: - Image Display
+    /// Image render view
+    @IBOutlet private var renderView: ImageRenderView! = nil
+    
+    /**
+     * Updates the displayed image.
+     *
+     * If no image is selected, the "no selection" indicator is displayed. If an image is selected, get a thumb to draw blurred behind all the
+     * things until the renderer draws a full size image.
+     */
+    private func updateDisplay(_ image: Image) {
+        // get a thumb image to show blurred while loading
+        ThumbHandler.shared.get(image) { imageId, res in
+            switch res {
+            case .failure(let err):
+                DDLogWarn("Failed to get edit view thumb: \(err)")
+                
+            case .success(let surface):
+                DDLogInfo("Got thumb surface: \(surface)")
+                self.renderView.thumbSurface = surface
+            }
+        }
+        
+        // display loading indicator
+        self.isLoading = true
+        
+        // request render
+    }
+    
+    /**
+     * Clears the display state.
+     */
+    private func clearDisplay() {
+        self.renderView.image = nil
+
+        self.isLoading = false
+    }
+    
+    // MARK: No Selection
+    /// Whether the "no selection" UI is visible
+    @objc dynamic private var noSelectionVisible: Bool = true
+    
+    /**
+     * Updates the "no selection" UI
+     */
+    private func updateNoSelection() {
+        
+    }
+    
+    // MARK: Loading indicator
+    /// Effect view holding the loading indicator
+    @IBOutlet private var loadingContainer: NSVisualEffectView! = nil
+    
+    /// Whether the loading indicator is visible
+    @objc dynamic private var isLoading: Bool = false
+    
+    /**
+     * Sets up the loading UI.
+     */
+    private func setUpLoadingUI() {
+        self.loadingContainer.wantsLayer = true
+        self.loadingContainer.layer?.cornerRadius = 10
     }
     
     // MARK: - XPC Connection

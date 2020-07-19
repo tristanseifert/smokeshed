@@ -11,27 +11,83 @@
             <objects>
                 <viewController title="Edit" id="j9g-cF-0uh" customClass="EditViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="gJv-Pr-4lS">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="640"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9ru-El-nM7">
-                                <rect key="frame" x="112" y="122" width="227" height="56"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Edit View" id="7G2-8y-GwV">
-                                    <font key="font" metaFont="systemBlack" size="48"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="d1j-Xx-t8D" customClass="ImageRenderView" customModule="SmokeShed" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="640"/>
+                            </customView>
+                            <visualEffectView blendingMode="withinWindow" material="contentBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="ZTd-Z3-gK8">
+                                <rect key="frame" x="283" y="20" width="235" height="70"/>
+                                <subviews>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UPN-M5-UMH">
+                                        <rect key="frame" x="20" y="10" width="195" height="50"/>
+                                        <subviews>
+                                            <progressIndicator maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="8Oj-as-oaG">
+                                                <rect key="frame" x="0.0" y="0.0" width="32" height="50"/>
+                                                <connections>
+                                                    <binding destination="j9g-cF-0uh" name="animate" keyPath="self.isLoading" id="UHg-BQ-8gI"/>
+                                                </connections>
+                                            </progressIndicator>
+                                            <customView verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="TpI-90-ZRO">
+                                                <rect key="frame" x="40" y="0.0" width="155" height="50"/>
+                                                <subviews>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LM6-yT-nLQ">
+                                                        <rect key="frame" x="-2" y="12" width="159" height="26"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Loading Image…" id="1fr-ns-QuA">
+                                                            <font key="font" textStyle="title1" name=".SFNS-Regular"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="LM6-yT-nLQ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="TpI-90-ZRO" secondAttribute="top" id="My6-Lh-6va"/>
+                                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="LM6-yT-nLQ" secondAttribute="bottom" id="NUd-Os-T0S"/>
+                                                    <constraint firstItem="LM6-yT-nLQ" firstAttribute="centerY" secondItem="TpI-90-ZRO" secondAttribute="centerY" id="VwW-No-X6f"/>
+                                                    <constraint firstItem="LM6-yT-nLQ" firstAttribute="leading" secondItem="TpI-90-ZRO" secondAttribute="leading" id="W0Z-kj-nFB"/>
+                                                    <constraint firstAttribute="trailing" secondItem="LM6-yT-nLQ" secondAttribute="trailing" id="mY8-AS-TNn"/>
+                                                </constraints>
+                                            </customView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="TpI-90-ZRO" firstAttribute="height" secondItem="8Oj-as-oaG" secondAttribute="height" id="Tug-Ut-Kuo"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="UPN-M5-UMH" secondAttribute="bottom" constant="10" id="DlC-bZ-TKh"/>
+                                    <constraint firstItem="UPN-M5-UMH" firstAttribute="top" secondItem="ZTd-Z3-gK8" secondAttribute="top" constant="10" id="dUc-Yi-ASh"/>
+                                    <constraint firstAttribute="trailing" secondItem="UPN-M5-UMH" secondAttribute="trailing" constant="20" symbolic="YES" id="hvQ-S6-CXi"/>
+                                    <constraint firstItem="UPN-M5-UMH" firstAttribute="leading" secondItem="ZTd-Z3-gK8" secondAttribute="leading" constant="20" symbolic="YES" id="l2b-YG-hQT"/>
+                                </constraints>
+                            </visualEffectView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="9ru-El-nM7" firstAttribute="centerY" secondItem="gJv-Pr-4lS" secondAttribute="centerY" id="Uh0-ze-JI1"/>
-                            <constraint firstItem="9ru-El-nM7" firstAttribute="centerX" secondItem="gJv-Pr-4lS" secondAttribute="centerX" id="le1-M8-1LJ"/>
+                            <constraint firstItem="ZTd-Z3-gK8" firstAttribute="centerX" secondItem="gJv-Pr-4lS" secondAttribute="centerX" id="5Ea-sz-Ud5"/>
+                            <constraint firstItem="d1j-Xx-t8D" firstAttribute="leading" secondItem="gJv-Pr-4lS" secondAttribute="leading" id="OXm-p1-qWD"/>
+                            <constraint firstAttribute="bottom" secondItem="d1j-Xx-t8D" secondAttribute="bottom" id="QVF-eI-KyU"/>
+                            <constraint firstItem="d1j-Xx-t8D" firstAttribute="top" secondItem="gJv-Pr-4lS" secondAttribute="top" id="SkM-Ap-YNN"/>
+                            <constraint firstAttribute="trailing" secondItem="d1j-Xx-t8D" secondAttribute="trailing" id="Urd-Vx-YKy"/>
+                            <constraint firstAttribute="bottom" secondItem="ZTd-Z3-gK8" secondAttribute="bottom" constant="20" symbolic="YES" id="yEU-xY-VI7"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="loadingContainer" destination="ZTd-Z3-gK8" id="vfW-ER-Acx"/>
+                        <outlet property="renderView" destination="d1j-Xx-t8D" id="HmG-6A-rtc"/>
+                    </connections>
                 </viewController>
                 <customObject id="Hy8-z1-wZS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4" y="-106"/>
+            <point key="canvasLocation" x="11" y="-496"/>
         </scene>
         <!--Secondary Window Controller-->
         <scene sceneID="037-ag-kza">

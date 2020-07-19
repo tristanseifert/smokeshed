@@ -72,4 +72,11 @@ extension IOSurface {
 
         return surface
     }
+    
+    /**
+     * Returns an `IOSurfaceRef` for this surface.
+     */
+    public var surfaceRef: IOSurfaceRef {
+        return unsafeBitCast(self, to: IOSurfaceRef.self)
+    }
 }

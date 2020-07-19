@@ -4,3 +4,6 @@ xcuserdata/
 # Carthage artifacts
 Carthage/Build
 Carthage/Checkouts
+
+# command line build output
+build/
