@@ -89,19 +89,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")!
         desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")!
         
-        let vertexDesc = MTLVertexDescriptor()
-        
-        vertexDesc.attributes[0].format = .float4
-        vertexDesc.attributes[0].bufferIndex = 0
-        vertexDesc.attributes[0].offset = 0
-        
-        vertexDesc.attributes[1].format = .float2
-        vertexDesc.attributes[1].bufferIndex = 0
-        vertexDesc.attributes[1].offset = MemoryLayout<SIMD4<Float>>.stride
-        
-        vertexDesc.layouts[0].stride = MemoryLayout<Vertex>.stride
-        
-        desc.vertexDescriptor = vertexDesc
+        desc.vertexDescriptor = Vertex.makeDescriptor()
         
         self.state = try self.device.makeRenderPipelineState(descriptor: desc)
     }
@@ -127,7 +115,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         
         desc.pixelFormat = .bgr10a2Unorm
         desc.storageMode = .private
-        desc.usage = .renderTarget
+        desc.usage = [.renderTarget, .shaderRead]
         
         // create such a texture
         guard let texture = self.device.makeSharedTexture(descriptor: desc) else {
@@ -167,7 +155,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
                 self.outTexture = try self.makeViewportTexture(newSize)
             }
             
-            // get shared texture handle
+            // get shared texture handle and render to it
             guard let handle = self.outTexture?.makeSharedTextureHandle() else {
                 throw Errors.makeSharedTextureHandleFailed
             }
@@ -183,7 +171,15 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
      * Performs a render pass.
      */
     func redraw(withReply reply: @escaping (Error?) -> Void) {
-        
+        // any drawing commands that could fail
+        do {
+            try self.draw() {
+                return reply(nil)
+            }
+        } catch {
+            DDLogError("Failed to redraw: \(error)")
+            return reply(error)
+        }
     }
     
     /**
@@ -195,10 +191,56 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         ])
     }
     
-    // MARK: - Drawing
+    // MARK: - Drawing    
     /**
      * Drawing that shit
      */
+    private func draw(_ completion: @escaping () -> Void) throws {
+        guard let buffer = self.queue.makeCommandBuffer() else {
+            throw Errors.makeCommandBufferFailed
+        }
+        
+        // render the final pass to the output texture
+        let descriptor = try self.renderPassDescriptor()
+        guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
+            throw Errors.makeRenderCommandEncoderFailed(descriptor)
+        }
+        
+        buffer.addCompletedHandler() { _ in
+            completion()
+        }
+        
+        // TODO: drawing
+        
+        encoder.endEncoding()
+        buffer.commit()
+    }
+    
+    /**
+     * Creates a render pass descriptor.
+     */
+    private func renderPassDescriptor() throws -> MTLRenderPassDescriptor {
+        guard self.outTexture != nil else {
+            throw Errors.invalidOutputTexture
+        }
+        
+        let pass = MTLRenderPassDescriptor()
+        
+        // size based on texture
+        pass.renderTargetWidth = self.outTexture!.width
+        pass.renderTargetHeight = self.outTexture!.height
+        
+        // clear on load and write to the texture
+        pass.colorAttachments[0].loadAction = .clear
+        pass.colorAttachments[0].storeAction = .store
+        pass.colorAttachments[0].texture = self.outTexture!
+        
+        // clear to black with alpha 1
+        pass.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0,
+                                                            alpha: 0)
+        
+        return pass
+    }
     
     // MARK: - Types
     /**
@@ -209,6 +251,22 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         var position = SIMD4<Float>()
         /// Texture coordinate (x, y)
         var textureCoord = SIMD2<Float>()
+        
+        static func makeDescriptor() -> MTLVertexDescriptor {
+            let vertexDesc = MTLVertexDescriptor()
+            
+            vertexDesc.attributes[0].format = .float4
+            vertexDesc.attributes[0].bufferIndex = 0
+            vertexDesc.attributes[0].offset = 0
+            
+            vertexDesc.attributes[1].format = .float2
+            vertexDesc.attributes[1].bufferIndex = 0
+            vertexDesc.attributes[1].offset = MemoryLayout<SIMD4<Float>>.stride
+            
+            vertexDesc.layouts[0].stride = MemoryLayout<Vertex>.stride
+            
+            return vertexDesc
+        }
     }
     
     /**
@@ -225,5 +283,13 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         case outputTextureAllocFailed(_ desc: MTLTextureDescriptor)
         /// Failed to create a shared texture handle
         case makeSharedTextureHandleFailed
+        /// Render pass descriptor is invalid
+        case invalidRenderPassDescriptor
+        /// The output texture is invalid.
+        case invalidOutputTexture
+        /// Failed to allocate a command buffer
+        case makeCommandBufferFailed
+        /// Failed to make a command encoder
+        case makeRenderCommandEncoderFailed(_ descriptor: MTLRenderPassDescriptor)
     }
 }

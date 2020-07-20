@@ -642,7 +642,7 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="216" width="19" height="28"/>
+                                <rect key="frame" x="363" y="217" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="EBQ-TV-p8A">
@@ -798,7 +798,6 @@ DQ
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="S5J-Ok-LJ3"/>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.autoSizeChunkCache" id="sUr-pA-0KL">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="1"/>
@@ -808,6 +807,7 @@ DQ
                                             <bool key="NSValidatesImmediately" value="YES"/>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="S5J-Ok-LJ3"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -926,7 +926,7 @@ DQ
                 <window title="Thumb Move Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="38d-WL-rhi" userLabel="Progress Sheet">
                     <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                     <rect key="contentRect" x="-2135" y="318" width="375" height="128"/>
-                    <rect key="screenRect" x="-2806" y="-240" width="1366" height="946"/>
+                    <rect key="screenRect" x="-2806" y="-600" width="1366" height="946"/>
                     <view key="contentView" id="E0c-GG-6dn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="128"/>
                         <autoresizingMask key="autoresizingMask"/>

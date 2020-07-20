@@ -43,6 +43,14 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             }
         }
     }
+    
+    // MARK: Initialization
+    /**
+     * Remove various observers when deallocating.
+     */
+    deinit {
+        self.deinitDisplay()
+    }
 
     // MARK: View Lifecycle
     /// Whether the secondary view should be restored when the view appears
@@ -55,6 +63,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         super.viewDidLoad()
         
         self.setUpLoadingUI()
+        self.initDisplay()
     }
 
     /**
@@ -251,6 +260,35 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     /// Image render view
     @IBOutlet private var renderView: ImageRenderView! = nil
     
+    /// Render view rendered notification observer
+    private var renderUpdatedObs: NSObjectProtocol? = nil
+    
+    /**
+     * Install the render notification observers.
+     */
+    private func initDisplay() {
+        self.renderUpdatedObs = NotificationCenter.default.addObserver(forName: .renderViewUpdatedImage,
+                                                                       object: self.renderView,
+                                                                       queue: nil)
+        { [weak self] _ in
+            DDLogVerbose("Render view redrew: \(self?.renderView)")
+            
+            DispatchQueue.main.async {
+                self?.isLoading = false
+            }
+        }
+    }
+    
+    /**
+     * Clean up display.
+     */
+    private func deinitDisplay() {
+        if let obs = self.renderUpdatedObs {
+            NotificationCenter.default.removeObserver(obs)
+            self.renderUpdatedObs = nil
+        }
+    }
+    
     /**
      * Updates the displayed image.
      *
@@ -259,20 +297,15 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     private func updateDisplay(_ image: Image) {
         // request render
-        self.renderView.image = image
-        
-        // get a thumb image to show blurred while loading
-        ThumbHandler.shared.get(image) { imageId, res in
-            switch res {
-            case .failure(let err):
-                DDLogWarn("Failed to get edit view thumb: \(err)")
+        self.renderView.setImage(image) { res in
+            do {
+                let _ = try res.get()
                 
-            case .success(let surface):
-                do {
-                    try self.renderView.updateThumb(surface)
-                } catch {
-                    DDLogError("Failed to update thumb: \(error)")
+                DispatchQueue.main.async {
+                    self.isLoading = false
                 }
+            } catch {
+                DDLogError("Failed to update image: \(error)")
             }
         }
         
@@ -284,8 +317,6 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * Clears the display state.
      */
     private func clearDisplay() {
-        self.renderView.image = nil
-
         self.isLoading = false
     }
     
