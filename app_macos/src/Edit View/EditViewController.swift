@@ -32,14 +32,12 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             if let images = self.representedObject as? [Image],
                let image = images.first {
                 self.noSelectionVisible = false
-                self.updateNoSelection()
                 
                 self.updateDisplay(image)
             }
             // no selection
             else {
                 self.noSelectionVisible = true
-                self.updateNoSelection()
             }
         }
     }
@@ -62,8 +60,12 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setUpNoSelectionUI()
         self.setUpLoadingUI()
         self.initDisplay()
+        
+        self.isLoading = false
+        self.noSelectionVisible = true
     }
 
     /**
@@ -260,33 +262,18 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     /// Image render view
     @IBOutlet private var renderView: ImageRenderView! = nil
     
-    /// Render view rendered notification observer
-    private var renderUpdatedObs: NSObjectProtocol? = nil
-    
     /**
-     * Install the render notification observers.
+     * Sets up for image display.
      */
     private func initDisplay() {
-        self.renderUpdatedObs = NotificationCenter.default.addObserver(forName: .renderViewUpdatedImage,
-                                                                       object: self.renderView,
-                                                                       queue: nil)
-        { [weak self] _ in
-            DDLogVerbose("Render view redrew: \(self?.renderView)")
-            
-            DispatchQueue.main.async {
-                self?.isLoading = false
-            }
-        }
+        
     }
     
     /**
-     * Clean up display.
+     * Cleans up image display.
      */
     private func deinitDisplay() {
-        if let obs = self.renderUpdatedObs {
-            NotificationCenter.default.removeObserver(obs)
-            self.renderUpdatedObs = nil
-        }
+        
     }
     
     /**
@@ -321,14 +308,54 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     }
     
     // MARK: No Selection
+    /// Effect view holding the no selection UI
+    @IBOutlet private var noSelectionContainer: NSVisualEffectView! = nil
+    
     /// Whether the "no selection" UI is visible
-    @objc dynamic private var noSelectionVisible: Bool = true
+    @objc dynamic private var noSelectionVisible: Bool = true {
+        didSet {
+            if !Thread.isMainThread {
+                DispatchQueue.main.async {
+                    self.updateNoSelection()
+                }
+            } else {
+                self.updateNoSelection()
+            }
+        }
+    }
+    
+    /**
+     * Sets up the no selection UI.
+     */
+    private func setUpNoSelectionUI() {
+        self.noSelectionContainer.layer?.cornerRadius = 10
+    }
     
     /**
      * Updates the "no selection" UI
      */
     private func updateNoSelection() {
+        // show view if needed
+        if self.noSelectionVisible {
+            self.noSelectionContainer.isHidden = false
+        }
         
+        NSAnimationContext.runAnimationGroup({ ctx in
+            // set animation style
+            ctx.duration = 0.33
+            ctx.timingFunction = CAMediaTimingFunction.init(name: .easeInEaseOut)
+            
+            // animate opacity in or out
+            if self.noSelectionVisible {
+                self.noSelectionContainer.animator().alphaValue = 1
+            } else {
+                self.noSelectionContainer.animator().alphaValue = 0
+            }
+        }) {
+            if !self.noSelectionVisible {
+                self.noSelectionContainer.isHidden = true
+            }
+        }
     }
     
     // MARK: Loading indicator
@@ -336,14 +363,51 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     @IBOutlet private var loadingContainer: NSVisualEffectView! = nil
     
     /// Whether the loading indicator is visible
-    @objc dynamic private var isLoading: Bool = false
+    @objc dynamic private var isLoading: Bool = false {
+        didSet {
+            if !Thread.isMainThread {
+                DispatchQueue.main.async {
+                    self.updateLoadingUI()
+                }
+            } else {
+                self.updateLoadingUI()
+            }
+        }
+    }
     
     /**
      * Sets up the loading UI.
      */
     private func setUpLoadingUI() {
-        self.loadingContainer.wantsLayer = true
         self.loadingContainer.layer?.cornerRadius = 10
+    }
+    
+    /**
+     * Updates the loading UI.
+     *
+     * - Note: This must be run from the main thread.
+     */
+    private func updateLoadingUI() {
+        if self.isLoading {
+            self.loadingContainer.isHidden = false
+        }
+        
+        NSAnimationContext.runAnimationGroup({ ctx in
+            // set animation style
+            ctx.duration = 0.33
+            ctx.timingFunction = CAMediaTimingFunction.init(name: .easeInEaseOut)
+            
+            // animate opacity in or out
+            if self.isLoading {
+                self.loadingContainer.animator().alphaValue = 1
+            } else {
+                self.loadingContainer.animator().alphaValue = 0
+            }
+        }) {
+            if !self.isLoading {
+                self.loadingContainer.isHidden = true
+            }
+        }
     }
     
     // MARK: - XPC Connection

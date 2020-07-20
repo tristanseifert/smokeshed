@@ -11,14 +11,46 @@
             <objects>
                 <viewController title="Edit" id="j9g-cF-0uh" customClass="EditViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="gJv-Pr-4lS">
-                        <rect key="frame" x="0.0" y="0.0" width="800" height="640"/>
+                        <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="d1j-Xx-t8D" customClass="ImageRenderView" customModule="SmokeShed" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="800" height="640"/>
+                                <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
                             </customView>
-                            <visualEffectView wantsLayer="YES" blendingMode="withinWindow" material="underWindowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="ZTd-Z3-gK8">
-                                <rect key="frame" x="283" y="20" width="235" height="70"/>
+                            <visualEffectView wantsLayer="YES" horizontalCompressionResistancePriority="500" blendingMode="behindWindow" material="menu" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="cRe-O1-ZM6" userLabel="No Selection container">
+                                <rect key="frame" x="155" y="270" width="600" height="101"/>
+                                <subviews>
+                                    <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hGj-KH-Q2G">
+                                        <rect key="frame" x="247" y="60" width="105" height="21"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="No Selection" id="o9u-kb-DYF">
+                                            <font key="font" textStyle="title2" name=".SFNS-Regular"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField wantsLayer="YES" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Jlk-Aa-80D">
+                                        <rect key="frame" x="18" y="20" width="564" height="32"/>
+                                        <textFieldCell key="cell" selectable="YES" alignment="center" title="Select an image before opening the Edit view, or select one now via the Secondary View window." id="tLr-Xd-czU">
+                                            <font key="font" textStyle="body" name=".SFNS-Regular"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="Jlk-Aa-80D" secondAttribute="bottom" constant="20" symbolic="YES" id="6L6-ur-ZOS"/>
+                                    <constraint firstAttribute="trailing" secondItem="Jlk-Aa-80D" secondAttribute="trailing" constant="20" symbolic="YES" id="97L-Ci-6ew"/>
+                                    <constraint firstItem="Jlk-Aa-80D" firstAttribute="top" secondItem="hGj-KH-Q2G" secondAttribute="bottom" constant="8" symbolic="YES" id="F0a-ih-K0k"/>
+                                    <constraint firstItem="hGj-KH-Q2G" firstAttribute="top" secondItem="cRe-O1-ZM6" secondAttribute="top" constant="20" symbolic="YES" id="ZgT-y1-Auw"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="600" id="fwL-3q-Jaj"/>
+                                    <constraint firstItem="Jlk-Aa-80D" firstAttribute="leading" secondItem="cRe-O1-ZM6" secondAttribute="leading" constant="20" symbolic="YES" id="jhu-JE-u63"/>
+                                    <constraint firstItem="hGj-KH-Q2G" firstAttribute="centerX" secondItem="cRe-O1-ZM6" secondAttribute="centerX" id="k51-9S-uTU"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="hGj-KH-Q2G" secondAttribute="trailing" constant="20" symbolic="YES" id="lk3-RJ-OET"/>
+                                    <constraint firstItem="hGj-KH-Q2G" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cRe-O1-ZM6" secondAttribute="leading" constant="20" symbolic="YES" id="t9t-qH-Ztx"/>
+                                </constraints>
+                            </visualEffectView>
+                            <visualEffectView wantsLayer="YES" blendingMode="withinWindow" material="menu" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="ZTd-Z3-gK8">
+                                <rect key="frame" x="337" y="20" width="235" height="70"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UPN-M5-UMH">
                                         <rect key="frame" x="20" y="10" width="195" height="50"/>
@@ -72,16 +104,19 @@
                             </visualEffectView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="cRe-O1-ZM6" firstAttribute="centerX" secondItem="gJv-Pr-4lS" secondAttribute="centerX" id="5B8-87-rbn"/>
                             <constraint firstItem="ZTd-Z3-gK8" firstAttribute="centerX" secondItem="gJv-Pr-4lS" secondAttribute="centerX" id="5Ea-sz-Ud5"/>
                             <constraint firstItem="d1j-Xx-t8D" firstAttribute="leading" secondItem="gJv-Pr-4lS" secondAttribute="leading" id="OXm-p1-qWD"/>
                             <constraint firstAttribute="bottom" secondItem="d1j-Xx-t8D" secondAttribute="bottom" id="QVF-eI-KyU"/>
                             <constraint firstItem="d1j-Xx-t8D" firstAttribute="top" secondItem="gJv-Pr-4lS" secondAttribute="top" id="SkM-Ap-YNN"/>
                             <constraint firstAttribute="trailing" secondItem="d1j-Xx-t8D" secondAttribute="trailing" id="Urd-Vx-YKy"/>
+                            <constraint firstItem="cRe-O1-ZM6" firstAttribute="centerY" secondItem="gJv-Pr-4lS" secondAttribute="centerY" id="rlj-fz-NQ0"/>
                             <constraint firstAttribute="bottom" secondItem="ZTd-Z3-gK8" secondAttribute="bottom" constant="20" symbolic="YES" id="yEU-xY-VI7"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="loadingContainer" destination="ZTd-Z3-gK8" id="vfW-ER-Acx"/>
+                        <outlet property="noSelectionContainer" destination="cRe-O1-ZM6" id="O1V-9D-dbE"/>
                         <outlet property="renderView" destination="d1j-Xx-t8D" id="HmG-6A-rtc"/>
                     </connections>
                 </viewController>
