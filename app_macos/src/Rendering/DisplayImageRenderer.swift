@@ -131,7 +131,7 @@ internal class DisplayImageRenderer {
      *
      * - Note: This method does not observe the image for changes. You have to handle this yourself.
      */
-    internal func setImage(_ image: Image, _ callback: @escaping(Result<Void, Error>) -> Void) {
+    internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping(Result<Void, Error>) -> Void) {
         // lol ya feel
         return callback(.success(Void()))
     }

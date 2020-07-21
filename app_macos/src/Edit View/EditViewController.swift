@@ -284,7 +284,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     private func updateDisplay(_ image: Image) {
         // request render
-        self.renderView.setImage(image) { res in
+        self.renderView.setImage(self.library, image) { res in
             do {
                 let _ = try res.get()
                 

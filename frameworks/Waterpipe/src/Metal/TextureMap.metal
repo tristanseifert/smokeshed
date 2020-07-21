@@ -1,43 +1,45 @@
 //
-//  ImageRenderView.metal
-//  Smokeshed (macOS)
+//  TextureMap.metal
+//  Waterpipe (macOS)
 //
-//  Created by Tristan Seifert on 20200718.
+//  Created by Tristan Seifert on 20200721.
 //
 
 #include <metal_stdlib>
 using namespace metal;
 
-/**
+/*
  * Input (from the vertex buffer) into the texture map vertex buffer.
  */
 typedef struct {
-    /// Position in screen space
+    // Position in screen space
     float4 position [[ attribute(0) ]];
-    /// Texture coordinate
+    // Texture coordinate
     float2 texture [[ attribute(1) ]];
 } TextureMapVertexIn;
 
-/**
+/*
  * Uniforms (namely, the projection matrix) for the texture map call
  */
 typedef struct {
-    /// Projection matrix
+    // Projection matrix
     float4x4 proj;
 } TextureMapUniformIn;
 
-/**
- * Output of a very simple texture sampling vertex shader, and input into the corresponding fragment shader.
+/*
+ * Output of a very simple texture sampling vertex shader, and input into the corresponding
+ * fragment shader.
  */
 typedef struct {
-    /// vertex position in screen space
+    // vertex position in screen space
     float4 renderedCoordinate [[position]];
-    /// texture coordinates to sample from
+    // texture coordinates to sample from
     float2 textureCoordinate;
 } TextureMapVertexOut;
 
-/**
- * When drawing four points, this vertex shader can be used to map a texture to the quad that results.
+/*
+ * When drawing four points, this vertex shader can be used to map a texture to the quad that
+ * results.
  */
 vertex TextureMapVertexOut textureMapVtx(const TextureMapVertexIn vertexIn [[ stage_in ]],
                                          const device TextureMapUniformIn &uniforms [[ buffer(1) ]]) {
@@ -49,9 +51,9 @@ vertex TextureMapVertexOut textureMapVtx(const TextureMapVertexIn vertexIn [[ st
     return outVertex;
 }
 
-/**
- * Given the output of the `textureMapVtx` shader, this fragment shader samples
- * the first color attachment to produce the output image.
+/*
+ * Given the output of the `textureMapVtx` shader, this fragment shader samples the first color
+ * attachment to produce the output image.
  */
 fragment half4 textureMapFrag(TextureMapVertexOut fromVtx [[ stage_in  ]],
                               texture2d<float, access::sample> texture [[ texture(0)  ]]) {
@@ -60,4 +62,3 @@ fragment half4 textureMapFrag(TextureMapVertexOut fromVtx [[ stage_in  ]],
     // sample from the texture
     return half4(texture.sample(s, fromVtx.textureCoordinate));
 }
-

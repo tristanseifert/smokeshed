@@ -26,13 +26,6 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     /// Pipeline state
     private var state: MTLRenderPipelineState! = nil
     
-    /// Vertex buffers (contains screen space coords and texture coords)
-    private var quadVertexBuf: MTLBuffer! = nil
-    /// Uniform buffer (contains identity projection matrix)
-    private var quadUniformBuf: MTLBuffer! = nil
-    /// Index buffer for drawing full screen quad
-    private var quadIndexBuf: MTLBuffer! = nil
-    
     /// Output texture
     private var outTexture: MTLTexture? = nil
     
@@ -52,46 +45,6 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         // create command queue
         self.queue = self.device.makeCommandQueue()!
         self.queue.label = String(format: "UserInteractiveRenderer-%@", self.identifier.uuidString)
-        
-        // create library for shader code
-        self.library = self.device!.makeDefaultLibrary()!
-        
-        // create index buffer for a full screen quad
-        let indexData: [UInt32] = [0, 1, 2, 2, 1, 3]
-        
-        let indexBufSz = indexData.count * MemoryLayout<UInt32>.stride
-        self.quadIndexBuf = self.device.makeBuffer(bytes: indexData, length: indexBufSz)!
-        
-        // create uniform buffer (projection matrix is diagonal identity matrix)
-        var uniform = Uniform()
-        uniform.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
-        
-        self.quadUniformBuf = self.device.makeBuffer(bytes: &uniform,
-                                                     length: MemoryLayout<Uniform>.stride)!
-        
-        // create vertex buffer
-        let vertices: [Vertex] = [
-            Vertex(position: SIMD4<Float>(-1, 1, 0, 1), textureCoord: SIMD2<Float>(0, 0)),
-            Vertex(position: SIMD4<Float>(-1, -1, 0, 1), textureCoord: SIMD2<Float>(0, 1)),
-            Vertex(position: SIMD4<Float>(1, 1, 0, 1), textureCoord: SIMD2<Float>(1, 0)),
-            Vertex(position: SIMD4<Float>(1, -1, 0, 1), textureCoord: SIMD2<Float>(1, 1)),
-        ]
-        
-        let vertexBufSz = vertices.count * MemoryLayout<Vertex>.stride
-        self.quadVertexBuf = self.device.makeBuffer(bytes: vertices, length: vertexBufSz)!
-        
-        // set up the pipeline descriptor
-        let desc = MTLRenderPipelineDescriptor()
-        desc.sampleCount = 1
-        desc.colorAttachments[0].pixelFormat = .bgr10a2Unorm
-        desc.depthAttachmentPixelFormat = .invalid
-    
-        desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")!
-        desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")!
-        
-        desc.vertexDescriptor = Vertex.makeDescriptor()
-        
-        self.state = try self.device.makeRenderPipelineState(descriptor: desc)
     }
     
     /**
@@ -240,41 +193,6 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
                                                             alpha: 0)
         
         return pass
-    }
-    
-    // MARK: - Types
-    /**
-     * Texture map vertex buffer type
-     */
-    private struct Vertex {
-        /// Screen position (x, y, z, W) of the vertex
-        var position = SIMD4<Float>()
-        /// Texture coordinate (x, y)
-        var textureCoord = SIMD2<Float>()
-        
-        static func makeDescriptor() -> MTLVertexDescriptor {
-            let vertexDesc = MTLVertexDescriptor()
-            
-            vertexDesc.attributes[0].format = .float4
-            vertexDesc.attributes[0].bufferIndex = 0
-            vertexDesc.attributes[0].offset = 0
-            
-            vertexDesc.attributes[1].format = .float2
-            vertexDesc.attributes[1].bufferIndex = 0
-            vertexDesc.attributes[1].offset = MemoryLayout<SIMD4<Float>>.stride
-            
-            vertexDesc.layouts[0].stride = MemoryLayout<Vertex>.stride
-            
-            return vertexDesc
-        }
-    }
-    
-    /**
-     * Texture map vertex uniforms
-     */
-    private struct Uniform {
-        /// Projection matrix
-        var projection = simd_float4x4()
     }
     
     // MARK: - Errors

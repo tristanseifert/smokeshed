@@ -76,7 +76,6 @@
 		6A5B5D9624C39620003BC002 /* Edit View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A5B5D9524C39620003BC002 /* Edit View.xcassets */; };
 		6A5B5D9824C39BDA003BC002 /* ImageRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5B5D9724C39BDA003BC002 /* ImageRenderView.swift */; };
 		6A5B5D9A24C39BEB003BC002 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5B5D9924C39BEB003BC002 /* MetalKit.framework */; };
-		6A5B5D9C24C3AED8003BC002 /* ImageRenderView.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A5B5D9B24C3AED8003BC002 /* ImageRenderView.metal */; };
 		6A5CAC0624C267F400BF55BA /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
 		6A5CAC0824C2706D00BF55BA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5CAC0724C2706D00BF55BA /* CoreFoundation.framework */; };
 		6A5CAC0924C2707300BF55BA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
@@ -86,7 +85,6 @@
 		6A660C5624C4AEFA0012CFD8 /* DisplayImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A660C5524C4AEFA0012CFD8 /* DisplayImageRenderer.swift */; };
 		6A660C5824C4C7CC0012CFD8 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A660C5724C4C7CB0012CFD8 /* MetalPerformanceShaders.framework */; };
 		6A660C5B24C4D0890012CFD8 /* UserInteractiveRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A660C5A24C4D0890012CFD8 /* UserInteractiveRenderer.swift */; };
-		6A660C5D24C508290012CFD8 /* UserInteractiveRenderer.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A660C5C24C508290012CFD8 /* UserInteractiveRenderer.metal */; };
 		6A661E8324BEA0FC00D78F0A /* RenderServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A661E8224BEA0FC00D78F0A /* RenderServer.swift */; };
 		6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB4682498A3830007E450 /* JPEGFrame.swift */; };
 		6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */; };
@@ -117,6 +115,9 @@
 		6A872A0324BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A872A0124BBD0D700D50C49 /* RendererXPCProtocol.swift */; };
 		6A872A0524BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A872A0424BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift */; };
 		6A872A0624BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A872A0424BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift */; };
+		6A8B2EE924C7AB5C009FB581 /* TextureMap.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EE824C7AB5C009FB581 /* TextureMap.metal */; };
+		6A8B2EEB24C7ABD6009FB581 /* TexturedQuad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */; };
+		6A8B2EEC24C7ABEA009FB581 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5B5D9924C39BEB003BC002 /* MetalKit.framework */; };
 		6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */; };
 		6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */; };
 		6A903FCF248C621200BD1602 /* LibraryBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FCE248C621200BD1602 /* LibraryBundle.swift */; };
@@ -462,13 +463,11 @@
 		6A5B5D9524C39620003BC002 /* Edit View.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Edit View.xcassets"; path = "app_macos/src/Edit View/Edit View.xcassets"; sourceTree = "<group>"; };
 		6A5B5D9724C39BDA003BC002 /* ImageRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageRenderView.swift; path = app_macos/src/Rendering/UI/ImageRenderView.swift; sourceTree = "<group>"; };
 		6A5B5D9924C39BEB003BC002 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
-		6A5B5D9B24C3AED8003BC002 /* ImageRenderView.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = ImageRenderView.metal; path = app_macos/src/Rendering/UI/ImageRenderView.metal; sourceTree = "<group>"; };
 		6A5CAC0724C2706D00BF55BA /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		6A5CAC0A24C2719900BF55BA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		6A660C5524C4AEFA0012CFD8 /* DisplayImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DisplayImageRenderer.swift; path = app_macos/src/Rendering/DisplayImageRenderer.swift; sourceTree = "<group>"; };
 		6A660C5724C4C7CB0012CFD8 /* MetalPerformanceShaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalPerformanceShaders.framework; path = System/Library/Frameworks/MetalPerformanceShaders.framework; sourceTree = SDKROOT; };
 		6A660C5A24C4D0890012CFD8 /* UserInteractiveRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserInteractiveRenderer.swift; path = "app_macos/src/Rendering/XPC Service/Render Server/UserInteractiveRenderer.swift"; sourceTree = "<group>"; };
-		6A660C5C24C508290012CFD8 /* UserInteractiveRenderer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = UserInteractiveRenderer.metal; path = "app_macos/src/Rendering/XPC Service/Render Server/UserInteractiveRenderer.metal"; sourceTree = "<group>"; };
 		6A661E8224BEA0FC00D78F0A /* RenderServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderServer.swift; path = "app_macos/src/Rendering/XPC Service/Render Server/RenderServer.swift"; sourceTree = "<group>"; };
 		6A6FB4682498A3830007E450 /* JPEGFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGFrame.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGFrame.swift"; sourceTree = "<group>"; };
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
@@ -491,6 +490,8 @@
 		6A8729FA24BBCF8700D50C49 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		6A872A0124BBD0D700D50C49 /* RendererXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RendererXPCProtocol.swift; path = "app_macos/src/Rendering/XPC Service/Protocol/RendererXPCProtocol.swift"; sourceTree = "<group>"; };
 		6A872A0424BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RendererXPCProtocolHelpers.swift; path = "app_macos/src/Rendering/XPC Service/Protocol/RendererXPCProtocolHelpers.swift"; sourceTree = "<group>"; };
+		6A8B2EE824C7AB5C009FB581 /* TextureMap.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = TextureMap.metal; path = frameworks/Waterpipe/src/Metal/TextureMap.metal; sourceTree = "<group>"; };
+		6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TexturedQuad.swift; path = frameworks/Waterpipe/src/Metal/TexturedQuad.swift; sourceTree = "<group>"; };
 		6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryHistoryManager.swift; path = "app_macos/src/UI State Handling/LibraryHistoryManager.swift"; sourceTree = "<group>"; };
 		6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library UI.xcassets"; path = "app_macos/assets/Library UI.xcassets"; sourceTree = "<group>"; };
 		6A903FCE248C621200BD1602 /* LibraryBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundle.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundle.swift"; sourceTree = "<group>"; };
@@ -671,6 +672,7 @@
 				6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */,
 				6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */,
 				6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
+				6A8B2EEC24C7ABEA009FB581 /* MetalKit.framework in Frameworks */,
 				6A4CEF19248B357F00145E49 /* Smokeshop.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1033,6 +1035,7 @@
 		6A4CEEFD248B339E00145E49 /* Image Processing (Waterpipe) */ = {
 			isa = PBXGroup;
 			children = (
+				6A8B2EE724C7AB20009FB581 /* Metal Utilities */,
 				6A93159C2493434400A9F9B4 /* Helpers */,
 				6A4CEF0B248B349200145E49 /* Headers */,
 				6A4CEF0C248B349600145E49 /* Resources */,
@@ -1124,7 +1127,6 @@
 			isa = PBXGroup;
 			children = (
 				6A5B5D9724C39BDA003BC002 /* ImageRenderView.swift */,
-				6A5B5D9B24C3AED8003BC002 /* ImageRenderView.metal */,
 			);
 			name = "User Interface";
 			sourceTree = "<group>";
@@ -1141,7 +1143,6 @@
 			isa = PBXGroup;
 			children = (
 				6A660C5A24C4D0890012CFD8 /* UserInteractiveRenderer.swift */,
-				6A660C5C24C508290012CFD8 /* UserInteractiveRenderer.metal */,
 			);
 			name = "Renderer Imps";
 			sourceTree = "<group>";
@@ -1227,6 +1228,15 @@
 			children = (
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		6A8B2EE724C7AB20009FB581 /* Metal Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				6A8B2EE824C7AB5C009FB581 /* TextureMap.metal */,
+				6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */,
+			);
+			name = "Metal Utilities";
 			sourceTree = "<group>";
 		};
 		6A903FC6248B8DF900BD1602 /* UI State Handling */ = {
@@ -2177,7 +2187,6 @@
 				6A4DEE3424BAD13800F734F0 /* EditSecondaryViewController.swift in Sources */,
 				6A2C5F66248CCDF6009EA409 /* ActivityViewController.swift in Sources */,
 				6ABD367F2494C54E005F80EE /* InspectorWindowController.swift in Sources */,
-				6A5B5D9C24C3AED8003BC002 /* ImageRenderView.metal in Sources */,
 				6A7F226A24C123EB0051438F /* RenderPreferencesViewController.swift in Sources */,
 				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,
 				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
@@ -2218,6 +2227,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A8B2EE924C7AB5C009FB581 /* TextureMap.metal in Sources */,
+				6A8B2EEB24C7ABD6009FB581 /* TexturedQuad.swift in Sources */,
 				6A93159E2493437900A9F9B4 /* IOSurface+ImageSupport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2241,7 +2252,6 @@
 			files = (
 				6A661E8324BEA0FC00D78F0A /* RenderServer.swift in Sources */,
 				6A660C5B24C4D0890012CFD8 /* UserInteractiveRenderer.swift in Sources */,
-				6A660C5D24C508290012CFD8 /* UserInteractiveRenderer.metal in Sources */,
 				6A872A0624BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */,
 				6A872A0324BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */,
 				6A8729F424BBCDBF00D50C49 /* XPCDelegate.swift in Sources */,

@@ -86,7 +86,7 @@ class ImageRenderView: MTKView {
     /**
      * Sets the image to be displayed.
      */
-    internal func setImage(_ image: Image, _ callback: @escaping (Result<Void, Error>) -> Void) {
+    internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping (Result<Void, Error>) -> Void) {
         self.thumbTexture = nil
         
         // we must have a renderer
@@ -105,7 +105,7 @@ class ImageRenderView: MTKView {
         }
 
         // update image and request redrawing
-        self.renderer?.setImage(image) { res in
+        self.renderer?.setImage(library, image) { res in
             do {
                 let _ = try res.get()
                 
@@ -130,11 +130,6 @@ class ImageRenderView: MTKView {
     /// Shader library
     private var library: MTLLibrary! = nil
     
-    /// Index buffer for triangle coordinates of the thumb
-    private var quadIndexBuf: MTLBuffer? = nil
-    /// Uniform buffer for thumb rendering
-    private var quadUniformBuf: MTLBuffer? = nil
-    
     /**
      * Invalidates all existing Metal resources.
      */
@@ -143,16 +138,12 @@ class ImageRenderView: MTKView {
         self.queue = nil
         self.library = nil
         
-        self.quadIndexBuf = nil
-        self.quadUniformBuf = nil
-        
         // thumbnail data
-        self.thumbVertexBuf = nil
+        self.thumbQuad = nil
         self.thumbTexture = nil
         
         // viewport
-        self.viewportUniformBuf = nil
-        self.viewportVertexBuf = nil
+        self.viewportQuad = nil
         self.viewportTexture = nil
         
         // renderer
@@ -171,18 +162,13 @@ class ImageRenderView: MTKView {
             self.queue.label = String(format: "ImageRenderView-%@", self)
             
             // create library for shader code
-            self.library = self.device!.makeDefaultLibrary()!
-            
-            // index buffer for drawing full screen quad
-            self.createQuadIndexBuf()
-            self.createQuadUniforms()
+            self.library = self.device!.makeDefaultLibrary()
             
             // thumbnail stuff
-            try self.makeThumbPipelineState()
+            self.thumbQuad = try TexturedQuad(self.device!)
             
             // viewport
-            self.createViewportBufs()
-            try self.createViewportPipelineState()
+            self.viewportQuad = try TexturedQuad(self.device!)
             
             // renderer
             self.createRenderer()
@@ -192,51 +178,34 @@ class ImageRenderView: MTKView {
     }
     
     /**
-     * Creates an index buffer for drawing a full screen quad.
-     */
-    private func createQuadIndexBuf() {
-        let indexData: [UInt32] = [
-            // first triangle: top left, bottom left, top right (CCW)
-            0, 1, 2,
-            // second triangle: top right, bottom left, bottom right (CCW)
-            2, 1, 3
-        ]
-        
-        let indexBufSz = indexData.count * MemoryLayout<UInt32>.stride
-        self.quadIndexBuf = self.device?.makeBuffer(bytes: indexData, length: indexBufSz)!
-    }
-    
-    /**
      * Update thumbnail uniform buffer. Any time the view is resized, this is performed.
      */
-    private func createQuadUniforms() {
+    private func updateProjection() {
         // ensure this is always run on main thread (due to reading bounds)
         if !Thread.isMainThread {
             return DispatchQueue.main.sync {
-                self.createQuadUniforms()
+                self.updateProjection()
             }
         }
         
         // create an identity matrix
-        var uniforms = Uniform()
-        uniforms.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
+        var projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
         
         // correct for aspect ratio (x/y scale)
-        uniforms.projection.columns.0[0] = 1 / Float(self.bounds.width / self.bounds.height)
+        projection.columns.0[0] = 1 / Float(self.bounds.width / self.bounds.height)
         
         // compensate for the top inset from the title bar
         if let safeArea = self.window?.contentView?.safeAreaInsets {
             let screenSpaceOffset = Float(safeArea.top / self.bounds.height)
-            uniforms.projection.columns.1[3] = -screenSpaceOffset // translate
-            uniforms.projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
+            projection.columns.1[3] = -screenSpaceOffset // translate
+            projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
         }
         
-        DDLogVerbose("Projection matrix: \(uniforms.projection)")
+        DDLogVerbose("Projection matrix: \(projection)")
         
-        // create buffer
-        let bufSize = MemoryLayout<Uniform>.stride
-        self.quadUniformBuf = self.device?.makeBuffer(bytes: &uniforms,
-                                                      length: bufSize)!
+        // update each of the quad drawers
+        self.thumbQuad?.projection = projection
+        self.viewportQuad?.projection = projection
     }
     
     // MARK: - Size changes
@@ -254,7 +223,7 @@ class ImageRenderView: MTKView {
         self.sizeObs = NotificationCenter.default.addObserver(forName: NSView.frameDidChangeNotification,
                                                               object: self, queue: nil) { note in
             // update uniforms (projection matrix) always
-            self.createQuadUniforms()
+            self.updateProjection()
             
             // resize viewport if not in live resize
             if !self.inLiveResize {
@@ -296,7 +265,7 @@ class ImageRenderView: MTKView {
         super.viewDidEndLiveResize()
         
         // update uniforms (projection matrix)
-        self.createQuadUniforms()
+        self.updateProjection()
         
         // resize the texture
         self.updateViewportSize()
@@ -374,12 +343,12 @@ class ImageRenderView: MTKView {
             }
             
             // draw thumbnail
-            if self.thumbTexture != nil, self.drawThumb {
+            if self.drawThumb, let thumb = self.thumbTexture {
                 guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
                     throw Errors.makeRenderCommandEncoderFailed(descriptor)
                 }
                 
-                try self.drawBackgroundThumb(encoder)
+                try self.thumbQuad?.encode(encoder, texture: thumb)
                 
                 encoder.endEncoding()
             }
@@ -414,13 +383,10 @@ class ImageRenderView: MTKView {
     }
     
     // MARK: - Thumbnail
-    /// Vertex coordinate buffer for thumbnail
-    private var thumbVertexBuf: MTLBuffer? = nil
     /// Texture for the thumbnail image
     private var thumbTexture: MTLTexture? = nil
-    
-    /// Thumbnail render pipeline state
-    private var thumbPipelineState: MTLRenderPipelineState? = nil
+    /// Quad drawer for the thumb
+    private var thumbQuad: TexturedQuad? = nil
     
     /// Should the thumbnail image be drawn? This is cleared once the renderer returns.
     private var drawThumb: Bool = true
@@ -502,33 +468,12 @@ class ImageRenderView: MTKView {
     }
     
     /**
-     * Creates the thumbnail pipeline state
-     */
-    private func makeThumbPipelineState() throws {
-        let desc = MTLRenderPipelineDescriptor()
-        desc.sampleCount = 1
-        desc.colorAttachments[0].pixelFormat = .bgr10a2Unorm
-        desc.depthAttachmentPixelFormat = .invalid
-    
-        desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")!
-        desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")!
-        
-        desc.vertexDescriptor = Vertex.makeDescriptor()
-    
-        // create the pipeline state
-        self.thumbPipelineState = try self.device!.makeRenderPipelineState(descriptor: desc)
-    }
-    
-    /**
      * Updates the vertex buffer for the image thumbnail quad.
      *
      * The coordinates are set such that the short edge of the image is 0.05 from the edge of the screen, and the long edge is
      * proportionally scaled. This preserves a semi-correct appearance when the actual rendered image comes in.
      */
     private func updateThumbVertexBuf(input: MTLTexture) {
-        // deallocate previous buffer
-        self.thumbVertexBuf = nil
-        
         // vertex coords vary based on landscape/portrait layout
         var x: Float = 0
         var y: Float = 0
@@ -541,45 +486,19 @@ class ImageRenderView: MTKView {
             x = (Float(input.width) / Float(input.height)) * y
         }
         
-        let vertexData = [
-            Vertex(position: SIMD4<Float>(-x, y, 0, 1), textureCoord: SIMD2<Float>(0, 0)),
-            Vertex(position: SIMD4<Float>(-x, -y, 0, 1), textureCoord: SIMD2<Float>(0, 1)),
-            Vertex(position: SIMD4<Float>(x, y, 0, 1), textureCoord: SIMD2<Float>(1, 0)),
-            Vertex(position: SIMD4<Float>(x, -y, 0, 1), textureCoord: SIMD2<Float>(1, 1)),
+        self.thumbQuad?.vertices = [
+            TexturedQuad.Vertex(position: SIMD4<Float>(-x, y, 0, 1), textureCoord: SIMD2<Float>(0, 0)),
+            TexturedQuad.Vertex(position: SIMD4<Float>(-x, -y, 0, 1), textureCoord: SIMD2<Float>(0, 1)),
+            TexturedQuad.Vertex(position: SIMD4<Float>(x, y, 0, 1), textureCoord: SIMD2<Float>(1, 0)),
+            TexturedQuad.Vertex(position: SIMD4<Float>(x, -y, 0, 1), textureCoord: SIMD2<Float>(1, 1)),
         ]
-        
-        // create buffer
-        let bufSize = vertexData.count * MemoryLayout<Vertex>.stride
-        self.thumbVertexBuf = self.device?.makeBuffer(bytes: vertexData, length: bufSize)!
-    }
-    
-    /**
-     * Draw the blurred background texture
-     */
-    private func drawBackgroundThumb(_ encoder: MTLRenderCommandEncoder) throws {
-        encoder.pushDebugGroup("RenderThumb")
-        
-        encoder.setRenderPipelineState(self.thumbPipelineState!)
-        encoder.setFragmentTexture(self.thumbTexture!, index: 0)
-        
-        encoder.setVertexBuffer(self.thumbVertexBuf!, offset: 0, index: 0)
-        encoder.setVertexBuffer(self.quadUniformBuf!, offset: 0, index: 1)
-        
-        encoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint32,
-                                      indexBuffer: self.quadIndexBuf!, indexBufferOffset: 0)
-        
-        encoder.popDebugGroup()
     }
     
     // MARK: Viewport
-    /// Uniform buffer for viewport drawing
-    private var viewportUniformBuf: MTLBuffer? = nil
-    /// Vertex coordinate buffer for viewport
-    private var viewportVertexBuf: MTLBuffer? = nil
+    /// Viewport quad
+    private var viewportQuad: TexturedQuad? = nil
     /// Texture for the viewport image image
     private var viewportTexture: MTLTexture? = nil
-    /// Render pipeline state used for displaying the viewport image
-    private var viewportPipelineState: MTLRenderPipelineState? = nil
     
     /// Current viewport rect
     private var viewport: CGRect = .zero
@@ -588,67 +507,15 @@ class ImageRenderView: MTKView {
     private var shouldDrawViewport: Bool = false
     
     /**
-     * Updates the vertex buffer used to draw the viewport texture.
-     */
-    private func createViewportBufs() {
-        // create vertex buffer
-        let vertices: [Vertex] = [
-            Vertex(position: SIMD4<Float>(-1, 1, 0, 1), textureCoord: SIMD2<Float>(0, 0)),
-            Vertex(position: SIMD4<Float>(-1, -1, 0, 1), textureCoord: SIMD2<Float>(0, 1)),
-            Vertex(position: SIMD4<Float>(1, 1, 0, 1), textureCoord: SIMD2<Float>(1, 0)),
-            Vertex(position: SIMD4<Float>(1, -1, 0, 1), textureCoord: SIMD2<Float>(1, 1)),
-        ]
-        
-        let vertexBufSz = vertices.count * MemoryLayout<Vertex>.stride
-        self.viewportVertexBuf = self.device?.makeBuffer(bytes: vertices, length: vertexBufSz)!
-        
-        // also, allocate the uniforms buffer
-        var uniformViewport = Uniform()
-        uniformViewport.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
-        
-        self.viewportUniformBuf = self.device?.makeBuffer(bytes: &uniformViewport,
-                                                          length: MemoryLayout<Uniform>.stride)!
-    }
-    
-    /**
-     * Updates the viewport drawing pipeline state.
-     */
-    private func createViewportPipelineState() throws {
-        let desc = MTLRenderPipelineDescriptor()
-        desc.sampleCount = 1
-        desc.colorAttachments[0].pixelFormat = .bgr10a2Unorm
-        desc.depthAttachmentPixelFormat = .invalid
-    
-        desc.vertexFunction = self.library.makeFunction(name: "textureMapVtx")!
-        desc.fragmentFunction = self.library.makeFunction(name: "textureMapFrag")!
-        
-        desc.vertexDescriptor = Vertex.makeDescriptor()
-    
-        // create the pipeline state
-        self.viewportPipelineState = try self.device!.makeRenderPipelineState(descriptor: desc)
-    }
-    
-    /**
      * Draw the viewport texture
      */
     private func drawViewport(_ encoder: MTLRenderCommandEncoder) throws {
-        guard self.viewportTexture != nil else {
+        guard let viewportTex = self.viewportTexture else {
             return
-        }
-        guard let state = self.viewportPipelineState else {
-            throw Errors.noPipelineState
         }
         
         encoder.pushDebugGroup("RenderViewport")
-        
-        encoder.setRenderPipelineState(state)
-        encoder.setFragmentTexture(self.viewportTexture!, index: 0)
-        encoder.setVertexBuffer(self.viewportVertexBuf!, offset: 0, index: 0)
-        encoder.setVertexBuffer(self.viewportUniformBuf!, offset: 0, index: 1)
-        
-        encoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint32,
-                                      indexBuffer: self.quadIndexBuf!, indexBufferOffset: 0)
-        
+        try self.viewportQuad?.encode(encoder, texture: viewportTex)
         encoder.popDebugGroup()
     }
     
@@ -785,43 +652,6 @@ class ImageRenderView: MTKView {
         case makeRenderCommandEncoderFailed(_ desc: MTLRenderPassDescriptor)
         /// There isn't a renderer instance available
         case noRenderer
-        /// There isn't an allocated pipeline state
-        case noPipelineState
-    }
-
-    // MARK: - Types
-    /**
-     * Texture map vertex buffer type
-     */
-    private struct Vertex {
-        /// Screen position (x, y, z, W) of the vertex
-        var position = SIMD4<Float>()
-        /// Texture coordinate (x, y)
-        var textureCoord = SIMD2<Float>()
-        
-        static func makeDescriptor() -> MTLVertexDescriptor {
-            let vertexDesc = MTLVertexDescriptor()
-            
-            vertexDesc.attributes[0].format = .float4
-            vertexDesc.attributes[0].bufferIndex = 0
-            vertexDesc.attributes[0].offset = 0
-            
-            vertexDesc.attributes[1].format = .float2
-            vertexDesc.attributes[1].bufferIndex = 0
-            vertexDesc.attributes[1].offset = MemoryLayout<SIMD4<Float>>.stride
-            
-            vertexDesc.layouts[0].stride = MemoryLayout<Vertex>.stride
-            
-            return vertexDesc
-        }
-    }
-    
-    /**
-     * Texture map vertex uniforms
-     */
-    private struct Uniform {
-        /// Projection matrix
-        var projection = simd_float4x4()
     }
 }
 
