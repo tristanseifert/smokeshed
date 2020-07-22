@@ -118,6 +118,9 @@
 		6A8B2EE924C7AB5C009FB581 /* TextureMap.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EE824C7AB5C009FB581 /* TextureMap.metal */; };
 		6A8B2EEB24C7ABD6009FB581 /* TexturedQuad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */; };
 		6A8B2EEC24C7ABEA009FB581 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5B5D9924C39BEB003BC002 /* MetalKit.framework */; };
+		6A8B2EEE24C807A4009FB581 /* MetalColorConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EED24C807A4009FB581 /* MetalColorConverter.swift */; };
+		6A8B2EEF24C80879009FB581 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
+		6A8B2EF224C81234009FB581 /* ColorConverter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EF124C81234009FB581 /* ColorConverter.metal */; };
 		6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */; };
 		6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */; };
 		6A903FCF248C621200BD1602 /* LibraryBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FCE248C621200BD1602 /* LibraryBundle.swift */; };
@@ -492,6 +495,8 @@
 		6A872A0424BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RendererXPCProtocolHelpers.swift; path = "app_macos/src/Rendering/XPC Service/Protocol/RendererXPCProtocolHelpers.swift"; sourceTree = "<group>"; };
 		6A8B2EE824C7AB5C009FB581 /* TextureMap.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = TextureMap.metal; path = frameworks/Waterpipe/src/Metal/TextureMap.metal; sourceTree = "<group>"; };
 		6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TexturedQuad.swift; path = frameworks/Waterpipe/src/Metal/TexturedQuad.swift; sourceTree = "<group>"; };
+		6A8B2EED24C807A4009FB581 /* MetalColorConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetalColorConverter.swift; path = "frameworks/Paper/src/Color Conversions/MetalColorConverter.swift"; sourceTree = "<group>"; };
+		6A8B2EF124C81234009FB581 /* ColorConverter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = ColorConverter.metal; path = "frameworks/Paper/src/Color Conversions/ColorConverter.metal"; sourceTree = "<group>"; };
 		6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryHistoryManager.swift; path = "app_macos/src/UI State Handling/LibraryHistoryManager.swift"; sourceTree = "<group>"; };
 		6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Library UI.xcassets"; path = "app_macos/assets/Library UI.xcassets"; sourceTree = "<group>"; };
 		6A903FCE248C621200BD1602 /* LibraryBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryBundle.swift; path = "frameworks/Smokeshop/src/Bundle Support/LibraryBundle.swift"; sourceTree = "<group>"; };
@@ -709,6 +714,7 @@
 			files = (
 				6A9D00B324A5C9F3007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
 				6ABD36B92496D1FB005F80EE /* CocoaLumberjack.framework in Frameworks */,
+				6A8B2EEF24C80879009FB581 /* Metal.framework in Frameworks */,
 				6ABD36BA2496D1FB005F80EE /* Foundation.framework in Frameworks */,
 				6AAC4577249FFF19009B9AFF /* Accelerate.framework in Frameworks */,
 				6ABD36CA2496D500005F80EE /* Combine.framework in Frameworks */,
@@ -1239,6 +1245,16 @@
 			name = "Metal Utilities";
 			sourceTree = "<group>";
 		};
+		6A8B2EF024C8121A009FB581 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6AAC4573249FFDAF009B9AFF /* CamToXYZInfo.plist */,
+				6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */,
+				6A8B2EF124C81234009FB581 /* ColorConverter.metal */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		6A903FC6248B8DF900BD1602 /* UI State Handling */ = {
 			isa = PBXGroup;
 			children = (
@@ -1493,12 +1509,12 @@
 		6AAC4572249FFBBB009B9AFF /* Color space, gamma */ = {
 			isa = PBXGroup;
 			children = (
-				6AAC4573249FFDAF009B9AFF /* CamToXYZInfo.plist */,
 				6AAC457B24A0033A009B9AFF /* colorspace.h */,
 				6AAC457C24A0033A009B9AFF /* colorspace.c */,
 				6AAC457F24A0130F009B9AFF /* PAPColorSpaceConverter.h */,
 				6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */,
-				6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */,
+				6A8B2EED24C807A4009FB581 /* MetalColorConverter.swift */,
+				6A8B2EF024C8121A009FB581 /* Resources */,
 			);
 			name = "Color space, gamma";
 			sourceTree = "<group>";
@@ -2268,6 +2284,7 @@
 				6A9D00AF24A5C706007566A5 /* ImageIOThumbReader.swift in Sources */,
 				6A9E827F249AEE52004BE66A /* huffman.c in Sources */,
 				6A9D00B624A5CB1B007566A5 /* ThumbReader.swift in Sources */,
+				6A8B2EF224C81234009FB581 /* ColorConverter.metal in Sources */,
 				6A961B84249C569700FE4D5E /* CR2Unslicer.m in Sources */,
 				6ABF946724986FD9002DBA91 /* JPEGHuffman.swift in Sources */,
 				6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */,
@@ -2284,6 +2301,7 @@
 				6A9E8288249AFED4004BE66A /* CJPEGHuffmanTable.m in Sources */,
 				6A9D00DA24A5D3DF007566A5 /* CR2ThumbReader.swift in Sources */,
 				6A7614C62499AE590043392E /* JPEGBitstream.swift in Sources */,
+				6A8B2EEE24C807A4009FB581 /* MetalColorConverter.swift in Sources */,
 				6AE51AC3249EABF40091A550 /* ImageIOMetadataReader.swift in Sources */,
 				6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */,
 				6AAC456D249F48C0009B9AFF /* PAPDebayerer.m in Sources */,

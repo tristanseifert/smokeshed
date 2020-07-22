@@ -642,7 +642,7 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="216" width="19" height="28"/>
+                                <rect key="frame" x="363" y="217" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="EBQ-TV-p8A">
@@ -926,7 +926,7 @@ DQ
                 <window title="Thumb Move Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="38d-WL-rhi" userLabel="Progress Sheet">
                     <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                     <rect key="contentRect" x="-2135" y="318" width="375" height="128"/>
-                    <rect key="screenRect" x="-1440" y="-691" width="1440" height="2535"/>
+                    <rect key="screenRect" x="-2728" y="-596" width="1288" height="946"/>
                     <view key="contentView" id="E0c-GG-6dn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="128"/>
                         <autoresizingMask key="autoresizingMask"/>
