@@ -225,29 +225,26 @@ static int InterpolateBilinear(const uint16_t *inPlane, uint16_t *outPlane, size
         outPlane[ PIXEL_INDEX(line,0,BLUE_VALUE) ] = ( IMAGE_PIXEL(line-1,1,BLUE_VALUE) + IMAGE_PIXEL(line+1,1,BLUE_VALUE) ) /2;
 
     // try to convert it into 3 component rgb
-    uint16_t temp[4];
-    size_t inRowOff, outRowOff;
+    //uint16_t temp[4];
+    size_t rowOff;
     
     for(line = 0; line < height; line++) {
-        inRowOff = (line * width * 4);
-        outRowOff = (line * width * 3);
+        rowOff = (line * width * 4);
         
         for(column = 0; column < width; column++) {
-            // read 4 16-bit values
-            for(int i = 0; i < 4; i++) {
-                temp[i] = outPlane[inRowOff + (column * 4) + i];
-            }
-            
-            // copy red and blue; these never change
-            outPlane[outRowOff + (column * 3)] = temp[0];
-            outPlane[outRowOff + (column * 3) + 2] = temp[3];
+            // read blue pixel value
+            uint16_t blue = outPlane[rowOff + (column * 4) + 3];
             
             // copy whatever green channel isn't zero
-            if(temp[1]) {
-                outPlane[outRowOff + (column * 3) + 1] = temp[1];
-            } else {
-                outPlane[outRowOff + (column * 3) + 1] = temp[2];
+            if(outPlane[rowOff + (column * 4) + 1] == 0) {
+                outPlane[rowOff + (column * 4) + 1] = outPlane[rowOff + (column * 4) + 2];
             }
+            
+            // write the blue pixel value in the correct component
+            outPlane[rowOff + (column * 4) + 2] = blue;
+            
+            // clear alpha
+            // outPlane[rowOff + (column * 4) + 3] = 0xFFFF;
         }
     }
     

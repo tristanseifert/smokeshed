@@ -43,9 +43,7 @@ public class MetalColorConverter {
         
         let desc = MTLComputePipelineDescriptor()
         desc.computeFunction = function
-        
-        desc.buffers[0].mutability = .mutable
-        desc.buffers[1].mutability = .immutable
+        desc.buffers[0].mutability = .immutable
         
         self.state = try device.makeComputePipelineState(descriptor: desc, options: [],
                                                          reflection: nil)
@@ -153,35 +151,38 @@ public class MetalColorConverter {
     /**
      * Encodes a conversion operation into the provided compute encoder. The transform executes in place.
      *
-     * - Parameter encoder: Command encoder on which the operation is encoded
-     * - Parameter imageDataBuffer: A buffer object containing pixel data, in RGBA format.
+     * - Parameter buffer: Command buffer on which the operation is encoded
+     * - Parameter image: Image texture in RGBA format
      * - Parameter imageSize: Total size of the image, in pixels.
      * - Parameter modelName: Camera model name, used to look up the conversion matrix
      */
-    public func encode(_ encoder: MTLComputeCommandEncoder, _ imageDataBuffer: MTLBuffer, imageSize: CGSize, modelName: String) throws {
+    public func encode(_ buffer: MTLCommandBuffer, input: MTLTexture, output: MTLTexture?, modelName: String) throws {
         guard let matrix = try self.xyzMatrixForModel(modelName) else {
             throw Errors.unknownModel(modelName)
         }
         
-        try self.encode(encoder, imageDataBuffer, imageSize: imageSize, matrix: matrix)
+        try self.encode(buffer, input: input, matrix: matrix)
     }
     /**
      * Encodes a conversion operation into the provided compute encoder. The transform executes in place.
      *
-     * - Parameter encoder: Command encoder on which the operation is encoded
-     * - Parameter imageDataBuffer: A buffer object containing pixel data, in RGBA format.
+     * - Parameter buffer: Command buffer on which the operation is encoded
+     * - Parameter image: Image texture in RGBA format
      * - Parameter imageSize: Total size of the image, in pixels.
      * - Parameter matrix: Camera model name, used to look up the conversion matrix
      */
-    public func encode(_ encoder: MTLComputeCommandEncoder, _ imageDataBuffer: MTLBuffer, imageSize: CGSize, matrix: simd_float3x3) throws {
+    public func encode(_ buffer: MTLCommandBuffer, input inImage: MTLTexture, matrix: simd_float3x3) throws {
+        // create command encoder
+        guard let encoder = buffer.makeComputeCommandEncoder() else {
+            throw Errors.failedMakeCommandEncoder
+        }
+        encoder.label = "MetalColorConverter.encode(_:_:_:)"
+        
         // calculate the threadgroup sizes
         let w = self.state.threadExecutionWidth
         let h = self.state.maxTotalThreadsPerThreadgroup / w
         let threadsPerThreadgroup = MTLSize(width: w, height: h, depth: 1)
-        
-        let threadsPerGrid = MTLSize(width: Int(imageSize.width),
-                                     height: Int(imageSize.height),
-                                     depth: 1)
+        let threadsPerGrid = MTLSize(width: inImage.width, height: inImage.height, depth: 1)
         
         // create a buffer with the info required by the compute functions
         var uniforms = Uniforms(conversionMatrix: matrix)
@@ -190,11 +191,12 @@ public class MetalColorConverter {
         
         // invoke the function
         encoder.setComputePipelineState(self.state)
-        encoder.setBuffer(imageDataBuffer, offset: 0, index: 0)
-        encoder.setBuffer(uniformBuf, offset: 0, index: 1)
+        encoder.setTexture(inImage, index: 0)
+        encoder.setBuffer(uniformBuf, offset: 0, index: 0)
         
         // encode the compute command
         encoder.dispatchThreads(threadsPerGrid, threadsPerThreadgroup: threadsPerThreadgroup)
+        encoder.endEncoding()
     }
     
     // MARK: - Types
@@ -218,5 +220,7 @@ public class MetalColorConverter {
         case invalidModelAliasMap
         /// No conversion data is available for the given model.
         case unknownModel(_ model: String)
+        /// Failed to create a command encoder
+        case failedMakeCommandEncoder
     }
 }
