@@ -10,6 +10,8 @@ import Foundation
 import Metal
 import simd
 
+import CocoaLumberjackSwift
+
 /**
  * Converts pixel data from a camera specific color space to the working color space.
  */
@@ -147,6 +149,32 @@ public class MetalColorConverter {
         return simd_float3x3(rows: rows)
     }
     
+    /**
+     * Given a matrix to convert from sensor color space to X*Y*Z, produce a final conversion matrix that converts the pixel data
+     * to the ProPhoto RGB (RIMM) color space, used as the working space for the render pipeline.
+     */
+    private func conversionMatrixFrom(xyz matrix: simd_float3x3) -> simd_float3x3 {
+        // multiply by the xyz -> proPhoto matrix
+        var temp = matrix * Self.proPhotoMatrix
+        
+        // normalization step
+        for i in 0..<3 {
+            // sum up the entire row (arithmetic sum)
+            let sum = temp[0][i] + temp[1][i] + temp[2][i]
+            
+            // divide each element in the column by this
+            for j in 0..<3 {
+                temp[j][i] /= sum
+            }
+        }
+        
+        // pseudoinverse
+        let inverse = temp.pseudoinverse
+        
+        // done!
+        return inverse
+    }
+    
     // MARK: - Compute pass encoding
     /**
      * Encodes a conversion operation into the provided compute encoder. The transform executes in place.
@@ -169,9 +197,9 @@ public class MetalColorConverter {
      * - Parameter buffer: Command buffer on which the operation is encoded
      * - Parameter image: Image texture in RGBA format
      * - Parameter imageSize: Total size of the image, in pixels.
-     * - Parameter matrix: Camera model name, used to look up the conversion matrix
+     * - Parameter matrix: Conversion matrix from sensor color space to XYZ color space
      */
-    public func encode(_ buffer: MTLCommandBuffer, input inImage: MTLTexture, matrix: simd_float3x3) throws {
+    public func encode(_ buffer: MTLCommandBuffer, input inImage: MTLTexture, matrix xyzMatrix: simd_float3x3) throws {
         // create command encoder
         guard let encoder = buffer.makeComputeCommandEncoder() else {
             throw Errors.failedMakeCommandEncoder
@@ -185,7 +213,9 @@ public class MetalColorConverter {
         let threadsPerGrid = MTLSize(width: inImage.width, height: inImage.height, depth: 1)
         
         // create a buffer with the info required by the compute functions
-        var uniforms = Uniforms(conversionMatrix: matrix)
+        let conversionMatrix = self.conversionMatrixFrom(xyz: xyzMatrix)
+        
+        var uniforms = Uniforms(conversionMatrix: conversionMatrix)
         let uniformBuf = self.device.makeBuffer(bytes: &uniforms,
                                                 length: MemoryLayout<Uniforms>.stride)
         
@@ -222,5 +252,75 @@ public class MetalColorConverter {
         case unknownModel(_ model: String)
         /// Failed to create a command encoder
         case failedMakeCommandEncoder
+    }
+    
+    // MARK: - Constants
+    /**
+     * Conversion matrix to go from X*Y*Z color space to ProPhoto RGB (RIMM) color space, which is used as the working
+     * space by the render pipeline.
+     */
+    private static let proPhotoMatrix = {
+        return simd_float3x3(SIMD3<Float>(0.529317, 0.098368, 0.016879),
+                             SIMD3<Float>(0.330092, 0.873465, 0.117663),
+                             SIMD3<Float>(0.140588, 0.028169, 0.865457))
+    }()
+}
+
+extension simd_float3x3 {
+    /**
+     * Returns the pseudoinverse of the matrix.
+     */
+    fileprivate var pseudoinverse: simd_float3x3 {
+        var out = simd_float3x3()
+        var work: [[Float]] = [[0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0]]
+        
+        // step 1 of this horribly fucked function
+        for i in 0..<3 {
+            for j in 0..<6 {
+                work[i][j] = (j == (i + 3)) ? 1 : 0
+            }
+            
+            for j in 0..<3 {
+                for k in 0..<3 {
+                    work[i][j] += self[i][k] * self[j][k]
+                }
+            }
+        }
+        
+        // stage 2 of this fuckshow
+        for i in 0..<3 {
+            // normalize some shit
+            let num = work[i][i]
+            for j in 0..<6 {
+                work[i][j] /= num
+            }
+            
+            // yeah idk anymore
+            for k in 0..<3 {
+                if k == i {
+                    continue
+                }
+                
+                let num2 = work[k][i]
+                for j in 0..<6 {
+                    work[k][j] -= work[i][j] * num2
+                }
+            }
+        }
+        
+        // stage 3 fuckery
+        for i in 0..<3 {
+            for j in 0..<3 {
+                out[j][i] = 0
+                
+                for k in 0..<3 {
+                    out[j][i] += work[j][k+3] * self[k][i]
+                }
+            }
+        }
+        
+        return out
     }
 }

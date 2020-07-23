@@ -135,7 +135,7 @@ static void MakeConversionMatrix(const double *camXyz, double *outCam) {
                
        // normalization step
        for (i=0; i < 3; i++) {
-           // sum up the entire column
+           // sum up the entire row
            num = 0;
            for (j = 0; j < 3; j++) {
                num += temp[i][j];
@@ -157,30 +157,42 @@ static void MakeConversionMatrix(const double *camXyz, double *outCam) {
 static void MatrixPseudoInverse3x3(const double *in, double *out) {
     double work[3][6], num;
     int i, j, k;
-
-    for (i=0; i < 3; i++) {
-      for (j=0; j < 6; j++)
-        work[i][j] = j == i+3;
-      for (j=0; j < 3; j++)
-        for (k=0; k < 3; k++)
-      work[i][j] += in[(k*3)+i] * in[(k*3)+j];
-    }
-    for (i=0; i < 3; i++) {
-      num = work[i][i];
-      for (j=0; j < 6; j++)
-        work[i][j] /= num;
-      for (k=0; k < 3; k++) {
-        if (k==i) continue;
-        num = work[k][i];
-        for (j=0; j < 6; j++)
-      work[k][j] -= work[i][j] * num;
-      }
-    }
-    for (i=0; i < 3; i++)
-      for (j=0; j < 3; j++)
-        for (out[(i*3)+j]=k=0; k < 3; k++)
-      out[(i*3)+j] += work[j][k+3] * in[(i*3)+k];
     
+    for (i=0; i < 3; i++) {
+        for (j=0; j < 6; j++) {
+            work[i][j] = j == i+3;
+        }
+        
+        for (j=0; j < 3; j++) {
+            for (k=0; k < 3; k++){
+                work[i][j] += in[(k*3)+i] * in[(k*3)+j];
+            }
+        }
+    }
+    
+    for (i=0; i < 3; i++) {
+        num = work[i][i];
+        for (j=0; j < 6; j++) {
+            work[i][j] /= num;
+        }
+        
+        for (k=0; k < 3; k++) {
+            if (k==i) continue;
+            num = work[k][i];
+            
+            for (j=0; j < 6; j++) {
+                work[k][j] -= work[i][j] * num;
+            }
+        }
+    }
+    
+    for (i=0; i < 3; i++) {
+        for (j=0; j < 3; j++) {
+            for (out[(i*3)+j]=k=0; k < 3; k++) {
+                out[(i*3)+j] += work[j][k+3] * in[(i*3)+k];
+            }
+        }
+    }
 }
 
 // MARK: vImage buffer helpers
