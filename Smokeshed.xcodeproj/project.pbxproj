@@ -45,7 +45,6 @@
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
-		6A4CEECA248B283600145E49 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */; };
 		6A4CEECC248B283600145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A4CEEE1248B2F8E00145E49 /* Smokeshop.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */; };
 		6A4CEEE2248B2F8E00145E49 /* Smokeshop.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -59,13 +58,13 @@
 		6A4CEF2E248B5A5600145E49 /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
 		6A4CEF2F248B5A5600145E49 /* Bowl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6A4CEF34248B5F5500145E49 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEF33248B5F5500145E49 /* Logger.swift */; };
-		6A4CEF35248B62D400145E49 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */; };
 		6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A4DEE2B24BA33C300F734F0 /* Paper-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4DEE2A24BA33BF00F734F0 /* Paper-Swift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A4DEE2D24BA35BE00F734F0 /* froge.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */; };
 		6A4DEE2F24BA3F2D00F734F0 /* CamToXYZAliases.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */; };
 		6A4DEE3124BA408E00F734F0 /* meow.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3024BA408E00F734F0 /* meow.cr2 */; };
 		6A4DEE3424BAD13800F734F0 /* EditSecondaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3324BAD13800F734F0 /* EditSecondaryViewController.swift */; };
+		6A53A34F24CA4C1500764089 /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
 		6A587F6E24A7F83B009696E9 /* PreferencesTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6D24A7F83B009696E9 /* PreferencesTabController.swift */; };
 		6A587F7024A8500E009696E9 /* GridCellDetailPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F6F24A8500E009696E9 /* GridCellDetailPreferencesController.swift */; };
 		6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A587F7124A85CE6009696E9 /* UserDefaults+GridCell.swift */; };
@@ -77,11 +76,8 @@
 		6A5B5D9824C39BDA003BC002 /* ImageRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5B5D9724C39BDA003BC002 /* ImageRenderView.swift */; };
 		6A5B5D9A24C39BEB003BC002 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5B5D9924C39BEB003BC002 /* MetalKit.framework */; };
 		6A5CAC0624C267F400BF55BA /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
-		6A5CAC0824C2706D00BF55BA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5CAC0724C2706D00BF55BA /* CoreFoundation.framework */; };
-		6A5CAC0924C2707300BF55BA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
 		6A5CAC0B24C2719900BF55BA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5CAC0A24C2719900BF55BA /* MapKit.framework */; };
 		6A5CAC0C24C2719E00BF55BA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
-		6A5CAC0D24C2720800BF55BA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
 		6A660C5624C4AEFA0012CFD8 /* DisplayImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A660C5524C4AEFA0012CFD8 /* DisplayImageRenderer.swift */; };
 		6A660C5824C4C7CC0012CFD8 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A660C5724C4C7CB0012CFD8 /* MetalPerformanceShaders.framework */; };
 		6A660C5B24C4D0890012CFD8 /* UserInteractiveRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A660C5A24C4D0890012CFD8 /* UserInteractiveRenderer.swift */; };
@@ -119,7 +115,6 @@
 		6A8B2EEB24C7ABD6009FB581 /* TexturedQuad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */; };
 		6A8B2EEC24C7ABEA009FB581 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5B5D9924C39BEB003BC002 /* MetalKit.framework */; };
 		6A8B2EEE24C807A4009FB581 /* MetalColorConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EED24C807A4009FB581 /* MetalColorConverter.swift */; };
-		6A8B2EEF24C80879009FB581 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
 		6A8B2EF224C81234009FB581 /* ColorConverter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B2EF124C81234009FB581 /* ColorConverter.metal */; };
 		6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */; };
 		6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */; };
@@ -133,8 +128,6 @@
 		6A93159E2493437900A9F9B4 /* IOSurface+ImageSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A93159D2493437900A9F9B4 /* IOSurface+ImageSupport.swift */; };
 		6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A42493441B00A9F9B4 /* QuartzCore.framework */; };
 		6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A62493442000A9F9B4 /* Metal.framework */; };
-		6A9315A92493442A00A9F9B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
-		6A9315AA2493443500A9F9B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
 		6A9315AB2493443800A9F9B4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEFC248B337C00145E49 /* CoreData.framework */; };
 		6A9315AD2493443E00A9F9B4 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315AC2493443D00A9F9B4 /* CoreLocation.framework */; };
 		6A94C8AE2491C134008FCE90 /* Date+BowlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A94C8AD2491C134008FCE90 /* Date+BowlExtensions.swift */; };
@@ -172,7 +165,6 @@
 		6A9D00DC24A69781007566A5 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00DB24A69781007566A5 /* Generator.swift */; };
 		6A9D00DD24A6C2D8007566A5 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00B124A5C9E9007566A5 /* UniformTypeIdentifiers.framework */; };
 		6A9D00DF24A6D677007566A5 /* Retriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00DE24A6D677007566A5 /* Retriever.swift */; };
-		6A9D00E024A6DA9D007566A5 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEFC248B337C00145E49 /* CoreData.framework */; };
 		6A9D00E224A6DAA1007566A5 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00E124A6DAA1007566A5 /* ImageIO.framework */; };
 		6A9D00E524A70C9E007566A5 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00E424A70C9E007566A5 /* Preferences.storyboard */; };
 		6A9D00E924A71318007566A5 /* ThumbPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00E824A71318007566A5 /* ThumbPreferencesViewController.swift */; };
@@ -225,12 +217,9 @@
 		6ABD36A72496B94A005F80EE /* MetaHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36A62496B94A005F80EE /* MetaHelper.swift */; };
 		6ABD36A92496BBB3005F80EE /* CameraFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36A82496BBB3005F80EE /* CameraFinder.swift */; };
 		6ABD36AC2496BF33005F80EE /* GPSLocation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36AB2496BF32005F80EE /* GPSLocation+CoreDataProperties.swift */; };
-		6ABD36B92496D1FB005F80EE /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */; };
-		6ABD36BA2496D1FB005F80EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9315A82493442900A9F9B4 /* Foundation.framework */; };
 		6ABD36BB2496D1FB005F80EE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6ABD36C52496D282005F80EE /* Paper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36C72496D408005F80EE /* TIFFReader.swift */; };
-		6ABD36CA2496D500005F80EE /* Combine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C92496D4FE005F80EE /* Combine.framework */; };
 		6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36CB2496DB93005F80EE /* TIFFDirectory.swift */; };
 		6ABD36D82496F0EC005F80EE /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
 		6ABD36E02496F146005F80EE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
@@ -632,10 +621,9 @@
 				6A9D00DD24A6C2D8007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
 				6A020D4424920A8C006F5093 /* Waterpipe.framework in Frameworks */,
 				6A9D00E224A6DAA1007566A5 /* ImageIO.framework in Frameworks */,
-				6A9D00E024A6DA9D007566A5 /* CoreData.framework in Frameworks */,
 				6A020D4024920A8C006F5093 /* Bowl.framework in Frameworks */,
-				6A5CAC0924C2707300BF55BA /* Foundation.framework in Frameworks */,
 				6A020D4924920AAF006F5093 /* CocoaLumberjackSwift.framework in Frameworks */,
+				6A53A34F24CA4C1500764089 /* Paper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,7 +641,6 @@
 				6A587F7524A86766009696E9 /* UniformTypeIdentifiers.framework in Frameworks */,
 				6A4CEEE1248B2F8E00145E49 /* Smokeshop.framework in Frameworks */,
 				6A660C5824C4C7CC0012CFD8 /* MetalPerformanceShaders.framework in Frameworks */,
-				6A4CEECA248B283600145E49 /* CocoaLumberjack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,7 +652,6 @@
 				6A9315AD2493443E00A9F9B4 /* CoreLocation.framework in Frameworks */,
 				6A903FD0248C623800BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A9315AB2493443800A9F9B4 /* CoreData.framework in Frameworks */,
-				6A9315AA2493443500A9F9B4 /* Foundation.framework in Frameworks */,
 				6A9D00B224A5C9E9007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -687,8 +673,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A8729FB24BBCF8700D50C49 /* Security.framework in Frameworks */,
-				6A4CEF35248B62D400145E49 /* CocoaLumberjack.framework in Frameworks */,
-				6A9315A92493442A00A9F9B4 /* Foundation.framework in Frameworks */,
 				6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -700,10 +684,8 @@
 				6A8729E524BBCBE900D50C49 /* Paper.framework in Frameworks */,
 				6A8729D724BBCBA200D50C49 /* UniformTypeIdentifiers.framework in Frameworks */,
 				6A8729D824BBCBA200D50C49 /* Waterpipe.framework in Frameworks */,
-				6A5CAC0824C2706D00BF55BA /* CoreFoundation.framework in Frameworks */,
 				6A8729D924BBCBA200D50C49 /* ImageIO.framework in Frameworks */,
 				6A8729DB24BBCBA200D50C49 /* Bowl.framework in Frameworks */,
-				6A5CAC0D24C2720800BF55BA /* Metal.framework in Frameworks */,
 				6A8729DC24BBCBA200D50C49 /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -713,11 +695,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A9D00B324A5C9F3007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
-				6ABD36B92496D1FB005F80EE /* CocoaLumberjack.framework in Frameworks */,
-				6A8B2EEF24C80879009FB581 /* Metal.framework in Frameworks */,
-				6ABD36BA2496D1FB005F80EE /* Foundation.framework in Frameworks */,
 				6AAC4577249FFF19009B9AFF /* Accelerate.framework in Frameworks */,
-				6ABD36CA2496D500005F80EE /* Combine.framework in Frameworks */,
 				6ABD36BB2496D1FB005F80EE /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2486,7 +2464,7 @@
 					"@loader_path/../Frameworks",
 					"@loader_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2563,7 +2541,7 @@
 					"@loader_path/../Frameworks",
 					"@loader_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.xpc.hand;
@@ -2712,7 +2690,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2785,7 +2763,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.SmokeShed;
@@ -2867,7 +2845,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2948,7 +2926,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.smokeshop;
@@ -3033,7 +3011,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3112,7 +3090,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.waterpipe;
@@ -3196,7 +3174,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3275,7 +3253,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.bowl;
@@ -3356,7 +3334,7 @@
 					"@loader_path/../Frameworks",
 					"@loader_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3430,7 +3408,7 @@
 					"@loader_path/../Frameworks",
 					"@loader_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.xpc.renderer;
@@ -3512,7 +3490,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3594,7 +3572,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.paper;
