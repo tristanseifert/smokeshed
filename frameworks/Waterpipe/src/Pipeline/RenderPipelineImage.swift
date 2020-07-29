@@ -69,13 +69,14 @@ public class RenderPipelineImage {
         
         // decode the image to an RGBA data buffer and copy to GPU
         // TODO: support 16 bit formats
+        // TODO: use .shared storage mode on iOS
         progress.becomeCurrent(withPendingUnitCount: 1)
         
         let decoded = try self.image.decode(.float32)
         try decoded.data.withUnsafeBytes {
             guard let buf = device.makeBuffer(bytes: $0.baseAddress!,
                                               length: decoded.data.count,
-                                              options: .storageModePrivate) else {
+                                              options: .storageModeManaged) else {
                 throw Errors.makeBufferFailed
             }
             self.pixelBuffer = buf

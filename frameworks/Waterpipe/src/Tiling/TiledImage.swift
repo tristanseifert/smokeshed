@@ -92,8 +92,50 @@ public class TiledImage {
         guard imageSize == destination.imageSize else {
             throw Errors.invalidDestinationSize
         }
+        // set up a blit command encoder
+        guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+            throw Errors.invalidBlitEncoder
+        }
         
-        // TODO: implement
+        // calculate tile counts
+        let wholeTilesPerRow = Int(floor(imageSize.width / CGFloat(destination.tileSize)))
+        let tilesPerRow = Int(ceil(imageSize.width / CGFloat(destination.tileSize)))
+        
+        let rows = Int(ceil(imageSize.height / CGFloat(destination.tileSize)))
+        let wholeRows = Int(floor(imageSize.height / CGFloat(destination.tileSize)))
+        
+        // copy data
+        for row in 0..<rows {
+            for col in 0..<tilesPerRow {
+                // get the size to copy (a full tile, except for right and bottom edges
+                var copySize = MTLSize(width: Int(destination.tileSize),
+                                       height: Int(destination.tileSize),
+                                       depth: 1)
+                
+                if col == (tilesPerRow - 1), wholeTilesPerRow != tilesPerRow {
+                    copySize.width = Int(imageSize.width) - (Int(destination.tileSize) * wholeTilesPerRow)
+                }
+                
+                if row == (rows - 1), wholeRows != rows {
+                    copySize.height = Int(imageSize.height) - (Int(destination.tileSize) * wholeRows)
+                }
+                
+                // calculate index into texture array and buffer and perform copy
+                let index = (row * tilesPerRow) + col
+                let offset = (row * bytesPerRow * Int(destination.tileSize)) + (col * Int(destination.tileSize) * 4 * 4)
+                
+                encoder.copy(from: imageBuffer, sourceOffset: offset,
+                             sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: 0,
+                             sourceSize: copySize, to: destination.texture,
+                             destinationSlice: index, destinationLevel: 0,
+                             destinationOrigin: MTLOrigin(), options: [])
+            }
+        }
+        
+        // ensure texture is updated, then complete encoding
+        encoder.synchronize(resource: destination.texture)
+
+        encoder.endEncoding()
     }
     
     // MARK: Helpers
@@ -132,5 +174,7 @@ public class TiledImage {
     enum Errors: Error {
         /// Size of the destination tiled image is invalid
         case invalidDestinationSize
+        /// Failed to create a blit command encoder
+        case invalidBlitEncoder
     }
 }
