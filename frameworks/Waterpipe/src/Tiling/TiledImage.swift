@@ -76,9 +76,23 @@ public class TiledImage {
     /**
      * Encodes into the command buffer a series of commands needed to copy the image data out of the provided buffer
      * and into the provided tiled image.
+     *
+     * - Parameter commandBuffer: Command buffer onto which 0+ compute/blit passes are encoded to copy the image
+     * - Parameter imageBuffer: Metal buffer containing input pixel data
+     * - Parameter imageSize: Size of the original image in the buffer
+     * - Parameter bytesPerRow: Number of bytes per row of pixel data (stride) in the buffer
+     * - Parameter pixelFormat: Format of pixel data in the buffer
+     * - Parameter destination: Tiled image to receive data (must be the same size)
+     *
+     * - Throws: If encoding the commands fails, or a precondition isn't met.
      */
     public class func copyBufferToImage(_ commandBuffer: MTLCommandBuffer, _ imageBuffer: MTLBuffer,
             _ imageSize: CGSize, _ bytesPerRow: Int, _ pixelFormat: MTLPixelFormat, _ destination: TiledImage) throws {
+        // validate size
+        guard imageSize == destination.imageSize else {
+            throw Errors.invalidDestinationSize
+        }
+        
         // TODO: implement
     }
     
@@ -112,5 +126,11 @@ public class TiledImage {
         DDLogVerbose("Tiles for image sized \(size) (tile size \(tileSize)): \(numTiles)")
 
         return numTiles
+    }
+    
+    // MARK: - Errors
+    enum Errors: Error {
+        /// Size of the destination tiled image is invalid
+        case invalidDestinationSize
     }
 }

@@ -17,6 +17,8 @@ import Metal
 public class RenderPipeline {
     /// Render device to use for the pipeline
     private(set) public var device: MTLDevice! = nil
+    /// Command queue used for pipeline tasks (such as decoding images)
+    private var commandQueue: MTLCommandQueue! = nil
     
     // MARK: - Initialization
     /**
@@ -24,6 +26,9 @@ public class RenderPipeline {
      */
     public init(device: MTLDevice) {
         self.device = device
+        
+        self.commandQueue = device.makeCommandQueue()!
+        self.commandQueue.label = "RenderPipeline"
     }
     
     // MARK: - State creation
@@ -39,7 +44,14 @@ public class RenderPipeline {
      */
     public func createState(image: RenderPipelineImage) throws -> Any? {
         // decode the image
-        try image.decode(device: self.device)
+        guard let buffer = self.commandQueue.makeCommandBuffer() else {
+            throw Errors.makeCommandBufferFailed
+        }
+        
+        try image.decode(device: self.device, commandBuffer: buffer)
+        
+        buffer.commit()
+        buffer.waitUntilCompleted()
         
         // try to create the pipeline state
         let state = try RenderPipelineState(device: self.device, image: image)
@@ -47,5 +59,11 @@ public class RenderPipeline {
         
         // TODO: more stuff
         return state
+    }
+    
+    // MARK: - Errors
+    enum Errors: Error {
+        /// Failed to create a command buffer to decode an image on
+        case makeCommandBufferFailed
     }
 }
