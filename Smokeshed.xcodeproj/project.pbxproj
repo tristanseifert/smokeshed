@@ -25,6 +25,20 @@
 		6A0BA37124D0E664006035BE /* ImageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37024D0E664006035BE /* ImageReader.swift */; };
 		6A0BA37324D0E77F006035BE /* ImageReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37224D0E77F006035BE /* ImageReaderImpl.swift */; };
 		6A0BA37624D0EA32006035BE /* CR2ImageReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37524D0EA32006035BE /* CR2ImageReaderImpl.swift */; };
+		6A0BA38024D23C65006035BE /* CanonRAWTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CB24A5CF69007566A5 /* CanonRAWTests.swift */; };
+		6A0BA38124D23C65006035BE /* Bitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BE2499A1020043392E /* Bitstream.swift */; };
+		6A0BA38224D23C65006035BE /* DebayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CA24A5CF69007566A5 /* DebayerTests.swift */; };
+		6A0BA38324D23C65006035BE /* ThumbReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CF24A5D044007566A5 /* ThumbReaderTests.swift */; };
+		6A0BA38424D23C65006035BE /* BitstreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00C724A5CF5C007566A5 /* BitstreamTests.swift */; };
+		6A0BA38524D23C65006035BE /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
+		6A0BA38724D23C65006035BE /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
+		6A0BA38824D23C65006035BE /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
+		6A0BA38924D23C65006035BE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
+		6A0BA38B24D23C65006035BE /* birb.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00D724A5D3B9007566A5 /* birb.cr2 */; };
+		6A0BA38E24D23C65006035BE /* froge.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */; };
+		6A0BA39024D23C65006035BE /* meow.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3024BA408E00F734F0 /* meow.cr2 */; };
+		6A0BA39A24D23CB9006035BE /* Waterpipe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF03248B348800145E49 /* Waterpipe.framework */; };
+		6A0BA39C24D23CED006035BE /* PipelineCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA39B24D23CED006035BE /* PipelineCreate.swift */; };
 		6A0EE470248B640D0044B433 /* ContainerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE46F248B640D0044B433 /* ContainerHelper.swift */; };
 		6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47B248B696A0044B433 /* Defaults.plist */; };
 		6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */; };
@@ -272,6 +286,27 @@
 			remoteGlobalIDString = 6A4CEF02248B348800145E49;
 			remoteInfo = "Waterpipe (macOS)";
 		};
+		6A0BA37C24D23C65006035BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6ABD36B02496D1FB005F80EE;
+			remoteInfo = "Paper (macOS)";
+		};
+		6A0BA37E24D23C65006035BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A4CEE99248B259500145E49;
+			remoteInfo = "Smokeshed (macOS)";
+		};
+		6A0BA39824D23CB4006035BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A4CEF02248B348800145E49;
+			remoteInfo = "Waterpipe (macOS)";
+		};
 		6A2C5F42248CB555009EA409 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6A4CEE90248B229F00145E49 /* Project object */;
@@ -409,6 +444,9 @@
 		6A0BA37024D0E664006035BE /* ImageReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageReader.swift; path = frameworks/Waterpipe/src/Pipeline/ImageReader.swift; sourceTree = "<group>"; };
 		6A0BA37224D0E77F006035BE /* ImageReaderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageReaderImpl.swift; path = frameworks/Waterpipe/src/Pipeline/ImageReaderImpl.swift; sourceTree = "<group>"; };
 		6A0BA37524D0EA32006035BE /* CR2ImageReaderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2ImageReaderImpl.swift; path = frameworks/Waterpipe/src/Pipeline/CR2ImageReaderImpl.swift; sourceTree = "<group>"; };
+		6A0BA39624D23C65006035BE /* WaterpipeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WaterpipeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0BA39724D23C65006035BE /* PaperTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PaperTests copy-Info.plist"; path = "/Users/tristan/smokeshed/PaperTests copy-Info.plist"; sourceTree = "<absolute>"; };
+		6A0BA39B24D23CED006035BE /* PipelineCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PipelineCreate.swift; path = tests/waterpipe/Pipeline/PipelineCreate.swift; sourceTree = "<group>"; };
 		6A0EE46F248B640D0044B433 /* ContainerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerHelper.swift; sourceTree = "<group>"; };
 		6A0EE47B248B696A0044B433 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = app_macos/assets/Defaults.plist; sourceTree = "<group>"; };
 		6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryPickerController.swift; path = "app_macos/src/Library UI/LibraryPickerController.swift"; sourceTree = "<group>"; };
@@ -642,6 +680,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6A0BA38624D23C65006035BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A0BA39A24D23CB9006035BE /* Waterpipe.framework in Frameworks */,
+				6A0BA38724D23C65006035BE /* Bowl.framework in Frameworks */,
+				6A0BA38824D23C65006035BE /* Paper.framework in Frameworks */,
+				6A0BA38924D23C65006035BE /* CocoaLumberjackSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A4CEE97248B259500145E49 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -810,6 +859,30 @@
 			name = Implementations;
 			sourceTree = "<group>";
 		};
+		6A0BA37724D23C0A006035BE /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				6A0BA37824D23C20006035BE /* Pipeline */,
+				6A0BA37924D23C25006035BE /* Data */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		6A0BA37824D23C20006035BE /* Pipeline */ = {
+			isa = PBXGroup;
+			children = (
+				6A0BA39B24D23CED006035BE /* PipelineCreate.swift */,
+			);
+			name = Pipeline;
+			sourceTree = "<group>";
+		};
+		6A0BA37924D23C25006035BE /* Data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
 		6A0EE46E248B63FE0044B433 /* Groups */ = {
 			isa = PBXGroup;
 			children = (
@@ -887,6 +960,7 @@
 				6A4CEEAE248B263300145E49 /* macOS App */,
 				6A4CEE9B248B259500145E49 /* Products */,
 				6AAC4575249FFF18009B9AFF /* Frameworks */,
+				6A0BA39724D23C65006035BE /* PaperTests copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -901,6 +975,7 @@
 				6ABD36C02496D1FB005F80EE /* Paper.framework */,
 				6ABD36D32496F0EC005F80EE /* PaperTests.xctest */,
 				6A8729E324BBCBA200D50C49 /* Renderer.xpc */,
+				6A0BA39624D23C65006035BE /* WaterpipeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1078,6 +1153,7 @@
 				6A8B2EE724C7AB20009FB581 /* Metal Utilities */,
 				6A93159C2493434400A9F9B4 /* Helpers */,
 				6A4CEF0C248B349600145E49 /* Resources */,
+				6A0BA37724D23C0A006035BE /* Tests */,
 			);
 			name = "Image Processing (Waterpipe)";
 			sourceTree = "<group>";
@@ -1845,6 +1921,26 @@
 			productReference = 6A020D2F24920A6C006F5093 /* ThumbHandler.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		6A0BA37A24D23C65006035BE /* WaterpipeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A0BA39324D23C65006035BE /* Build configuration list for PBXNativeTarget "WaterpipeTests" */;
+			buildPhases = (
+				6A0BA37F24D23C65006035BE /* Sources */,
+				6A0BA38624D23C65006035BE /* Frameworks */,
+				6A0BA38A24D23C65006035BE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6A0BA39924D23CB4006035BE /* PBXTargetDependency */,
+				6A0BA37B24D23C65006035BE /* PBXTargetDependency */,
+				6A0BA37D24D23C65006035BE /* PBXTargetDependency */,
+			);
+			name = WaterpipeTests;
+			productName = PaperTests;
+			productReference = 6A0BA39624D23C65006035BE /* WaterpipeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6A4CEE99248B259500145E49 /* Smokeshed (macOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6A4CEEA8248B25B600145E49 /* Build configuration list for PBXNativeTarget "Smokeshed (macOS)" */;
@@ -2040,10 +2136,11 @@
 				6A4CEE99248B259500145E49 /* Smokeshed (macOS) */,
 				6A4CEED9248B2F8E00145E49 /* Smokeshop (macOS) */,
 				6A4CEF02248B348800145E49 /* Waterpipe (macOS) */,
+				6A0BA37A24D23C65006035BE /* WaterpipeTests */,
 				6A4CEF1B248B59CE00145E49 /* Bowl (macOS) */,
 				6ABD36B02496D1FB005F80EE /* Paper (macOS) */,
-				6A020D2E24920A6C006F5093 /* ThumbHandler */,
 				6ABD36D22496F0EC005F80EE /* PaperTests */,
+				6A020D2E24920A6C006F5093 /* ThumbHandler */,
 				6A8729BD24BBCBA200D50C49 /* Renderer */,
 			);
 		};
@@ -2056,6 +2153,16 @@
 			files = (
 				6A4AE88424B2DCFE000F93F1 /* Defaults.plist in Resources */,
 				6A46D0D624AC3453001AE6FE /* MaintenanceProgress.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A0BA38A24D23C65006035BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A0BA38B24D23C65006035BE /* birb.cr2 in Resources */,
+				6A0BA38E24D23C65006035BE /* froge.cr2 in Resources */,
+				6A0BA39024D23C65006035BE /* meow.cr2 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2189,6 +2296,20 @@
 				6A9D00DC24A69781007566A5 /* Generator.swift in Sources */,
 				6AAC459624A07C21009B9AFF /* Library+CoreDataClass.swift in Sources */,
 				6AAC459A24A07EF2009B9AFF /* ChunkManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A0BA37F24D23C65006035BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A0BA38024D23C65006035BE /* CanonRAWTests.swift in Sources */,
+				6A0BA38124D23C65006035BE /* Bitstream.swift in Sources */,
+				6A0BA38224D23C65006035BE /* DebayerTests.swift in Sources */,
+				6A0BA38324D23C65006035BE /* ThumbReaderTests.swift in Sources */,
+				6A0BA38424D23C65006035BE /* BitstreamTests.swift in Sources */,
+				6A0BA39C24D23CED006035BE /* PipelineCreate.swift in Sources */,
+				6A0BA38524D23C65006035BE /* BitHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2383,6 +2504,21 @@
 			isa = PBXTargetDependency;
 			target = 6A4CEF02248B348800145E49 /* Waterpipe (macOS) */;
 			targetProxy = 6A020D4624920A8C006F5093 /* PBXContainerItemProxy */;
+		};
+		6A0BA37B24D23C65006035BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6ABD36B02496D1FB005F80EE /* Paper (macOS) */;
+			targetProxy = 6A0BA37C24D23C65006035BE /* PBXContainerItemProxy */;
+		};
+		6A0BA37D24D23C65006035BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A4CEE99248B259500145E49 /* Smokeshed (macOS) */;
+			targetProxy = 6A0BA37E24D23C65006035BE /* PBXContainerItemProxy */;
+		};
+		6A0BA39924D23CB4006035BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A4CEF02248B348800145E49 /* Waterpipe (macOS) */;
+			targetProxy = 6A0BA39824D23CB4006035BE /* PBXContainerItemProxy */;
 		};
 		6A2C5F43248CB555009EA409 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2606,6 +2742,158 @@
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6A0BA39424D23C65006035BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8QDQ246B94;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = tests/waterpipe/assets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@executable_path/../..",
+					"@executable_path/../../..",
+					"$(BUILT_PRODUCTS_DIR)",
+					"$(SRCROOT)/Carthage/Build/Mac",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.test.WaterpipeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6A0BA39524D23C65006035BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8QDQ246B94;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = tests/waterpipe/assets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"@executable_path/../..",
+					"@executable_path/../../..",
+					"$(BUILT_PRODUCTS_DIR)",
+					"$(SRCROOT)/Carthage/Build/Mac",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = me.tseifert.smokeshed.test.WaterpipeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -3803,6 +4091,15 @@
 			buildConfigurations = (
 				6A020D3C24920A6C006F5093 /* Debug */,
 				6A020D3D24920A6C006F5093 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A0BA39324D23C65006035BE /* Build configuration list for PBXNativeTarget "WaterpipeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A0BA39424D23C65006035BE /* Debug */,
+				6A0BA39524D23C65006035BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

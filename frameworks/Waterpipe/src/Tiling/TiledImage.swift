@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import simd
 import Metal
 import MetalPerformanceShaders
 
@@ -32,6 +33,9 @@ public class TiledImage {
         return UInt(ceil(self.imageSize.width / CGFloat(self.tileSize)))
     }
 
+    /// Information for each of the tiles; each index corresponds to one tile in the texture
+    private var tileInfo: [TileInfo] = []
+
     /// 2D array texture backing this image
     private(set) internal var texture: MTLTexture! = nil
     /// If backed by a temporary image, this is the image.
@@ -53,6 +57,8 @@ public class TiledImage {
         }
 
         self.texture = texture
+
+        self.tileInfo = Self.tileInfoForImage(imageSize, tileSize)
     }
 
     /**
@@ -68,9 +74,11 @@ public class TiledImage {
         // allocate temporary image based on texture descriptor
         let desc = Self.textureDescriptorFor(size: imageSize, tileSize, pixelFormat)
         let image = MPSTemporaryImage(commandBuffer: buffer, textureDescriptor: desc) 
-    
+
         self.tempImage = image
         self.texture = image.texture
+
+        self.tileInfo = Self.tileInfoForImage(imageSize, tileSize)
     }
 
     /**
@@ -169,6 +177,47 @@ public class TiledImage {
 
         return numTiles
     }
+
+    /**
+     * Generates tile metadata for the given size/tile size combination.
+     */
+    private class func tileInfoForImage(_ size: CGSize, _ tileSize: UInt) -> [TileInfo] {
+        var info: [TileInfo] = []
+
+        // calculate tile counts
+        let wholeTilesPerRow = Int(floor(size.width / CGFloat(tileSize)))
+        let tilesPerRow = Int(ceil(size.width / CGFloat(tileSize)))
+        
+        let rows = Int(ceil(size.height / CGFloat(tileSize)))
+        let wholeRows = Int(floor(size.height / CGFloat(tileSize)))
+        
+        // copy data
+        for row in 0..<rows {
+            for col in 0..<tilesPerRow {
+                // get the size to copy (a full tile, except for right and bottom edges
+                var copySize = MTLSize(width: Int(tileSize),
+                                       height: Int(tileSize),
+                                       depth: 1)
+                
+                if col == (tilesPerRow - 1), wholeTilesPerRow != tilesPerRow {
+                    copySize.width = Int(size.width) - (Int(tileSize) * wholeTilesPerRow)
+                }
+                
+                if row == (rows - 1), wholeRows != rows {
+                    copySize.height = Int(size.height) - (Int(tileSize) * wholeRows)
+                }
+            
+                // create the info struct
+                var tileInfo = TileInfo()
+                tileInfo.activeRegion = SIMD2<Float>(Float(copySize.width), Float(copySize.height))
+
+                info.append(tileInfo)
+            }
+        }
+        
+        // done
+        return info
+    }
     
     // MARK: - Errors
     enum Errors: Error {
@@ -176,5 +225,14 @@ public class TiledImage {
         case invalidDestinationSize
         /// Failed to create a blit command encoder
         case invalidBlitEncoder
+    }
+
+    // MARK: - Types
+    /**
+     * Per tile metadata
+     */
+    private struct TileInfo {
+        /// Active region of the tile (top left origin)
+        var activeRegion = SIMD2<Float>()
     }
 }

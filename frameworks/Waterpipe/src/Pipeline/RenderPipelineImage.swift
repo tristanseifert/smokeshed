@@ -86,7 +86,7 @@ public class RenderPipelineImage {
         
         // allocate a tiled image and copy the buffer into it
         progress.becomeCurrent(withPendingUnitCount: 1)
-        guard let tiled = TiledImage(device: device, forImageSized: image.size,
+        guard let tiled = TiledImage(device: device, forImageSized: self.image.size,
                                      tileSize: 512) else {
             throw Errors.makeTiledImageFailed
         }
@@ -95,6 +95,8 @@ public class RenderPipelineImage {
         
         self.tiledImage = tiled        
         progress.resignCurrent()
+        
+        self.isDecoded = true
     }
     
     // MARK: - Errors
