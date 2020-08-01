@@ -26,7 +26,8 @@ class PipelineCreate: XCTestCase {
         // get the system default device
         self.device = MTLCreateSystemDefaultDevice()
         XCTAssertNotNil(self.device)
-        
+
+    /*
         // set up for capturing all Metal commands
         let captureManager = MTLCaptureManager.shared()
         let captureDescriptor = MTLCaptureDescriptor()
@@ -34,15 +35,18 @@ class PipelineCreate: XCTestCase {
     
         // capture that shit
         try captureManager.startCapture(with: captureDescriptor)
+    */
     }
 
     /**
      * Ends the GPU capture.
      */
     override func tearDown() {
+        /*
         // stop GPU capture
         let captureManager = MTLCaptureManager.shared()
         captureManager.stopCapture()
+        */
     }
     
     /**
@@ -64,6 +68,6 @@ class PipelineCreate: XCTestCase {
         
         // create pipeline state
         let state = try pipeline.createState(image: image)
-        DDLogInfo("Pipeline state: \(state)")
+        DDLogInfo("Pipeline state: \(String(describing: state))")
     }
 }

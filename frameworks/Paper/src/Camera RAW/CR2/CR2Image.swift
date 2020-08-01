@@ -23,13 +23,13 @@ public class CR2Image {
     internal(set) public var thumbs: [CGImage] = []
 
     // MARK: - Raw image
-    /// Size of the raw image
+    /// Size of the raw image, before trimming borders or any other processing to discard data
     internal(set) public var rawSize: CGSize = .zero
     /// Raw bitplanes
     internal(set) public var rawPlanes: [Data] = []
 
-    /// Dimensions of sensor data
-    internal(set) public var rawValuesSize: CGSize = .zero
+    /// Dimensions of visible image data
+    internal(set) public var visibleImageSize: CGSize = .zero
     /// Sensor data; first row is RG pixels, second is GB pixels, with borders trimmed. (UInt16 per pixel)
     internal(set) public var rawValues: Data!
     /// Vertical shift of the Bayer matrix; the first actual line (after borders) may be GB pixels

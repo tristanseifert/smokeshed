@@ -25,12 +25,6 @@
 		6A0BA37124D0E664006035BE /* ImageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37024D0E664006035BE /* ImageReader.swift */; };
 		6A0BA37324D0E77F006035BE /* ImageReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37224D0E77F006035BE /* ImageReaderImpl.swift */; };
 		6A0BA37624D0EA32006035BE /* CR2ImageReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37524D0EA32006035BE /* CR2ImageReaderImpl.swift */; };
-		6A0BA38024D23C65006035BE /* CanonRAWTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CB24A5CF69007566A5 /* CanonRAWTests.swift */; };
-		6A0BA38124D23C65006035BE /* Bitstream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BE2499A1020043392E /* Bitstream.swift */; };
-		6A0BA38224D23C65006035BE /* DebayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CA24A5CF69007566A5 /* DebayerTests.swift */; };
-		6A0BA38324D23C65006035BE /* ThumbReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00CF24A5D044007566A5 /* ThumbReaderTests.swift */; };
-		6A0BA38424D23C65006035BE /* BitstreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D00C724A5CF5C007566A5 /* BitstreamTests.swift */; };
-		6A0BA38524D23C65006035BE /* BitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614C72499B53A0043392E /* BitHelpers.swift */; };
 		6A0BA38724D23C65006035BE /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
 		6A0BA38824D23C65006035BE /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
 		6A0BA38924D23C65006035BE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
@@ -2303,13 +2297,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6A0BA38024D23C65006035BE /* CanonRAWTests.swift in Sources */,
-				6A0BA38124D23C65006035BE /* Bitstream.swift in Sources */,
-				6A0BA38224D23C65006035BE /* DebayerTests.swift in Sources */,
-				6A0BA38324D23C65006035BE /* ThumbReaderTests.swift in Sources */,
-				6A0BA38424D23C65006035BE /* BitstreamTests.swift in Sources */,
 				6A0BA39C24D23CED006035BE /* PipelineCreate.swift in Sources */,
-				6A0BA38524D23C65006035BE /* BitHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

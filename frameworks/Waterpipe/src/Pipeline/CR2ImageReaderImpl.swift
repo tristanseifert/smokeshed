@@ -26,7 +26,7 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
         guard let image = self.image else {
             return .zero
         }
-        return image.rawSize
+        return image.visibleImageSize
     }
     
     /// CR2 reader instance
@@ -66,11 +66,11 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
         // debayer
         let wb = self.image!.rawWbMultiplier.map(NSNumber.init)
         
-        let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 2
+        let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 2
         let outData = NSMutableData(length: Int(bytes))!
         
         PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
-                             imageSize: image.rawValuesSize, andAlgorithm: 1,
+                             imageSize: image.visibleImageSize, andAlgorithm: 1,
                              vShift: UInt(image.rawValuesVshift), wbShift: wb,
                              blackLevel: image.rawBlackLevel as [NSNumber])
         

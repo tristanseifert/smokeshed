@@ -13,8 +13,11 @@ import Metal
  * Represents a single image to ingest into the render pipeline.
  */
 public class RenderPipelineImage {
-    private var image: ImageReaderImpl! = nil
-    
+    private var image: ImageReaderImpl
+
+    /// Size of the image
+    private(set) public var size: CGSize
+
     // MARK: - Initialization
     /**
      * Attempts to create a new render pipeline image from the file at the given url.
@@ -30,6 +33,7 @@ public class RenderPipelineImage {
             throw Errors.readImageFailed(url)
         }
         self.image = image
+        self.size = image.size
     }
     
     // MARK: - Decoding

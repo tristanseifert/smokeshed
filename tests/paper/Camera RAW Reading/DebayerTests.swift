@@ -43,11 +43,11 @@ class DebayerTests: XCTestCase {
                 DDLogVerbose("WB multipliers: \(wb)")
                 
                 // attempt debayering
-                let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 3
+                let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 3
                 let outData = NSMutableData(length: Int(bytes))!
                 
                 PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
-                                     imageSize: image.rawValuesSize, andAlgorithm: 1,
+                                     imageSize: image.visibleImageSize, andAlgorithm: 1,
                                      vShift: UInt(image.rawValuesVshift), wbShift: wb,
                                      blackLevel: image.rawBlackLevel as [NSNumber])
                 
@@ -85,11 +85,11 @@ class DebayerTests: XCTestCase {
         DDLogVerbose("WB multipliers: \(wb)")
         
         // attempt debayering
-        let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 3
+        let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 3
         let outData = NSMutableData(length: Int(bytes))!
         
         PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
-                             imageSize: image.rawValuesSize, andAlgorithm: 1,
+                             imageSize: image.visibleImageSize, andAlgorithm: 1,
                              vShift: UInt(image.rawValuesVshift), wbShift: wb,
                              blackLevel: image.rawBlackLevel as [NSNumber])
         
@@ -128,11 +128,11 @@ class DebayerTests: XCTestCase {
         DDLogVerbose("WB multipliers: \(wb)")
         
         // attempt debayering
-        let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 2
+        let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 2
         let outData = NSMutableData(length: Int(bytes))!
         
         PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
-                             imageSize: image.rawValuesSize, andAlgorithm: 1,
+                             imageSize: image.visibleImageSize, andAlgorithm: 1,
                              vShift: UInt(image.rawValuesVshift), wbShift: wb,
                              blackLevel: image.rawBlackLevel as [NSNumber])
         
@@ -140,14 +140,14 @@ class DebayerTests: XCTestCase {
         let floatData = NSMutableData(length: Int(bytes * 2))!
         
         var inBuf = vImage_Buffer(data: outData.mutableBytes,
-                                   height: UInt(image.rawValuesSize.height),
-                                   width: UInt(image.rawValuesSize.width) * 4,
-                                   rowBytes: Int(image.rawValuesSize.width * 4 * 2))
+                                   height: UInt(image.visibleImageSize.height),
+                                   width: UInt(image.visibleImageSize.width) * 4,
+                                   rowBytes: Int(image.visibleImageSize.width * 4 * 2))
         
         var outBuf = vImage_Buffer(data: floatData.mutableBytes,
-                                   height: UInt(image.rawValuesSize.height),
-                                   width: UInt(image.rawValuesSize.width) * 4,
-                                   rowBytes: Int(image.rawValuesSize.width * 4 * 4))
+                                   height: UInt(image.visibleImageSize.height),
+                                   width: UInt(image.visibleImageSize.width) * 4,
+                                   rowBytes: Int(image.visibleImageSize.width * 4 * 4))
         
         let err = vImageConvert_16UToF(&inBuf, &outBuf, 0, (1.0 / 16384.0), .zero)
         XCTAssertEqual(err, kvImageNoError, "Failed to convert to 32 bit float buffer")
@@ -159,8 +159,8 @@ class DebayerTests: XCTestCase {
         let queue = device.makeCommandQueue()!
         
         let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float,
-                                                            width: Int(image.rawValuesSize.width),
-                                                            height: Int(image.rawValuesSize.height),
+                                                            width: Int(image.visibleImageSize.width),
+                                                            height: Int(image.visibleImageSize.height),
                                                             mipmapped: false)
         desc.storageMode = .managed
         desc.usage.insert(.shaderWrite)
@@ -219,11 +219,11 @@ class DebayerTests: XCTestCase {
         DDLogVerbose("WB multipliers: \(wb)")
         
         // attempt debayering
-        let bytes = image.rawValuesSize.width * image.rawValuesSize.height * 4 * 3
+        let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 3
         let outData = NSMutableData(length: Int(bytes))!
         
         PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
-                             imageSize: image.rawValuesSize, andAlgorithm: 1,
+                             imageSize: image.visibleImageSize, andAlgorithm: 1,
                              vShift: UInt(image.rawValuesVshift), wbShift: wb,
                              blackLevel: image.rawBlackLevel as [NSNumber])
         

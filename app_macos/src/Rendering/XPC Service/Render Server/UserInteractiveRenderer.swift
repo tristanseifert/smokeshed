@@ -32,6 +32,15 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     /// Shader code library
     private var library: MTLLibrary! = nil
     
+    /// Image rendering pipeline
+    private var pipeline: RenderPipeline! = nil
+    /// Current image
+    private var renderImage: RenderPipelineImage? = nil
+    /// Render pipeline state (for the current image)
+    private var pipelineState: RenderPipelineState? = nil
+    /// Tiled image for the renderer output
+    private var renderOutput: TiledImage? = nil
+
     // MARK: - Initialization
     /**
      * Creates an user-interactive renderer that uses the given graphics device.
@@ -41,7 +50,10 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         self.device = device
         
         DDLogVerbose("Created UI renderer for device \(device)")
-        
+
+        // create render pipeline
+        self.pipeline = RenderPipeline(device: device)
+
         // create command queue
         self.queue = self.device.makeCommandQueue()!
         self.queue.label = String(format: "UserInteractiveRenderer-%@", self.identifier.uuidString)
@@ -84,6 +96,18 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
      */
     func setRenderDescriptor(_ descriptor: [AnyHashable : Any], withReply reply: @escaping (Error?) -> Void) {
         DDLogVerbose("Render descriptor: \(descriptor)")
+
+        // TODO: update image
+
+        // allocate new output texture if needed
+        if self.renderOutput == nil ||
+           self.renderOutput!.imageSize != self.renderImage!.size {
+            self.renderOutput = nil
+            guard let image = TiledImage(device: self.device!, forImageSized: self.renderImage!.size, tileSize: 512) else {
+                return reply(Errors.renderOutputAllocFailed)
+            }
+            self.renderOutput = image
+        }
     }
     
     /**
@@ -126,13 +150,14 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     func redraw(withReply reply: @escaping (Error?) -> Void) {
         // any drawing commands that could fail
         do {
-            try self.draw() {
-                return reply(nil)
-            }
+            try self.draw()
         } catch {
             DDLogError("Failed to redraw: \(error)")
             return reply(error)
         }
+
+        // success rendering
+        return reply(nil)
     }
     
     /**
@@ -146,29 +171,33 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     
     // MARK: - Drawing    
     /**
-     * Drawing that shit
+     * Drawing that shit, happens synchronously
      */
-    private func draw(_ completion: @escaping () -> Void) throws {
+    private func draw() throws {
+        // re-render the pipeline state
+        guard let pipelineState = self.pipelineState else {
+            return
+        }
+
+        try self.pipeline.render(pipelineState, self.renderOutput!)
+
+        // draw the output image
         guard let buffer = self.queue.makeCommandBuffer() else {
             throw Errors.makeCommandBufferFailed
         }
-        
-        // render the final pass to the output texture
+
         let descriptor = try self.renderPassDescriptor()
         guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
             throw Errors.makeRenderCommandEncoderFailed(descriptor)
         }
-        
-        buffer.addCompletedHandler() { _ in
-            completion()
-        }
-        
-        // TODO: drawing
-        
+
         encoder.endEncoding()
         buffer.commit()
+
+        // wait for render to texture to finish
+        buffer.waitUntilCompleted()
     }
-    
+
     /**
      * Creates a render pass descriptor.
      */
@@ -197,6 +226,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     
     // MARK: - Errors
     enum Errors: Error {
+        /// Failed to allocate output tiled image
+        case renderOutputAllocFailed
         /// Failed to allocate output texture with the given descriptor
         case outputTextureAllocFailed(_ desc: MTLTextureDescriptor)
         /// Failed to create a shared texture handle

@@ -42,7 +42,7 @@ public class RenderPipeline {
      *
      * - Note: `Progress` reporting is supported. All processing takes place synchronously.
      */
-    public func createState(image: RenderPipelineImage) throws -> Any? {
+    public func createState(image: RenderPipelineImage) throws -> RenderPipelineState {
         // decode the image
         guard let buffer = self.commandQueue.makeCommandBuffer() else {
             throw Errors.makeCommandBufferFailed
@@ -60,9 +60,24 @@ public class RenderPipeline {
         // TODO: more stuff
         return state
     }
+
+    /**
+     * Renders the given pipeline state synchronously. The output is rendered
+     * into the given tiled image.
+     */
+    public func render(_ state: RenderPipelineState, _ image: TiledImage) throws {
+        // validate device
+        guard self.device.registryID == state.device.registryID else {
+            throw Errors.invalidDevice
+        }
+
+        // TODO: shit
+    }
     
     // MARK: - Errors
     enum Errors: Error {
+        /// Render state is not valid on this renderer's device
+        case invalidDevice
         /// Failed to create a command buffer to decode an image on
         case makeCommandBufferFailed
     }
