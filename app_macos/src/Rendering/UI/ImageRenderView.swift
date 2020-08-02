@@ -105,7 +105,7 @@ class ImageRenderView: MTKView {
         }
 
         // update image and request redrawing
-        self.renderer?.setImage(library, image) { res in
+        self.renderer!.setImage(library, image) { res in            
             do {
                 let _ = try res.get()
                 

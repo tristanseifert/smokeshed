@@ -94,20 +94,41 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     /**
      * Define the render descriptor for the image.
      */
-    func setRenderDescriptor(_ descriptor: [AnyHashable : Any], withReply reply: @escaping (Error?) -> Void) {
-        DDLogVerbose("Render descriptor: \(descriptor)")
-
-        // TODO: update image
-
-        // allocate new output texture if needed
-        if self.renderOutput == nil ||
-           self.renderOutput!.imageSize != self.renderImage!.size {
-            self.renderOutput = nil
-            guard let image = TiledImage(device: self.device!, forImageSized: self.renderImage!.size, tileSize: 512) else {
-                return reply(Errors.renderOutputAllocFailed)
+    func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (Error?) -> Void) {
+        let progress = Progress(totalUnitCount: 2)
+        
+        do {
+            // get new image
+            progress.becomeCurrent(withPendingUnitCount: 1)
+            if descriptor.discardCaches || self.renderImage == nil ||
+                self.renderImage?.url != descriptor.url {
+                let image = try RenderPipelineImage(url: descriptor.url)
+                self.pipelineState = try self.pipeline.createState(image: image)
+                
+                self.renderImage = image
             }
-            self.renderOutput = image
+            guard self.renderImage != nil, self.pipelineState != nil else {
+                throw Errors.imageCreateFailed
+            }
+            progress.resignCurrent()
+
+            // allocate new output texture if needed
+            progress.becomeCurrent(withPendingUnitCount: 1)
+            if self.renderOutput == nil ||
+               self.renderOutput!.imageSize != self.renderImage!.size {
+                self.renderOutput = nil
+                guard let image = TiledImage(device: self.device!, forImageSized: self.renderImage!.size, tileSize: 512) else {
+                    throw Errors.renderOutputAllocFailed
+                }
+                self.renderOutput = image
+            }
+            progress.resignCurrent()
+        } catch {
+            DDLogError("Failed to set descriptor: \(error) (desc: \(descriptor), renderer \(self))")
+            return reply(error)
         }
+        
+        return reply(nil)
     }
     
     /**
@@ -240,5 +261,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         case makeCommandBufferFailed
         /// Failed to make a command encoder
         case makeRenderCommandEncoderFailed(_ descriptor: MTLRenderPassDescriptor)
+        
+        /// Couldn't create the image when setting render descriptor
+        case imageCreateFailed
     }
 }

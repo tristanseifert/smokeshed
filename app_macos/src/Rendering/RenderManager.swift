@@ -131,7 +131,7 @@ class RenderManager {
      *
      * This renderer will run on the device specified, or the system default device otherwise.
      */
-    public func getDisplayRenderer(_ device: MTLDevice?, callback: @escaping (Result<DisplayImageRenderer?, Error>) -> Void) {
+    public func getDisplayRenderer(_ device: MTLDevice?, callback: @escaping (Result<DisplayImageRenderer, Error>) -> Void) {
         // get the registry id for the device
         var registryId = device?.registryID ?? 0
         

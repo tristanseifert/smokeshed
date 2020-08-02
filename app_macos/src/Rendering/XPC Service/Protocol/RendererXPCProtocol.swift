@@ -9,6 +9,8 @@ import Foundation
 import Cocoa
 import Metal
 
+import CocoaLumberjackSwift
+
 /**
  * Interface of the object exported by the renderer XPC service
  */
@@ -79,7 +81,7 @@ import Metal
      * - Parameter descriptor: Render descriptor to use for any subsequent render passes
      * - Parameter error: If non-nil, the render descriptor was not applied because of this error.
      */
-    func setRenderDescriptor(_ descriptor: [AnyHashable: Any], withReply reply: @escaping (_ error: Error?) -> Void)
+    func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (_ error: Error?) -> Void)
     
     /**
      * Updates the viewport being displayed.
@@ -148,7 +150,7 @@ import Metal
      * - Parameter error: If non-nil, the error that caused rendering to fail.
      * - Parameter bitmap: If successful, the bitmap that was rendered.
      */
-    func render(_ descriptor: [AnyHashable: Any], withReply reply: @escaping (_ error: Error?, _ bitmap: NSImage?) -> Void)
+    func render(_ descriptor: RenderDescriptor, withReply reply: @escaping (_ error: Error?, _ bitmap: NSImage?) -> Void)
     
     /**
      * Releases all resources allocated by the renderer.
@@ -172,7 +174,7 @@ import Metal
      * - Parameter options: Where the output file is written, its format, and any format-specific options.
      * - Parameter error: If non-nil, the error that caused rendering to fail; otherwise, assume success.
      */
-    func render(_ descriptor: [AnyHashable: Any], _ options: [AnyHashable: Any], withReply reply: @escaping (_ error: Error?) -> Void)
+    func render(_ descriptor: RenderDescriptor, _ options: [AnyHashable: Any], withReply reply: @escaping (_ error: Error?) -> Void)
     
     /**
      * Releases all resources allocated by the renderer.
@@ -211,4 +213,94 @@ public enum RendererXPCConfigKey: String {
      * - Parameter config: A dictionary of configuration keys to change
      */
     func setConfig(_ config: [String: Any])
+}
+
+/**
+ * Render descriptor
+ */
+@objc(RendererXPCJobDescriptor) public class RenderDescriptor: NSObject, NSSecureCoding {
+    /// We support secure coding, required for XPC
+    public static var supportsSecureCoding: Bool = true
+    
+    /// Should all cached render state be thrown away?
+    internal(set) public var discardCaches: Bool = false
+    
+    /// URL to the image
+    internal(set) public var url: URL! = nil
+    /// Bookmark data for the image url
+    internal var urlBookmark: Data? = nil
+    
+    /// URL to which the bookmark is relative to
+    internal var urlRelativeBase: URL? = nil
+    /// Bookmark data for the base url
+    internal var urlRelativeBaseBookmark: Data?
+    
+    public override init() {
+        super.init()
+    }
+    
+    /**
+     * Encodes the render descriptor into its wire format.
+     */
+    public func encode(with coder: NSCoder) {
+        // encode url data
+        if let bookmark = self.urlBookmark {
+            coder.encode(bookmark, forKey: "url.bookmark")
+            coder.encode(self.urlRelativeBase, forKey: "url.base")
+            
+            if let data = self.urlRelativeBaseBookmark {
+                coder.encode(data, forKey: "url.base.bookmark")
+            }
+        } else if let url = self.url {
+            coder.encode(url, forKey: "url")
+        }
+        
+        // encode some other flags
+        coder.encode(self.discardCaches, forKey: "discardCaches")
+    }
+    
+    /**
+     * Decodes a render descriptor from its serialized representation.
+     */
+    public required init?(coder: NSCoder) {
+        // attempt to decode the url by resolving the bookmark or just taking the raw url value
+        if let bookmark = coder.decodeObject(of: NSData.self, forKey: "url.bookmark") as Data? {
+            do {
+                // decode base url bookmark or read it
+                var base: URL! = coder.decodeObject(of: NSURL.self, forKey: "url.base") as URL?
+                
+                if let data = coder.decodeObject(of: NSData.self, forKey: "url.base.bookmark") as Data? {
+                    // this is just a minimal bookmark
+                    do {
+                        var isStale: Bool = false
+                        let url = try URL(resolvingBookmarkData: data, options: [.withoutUI],
+                                          relativeTo: nil, bookmarkDataIsStale: &isStale)
+                        base = url
+                    } catch {
+                        DDLogError("Failed to decode base url bookmark data (\(data)): \(error)")
+                        return nil
+                    }
+                }
+                
+                self.urlRelativeBase = base
+                
+                var isStale: Bool = false
+                let url = try URL(resolvingBookmarkData: bookmark,
+                                  options: [.withoutUI, .withSecurityScope],
+                                  relativeTo: base, bookmarkDataIsStale: &isStale)
+                self.url = url
+            } catch {
+                DDLogError("Failed to decode url bookmark data (\(bookmark)): \(error)")
+                return nil
+            }
+        } else if let url = coder.decodeObject(of: NSURL.self, forKey: "url") as URL? {
+            self.url = url
+        }
+        
+        // decode flags
+        self.discardCaches = coder.decodeBool(forKey: "discardCaches")
+        
+        // call through to super init
+        super.init()
+    }
 }

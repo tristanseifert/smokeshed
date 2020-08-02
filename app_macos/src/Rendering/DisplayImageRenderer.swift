@@ -19,7 +19,7 @@ import CocoaLumberjackSwift
  */
 internal class DisplayImageRenderer {
     /// Remote object proxy for the renderer
-    private var proxy: RendererUserInteractiveXPCProtocol? = nil
+    private var proxy: RendererUserInteractiveXPCProtocol! = nil
     
     // MARK: - Initialization
     /**
@@ -132,8 +132,12 @@ internal class DisplayImageRenderer {
      * - Note: This method does not observe the image for changes. You have to handle this yourself.
      */
     internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping(Result<Void, Error>) -> Void) {
-        // lol ya feel
-        return callback(.success(Void()))
+        do {
+            let desc = try RenderDescriptor(library: library, image: image)
+            self.setRenderDescriptor(desc, callback)
+        } catch {
+            return callback(.failure(error))
+        }
     }
     
     /**
@@ -141,7 +145,7 @@ internal class DisplayImageRenderer {
      *
      * - Parameter callback: Invoked once the render descriptor is set, or if there was an error validating it.
      */
-    private func setRenderDescriptor(_ descriptor: [AnyHashable: Any], _ callback: @escaping (Result<Void, Error>) -> Void) {
+    private func setRenderDescriptor(_ descriptor: RenderDescriptor, _ callback: @escaping (Result<Void, Error>) -> Void) {
         guard self.proxy != nil else {
             return callback(.failure(Errors.invalidProxy))
         }
@@ -165,5 +169,49 @@ internal class DisplayImageRenderer {
         case invalidSize
         /// The specified viewport is invalid
         case invalidViewport
+    }
+}
+
+extension RenderDescriptor {
+    /**
+     * Initializes a render descriptor based on a particular image.
+     */
+    public convenience init(library: LibraryBundle, image: Image) throws {
+        self.init()
+        
+        // get the image and library urls
+        guard let url = image.getUrl(relativeTo: self.urlRelativeBase) else {
+            throw Errors.invalidImageUrl
+        }
+        self.url = url
+        self.urlRelativeBase = library.url
+        
+        // create bookmark for library
+        var relinquish = self.urlRelativeBase!.startAccessingSecurityScopedResource()
+    
+        let bm = try self.urlRelativeBase!.bookmarkData(options: [.minimalBookmark],
+                                                       includingResourceValuesForKeys: nil,
+                                                       relativeTo: nil)
+        self.urlRelativeBaseBookmark = bm
+    
+        if relinquish {
+            self.urlRelativeBase!.stopAccessingSecurityScopedResource()
+        }
+        
+        // create bookmark for the image url
+        relinquish = url.startAccessingSecurityScopedResource()
+        
+        self.urlBookmark = try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess],
+                                                includingResourceValuesForKeys: nil,
+                                                relativeTo: self.urlRelativeBase)
+        
+        if relinquish {
+            url.stopAccessingSecurityScopedResource()
+        }
+    }
+    
+    enum Errors: Error {
+        /// Image url is invalid
+        case invalidImageUrl
     }
 }

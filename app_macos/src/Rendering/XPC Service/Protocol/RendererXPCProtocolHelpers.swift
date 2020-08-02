@@ -38,6 +38,13 @@ internal class RendererXPCProtocolHelpers {
      */
     static private func makeUserInteractive() -> NSXPCInterface {
         let int = NSXPCInterface(with: RendererUserInteractiveXPCProtocol.self)
+        
+        let renderDescClass = NSSet(array: [
+            RenderDescriptor.self
+        ]) as! Set<AnyHashable>
+        int.setClasses(renderDescClass,
+                       for: #selector(RendererUserInteractiveXPCProtocol.setRenderDescriptor(_:withReply:)),
+                       argumentIndex: 0, ofReply: false)
 
         return int
     }
@@ -47,6 +54,13 @@ internal class RendererXPCProtocolHelpers {
      */
     static private func makeBitmap() -> NSXPCInterface {
         let int = NSXPCInterface(with: RendererBitmapXPCProtocol.self)
+        
+        let renderDescClass = NSSet(array: [
+            RenderDescriptor.self
+        ]) as! Set<AnyHashable>
+        int.setClasses(renderDescClass,
+                       for: #selector(RendererBitmapXPCProtocol.render(_:withReply:)),
+                       argumentIndex: 0, ofReply: false)
 
         return int
     }
@@ -56,6 +70,13 @@ internal class RendererXPCProtocolHelpers {
      */
     static private func makeFile() -> NSXPCInterface {
         let int = NSXPCInterface(with: RendererFileXPCProtocol.self)
+        
+        let renderDescClass = NSSet(array: [
+            RenderDescriptor.self
+        ]) as! Set<AnyHashable>
+        int.setClasses(renderDescClass,
+                       for: #selector(RendererFileXPCProtocol.render(_:_:withReply:)),
+                       argumentIndex: 0, ofReply: false)
 
         return int
     }

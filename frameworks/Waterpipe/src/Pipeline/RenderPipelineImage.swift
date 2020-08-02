@@ -14,9 +14,13 @@ import Metal
  */
 public class RenderPipelineImage {
     private var image: ImageReaderImpl
-
+    
+    /// URL from which the image was read originally
+    private(set) public var url: URL
     /// Size of the image
-    private(set) public var size: CGSize
+    public var size: CGSize {
+        return self.image.size
+    }
 
     // MARK: - Initialization
     /**
@@ -32,8 +36,8 @@ public class RenderPipelineImage {
         guard let image = try ImageReader.shared.read(url: url) else {
             throw Errors.readImageFailed(url)
         }
+        self.url = url
         self.image = image
-        self.size = image.size
     }
     
     // MARK: - Decoding
@@ -100,6 +104,8 @@ public class RenderPipelineImage {
         self.tiledImage = tiled        
         progress.resignCurrent()
         
+        // ensure we won't decode on the same device again later
+        self.device = device
         self.isDecoded = true
     }
     
