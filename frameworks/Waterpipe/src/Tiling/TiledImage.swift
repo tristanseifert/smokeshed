@@ -35,6 +35,10 @@ public class TiledImage {
 
     /// Information for each of the tiles; each index corresponds to one tile in the texture
     private var tileInfo: [TileInfo] = []
+    /// Number of tiles
+    public var numTiles: Int {
+        return self.tileInfo.count
+    }
 
     /// 2D array texture backing this image
     private(set) internal var texture: MTLTexture! = nil
@@ -130,7 +134,7 @@ public class TiledImage {
                 
                 // calculate index into texture array and buffer and perform copy
                 let index = (row * tilesPerRow) + col
-                let offset = (row * bytesPerRow * Int(destination.tileSize)) + (col * Int(destination.tileSize) * 4 * 4)
+                let offset = (row * bytesPerRow) + (col * Int(destination.tileSize) * 4 * 4)
                 
                 encoder.copy(from: imageBuffer, sourceOffset: offset,
                              sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: 0,
@@ -210,6 +214,8 @@ public class TiledImage {
                 // create the info struct
                 var tileInfo = TileInfo()
                 tileInfo.activeRegion = SIMD2<Float>(Float(copySize.width), Float(copySize.height))
+                tileInfo.origin = SIMD2<Float>(Float(col * Int(tileSize)),
+                                               Float(row * Int(tileSize)))
 
                 info.append(tileInfo)
             }
@@ -217,6 +223,31 @@ public class TiledImage {
         
         // done
         return info
+    }
+    
+    // MARK: - Helpers
+    /**
+     * Gets the active region for the given tile.
+     */
+    public func visibleRegionForTile(_ tile: Int) -> CGSize? {
+        guard tile < self.tileInfo.count else {
+            return nil
+        }
+        let info = self.tileInfo[tile]
+
+        return CGSize(width: CGFloat(info.activeRegion.x), height: CGFloat(info.activeRegion.y))
+    }
+    
+    /**
+     * Gets the top-left origin for the given tile.
+     */
+    public func originForTile(_ tile: Int) -> CGPoint? {
+        guard tile < self.tileInfo.count else {
+            return nil
+        }
+        let info = self.tileInfo[tile]
+        
+        return CGPoint(x: CGFloat(info.origin.x), y: CGFloat(info.origin.y))
     }
     
     // MARK: - Errors
@@ -234,5 +265,7 @@ public class TiledImage {
     private struct TileInfo {
         /// Active region of the tile (top left origin)
         var activeRegion = SIMD2<Float>()
+        /// Position of the tile origin (top left) relative to the overall image
+        var origin = SIMD2<Float>()
     }
 }

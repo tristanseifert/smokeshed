@@ -90,18 +90,18 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
     private func convert16UTo32F(_ inData: NSMutableData, _ image: CR2Image) throws -> ImageBuffer {
         // create descriptor for input buffer
         var inBuf = vImage_Buffer(data: inData.mutableBytes,
-                                   height: UInt(image.rawSize.height),
-                                   width: UInt(image.rawSize.width) * 4,
-                                   rowBytes: Int(image.rawSize.width * 4 * 2))
+                                   height: UInt(image.visibleImageSize.height),
+                                   width: UInt(image.visibleImageSize.width) * 4,
+                                   rowBytes: Int(image.visibleImageSize.width * 4 * 2))
         
         // allocate output buffer
-        let bytes = image.rawSize.width * image.rawSize.height * 4 * 4
+        let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 4
         let floatData = NSMutableData(length: Int(bytes))!
         
         var outBuf = vImage_Buffer(data: floatData.mutableBytes,
-                                   height: UInt(image.rawSize.height),
-                                   width: UInt(image.rawSize.width) * 4,
-                                   rowBytes: Int(image.rawSize.width * 4 * 4))
+                                   height: UInt(image.visibleImageSize.height),
+                                   width: UInt(image.visibleImageSize.width) * 4,
+                                   rowBytes: Int(image.visibleImageSize.width * 4 * 4))
         
         // perform the conversion (assuming 14-bit components on input)
         let err = vImageConvert_16UToF(&inBuf, &outBuf, 0, (1.0 / 16384.0), .zero)
@@ -109,8 +109,8 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
             throw Errors.bufferConvertFailed(err)
         }
         
-        return ImageBuffer(data: floatData as Data, bytesPerRow: outBuf.rowBytes,
-                           rows: UInt(image.rawSize.height), cols: UInt(image.rawSize.width))
+        return ImageBuffer(data: floatData as Data, bytesPerRow: Int(image.visibleImageSize.width) * 4 * 4,
+                           rows: UInt(image.visibleImageSize.height), cols: UInt(image.visibleImageSize.width))
     }
     
     /**
@@ -119,9 +119,9 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
     private func convert16UTo16FInPlace(_ inData: NSMutableData, _ image: CR2Image) throws -> ImageBuffer {
         // the same descriptor is used for input and output
         var buf = vImage_Buffer(data: inData.mutableBytes,
-                                height: UInt(image.rawSize.height),
-                                width: UInt(image.rawSize.width) * 4,
-                                rowBytes: Int(image.rawSize.width * 4 * 2))
+                                height: UInt(image.visibleImageSize.height),
+                                width: UInt(image.visibleImageSize.width) * 4,
+                                rowBytes: Int(image.visibleImageSize.width * 4 * 2))
         
         // perform the conversion (assuming 14-bit components on input)
         let err = vImageConvert_16Uto16F(&buf, &buf, .zero)
@@ -129,8 +129,8 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
             throw Errors.bufferConvertFailed(err)
         }
         
-        return ImageBuffer(data: inData as Data, bytesPerRow: buf.rowBytes,
-                           rows: UInt(image.rawSize.height), cols: UInt(image.rawSize.width))
+        return ImageBuffer(data: inData as Data, bytesPerRow: Int(image.visibleImageSize.width) * 4 * 2,
+                           rows: UInt(image.visibleImageSize.height), cols: UInt(image.visibleImageSize.width))
     }
     
     // MARK: - Pipeline support

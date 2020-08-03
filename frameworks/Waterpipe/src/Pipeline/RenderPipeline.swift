@@ -71,7 +71,21 @@ public class RenderPipeline {
             throw Errors.invalidDevice
         }
 
-        // TODO: shit
+        // for now, just copy the texture to output
+        guard let commandBuffer = self.commandQueue.makeCommandBuffer() else {
+            throw Errors.makeCommandBufferFailed
+        }
+        guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+            throw Errors.makeCommandBufferFailed
+        }
+        
+        encoder.copy(from: state.image.tiledImage!.texture!, to: image.texture)
+        
+        encoder.endEncoding()
+        
+        // execute and wait
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
     }
     
     // MARK: - Errors

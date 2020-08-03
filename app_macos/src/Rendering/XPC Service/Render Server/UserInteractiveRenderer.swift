@@ -18,17 +18,14 @@ import CocoaLumberjackSwift
  */
 internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProtocol {
     /// Device used for rendering
-    private var device: MTLDevice! = nil
+    private(set) internal var device: MTLDevice
     
     /// Command queue for rendering
-    private var queue: MTLCommandQueue! = nil
-    
+    private var queue: MTLCommandQueue!
     /// Pipeline state
-    private var state: MTLRenderPipelineState! = nil
-    
+    private var state: MTLRenderPipelineState!
     /// Output texture
     private var outTexture: MTLTexture? = nil
-    
     /// Shader code library
     private var library: MTLLibrary! = nil
     
@@ -40,14 +37,20 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     private var pipelineState: RenderPipelineState? = nil
     /// Tiled image for the renderer output
     private var renderOutput: TiledImage? = nil
+    
+    /// Current viewport
+    private(set) internal var viewport: CGRect = .zero
+    
+    /// Drawing tiled images
+    private var tiledImageDrawer: TiledImageRenderer!
 
     // MARK: - Initialization
     /**
      * Creates an user-interactive renderer that uses the given graphics device.
      */
     init(_ device: MTLDevice) throws {
-        super.init()
         self.device = device
+        super.init()
         
         DDLogVerbose("Created UI renderer for device \(device)")
 
@@ -57,6 +60,9 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         // create command queue
         self.queue = self.device.makeCommandQueue()!
         self.queue.label = String(format: "UserInteractiveRenderer-%@", self.identifier.uuidString)
+        
+        // tiled image drawer
+        self.tiledImageDrawer = try TiledImageRenderer(device: device)
     }
     
     /**
@@ -117,18 +123,18 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
             if self.renderOutput == nil ||
                self.renderOutput!.imageSize != self.renderImage!.size {
                 self.renderOutput = nil
-                guard let image = TiledImage(device: self.device!, forImageSized: self.renderImage!.size, tileSize: 512) else {
+                guard let image = TiledImage(device: self.device, forImageSized: self.renderImage!.size, tileSize: 512) else {
                     throw Errors.renderOutputAllocFailed
                 }
                 self.renderOutput = image
             }
             progress.resignCurrent()
+            
+            reply(nil)
         } catch {
             DDLogError("Failed to set descriptor: \(error) (desc: \(descriptor), renderer \(self))")
-            return reply(error)
+            reply(error)
         }
-        
-        return reply(nil)
     }
     
     /**
@@ -136,6 +142,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
      */
     func setViewport(_ visible: CGRect, withReply reply: @escaping (Error?) -> Void) {
         DDLogVerbose("Viewport: \(visible)")
+        self.viewport = visible
     }
     
     /**
@@ -211,6 +218,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
             throw Errors.makeRenderCommandEncoderFailed(descriptor)
         }
+        
+        try self.drawRenderTexture(encoder)
 
         encoder.endEncoding()
         buffer.commit()
@@ -243,6 +252,20 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
                                                             alpha: 0)
         
         return pass
+    }
+    
+    /**
+     * Draws the tiled image with the currently specified viewport.
+     */
+    private func drawRenderTexture(_ encoder: MTLRenderCommandEncoder) throws {
+        var region = MTLRegion()
+        region.origin = MTLOriginMake(Int(self.viewport.origin.x), Int(self.viewport.origin.y), 0)
+        region.size = MTLSizeMake(Int(self.viewport.size.width), Int(self.viewport.size.height), 1)
+        
+        try self.tiledImageDrawer.draw(image: self.renderOutput!, region: region,
+                                       outputSize: CGSize(width: self.outTexture!.width,
+                                                          height: self.outTexture!.height),
+                                       encoder)
     }
     
     // MARK: - Errors

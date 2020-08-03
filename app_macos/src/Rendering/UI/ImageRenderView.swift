@@ -105,11 +105,12 @@ class ImageRenderView: MTKView {
         }
 
         // update image and request redrawing
-        self.renderer!.setImage(library, image) { res in            
+        self.renderer!.setImage(library, image) { res in
             do {
                 let _ = try res.get()
                 
                 self.renderer?.redraw() { res in
+                    self.shouldDrawViewport = true
                     return callback(res)
                 }
             } catch {
@@ -205,7 +206,7 @@ class ImageRenderView: MTKView {
         
         // update each of the quad drawers
         self.thumbQuad?.projection = projection
-        self.viewportQuad?.projection = projection
+        self.viewportQuad?.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
     }
     
     // MARK: - Size changes
@@ -600,6 +601,11 @@ class ImageRenderView: MTKView {
         if scaledSize.width == CGFloat(self.viewportTexture?.width ?? 0),
            scaledSize.height == CGFloat(self.viewportTexture?.height ?? 0) {
             return
+        }
+        
+        // fix up viewport size
+        if self.viewport == .zero {
+            self.viewport = CGRect(x: 0, y: 0, width: scaledSize.width, height: scaledSize.height)
         }
         
         // request renrerer resizes viewport (if different than current viewport texture size)

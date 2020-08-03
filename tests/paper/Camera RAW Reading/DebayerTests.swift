@@ -112,6 +112,54 @@ class DebayerTests: XCTestCase {
     }
     
     /**
+     * Reads in the `birb.cr2` RAW file once, then attempts to debayer it and convert to 32-bit floating point.
+     */
+    func testCr2BirbDebayer32F() throws {
+        let url = Bundle(for: type(of: self)).url(forResource: "birb",
+                                                  withExtension: "cr2")!
+
+        let reader = try CR2Reader(fromUrl: url, decodeRawData: true, decodeThumbs: true)
+        let image = try reader.decode()
+        
+        // get white balance values
+        let wb = image.rawWbMultiplier.map(NSNumber.init)
+        
+        // attempt debayering
+        let bytes = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 3
+        let outData = NSMutableData(length: Int(bytes))!
+        
+        PAPDebayerer.debayer(image.rawValues!, withOutput: outData,
+                             imageSize: image.visibleImageSize, andAlgorithm: 1,
+                             vShift: UInt(image.rawValuesVshift), wbShift: wb,
+                             blackLevel: image.rawBlackLevel as [NSNumber])
+        
+        // create descriptor for input buffer
+        var inBuf = vImage_Buffer(data: outData.mutableBytes,
+                                   height: UInt(image.visibleImageSize.height),
+                                   width: UInt(image.visibleImageSize.width) * 4,
+                                   rowBytes: Int(image.visibleImageSize.width * 4 * 2))
+        
+        // allocate output buffer
+        let bytes2 = image.visibleImageSize.width * image.visibleImageSize.height * 4 * 4
+        let floatData = NSMutableData(length: Int(bytes2))!
+        
+        var outBuf = vImage_Buffer(data: floatData.mutableBytes,
+                                   height: UInt(image.visibleImageSize.height),
+                                   width: UInt(image.visibleImageSize.width) * 4,
+                                   rowBytes: Int(image.visibleImageSize.width * 4 * 4))
+        
+        // perform the conversion (assuming 14-bit components on input)
+        let err = vImageConvert_16UToF(&inBuf, &outBuf, 0, (1.0 / 16384.0), .zero)
+        XCTAssertEqual(err, kvImageNoError)
+        
+        // save that shit
+        let attach2 = XCTAttachment(data: floatData as Data)
+        attach2.name = String(format: "floatData")
+        attach2.lifetime = .keepAlways
+        self.add(attach2)
+    }
+    
+    /**
      * Reads in the `birb.cr2` RAW file once, then attempts to debayer it and color correct it using Metal.
      */
     func testCr2BirbDebayerMetal() throws {

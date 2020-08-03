@@ -50,7 +50,7 @@ public class RenderPipelineImage {
     private(set) internal var isDecoded: Bool = false
     
     /// Tiled image containing pixel data
-    private var tiledImage: TiledImage? = nil
+    private(set) internal var tiledImage: TiledImage? = nil
     
     /// Buffer on the GPU containing the image data
     private var pixelBuffer: MTLBuffer? = nil

@@ -98,6 +98,8 @@
 		6A660C5824C4C7CC0012CFD8 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A660C5724C4C7CB0012CFD8 /* MetalPerformanceShaders.framework */; };
 		6A660C5B24C4D0890012CFD8 /* UserInteractiveRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A660C5A24C4D0890012CFD8 /* UserInteractiveRenderer.swift */; };
 		6A661E8324BEA0FC00D78F0A /* RenderServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A661E8224BEA0FC00D78F0A /* RenderServer.swift */; };
+		6A6D10A324D79749008B0E93 /* TiledImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6D10A224D79749008B0E93 /* TiledImageRenderer.swift */; };
+		6A6D10A524D798BC008B0E93 /* TiledImageRenderer.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A6D10A424D798BC008B0E93 /* TiledImageRenderer.metal */; };
 		6A6FB4692498A3830007E450 /* JPEGFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB4682498A3830007E450 /* JPEGFrame.swift */; };
 		6A6FB46B2498AD9A0007E450 /* JPEGScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */; };
 		6A7614BD24999C740043392E /* HuffmanTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7614BC24999C740043392E /* HuffmanTree.swift */; };
@@ -508,6 +510,8 @@
 		6A660C5724C4C7CB0012CFD8 /* MetalPerformanceShaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalPerformanceShaders.framework; path = System/Library/Frameworks/MetalPerformanceShaders.framework; sourceTree = SDKROOT; };
 		6A660C5A24C4D0890012CFD8 /* UserInteractiveRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserInteractiveRenderer.swift; path = "app_macos/src/Rendering/XPC Service/Render Server/UserInteractiveRenderer.swift"; sourceTree = "<group>"; };
 		6A661E8224BEA0FC00D78F0A /* RenderServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderServer.swift; path = "app_macos/src/Rendering/XPC Service/Render Server/RenderServer.swift"; sourceTree = "<group>"; };
+		6A6D10A224D79749008B0E93 /* TiledImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageRenderer.swift; path = frameworks/Waterpipe/src/Tiling/TiledImageRenderer.swift; sourceTree = "<group>"; };
+		6A6D10A424D798BC008B0E93 /* TiledImageRenderer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = TiledImageRenderer.metal; path = frameworks/Waterpipe/src/Tiling/TiledImageRenderer.metal; sourceTree = "<group>"; };
 		6A6FB4682498A3830007E450 /* JPEGFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGFrame.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGFrame.swift"; sourceTree = "<group>"; };
 		6A6FB46A2498AD9A0007E450 /* JPEGScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JPEGScan.swift; path = "frameworks/Paper/src/JPEG Decoding/JPEGScan.swift"; sourceTree = "<group>"; };
 		6A7614BC24999C740043392E /* HuffmanTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HuffmanTree.swift; path = frameworks/Paper/src/Helpers/HuffmanTree.swift; sourceTree = "<group>"; };
@@ -820,6 +824,8 @@
 			children = (
 				6A0BA36324CF83F2006035BE /* TiledImage.swift */,
 				6A0BA36524CF8486006035BE /* TiledImageScaler.swift */,
+				6A6D10A224D79749008B0E93 /* TiledImageRenderer.swift */,
+				6A6D10A424D798BC008B0E93 /* TiledImageRenderer.metal */,
 			);
 			name = Tiling;
 			sourceTree = "<group>";
@@ -2383,6 +2389,8 @@
 				6A0BA37624D0EA32006035BE /* CR2ImageReaderImpl.swift in Sources */,
 				6A0BA37324D0E77F006035BE /* ImageReaderImpl.swift in Sources */,
 				6A8B2EE924C7AB5C009FB581 /* TextureMap.metal in Sources */,
+				6A6D10A324D79749008B0E93 /* TiledImageRenderer.swift in Sources */,
+				6A6D10A524D798BC008B0E93 /* TiledImageRenderer.metal in Sources */,
 				6A0BA36924CFF5B9006035BE /* RenderPipeline.swift in Sources */,
 				6A0BA37124D0E664006035BE /* ImageReader.swift in Sources */,
 				6A8B2EEB24C7ABD6009FB581 /* TexturedQuad.swift in Sources */,
