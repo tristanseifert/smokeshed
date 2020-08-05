@@ -134,7 +134,8 @@ public class TiledImage {
                 
                 // calculate index into texture array and buffer and perform copy
                 let index = (row * tilesPerRow) + col
-                let offset = (row * bytesPerRow) + (col * Int(destination.tileSize) * 4 * 4)
+                let bytesPerPixel = Int(destination.tileSize) * 4 * 4
+                let offset = (row * Int(destination.tileSize) * bytesPerRow) + (col * bytesPerPixel)
                 
                 encoder.copy(from: imageBuffer, sourceOffset: offset,
                              sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: 0,

@@ -50,16 +50,20 @@ typedef struct {
  */
 vertex TiledImageRenderVertexOut tiledImageRenderVtx(const TiledImageRenderVertexIn vertexIn [[ stage_in ]],
                                                      const device TiledImageRenderUniformIn &uniforms [[ buffer(1) ]]) {
-    // convert pixel space position
+    TiledImageRenderVertexOut outVertex;
+    
+    // convert pixel space position (flip Y origin)
     float4 pos = vector_float4(0, 0, 0, 1);
     pos.xy = vertexIn.position.xy / (uniforms.viewport / 2);
     pos.x -= 1;
-    pos.y -= 1;
-    
-    // output to fragment shader
-    TiledImageRenderVertexOut outVertex;
+    pos.y = 2 - (pos.y - 1);
     outVertex.renderedCoordinate = pos * uniforms.proj;
+    
+    // flip the Y origin on texture coordinates as well
     outVertex.textureCoordinate = vertexIn.textureInfo.xy;
+    outVertex.textureCoordinate.y = 1 - outVertex.textureCoordinate.y;
+    
+    // texture info
     outVertex.slice = vertexIn.slice;
 
     return outVertex;

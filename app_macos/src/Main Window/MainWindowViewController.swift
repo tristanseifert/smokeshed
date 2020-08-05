@@ -29,9 +29,9 @@ class MainWindowViewController: NSSplitViewController, NSMenuItemValidation, NST
                   options: nil)
         
         if let window = self.view.window, let toolbar = window.toolbar {
-            if !toolbar.items.contains(where: { $0.itemIdentifier == .sidebarTrackingSeparatorItemIdentifier }) {
+            if !toolbar.items.contains(where: { $0.itemIdentifier == .sidebarTrackingSeparator }) {
                 toolbar.delegate = self
-                toolbar.insertItem(withItemIdentifier: .sidebarTrackingSeparatorItemIdentifier, at: 1)
+                toolbar.insertItem(withItemIdentifier: .sidebarTrackingSeparator, at: 1)
             }
         }
     }
@@ -43,8 +43,8 @@ class MainWindowViewController: NSSplitViewController, NSMenuItemValidation, NST
      * In this implementation, we only create the sidebar tracking space item.
      */
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-        if itemIdentifier == .sidebarTrackingSeparatorItemIdentifier {
-            return NSTrackingSeparatorToolbarItem(identifier: .sidebarTrackingSeparatorItemIdentifier,
+        if itemIdentifier == .sidebarTrackingSeparator {
+            return NSTrackingSeparatorToolbarItem(identifier: .sidebarTrackingSeparator,
                                                   splitView: self.splitView,
                                                   dividerIndex: 0)
         }
