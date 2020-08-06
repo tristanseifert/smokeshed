@@ -502,7 +502,7 @@ class ImageRenderView: MTKView {
     private var viewportTexture: MTLTexture? = nil
     
     /// Current viewport rect
-    private var viewport: CGRect = .zero
+    private(set) public var viewport: CGRect = .zero
     
     /// Should the viewport be drawn?
     private var shouldDrawViewport: Bool = false
@@ -533,11 +533,21 @@ class ImageRenderView: MTKView {
         
         // request resize from renderer
         self.renderer!.setViewport(self.viewport) {
-            callback($0)
             
-            // force re-display of view
-            DispatchQueue.main.async {
-                self.needsDisplay = true
+            // once updated, force a redraw
+            do {
+                let _ = try $0.get()
+                
+                self.renderer!.redraw({ drawRes in
+                    callback(drawRes)
+                    
+                    // force re-display of view
+                    DispatchQueue.main.async {
+                        self.needsDisplay = true
+                    }
+                })
+            } catch {
+                return callback(.failure(error))
             }
         }
     }

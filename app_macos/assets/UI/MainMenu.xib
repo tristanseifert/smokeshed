@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17147" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17147"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -476,6 +476,19 @@ CA
                             <menuItem title="Toggle Inspector" keyEquivalent="i" id="Sl1-o5-tXI">
                                 <connections>
                                     <action selector="toggleInspector:" target="-1" id="ij9-H9-Enn"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Secret Menu™" id="nny-SQ-ZjZ" userLabel="Debug">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Secret Menu™" id="NWT-yC-ejE">
+                        <items>
+                            <menuItem title="Toggle edit view debug" id="zRz-zE-1Wl">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleEditDebugWindow:" target="-1" id="UtS-vg-4Zp"/>
                                 </connections>
                             </menuItem>
                         </items>

@@ -16,6 +16,8 @@
 		6A020D5224920C97006F5093 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D4D24920B41006F5093 /* main.swift */; };
 		6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
 		6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
+		6A03ECFA24DB6BDC009B6714 /* EditViewDebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECF924DB6BDB009B6714 /* EditViewDebugViewController.swift */; };
+		6A03ECFC24DB8CBC009B6714 /* EditViewDebugWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */; };
 		6A0BA36424CF83F2006035BE /* TiledImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36324CF83F2006035BE /* TiledImage.swift */; };
 		6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36524CF8486006035BE /* TiledImageScaler.swift */; };
 		6A0BA36924CFF5B9006035BE /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */; };
@@ -432,6 +434,8 @@
 		6A020D4D24920B41006F5093 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = "app_macos/src/Thumb Handling/XPC Service/main.swift"; sourceTree = "<group>"; };
 		6A020D5024920C15006F5093 /* XPCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XPCDelegate.swift; path = "app_macos/src/Thumb Handling/XPC Service/XPCDelegate.swift"; sourceTree = "<group>"; };
 		6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbXPCProtocol.swift; path = "app_macos/src/Thumb Handling/XPC Service/ThumbXPCProtocol.swift"; sourceTree = "<group>"; };
+		6A03ECF924DB6BDB009B6714 /* EditViewDebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewDebugViewController.swift; path = "app_macos/src/Edit View/EditViewDebugViewController.swift"; sourceTree = "<group>"; };
+		6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewDebugWindowController.swift; path = "app_macos/src/Edit View/EditViewDebugWindowController.swift"; sourceTree = "<group>"; };
 		6A0BA36324CF83F2006035BE /* TiledImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImage.swift; path = frameworks/Waterpipe/src/Tiling/TiledImage.swift; sourceTree = "<group>"; };
 		6A0BA36524CF8486006035BE /* TiledImageScaler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageScaler.swift; path = frameworks/Waterpipe/src/Tiling/TiledImageScaler.swift; sourceTree = "<group>"; };
 		6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderPipeline.swift; path = frameworks/Waterpipe/src/Pipeline/RenderPipeline.swift; sourceTree = "<group>"; };
@@ -817,6 +821,15 @@
 				6A020D4D24920B41006F5093 /* main.swift */,
 			);
 			name = "Initialization and Setup";
+			sourceTree = "<group>";
+		};
+		6A03ECF824DB6BAF009B6714 /* Debug Support */ = {
+			isa = PBXGroup;
+			children = (
+				6A03ECF924DB6BDB009B6714 /* EditViewDebugViewController.swift */,
+				6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */,
+			);
+			name = "Debug Support";
 			sourceTree = "<group>";
 		};
 		6A0BA36224CF83D7006035BE /* Tiling */ = {
@@ -1834,6 +1847,7 @@
 				6AAF473724A3055A00572AB3 /* Edit View.storyboard */,
 				6AD8CFE4248E0A79009AF452 /* EditViewController.swift */,
 				6A4DEE3224BAD0E600F734F0 /* Secondary View */,
+				6A03ECF824DB6BAF009B6714 /* Debug Support */,
 				6A5B5D9424C39604003BC002 /* Resources */,
 			);
 			name = "Edit View";
@@ -2313,6 +2327,7 @@
 			files = (
 				6A587F7024A8500E009696E9 /* GridCellDetailPreferencesController.swift in Sources */,
 				6A872A0524BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */,
+				6A03ECFC24DB8CBC009B6714 /* EditViewDebugWindowController.swift in Sources */,
 				6A5B5D9824C39BDA003BC002 /* ImageRenderView.swift in Sources */,
 				6A962C2B248F3ABC0088E1DB /* LibraryOptionsController.swift in Sources */,
 				6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */,
@@ -2325,6 +2340,7 @@
 				6A2D4D1F24A47692002AAB53 /* SidebarShortcutsController.swift in Sources */,
 				6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
+				6A03ECFA24DB6BDC009B6714 /* EditViewDebugViewController.swift in Sources */,
 				6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */,
 				6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */,
 				6A872A0224BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */,

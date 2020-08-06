@@ -65,6 +65,14 @@ public class TiledImageRenderer {
         // calculate the transform matrix
         var matrix = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
         
+        // origin X offset
+        let xTranslate = CGFloat(region.origin.x) / outputSize.width
+        matrix.columns.0[3] = Float(xTranslate)
+        
+        // origin Y offset
+        let yTranslate = CGFloat(region.origin.y) / outputSize.height
+        matrix.columns.1[3] = -Float(yTranslate)
+
         // scale pixel coords to output view
 //        matrix.columns.0[0] = 1 / Float(outputSize.width / outputSize.height)
         

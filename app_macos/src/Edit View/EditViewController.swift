@@ -255,6 +255,12 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             return true
         }
         
+        // debug item
+        if menuItem.action == #selector(toggleEditDebugWindow(_:)) {
+            menuItem.state = (self.debugWc?.window?.isVisible ?? false) ? .on : .off
+            return true
+        }
+        
         return false
     }
     
@@ -410,5 +416,39 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         }
     }
     
+    // MARK: - Debugging support
+    /// Debug window controller
+    private var debugWc: NSWindowController? = nil
+    
+    /**
+     * Toggles the debug controller's visibility.
+     */
+    @IBAction private func toggleEditDebugWindow(_ sender: Any) {
+        // close window if open
+        if (self.debugWc?.window?.isVisible ?? false) {
+            self.debugWc?.close()
+        }
+        // otherwise, create and/or show it
+        else {
+            if self.debugWc == nil {
+                self.debugWc = self.storyboard!.instantiateController(identifier: .editViewDebugWindow, creator: {
+                    return EditViewDebugWindowController(coder: $0)
+                })
+                
+                guard let wc = self.debugWc as? EditViewDebugWindowController else {
+                    DDLogError("Failed to cast debug window: \(String(describing: self.debugWc))")
+                    return
+                }
+                wc.editView = self.renderView
+            }
+            
+            self.debugWc?.showWindow(sender)
+        }
+    }
+    
     // MARK: - XPC Connection
+}
+
+extension NSStoryboard.SceneIdentifier {
+    static let editViewDebugWindow = "editViewDebug"
 }

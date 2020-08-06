@@ -143,6 +143,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     func setViewport(_ visible: CGRect, withReply reply: @escaping (Error?) -> Void) {
         DDLogVerbose("Viewport: \(visible)")
         self.viewport = visible
+        
+        reply(nil)
     }
     
     /**
