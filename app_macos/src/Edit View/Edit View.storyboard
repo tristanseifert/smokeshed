@@ -201,7 +201,7 @@
                             </customView>
                             <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="1" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kCG-sJ-xaI">
                                 <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
-                                <clipView key="contentView" drawsBackground="NO" id="BSK-bY-tlX">
+                                <clipView key="contentView" drawsBackground="NO" id="BSK-bY-tlX" customClass="ImageRenderClipView" customModule="SmokeShed" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

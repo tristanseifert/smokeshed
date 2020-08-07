@@ -345,9 +345,18 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             return
         }
         
+        // the render view operates in backing pixels
         var viewport = content.documentVisibleRect
         viewport = content.convertToBacking(viewport)
         
+        // apply scale for magnification
+        let zoomScale = self.scrollView.magnification
+        if zoomScale != 1 {
+            viewport.size.width /= zoomScale
+            viewport.size.height /= zoomScale
+        }
+        
+        // update the render view
         self.renderView.setViewport(viewport) {
             do {
                 let _ = try $0.get()

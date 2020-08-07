@@ -20,6 +20,7 @@
 		6A03ECFC24DB8CBC009B6714 /* EditViewDebugWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */; };
 		6A03ECFE24DBBF22009B6714 /* TextureFiller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */; };
 		6A03ED0024DBC075009B6714 /* TextureFiller.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFF24DBC075009B6714 /* TextureFiller.metal */; };
+		6A03ED0224DD3280009B6714 /* ImageRenderClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ED0124DD3280009B6714 /* ImageRenderClipView.swift */; };
 		6A0BA36424CF83F2006035BE /* TiledImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36324CF83F2006035BE /* TiledImage.swift */; };
 		6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36524CF8486006035BE /* TiledImageScaler.swift */; };
 		6A0BA36924CFF5B9006035BE /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */; };
@@ -440,6 +441,7 @@
 		6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewDebugWindowController.swift; path = "app_macos/src/Edit View/EditViewDebugWindowController.swift"; sourceTree = "<group>"; };
 		6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextureFiller.swift; path = frameworks/Waterpipe/src/Metal/TextureFiller.swift; sourceTree = "<group>"; };
 		6A03ECFF24DBC075009B6714 /* TextureFiller.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = TextureFiller.metal; path = frameworks/Waterpipe/src/Metal/TextureFiller.metal; sourceTree = "<group>"; };
+		6A03ED0124DD3280009B6714 /* ImageRenderClipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageRenderClipView.swift; path = app_macos/src/Rendering/UI/ImageRenderClipView.swift; sourceTree = "<group>"; };
 		6A0BA36324CF83F2006035BE /* TiledImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImage.swift; path = frameworks/Waterpipe/src/Tiling/TiledImage.swift; sourceTree = "<group>"; };
 		6A0BA36524CF8486006035BE /* TiledImageScaler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageScaler.swift; path = frameworks/Waterpipe/src/Tiling/TiledImageScaler.swift; sourceTree = "<group>"; };
 		6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderPipeline.swift; path = frameworks/Waterpipe/src/Pipeline/RenderPipeline.swift; sourceTree = "<group>"; };
@@ -1251,6 +1253,7 @@
 			isa = PBXGroup;
 			children = (
 				6A5B5D9724C39BDA003BC002 /* ImageRenderView.swift */,
+				6A03ED0124DD3280009B6714 /* ImageRenderClipView.swift */,
 			);
 			name = "User Interface";
 			sourceTree = "<group>";
@@ -2345,6 +2348,7 @@
 				6A8729B824BB801B00D50C49 /* EditSecondaryWindowController.swift in Sources */,
 				6A2D4D1F24A47692002AAB53 /* SidebarShortcutsController.swift in Sources */,
 				6A9664612490652100F757A1 /* LibraryCollectionItem.swift in Sources */,
+				6A03ED0224DD3280009B6714 /* ImageRenderClipView.swift in Sources */,
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A03ECFA24DB6BDC009B6714 /* EditViewDebugViewController.swift in Sources */,
 				6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */,
