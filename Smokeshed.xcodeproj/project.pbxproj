@@ -18,6 +18,8 @@
 		6A020D5724920F2E006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
 		6A03ECFA24DB6BDC009B6714 /* EditViewDebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECF924DB6BDB009B6714 /* EditViewDebugViewController.swift */; };
 		6A03ECFC24DB8CBC009B6714 /* EditViewDebugWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */; };
+		6A03ECFE24DBBF22009B6714 /* TextureFiller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */; };
+		6A03ED0024DBC075009B6714 /* TextureFiller.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFF24DBC075009B6714 /* TextureFiller.metal */; };
 		6A0BA36424CF83F2006035BE /* TiledImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36324CF83F2006035BE /* TiledImage.swift */; };
 		6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36524CF8486006035BE /* TiledImageScaler.swift */; };
 		6A0BA36924CFF5B9006035BE /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */; };
@@ -436,6 +438,8 @@
 		6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThumbXPCProtocol.swift; path = "app_macos/src/Thumb Handling/XPC Service/ThumbXPCProtocol.swift"; sourceTree = "<group>"; };
 		6A03ECF924DB6BDB009B6714 /* EditViewDebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewDebugViewController.swift; path = "app_macos/src/Edit View/EditViewDebugViewController.swift"; sourceTree = "<group>"; };
 		6A03ECFB24DB8CBC009B6714 /* EditViewDebugWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditViewDebugWindowController.swift; path = "app_macos/src/Edit View/EditViewDebugWindowController.swift"; sourceTree = "<group>"; };
+		6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextureFiller.swift; path = frameworks/Waterpipe/src/Metal/TextureFiller.swift; sourceTree = "<group>"; };
+		6A03ECFF24DBC075009B6714 /* TextureFiller.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = TextureFiller.metal; path = frameworks/Waterpipe/src/Metal/TextureFiller.metal; sourceTree = "<group>"; };
 		6A0BA36324CF83F2006035BE /* TiledImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImage.swift; path = frameworks/Waterpipe/src/Tiling/TiledImage.swift; sourceTree = "<group>"; };
 		6A0BA36524CF8486006035BE /* TiledImageScaler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageScaler.swift; path = frameworks/Waterpipe/src/Tiling/TiledImageScaler.swift; sourceTree = "<group>"; };
 		6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderPipeline.swift; path = frameworks/Waterpipe/src/Pipeline/RenderPipeline.swift; sourceTree = "<group>"; };
@@ -1355,6 +1359,8 @@
 			children = (
 				6A8B2EE824C7AB5C009FB581 /* TextureMap.metal */,
 				6A8B2EEA24C7ABD6009FB581 /* TexturedQuad.swift */,
+				6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */,
+				6A03ECFF24DBC075009B6714 /* TextureFiller.metal */,
 			);
 			name = "Metal Utilities";
 			sourceTree = "<group>";
@@ -2402,7 +2408,9 @@
 				6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */,
 				6A0BA36B24CFF816006035BE /* RenderPipelineImage.swift in Sources */,
 				6A0BA36F24CFF9AC006035BE /* RenderPipelineState.swift in Sources */,
+				6A03ED0024DBC075009B6714 /* TextureFiller.metal in Sources */,
 				6A0BA37624D0EA32006035BE /* CR2ImageReaderImpl.swift in Sources */,
+				6A03ECFE24DBBF22009B6714 /* TextureFiller.swift in Sources */,
 				6A0BA37324D0E77F006035BE /* ImageReaderImpl.swift in Sources */,
 				6A8B2EE924C7AB5C009FB581 /* TextureMap.metal in Sources */,
 				6A6D10A324D79749008B0E93 /* TiledImageRenderer.swift in Sources */,

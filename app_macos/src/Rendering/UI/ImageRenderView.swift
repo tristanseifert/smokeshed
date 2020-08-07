@@ -52,6 +52,7 @@ class ImageRenderView: MTKView {
         self.colorPixelFormat = .bgr10a2Unorm
         self.depthStencilPixelFormat = .invalid
         self.framebufferOnly = true
+        self.clearColor = MTLClearColorMake(0, 0, 0, 1)
         
         self.colorspace = CGColorSpace(name: CGColorSpace.rommrgb)
         

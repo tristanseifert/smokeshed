@@ -67,11 +67,19 @@ public class TiledImageRenderer {
         
         // origin X offset
         let xTranslate = CGFloat(region.origin.x) / outputSize.width
-        matrix.columns.0[3] = Float(xTranslate)
+        matrix.columns.0[3] = -Float(xTranslate / 2)
         
         // origin Y offset
         let yTranslate = CGFloat(region.origin.y) / outputSize.height
-        matrix.columns.1[3] = -Float(yTranslate)
+        matrix.columns.1[3] = -Float(yTranslate / 2) - 1
+        
+        // size width
+        let xScale = outputSize.width / CGFloat(region.size.width)
+        matrix.columns.0[0] = Float(xScale)
+        
+        // size height
+        let yScale = outputSize.height / CGFloat(region.size.height)
+        matrix.columns.1[1] = Float(yScale)
 
         // scale pixel coords to output view
 //        matrix.columns.0[0] = 1 / Float(outputSize.width / outputSize.height)

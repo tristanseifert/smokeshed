@@ -43,6 +43,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     
     /// Drawing tiled images
     private var tiledImageDrawer: TiledImageRenderer!
+    /// Texture clearer
+    private var textureClearer: TextureFiller!
 
     // MARK: - Initialization
     /**
@@ -61,8 +63,9 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         self.queue = self.device.makeCommandQueue()!
         self.queue.label = String(format: "UserInteractiveRenderer-%@", self.identifier.uuidString)
         
-        // tiled image drawer
+        // tiled image drawer and texture filler
         self.tiledImageDrawer = try TiledImageRenderer(device: device)
+        self.textureClearer = try TextureFiller(device: device)
     }
     
     /**
@@ -92,6 +95,20 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         guard let texture = self.device.makeSharedTexture(descriptor: desc) else {
             throw Errors.outputTextureAllocFailed(desc)
         }
+        
+        // we want to clear it
+        guard let buffer = self.queue.makeCommandBuffer()else {
+            throw Errors.makeCommandBufferFailed
+        }
+        
+        try self.textureClearer.encode(into: buffer) { ops in
+            ops.clear(texture: texture, SIMD4<Float>(SIMD3<Float>(repeating: 0), 1))
+        }
+        
+        buffer.commit()
+        
+        // XXX: we could prob skip this
+        buffer.waitUntilCompleted()
         
         return texture
     }

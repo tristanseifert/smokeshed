@@ -199,6 +199,27 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="d1j-Xx-t8D" customClass="ImageRenderView" customModule="SmokeShed" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
                             </customView>
+                            <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="1" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kCG-sJ-xaI">
+                                <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
+                                <clipView key="contentView" drawsBackground="NO" id="BSK-bY-tlX">
+                                    <rect key="frame" x="0.0" y="0.0" width="909" height="640"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <view id="Mzi-Yy-coR">
+                                            <rect key="frame" x="0.0" y="0.0" width="894" height="625"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        </view>
+                                    </subviews>
+                                </clipView>
+                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="LvU-ZZ-lMP">
+                                    <rect key="frame" x="0.0" y="624" width="909" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1G1-bV-1Wt">
+                                    <rect key="frame" x="893" y="0.0" width="16" height="640"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
                             <visualEffectView wantsLayer="YES" horizontalCompressionResistancePriority="500" blendingMode="behindWindow" material="menu" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="cRe-O1-ZM6" userLabel="No Selection container">
                                 <rect key="frame" x="155" y="270" width="600" height="100"/>
                                 <subviews>
@@ -288,11 +309,15 @@
                         <constraints>
                             <constraint firstItem="cRe-O1-ZM6" firstAttribute="centerX" secondItem="gJv-Pr-4lS" secondAttribute="centerX" id="5B8-87-rbn"/>
                             <constraint firstItem="ZTd-Z3-gK8" firstAttribute="centerX" secondItem="gJv-Pr-4lS" secondAttribute="centerX" id="5Ea-sz-Ud5"/>
+                            <constraint firstItem="kCG-sJ-xaI" firstAttribute="top" secondItem="gJv-Pr-4lS" secondAttribute="top" id="DhN-7C-dY4"/>
+                            <constraint firstAttribute="trailing" secondItem="kCG-sJ-xaI" secondAttribute="trailing" id="MSd-a1-QOh"/>
                             <constraint firstItem="d1j-Xx-t8D" firstAttribute="leading" secondItem="gJv-Pr-4lS" secondAttribute="leading" id="OXm-p1-qWD"/>
+                            <constraint firstItem="kCG-sJ-xaI" firstAttribute="leading" secondItem="gJv-Pr-4lS" secondAttribute="leading" id="PI5-XR-uH1"/>
                             <constraint firstAttribute="bottom" secondItem="d1j-Xx-t8D" secondAttribute="bottom" id="QVF-eI-KyU"/>
                             <constraint firstItem="d1j-Xx-t8D" firstAttribute="top" secondItem="gJv-Pr-4lS" secondAttribute="top" id="SkM-Ap-YNN"/>
                             <constraint firstAttribute="trailing" secondItem="d1j-Xx-t8D" secondAttribute="trailing" id="Urd-Vx-YKy"/>
                             <constraint firstItem="cRe-O1-ZM6" firstAttribute="centerY" secondItem="gJv-Pr-4lS" secondAttribute="centerY" id="rlj-fz-NQ0"/>
+                            <constraint firstAttribute="bottom" secondItem="kCG-sJ-xaI" secondAttribute="bottom" id="uQ3-0G-IxZ"/>
                             <constraint firstAttribute="bottom" secondItem="ZTd-Z3-gK8" secondAttribute="bottom" constant="20" symbolic="YES" id="yEU-xY-VI7"/>
                         </constraints>
                     </view>
@@ -300,11 +325,12 @@
                         <outlet property="loadingContainer" destination="ZTd-Z3-gK8" id="vfW-ER-Acx"/>
                         <outlet property="noSelectionContainer" destination="cRe-O1-ZM6" id="O1V-9D-dbE"/>
                         <outlet property="renderView" destination="d1j-Xx-t8D" id="HmG-6A-rtc"/>
+                        <outlet property="scrollView" destination="kCG-sJ-xaI" id="vk0-AC-SR2"/>
                     </connections>
                 </viewController>
                 <customObject id="Hy8-z1-wZS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11" y="-496"/>
+            <point key="canvasLocation" x="10.5" y="-496"/>
         </scene>
         <!--Secondary Window Controller-->
         <scene sceneID="037-ag-kza">

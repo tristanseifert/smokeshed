@@ -33,6 +33,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                let image = images.first {
                 self.noSelectionVisible = false
                 
+                self.updateScrollSize(image)
                 self.updateDisplay(image)
             }
             // no selection
@@ -48,6 +49,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     deinit {
         self.deinitDisplay()
+        self.cleanUpScrollView()
     }
 
     // MARK: View Lifecycle
@@ -63,6 +65,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         self.setUpNoSelectionUI()
         self.setUpLoadingUI()
         self.initDisplay()
+        self.setUpScrollView()
         
         self.isLoading = false
         self.noSelectionVisible = true
@@ -313,6 +316,75 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         self.isLoading = false
     }
     
+    // MARK: Scroll View
+    @IBOutlet private var scrollView: NSScrollView! = nil
+    
+    /// Scroll view observers
+    private var scrollViewObservers: [NSObjectProtocol] = []
+    
+    /**
+     * Sets up the scroll view observation.
+     */
+    private func setUpScrollView() {
+        let c = NotificationCenter.default
+        
+        // observe the bounds of the scroll view
+        self.scrollView.contentView.postsBoundsChangedNotifications = true
+        let o = c.addObserver(forName: NSView.boundsDidChangeNotification,
+                              object: self.scrollView.contentView,
+                              queue: OperationQueue.main, using: self.scrollViewBoundsChanged)
+        scrollViewObservers.append(o)
+    }
+    
+    /**
+     * Handles a bounds change notification for the scroll view.
+     */
+    private func scrollViewBoundsChanged(_ note: Notification) {
+        guard let content = note.object as? NSClipView else {
+            DDLogError("Invalid notification object: \(note)")
+            return
+        }
+        
+        var viewport = content.documentVisibleRect
+        viewport = content.convertToBacking(viewport)
+        
+        self.renderView.setViewport(viewport) {
+            do {
+                let _ = try $0.get()
+            } catch {
+                DDLogError("Failed to set viewport: \(error)")
+            }
+        }
+    }
+    
+    /**
+     * Cleans up scroll view observations.
+     */
+    private func cleanUpScrollView() {
+        // remove the bounds observer of the clip view
+        self.scrollView.contentView.postsBoundsChangedNotifications = false
+        
+        // clear all notification handlers
+        self.scrollViewObservers.forEach {
+            NotificationCenter.default.removeObserver($0)
+        }
+        self.scrollViewObservers.removeAll()
+    }
+    
+    /**
+     * Updates the scroll view for the given image.
+     */
+    private func updateScrollSize(_ image: Image) {
+        let newSize = image.imageSize
+        
+        // resize content view
+        guard let content = self.scrollView.documentView else {
+            return
+        }
+        content.setFrameSize(newSize)
+        DDLogVerbose("New scroll content view size: \(newSize)")
+    }
+    
     // MARK: No Selection
     /// Effect view holding the no selection UI
     @IBOutlet private var noSelectionContainer: NSVisualEffectView! = nil
@@ -344,6 +416,9 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         // show view if needed
         if self.noSelectionVisible {
             self.noSelectionContainer.isHidden = false
+            self.scrollView.isHidden = true
+        } else {
+            self.scrollView.isHidden = false
         }
         
         NSAnimationContext.runAnimationGroup({ ctx in
