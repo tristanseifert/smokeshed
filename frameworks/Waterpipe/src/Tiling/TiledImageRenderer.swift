@@ -27,7 +27,7 @@ public class TiledImageRenderer {
     /**
      * Creates a new tiled image renderer bound to the specified Metal device.
      */
-    public init(device: MTLDevice) throws {
+    public init(device: MTLDevice, _ pixelFormat: MTLPixelFormat = .rgba32Float) throws {
         self.device = device
         
         let thisBundle = Bundle(for: type(of: self))
@@ -42,7 +42,7 @@ public class TiledImageRenderer {
         // set up the pipeline descriptor
         let desc = MTLRenderPipelineDescriptor()
         desc.sampleCount = 1
-        desc.colorAttachments[0].pixelFormat = .rgba32Float
+        desc.colorAttachments[0].pixelFormat = pixelFormat
         desc.depthAttachmentPixelFormat = .invalid
     
         desc.vertexFunction = self.library.makeFunction(name: "tiledImageRenderVtx")!
@@ -80,6 +80,8 @@ public class TiledImageRenderer {
         // size height
         let yScale = outputSize.height / CGFloat(region.size.height)
         matrix.columns.1[1] = Float(yScale)
+        
+//        DDLogVerbose("Tiled image transform for region \(region) (size \(outputSize)): \(matrix) (X translate: \(xTranslate), Y translate \(yTranslate), X scale \(xScale), Y scale \(yScale)")
 
         // scale pixel coords to output view
 //        matrix.columns.0[0] = 1 / Float(outputSize.width / outputSize.height)

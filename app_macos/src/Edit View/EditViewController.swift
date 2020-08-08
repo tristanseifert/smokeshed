@@ -356,14 +356,11 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             viewport.size.height /= zoomScale
         }
         
+//
+        DDLogVerbose("Viewport after scaling by \(zoomScale): \(viewport)")
+        
         // update the render view
-        self.renderView.setViewport(viewport) {
-            do {
-                let _ = try $0.get()
-            } catch {
-                DDLogError("Failed to set viewport: \(error)")
-            }
-        }
+        self.renderView.viewport = viewport
     }
     
     /**
@@ -390,6 +387,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         guard let content = self.scrollView.documentView else {
             return
         }
+        
+        self.scrollView.magnification = 1
         content.setFrameSize(newSize)
         DDLogVerbose("New scroll content view size: \(newSize)")
     }

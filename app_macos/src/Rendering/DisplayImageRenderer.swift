@@ -9,6 +9,7 @@ import Foundation
 
 import Metal
 
+import Waterpipe
 import Smokeshop
 import CocoaLumberjackSwift
 
@@ -35,67 +36,6 @@ internal class DisplayImageRenderer {
     deinit {
         if let proxy = self.proxy {
             proxy.destroy()
-        }
-    }
-    
-    // MARK: - Viewport
-    /**
-     * Updates the viewport.
-     *
-     * - Parameter visible: Rect describing the part of the image that is drawn into the output texture
-     * - Parameter callback: Invoked when the viewport has updated, or if something goes wrong.
-     */
-    func setViewport(_ visible: CGRect, _ callback: @escaping (Result<Void, Error>) -> Void) {
-        guard self.proxy != nil else {
-            return callback(.failure(Errors.invalidProxy))
-        }
-        
-        // validate args
-        guard visible != .zero else {
-            return callback(.failure(Errors.invalidViewport))
-        }
-        
-        // pass call to XPC service
-        self.proxy!.setViewport(visible) {
-            if let err = $0 {
-                return callback(.failure(err))
-            } else {
-                return callback(.success(Void()))
-            }
-        }
-    }
-    
-    /**
-     * Resizes the viewport texture, generating it if not yet existing.
-     *
-     * - Parameter size: Pixel size of the output texture
-     * - Parameter viewport: Rect describing the part of the image that is drawn into the output texture
-     */
-    func getOutputTexture(_ size: CGSize, viewport: CGRect, _ callback: @escaping(Result<MTLSharedTextureHandle, Error>) -> Void) {
-        guard self.proxy != nil else {
-            return callback(.failure(Errors.invalidProxy))
-        }
-        
-        // validate args
-        guard size != .zero else {
-            return callback(.failure(Errors.invalidSize))
-        }
-//        guard viewport != .zero else {
-//            return callback(.failure(Errors.invalidViewport))
-//        }
-        
-        // pass call to XPC service
-        self.proxy!.resizeTexture(size: size, viewport: viewport) { err, texture in
-            precondition((err != nil) || (texture != nil), "Invalid XPC response")
-            
-            // did the resize fail?
-            if let err = err {
-                return callback(.failure(err))
-            }
-            // did we get a texture handle?
-            else if let handle = texture {
-                return callback(.success(handle))
-            }
         }
     }
     
@@ -131,7 +71,7 @@ internal class DisplayImageRenderer {
      *
      * - Note: This method does not observe the image for changes. You have to handle this yourself.
      */
-    internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping(Result<Void, Error>) -> Void) {
+    internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping(Result<TiledImage, Error>) -> Void) {
         do {
             let desc = try RenderDescriptor(library: library, image: image)
             self.setRenderDescriptor(desc, callback)
@@ -145,17 +85,28 @@ internal class DisplayImageRenderer {
      *
      * - Parameter callback: Invoked once the render descriptor is set, or if there was an error validating it.
      */
-    private func setRenderDescriptor(_ descriptor: RenderDescriptor, _ callback: @escaping (Result<Void, Error>) -> Void) {
+    private func setRenderDescriptor(_ descriptor: RenderDescriptor, _ callback: @escaping (Result<TiledImage, Error>) -> Void) {
         guard self.proxy != nil else {
             return callback(.failure(Errors.invalidProxy))
         }
         
         // call through to XPC service with the descriptor
-        self.proxy!.setRenderDescriptor(descriptor) {
-            if let err = $0 {
-                return callback(.failure(err))
-            } else {
-                return callback(.success(Void()))
+        self.proxy!.setRenderDescriptor(descriptor) { err, archive in
+            do {
+                // throw error if non-nil
+                if let err = err {
+                    throw err
+                }
+                
+                // try to decode the tiled image
+                guard let archive = archive,
+                      let image = archive.toTiledImage() else {
+                    throw Errors.failedToDecodeTiledImageArchive
+                }
+                
+                return callback(.success(image))
+            } catch {
+                return callback(.failure(error))
             }
         }
     }
@@ -167,8 +118,8 @@ internal class DisplayImageRenderer {
         
         /// The size of the texture is invalid
         case invalidSize
-        /// The specified viewport is invalid
-        case invalidViewport
+        /// The tiled image could not be decoded.
+        case failedToDecodeTiledImageArchive
     }
 }
 

@@ -20,14 +20,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     /// Device used for rendering
     private(set) internal var device: MTLDevice
     
-    /// Command queue for rendering
-    private var queue: MTLCommandQueue!
     /// Pipeline state
     private var state: MTLRenderPipelineState!
-    /// Output texture
-    private var outTexture: MTLTexture? = nil
-    /// Shader code library
-    private var library: MTLLibrary! = nil
     
     /// Image rendering pipeline
     private var pipeline: RenderPipeline! = nil
@@ -41,8 +35,6 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     /// Current viewport
     private(set) internal var viewport: CGRect = .zero
     
-    /// Drawing tiled images
-    private var tiledImageDrawer: TiledImageRenderer!
     /// Texture clearer
     private var textureClearer: TextureFiller!
 
@@ -58,13 +50,8 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
 
         // create render pipeline
         self.pipeline = RenderPipeline(device: device)
-
-        // create command queue
-        self.queue = self.device.makeCommandQueue()!
-        self.queue.label = String(format: "UserInteractiveRenderer-%@", self.identifier.uuidString)
         
         // tiled image drawer and texture filler
-        self.tiledImageDrawer = try TiledImageRenderer(device: device)
         self.textureClearer = try TextureFiller(device: device)
     }
     
@@ -75,49 +62,11 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         DDLogVerbose("Releasing UI renderer \(self)")
     }
     
-    /**
-     * Creates a new viewport texture of the given size.
-     */
-    private func makeViewportTexture(_ size: CGSize) throws -> MTLTexture {
-        // set up texture descriptor
-        let desc = MTLTextureDescriptor()
-        
-        desc.width = Int(size.width)
-        desc.height = Int(size.height)
-        
-        desc.allowGPUOptimizedContents = true
-        
-        desc.pixelFormat = .bgr10a2Unorm
-        desc.storageMode = .private
-        desc.usage = [.renderTarget, .shaderRead]
-        
-        // create such a texture
-        guard let texture = self.device.makeSharedTexture(descriptor: desc) else {
-            throw Errors.outputTextureAllocFailed(desc)
-        }
-        
-        // we want to clear it
-        guard let buffer = self.queue.makeCommandBuffer()else {
-            throw Errors.makeCommandBufferFailed
-        }
-        
-        try self.textureClearer.encode(into: buffer) { ops in
-            ops.clear(texture: texture, SIMD4<Float>(SIMD3<Float>(repeating: 0), 1))
-        }
-        
-        buffer.commit()
-        
-        // XXX: we could prob skip this
-        buffer.waitUntilCompleted()
-        
-        return texture
-    }
-    
     // MARK: - XPC interface
     /**
      * Define the render descriptor for the image.
      */
-    func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (Error?) -> Void) {
+    func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (Error?, TiledImage.TiledImageArchive?) -> Void) {
         let progress = Progress(totalUnitCount: 2)
         
         do {
@@ -140,54 +89,17 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
             if self.renderOutput == nil ||
                self.renderOutput!.imageSize != self.renderImage!.size {
                 self.renderOutput = nil
-                guard let image = TiledImage(device: self.device, forImageSized: self.renderImage!.size, tileSize: 512) else {
+                guard let image = TiledImage(device: self.device, forImageSized: self.renderImage!.size, tileSize: 512, .rgba32Float, true) else {
                     throw Errors.renderOutputAllocFailed
                 }
                 self.renderOutput = image
             }
             progress.resignCurrent()
             
-            reply(nil)
+            reply(nil, self.renderOutput!.toArchive())
         } catch {
             DDLogError("Failed to set descriptor: \(error) (desc: \(descriptor), renderer \(self))")
-            reply(error)
-        }
-    }
-    
-    /**
-     * Sets the visible segment of the image.
-     */
-    func setViewport(_ visible: CGRect, withReply reply: @escaping (Error?) -> Void) {
-        DDLogVerbose("Viewport: \(visible)")
-        self.viewport = visible
-        
-        reply(nil)
-    }
-    
-    /**
-     * Resizes the output texture.
-     */
-    func resizeTexture(size newSize: CGSize, viewport: CGRect, withReply reply: @escaping (Error?, MTLSharedTextureHandle?) -> Void) {
-        DDLogVerbose("New texture size: \(newSize), viewport is \(viewport)")
-        
-        // try to create texture
-        do {
-            // allocate new texture if needed
-            if self.outTexture == nil ||
-               self.outTexture?.width ?? 0 != Int(newSize.width) ||
-               self.outTexture?.height ?? 0 != Int(newSize.height) {
-                self.outTexture = try self.makeViewportTexture(newSize)
-            }
-            
-            // get shared texture handle and render to it
-            guard let handle = self.outTexture?.makeSharedTextureHandle() else {
-                throw Errors.makeSharedTextureHandleFailed
-            }
-            
-            return reply(nil, handle)
-        } catch {
-            DDLogError("Failed to resize texture to \(newSize): \(error)")
-            return reply(error, nil)
+            reply(error, nil)
         }
     }
     
@@ -227,64 +139,6 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         }
 
         try self.pipeline.render(pipelineState, self.renderOutput!)
-
-        // draw the output image
-        guard let buffer = self.queue.makeCommandBuffer() else {
-            throw Errors.makeCommandBufferFailed
-        }
-
-        let descriptor = try self.renderPassDescriptor()
-        guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
-            throw Errors.makeRenderCommandEncoderFailed(descriptor)
-        }
-        
-        try self.drawRenderTexture(encoder)
-
-        encoder.endEncoding()
-        buffer.commit()
-
-        // wait for render to texture to finish
-        buffer.waitUntilCompleted()
-    }
-
-    /**
-     * Creates a render pass descriptor.
-     */
-    private func renderPassDescriptor() throws -> MTLRenderPassDescriptor {
-        guard self.outTexture != nil else {
-            throw Errors.invalidOutputTexture
-        }
-        
-        let pass = MTLRenderPassDescriptor()
-        
-        // size based on texture
-        pass.renderTargetWidth = self.outTexture!.width
-        pass.renderTargetHeight = self.outTexture!.height
-        
-        // clear on load and write to the texture
-        pass.colorAttachments[0].loadAction = .clear
-        pass.colorAttachments[0].storeAction = .store
-        pass.colorAttachments[0].texture = self.outTexture!
-        
-        // clear to black with alpha 1
-        pass.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0,
-                                                            alpha: 0)
-        
-        return pass
-    }
-    
-    /**
-     * Draws the tiled image with the currently specified viewport.
-     */
-    private func drawRenderTexture(_ encoder: MTLRenderCommandEncoder) throws {
-        var region = MTLRegion()
-        region.origin = MTLOriginMake(Int(self.viewport.origin.x), Int(self.viewport.origin.y), 0)
-        region.size = MTLSizeMake(Int(self.viewport.size.width), Int(self.viewport.size.height), 1)
-        
-        try self.tiledImageDrawer.draw(image: self.renderOutput!, region: region,
-                                       outputSize: CGSize(width: self.outTexture!.width,
-                                                          height: self.outTexture!.height),
-                                       encoder)
     }
     
     // MARK: - Errors

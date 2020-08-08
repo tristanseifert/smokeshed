@@ -48,19 +48,28 @@ public class TiledImage {
     // MARK: - Initialization
     /**
      * Creates a new tiled image backed by a permanently allocated texture.
+     *
+     * - Parameter shared: Whether the texture allocated is shareable or not.
      */
-    public init?(device: MTLDevice, forImageSized imageSize: CGSize, tileSize: UInt, _ pixelFormat: MTLPixelFormat = .rgba32Float) {
+    public init?(device: MTLDevice, forImageSized imageSize: CGSize, tileSize: UInt, _ pixelFormat: MTLPixelFormat = .rgba32Float, _ shared: Bool = false) {
         self.device = device
         self.tileSize = tileSize
         self.imageSize = imageSize
 
         // attempt to allocate the texture
         let desc = Self.textureDescriptorFor(size: imageSize, tileSize, pixelFormat)
-        guard let texture = device.makeTexture(descriptor: desc) else {
-            return nil
-        }
 
-        self.texture = texture
+        if shared {
+            guard let texture = device.makeSharedTexture(descriptor: desc) else {
+                return nil
+            }
+            self.texture = texture
+        } else {
+            guard let texture = device.makeTexture(descriptor: desc) else {
+                return nil
+            }
+            self.texture = texture
+        }
 
         self.tileInfo = Self.tileInfoForImage(imageSize, tileSize)
     }
@@ -83,6 +92,22 @@ public class TiledImage {
         self.texture = image.texture
 
         self.tileInfo = Self.tileInfoForImage(imageSize, tileSize)
+    }
+    
+    /**
+     * Creates a tiled image based on an archive form.
+     */
+    fileprivate init?(archive: TiledImageArchive) {
+        self.device = archive.handle.device
+        guard let texture = self.device.makeSharedTexture(handle: archive.handle) else {
+            return nil
+        }
+        self.texture = texture
+        
+        self.tileSize = archive.tileSize
+        self.imageSize = archive.imageSize
+        
+        self.tileInfo = archive.tileInfo
     }
 
     /**
@@ -178,7 +203,6 @@ public class TiledImage {
         let numTiles = cols * rows
         
         precondition(numTiles <= 2048) // metal limitation on array length
-        DDLogVerbose("Tiles for image sized \(size) (tile size \(tileSize)): \(numTiles)")
 
         return numTiles
     }
@@ -226,7 +250,18 @@ public class TiledImage {
         return info
     }
     
-    // MARK: - Helpers
+    /**
+     * Returns an XPC-friendly representation of a tiled image.
+     */
+    public func toArchive() -> TiledImageArchive? {
+        // the texture backing us MUST be shareable here
+        guard self.texture.isShareable else {
+            return nil
+        }
+        
+        return TiledImageArchive(image: self)
+    }
+    
     /**
      * Gets the active region for the given tile.
      */
@@ -263,10 +298,89 @@ public class TiledImage {
     /**
      * Per tile metadata
      */
-    private struct TileInfo {
+    fileprivate struct TileInfo: Codable {
         /// Active region of the tile (top left origin)
         var activeRegion = SIMD2<Float>()
         /// Position of the tile origin (top left) relative to the overall image
         var origin = SIMD2<Float>()
+    }
+    
+    /**
+     * Serializable object that represents a tiled image, and can be sent via XPC
+     */
+    @objc(SWPTiledImageArchive) public class TiledImageArchive: NSObject, NSSecureCoding {
+        /// Implement secure coding, so we can be sent across XPC boundaries
+        public static var supportsSecureCoding: Bool = true
+
+        /// Shared texture handle
+        fileprivate var handle: MTLSharedTextureHandle! = nil
+        /// Tile info
+        fileprivate var tileInfo: [TileInfo] = []
+        /// Size of each tile, in pixels. Tiles are square.
+        private(set) public var tileSize: UInt = 0
+        /// Original image size
+        private(set) public var imageSize: CGSize = .zero
+        
+        /**
+         * Encodes info about the tiled image into the archive.
+         */
+        public func encode(with coder: NSCoder) {
+            coder.encode(self.handle, forKey: "textureHandle")
+            coder.encode(self.tileSize, forKey: "tileSize")
+            coder.encode(self.imageSize, forKey: "imageSize")
+            
+            // encode using codable
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .binary
+            if let data = try? encoder.encode(self.tileInfo) {
+                coder.encode(data, forKey: "tileInfoData")
+            }
+        }
+        
+        /**
+         * Creates an archive from a given tiled image.
+         */
+        fileprivate init?(image: TiledImage) {
+            guard let handle = image.texture.makeSharedTextureHandle() else {
+                return nil
+            }
+            self.handle = handle
+        
+            self.tileInfo = image.tileInfo
+            self.tileSize = image.tileSize
+            self.imageSize = image.imageSize
+        }
+        
+        /**
+         * Decodes the tiled image archive into an object.
+         */
+        public required init?(coder: NSCoder) {
+            // decode the shared texture
+            guard let handle = coder.decodeObject(of: MTLSharedTextureHandle.self,
+                                                  forKey: "textureHandle") else {
+                return nil
+            }
+            self.handle = handle
+        
+            // tile and image sizes
+            self.tileSize = UInt(coder.decodeInteger(forKey: "tileSize"))
+            self.imageSize = coder.decodeSize(forKey: "imageSize")
+        
+            // tile info
+            let decoder = PropertyListDecoder()
+            guard let infoData = coder.decodeObject(of: NSData.self,
+                                                    forKey: "tileInfoData"),
+                  let info = try? decoder.decode([TileInfo].self, from: infoData as Data) else {
+                return nil
+            }
+            self.tileInfo = info
+        }
+        
+        /**
+         * Generates a tiled image from the archive.
+         */
+        public func toTiledImage() -> TiledImage? {
+            return TiledImage(archive: self)
+        }
     }
 }

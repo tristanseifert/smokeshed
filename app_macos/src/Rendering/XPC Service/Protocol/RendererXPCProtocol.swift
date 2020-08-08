@@ -9,6 +9,7 @@ import Foundation
 import Cocoa
 import Metal
 
+import Waterpipe
 import CocoaLumberjackSwift
 
 /**
@@ -81,38 +82,7 @@ import CocoaLumberjackSwift
      * - Parameter descriptor: Render descriptor to use for any subsequent render passes
      * - Parameter error: If non-nil, the render descriptor was not applied because of this error.
      */
-    func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (_ error: Error?) -> Void)
-    
-    /**
-     * Updates the viewport being displayed.
-     *
-     * The viewport is defined as the subrect of the output image that is drawn into the output texture.
-     *
-     * - Note: If the size of the viewport is smaller than the output texture, the image is centered in the texture.
-     *
-     * - Parameter visible: Rect describing the part of the image that is drawn into the output texture
-     * - Parameter error: If non-nil, the viewport could not be updated because of this error.
-     */
-    func setViewport(_ visible: CGRect, withReply reply: @escaping (_ error: Error?) -> Void)
-    
-    /**
-     * Resizes the output texture.
-     *
-     * This is a relatively heavyweight operation and should be avoided. New memory will be allocated for a new texture and a full
-     * render pass kicked off.
-     *
-     * You can observe the progress of the render using `Progress`.
-     *
-     * - Note: If resizing the texture fails, the old texture handle continues to be valid and will continue to be used as the render
-     * target for this renderer. On success, you _must_ discontinue use of the old texture as soon as possible.
-     *
-     * - Parameter newSize: Size of the new output texture, in pixels
-     * - Parameter viewport: Viewport to use for the initial render into the new texture
-     * - Parameter reply: Callback executed when the new texture is available
-     * - Parameter error: If non-nil, the error that caused resizing to fail.
-     * - Parameter texture: Handle to the new output texture.
-     */
-    func resizeTexture(size newSize: CGSize, viewport: CGRect, withReply reply: @escaping (_ error: Error?, _ texture: MTLSharedTextureHandle?) -> Void)
+    func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (_ error: Error?, _ outImage: TiledImage.TiledImageArchive?) -> Void)
 
     /**
      * Redraws the contents of the output texture.

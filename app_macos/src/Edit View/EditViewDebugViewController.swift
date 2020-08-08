@@ -54,15 +54,6 @@ internal class EditViewDebugViewController: NSViewController {
      */
     @IBAction func setViewport(_ sender: Any?) {
         DDLogVerbose("Updating viewport to \(self.viewport)")
-        self.editView.setViewport(self.viewport) { res in
-            do {
-                let _ = try res.get()
-                DDLogVerbose("Finished viewport update")
-            } catch {
-                DDLogError("Failed to set viewport: \(error)")
-                NSApp.presentError(error, modalFor: self.view.window!, delegate: nil,
-                                   didPresent: nil, contextInfo: nil)
-            }
-        }
+        self.editView.viewport = self.viewport
     }
 }

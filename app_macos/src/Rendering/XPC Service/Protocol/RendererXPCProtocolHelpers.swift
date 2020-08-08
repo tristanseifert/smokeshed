@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Waterpipe
+
 /**
  * Helpers for working with the renderer XPC protocol
  */
@@ -45,6 +47,13 @@ internal class RendererXPCProtocolHelpers {
         int.setClasses(renderDescClass,
                        for: #selector(RendererUserInteractiveXPCProtocol.setRenderDescriptor(_:withReply:)),
                        argumentIndex: 0, ofReply: false)
+        
+        let tiledImageClass = NSSet(array: [
+            TiledImage.TiledImageArchive.self
+        ]) as! Set<AnyHashable>
+        int.setClasses(tiledImageClass,
+                       for: #selector(RendererUserInteractiveXPCProtocol.setRenderDescriptor(_:withReply:)),
+                       argumentIndex: 1, ofReply: true)
 
         return int
     }

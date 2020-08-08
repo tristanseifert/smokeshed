@@ -40,15 +40,7 @@ class ImageRenderView: MTKView {
      * Common view initialization
      */
     private func commonInit() {
-        // set default device if not already set
-        if self.device == nil {
-            self.updateDevice()
-        } else {
-            DDLogDebug("Using device \(String(describing: self.device)) from constructor")
-            self.createMetalResources()
-        }
-        
-        // pixel formats
+        // pixel formats and other configuration
         self.colorPixelFormat = .bgr10a2Unorm
         self.depthStencilPixelFormat = .invalid
         self.framebufferOnly = true
@@ -57,6 +49,14 @@ class ImageRenderView: MTKView {
         self.colorspace = CGColorSpace(name: CGColorSpace.rommrgb)
         
         self.autoResizeDrawable = true
+        
+        // set default device if not already set
+        if self.device == nil {
+            self.updateDevice()
+        } else {
+            DDLogDebug("Using device \(String(describing: self.device)) from constructor")
+            self.createMetalResources()
+        }
         
         // resizing
         self.setUpSizeChangeObserver()
@@ -89,6 +89,7 @@ class ImageRenderView: MTKView {
      */
     internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping (Result<Void, Error>) -> Void) {
         self.thumbTexture = nil
+        self.renderOutput = nil
         
         // we must have a renderer
         guard self.renderer != nil else {
@@ -108,7 +109,7 @@ class ImageRenderView: MTKView {
         // update image and request redrawing
         self.renderer!.setImage(library, image) { res in
             do {
-                let _ = try res.get()
+                self.renderOutput = try res.get()
                 
                 self.renderer?.redraw() { res in
                     self.shouldDrawViewport = true
@@ -145,8 +146,7 @@ class ImageRenderView: MTKView {
         self.thumbTexture = nil
         
         // viewport
-        self.viewportQuad = nil
-        self.viewportTexture = nil
+        self.tiledImageRenderer = nil
         
         // renderer
         self.renderer = nil
@@ -170,7 +170,8 @@ class ImageRenderView: MTKView {
             self.thumbQuad = try TexturedQuad(self.device!)
             
             // viewport
-            self.viewportQuad = try TexturedQuad(self.device!)
+            self.tiledImageRenderer = try TiledImageRenderer(device: self.device!,
+                                                             self.colorPixelFormat)
             
             // renderer
             self.createRenderer()
@@ -207,7 +208,6 @@ class ImageRenderView: MTKView {
         
         // update each of the quad drawers
         self.thumbQuad?.projection = projection
-        self.viewportQuad?.projection = simd_float4x4(diagonal: SIMD4<Float>(repeating: 1))
     }
     
     // MARK: - Size changes
@@ -226,11 +226,6 @@ class ImageRenderView: MTKView {
                                                               object: self, queue: nil) { note in
             // update uniforms (projection matrix) always
             self.updateProjection()
-            
-            // resize viewport if not in live resize
-            if !self.inLiveResize {
-                self.updateViewportSize()
-            }
         }
         self.postsFrameChangedNotifications = true
     }
@@ -255,9 +250,7 @@ class ImageRenderView: MTKView {
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         
-        if self.frame.size != .zero {
-            self.updateViewportSize()
-        }
+        self.needsDisplay = true
     }
 
     /**
@@ -268,9 +261,6 @@ class ImageRenderView: MTKView {
         
         // update uniforms (projection matrix)
         self.updateProjection()
-        
-        // resize the texture
-        self.updateViewportSize()
         
         // redraw immediately
         self.needsDisplay = true
@@ -356,7 +346,7 @@ class ImageRenderView: MTKView {
             }
             
             // render the viewport
-            if self.shouldDrawViewport, self.viewportTexture != nil {
+            if self.shouldDrawViewport, self.renderOutput != nil {
                 guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else {
                     throw Errors.makeRenderCommandEncoderFailed(descriptor)
                 }
@@ -497,13 +487,23 @@ class ImageRenderView: MTKView {
     }
     
     // MARK: Viewport
-    /// Viewport quad
-    private var viewportQuad: TexturedQuad? = nil
-    /// Texture for the viewport image image
-    private var viewportTexture: MTLTexture? = nil
+    /// Output image from the renderer
+    private var renderOutput: TiledImage? = nil
+    /// Renderer for tiled images
+    private var tiledImageRenderer: TiledImageRenderer!
     
     /// Current viewport rect
-    private(set) public var viewport: CGRect = .zero
+    public var viewport: CGRect = .zero {
+        didSet {
+            if !Thread.isMainThread {
+                DispatchQueue.main.async {
+                    self.needsDisplay = true
+                }
+            } else {
+                self.needsDisplay = true
+            }
+        }
+    }
     
     /// Should the viewport be drawn?
     private var shouldDrawViewport: Bool = false
@@ -512,64 +512,16 @@ class ImageRenderView: MTKView {
      * Draw the viewport texture
      */
     private func drawViewport(_ encoder: MTLRenderCommandEncoder) throws {
-        guard let viewportTex = self.viewportTexture else {
-            return
-        }
+        // create the region
+        var region = MTLRegion()
+        region.origin = MTLOriginMake(Int(self.viewport.origin.x), Int(self.viewport.origin.y), 0)
+        region.size = MTLSizeMake(Int(self.viewport.size.width), Int(self.viewport.size.height), 1)
         
-        encoder.pushDebugGroup("RenderViewport")
-        try self.viewportQuad?.encode(encoder, texture: viewportTex)
-        encoder.popDebugGroup()
-    }
-    
-    /**
-     * Updates the current viewport rect.
-     */
-    func setViewport(_ viewport: CGRect, _ callback: @escaping (Result<Void, Error>) -> Void) {
-        self.viewport = viewport
+        // draw that shiz
+        let scaledSize = self.convertToBacking(self.frame.size)
         
-        // ensure there is a renderer
-        guard self.renderer != nil else {
-            return callback(.success(Void()))
-        }
-        
-        // request resize from renderer
-        self.renderer!.setViewport(self.viewport) {
-            
-            // once updated, force a redraw
-            do {
-                let _ = try $0.get()
-                
-                self.renderer!.redraw({ drawRes in
-                    callback(drawRes)
-                    
-                    // force re-display of view
-                    DispatchQueue.main.async {
-                        self.needsDisplay = true
-                    }
-                })
-            } catch {
-                return callback(.failure(error))
-            }
-        }
-    }
-    
-    /**
-     * Creates the viewport texture from a shared texture handle.
-     */
-    private func makeViewportTex(_ handle: MTLSharedTextureHandle) throws {
-        // create the texture
-        guard let texture = self.device?.makeSharedTexture(handle: handle) else {
-            throw Errors.makeSharedTextureFailed
-        }
-        
-        self.requestXpcRedraw() { res in
-            switch res {
-            case .success():
-                self.viewportTexture = texture
-            case .failure(let error):
-                DDLogError("Failed to draw: \(error)")
-            }
-        }
+        try self.tiledImageRenderer.draw(image: self.renderOutput!, region: region,
+                                         outputSize: scaledSize, encoder)
     }
     
     // MARK: - Renderer
@@ -587,45 +539,8 @@ class ImageRenderView: MTKView {
                 // get the renderer
                 let renderer = try res.get()
                 self?.renderer = renderer
-                
-                // prepare it for display
-                DispatchQueue.main.async {
-                    self?.updateViewportSize()
-                }
             } catch {
                 DDLogError("Failed to get renderer: \(error)")
-            }
-        }
-    }
-    
-    /**
-     * Resize the viewport texture to fill the view.
-     */
-    private func updateViewportSize() {
-        // calculate new size (including title bar insets, at backing store pixel scale)
-        let newSize = self.frame.size
-        let scaledSize = self.convertToBacking(newSize)
-        
-        DDLogDebug("Resizing viewport to: \(newSize) (scaled \(scaledSize))")
-        
-        // ensure the viewport actually changed
-        if scaledSize.width == CGFloat(self.viewportTexture?.width ?? 0),
-           scaledSize.height == CGFloat(self.viewportTexture?.height ?? 0) {
-            return
-        }
-        
-        // fix up viewport size
-        if self.viewport == .zero {
-            self.viewport = CGRect(x: 0, y: 0, width: scaledSize.width, height: scaledSize.height)
-        }
-        
-        // request renrerer resizes viewport (if different than current viewport texture size)
-        self.renderer?.getOutputTexture(scaledSize, viewport: self.viewport) {
-            do {
-                let handle = try $0.get()
-                try self.makeViewportTex(handle)
-            } catch {
-                DDLogError("Failed to update viewport size: \(error)")
             }
         }
     }
