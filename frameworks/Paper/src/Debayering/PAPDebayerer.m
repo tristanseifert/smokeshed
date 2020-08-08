@@ -45,7 +45,10 @@
     uint16_t *outPtr = output.mutableBytes;
     DDAssert(outPtr, @"Failed to get output plane pointer");
     
-    err = Debayer(kBayerAlgorithmBilinear, inPtr, outPtr, size.width,
+    DDAssert((algo == kBayerAlgorithmBilinear) || (algo == kBayerAlgorithmLMMSE),
+             @"Invalid debayer algorithm: %lu", (unsigned long)algo)
+    
+    err = Debayer((debayer_algorithm_t) algo, inPtr, outPtr, size.width,
                   size.height, vShift, wb, black);
     DDAssert(err == 0, @"Failed to debayer: %d", err);
 }

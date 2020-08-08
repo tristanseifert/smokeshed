@@ -148,20 +148,21 @@ public class TiledImageRenderer {
             let origin = image.originForTile(i)!
             
             // these are screen space coords
+            let tileSize = Float(image.tileSize)
+            let maxX = Float(visibleRegion.width)
+            let maxY = Float(visibleRegion.height)
+            let maxXTexture = maxX / tileSize
+            let maxYTexture = maxY / tileSize
+            
             let positions = [
-                (SIMD4<Float>(-1, 1, 0, 1), SIMD2<Float>(0, 0)),
-                (SIMD4<Float>(-1, -1, 0, 1), SIMD2<Float>(0, 1)),
-                (SIMD4<Float>(1, 1, 0, 1), SIMD2<Float>(1, 0)),
-                (SIMD4<Float>(1, -1, 0, 1), SIMD2<Float>(1, 1))
+                (SIMD4<Float>(0, maxY, 0, 1), SIMD2<Float>(0, 0)),
+                (SIMD4<Float>(0, 0, 0, 1), SIMD2<Float>(0, maxYTexture)),
+                (SIMD4<Float>(maxX, maxY, 0, 1), SIMD2<Float>(maxXTexture, 0)),
+                (SIMD4<Float>(maxX, 0, 0, 1), SIMD2<Float>(maxXTexture, maxYTexture))
             ]
             for pos in positions {
                 // transform the coordinates into absolute pixel space
                 var vertexPos = pos.0
-                
-                vertexPos.x *= (Float(image.tileSize) / 2.0)
-                vertexPos.x += (Float(image.tileSize) / 2.0)
-                vertexPos.y *= (Float(image.tileSize) / 2.0)
-                vertexPos.y += (Float(image.tileSize) / 2.0)
                 
                 vertexPos.x += Float(origin.x)
                 vertexPos.y += Float(origin.y)

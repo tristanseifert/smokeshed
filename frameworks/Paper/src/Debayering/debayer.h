@@ -17,6 +17,8 @@
 typedef enum debayer_algorithm {
     /// Basic bilinear interpolation
     kBayerAlgorithmBilinear = 1,
+    /// LSMME demosaicing algorithm (L. Zhang and X. Wu)
+    kBayerAlgorithmLMMSE = 2,
 } debayer_algorithm_t;
 
 /**

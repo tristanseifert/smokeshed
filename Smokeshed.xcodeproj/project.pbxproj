@@ -21,6 +21,7 @@
 		6A03ECFE24DBBF22009B6714 /* TextureFiller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */; };
 		6A03ED0024DBC075009B6714 /* TextureFiller.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ECFF24DBC075009B6714 /* TextureFiller.metal */; };
 		6A03ED0224DD3280009B6714 /* ImageRenderClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ED0124DD3280009B6714 /* ImageRenderClipView.swift */; };
+		6A03ED0424DE8AA7009B6714 /* CameraColorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ED0324DE8AA7009B6714 /* CameraColorInfo.swift */; };
 		6A0BA36424CF83F2006035BE /* TiledImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36324CF83F2006035BE /* TiledImage.swift */; };
 		6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36524CF8486006035BE /* TiledImageScaler.swift */; };
 		6A0BA36924CFF5B9006035BE /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */; };
@@ -442,6 +443,7 @@
 		6A03ECFD24DBBF22009B6714 /* TextureFiller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextureFiller.swift; path = frameworks/Waterpipe/src/Metal/TextureFiller.swift; sourceTree = "<group>"; };
 		6A03ECFF24DBC075009B6714 /* TextureFiller.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = TextureFiller.metal; path = frameworks/Waterpipe/src/Metal/TextureFiller.metal; sourceTree = "<group>"; };
 		6A03ED0124DD3280009B6714 /* ImageRenderClipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageRenderClipView.swift; path = app_macos/src/Rendering/UI/ImageRenderClipView.swift; sourceTree = "<group>"; };
+		6A03ED0324DE8AA7009B6714 /* CameraColorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CameraColorInfo.swift; path = "frameworks/Paper/src/Color Conversions/CameraColorInfo.swift"; sourceTree = "<group>"; };
 		6A0BA36324CF83F2006035BE /* TiledImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImage.swift; path = frameworks/Waterpipe/src/Tiling/TiledImage.swift; sourceTree = "<group>"; };
 		6A0BA36524CF8486006035BE /* TiledImageScaler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageScaler.swift; path = frameworks/Waterpipe/src/Tiling/TiledImageScaler.swift; sourceTree = "<group>"; };
 		6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderPipeline.swift; path = frameworks/Waterpipe/src/Pipeline/RenderPipeline.swift; sourceTree = "<group>"; };
@@ -1636,6 +1638,7 @@
 				6AAC458024A0130F009B9AFF /* PAPColorSpaceConverter.m */,
 				6A8B2EED24C807A4009FB581 /* MetalColorConverter.swift */,
 				6A8B2EF024C8121A009FB581 /* Resources */,
+				6A03ED0324DE8AA7009B6714 /* CameraColorInfo.swift */,
 			);
 			name = "Color space, gamma";
 			sourceTree = "<group>";
@@ -2483,6 +2486,7 @@
 				6ABF946524986A84002DBA91 /* JPEGMarker.swift in Sources */,
 				6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */,
 				6ABF946024986032002DBA91 /* JPEGDecoder.swift in Sources */,
+				6A03ED0424DE8AA7009B6714 /* CameraColorInfo.swift in Sources */,
 				6AE51ABF249D98580091A550 /* TIFFMetadataReader.swift in Sources */,
 				6A9E8284249AF9FB004BE66A /* CJPEGDecompressor.m in Sources */,
 				6ABF9463249861CA002DBA91 /* Data+ReadHelpers.swift in Sources */,

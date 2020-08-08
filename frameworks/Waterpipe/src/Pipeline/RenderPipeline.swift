@@ -43,35 +43,47 @@ public class RenderPipeline {
      * - Note: `Progress` reporting is supported. All processing takes place synchronously.
      */
     public func createState(image: RenderPipelineImage) throws -> RenderPipelineState {
+        let progress = Progress(totalUnitCount: 3)
+        
         // decode the image
+        progress.becomeCurrent(withPendingUnitCount: 1)
+        
         guard let buffer = self.commandQueue.makeCommandBuffer() else {
             throw Errors.makeCommandBufferFailed
         }
         
         try image.decode(device: self.device, commandBuffer: buffer)
+        progress.resignCurrent()
         
+        progress.becomeCurrent(withPendingUnitCount: 1)
         buffer.commit()
         buffer.waitUntilCompleted()
+        progress.resignCurrent()
         
         // try to create the pipeline state
+        progress.becomeCurrent(withPendingUnitCount: 1)
         let state = try RenderPipelineState(device: self.device, image: image)
         self.states.add(state)
+        progress.resignCurrent()
         
         // TODO: more stuff
         return state
     }
 
     /**
-     * Renders the given pipeline state synchronously. The output is rendered
-     * into the given tiled image.
+     * Renders the given pipeline state synchronously. The output is rendered into the given tiled image.
+     *
+     * - Note: Progress can be observed.
      */
     public func render(_ state: RenderPipelineState, _ image: TiledImage) throws {
+        let progress = Progress(totalUnitCount: 2)
         // validate device
         guard self.device.registryID == state.device.registryID else {
             throw Errors.invalidDevice
         }
 
         // for now, just copy the texture to output
+        progress.becomeCurrent(withPendingUnitCount: 1)
         guard let commandBuffer = self.commandQueue.makeCommandBuffer() else {
             throw Errors.makeCommandBufferFailed
         }
@@ -82,10 +94,15 @@ public class RenderPipeline {
         encoder.copy(from: state.image.tiledImage!.texture!, to: image.texture)
         
         encoder.endEncoding()
+        progress.resignCurrent()
         
         // execute and wait
+        progress.becomeCurrent(withPendingUnitCount: 1)
+        
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
+        
+        progress.resignCurrent()
     }
     
     // MARK: - Errors
