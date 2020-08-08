@@ -451,7 +451,6 @@
 		6A0BA37224D0E77F006035BE /* ImageReaderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageReaderImpl.swift; path = frameworks/Waterpipe/src/Pipeline/ImageReaderImpl.swift; sourceTree = "<group>"; };
 		6A0BA37524D0EA32006035BE /* CR2ImageReaderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CR2ImageReaderImpl.swift; path = frameworks/Waterpipe/src/Pipeline/CR2ImageReaderImpl.swift; sourceTree = "<group>"; };
 		6A0BA39624D23C65006035BE /* WaterpipeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WaterpipeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6A0BA39724D23C65006035BE /* PaperTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PaperTests copy-Info.plist"; path = "/Users/tristan/smokeshed/PaperTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		6A0BA39B24D23CED006035BE /* PipelineCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PipelineCreate.swift; path = tests/waterpipe/Pipeline/PipelineCreate.swift; sourceTree = "<group>"; };
 		6A0EE46F248B640D0044B433 /* ContainerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerHelper.swift; sourceTree = "<group>"; };
 		6A0EE47B248B696A0044B433 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = app_macos/assets/Defaults.plist; sourceTree = "<group>"; };
@@ -979,7 +978,6 @@
 				6A4CEEAE248B263300145E49 /* macOS App */,
 				6A4CEE9B248B259500145E49 /* Products */,
 				6AAC4575249FFF18009B9AFF /* Frameworks */,
-				6A0BA39724D23C65006035BE /* PaperTests copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};

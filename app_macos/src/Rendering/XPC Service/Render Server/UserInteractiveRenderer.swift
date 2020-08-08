@@ -69,11 +69,15 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
     func setRenderDescriptor(_ descriptor: RenderDescriptor, withReply reply: @escaping (Error?, TiledImage.TiledImageArchive?) -> Void) {
         let progress = Progress(totalUnitCount: 2)
         
+        // start security-scoped access to image
+        let relinquish = descriptor.url.startAccessingSecurityScopedResource()
+        
         do {
             // get new image
             progress.becomeCurrent(withPendingUnitCount: 1)
             if descriptor.discardCaches || self.renderImage == nil ||
                 self.renderImage?.url != descriptor.url {
+                
                 let image = try RenderPipelineImage(url: descriptor.url)
                 self.pipelineState = try self.pipeline.createState(image: image)
                 
@@ -100,6 +104,11 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         } catch {
             DDLogError("Failed to set descriptor: \(error) (desc: \(descriptor), renderer \(self))")
             reply(error, nil)
+        }
+        
+        // release security-scoped access if it was required earlier
+        if relinquish {
+            descriptor.url.stopAccessingSecurityScopedResource()
         }
     }
     

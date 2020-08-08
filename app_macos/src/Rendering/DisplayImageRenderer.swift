@@ -131,11 +131,11 @@ extension RenderDescriptor {
         self.init()
         
         // get the image and library urls
+        self.urlRelativeBase = library.url
         guard let url = image.getUrl(relativeTo: self.urlRelativeBase) else {
             throw Errors.invalidImageUrl
         }
         self.url = url
-        self.urlRelativeBase = library.url
         
         // create bookmark for library
         var relinquish = self.urlRelativeBase!.startAccessingSecurityScopedResource()
