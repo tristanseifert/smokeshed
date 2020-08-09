@@ -113,6 +113,7 @@ class ImageRenderView: MTKView {
                 
                 self.renderer?.redraw() { res in
                     self.shouldDrawViewport = true
+                    self.postImageUpdatedNote()
                     return callback(res)
                 }
             } catch {
@@ -204,7 +205,7 @@ class ImageRenderView: MTKView {
             projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
         }
         
-        DDLogVerbose("Projection matrix: \(projection)")
+//        DDLogVerbose("Projection matrix: \(projection)")
         
         // update each of the quad drawers
         self.thumbQuad?.projection = projection
@@ -351,14 +352,7 @@ class ImageRenderView: MTKView {
                     throw Errors.makeRenderCommandEncoderFailed(descriptor)
                 }
                 
-                // if in live resize, draw blurred viewport texture
-                if self.inLiveResize {
-                    
-                }
-                // otherwise, draw as-is
-                else {
-                    try self.drawViewport(encoder)
-                }
+                try self.drawViewport(encoder)
                 
                 encoder.endEncoding()
             }
@@ -562,12 +556,25 @@ class ImageRenderView: MTKView {
                     self.shouldDrawViewport = true
                     self.needsDisplay = true
                 }
-                
-                NotificationCenter.default.post(name: .renderViewUpdatedImage, object: self)
+                self.postImageUpdatedNote()
             } catch {
                 DDLogError("Redraw failed: \(error)")
             }
         }
+    }
+    
+    /**
+     * Posts the "image updated" notification.
+     */
+    private func postImageUpdatedNote() {
+        // prepare user info dict
+        let info = [
+            "image": self.renderOutput!
+        ]
+        
+        // send it
+        NotificationCenter.default.post(name: .renderViewUpdatedImage, object: self,
+                                        userInfo: info)
     }
     
     // MARK: - Errors
@@ -588,6 +595,11 @@ class ImageRenderView: MTKView {
 }
 
 internal extension Notification.Name {
-    /// Image render view has rendered full image data via the viewport.
+    /**
+     * The render view has completed the render service transaction, and new render data is available.
+     *
+     * User info consists of a dictionary with the following keys:
+     * - `image`:  A `TiledImage` instance that contains the render output.
+     */
     static let renderViewUpdatedImage = Notification.Name("me.tseifert.smokeshed.renderview.updated")
 }

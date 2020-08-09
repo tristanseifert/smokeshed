@@ -75,7 +75,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * Prepare for the view being shown by refetching all visible objects.
      */
     override func viewWillAppear() {
-        // restore secondary view if desired
+        self.showEditSidebar()
         self.restoreSecondaryState()
     }
 
@@ -83,6 +83,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * Quiesces data store access when the view has disappeared.
      */
     override func viewDidDisappear() {
+        self.hideEditSidebar()
+        
         // hide secondary view
         let secondaryVisible = self.secondaryWc?.window?.isVisible ?? false
         
@@ -247,6 +249,52 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         self.secondarySelectionObs = nil
     }
     
+    // MARK: - Editing sidebar
+    /// Edit sidebar view controller
+    private var editVc: EditSidebarViewController! = nil
+    /// Split view item for the edit view controller
+    private var editSplitItem: NSSplitViewItem! = nil
+    
+    /**
+     * Shows the edit-specific split controls on the right side of the split view.
+     *
+     * This should be called immediately before the view is to appear.
+     */
+    private func showEditSidebar() {
+        // instantiate the view controller if needed
+        if self.editVc == nil {
+            guard let sb = self.storyboard,
+                  let vc = sb.instantiateController(withIdentifier: "sidebarVc") as? EditSidebarViewController else {
+                DDLogError("Failed to instantiate edit sidebar controller")
+                return
+            }
+            vc.editView = self
+            self.editVc = vc
+        }
+        
+        // create split item if needed
+        if self.editSplitItem == nil {
+            self.editSplitItem = NSSplitViewItem(viewController: self.editVc)
+        }
+        
+        // show that bitch
+        if let split = self.enclosingSplitViewController {
+            split.splitViewItems.append(self.editSplitItem)
+        }
+    }
+    
+    /**
+     * Hides the edit-specific sidebar on the right.
+     *
+     * This should be called immediately before the view is to disappear.
+     */
+    private func hideEditSidebar() {
+        if let split = self.enclosingSplitViewController,
+           let itemIdx = split.splitViewItems.firstIndex(of: self.editSplitItem) {
+            split.splitViewItems.remove(at: itemIdx)
+        }
+    }
+    
     // MARK: - Menu item handling
     /**
      * Ensures menu items that affect our state are always up-to-date.
@@ -269,7 +317,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     
     // MARK: - Image Display
     /// Image render view
-    @IBOutlet private var renderView: ImageRenderView! = nil
+    @IBOutlet internal var renderView: ImageRenderView! = nil
     
     /**
      * Sets up for image display.
@@ -356,8 +404,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             viewport.size.height /= zoomScale
         }
         
-//
-        DDLogVerbose("Viewport after scaling by \(zoomScale): \(viewport)")
+//        DDLogVerbose("Viewport after scaling by \(zoomScale): \(viewport)")
         
         // update the render view
         self.renderView.viewport = viewport

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="j9g-cF-0uh">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17147"/>
+        <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -186,7 +187,7 @@
                 </viewController>
                 <customObject id="ivb-79-7ci" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="277" y="-1441"/>
+            <point key="canvasLocation" x="236" y="-1534"/>
         </scene>
         <!--Edit-->
         <scene sceneID="9WU-wo-Mqz">
@@ -357,6 +358,94 @@
                 <customObject id="uAJ-nG-hgH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-18" y="413"/>
+        </scene>
+        <!--Edit Sidebar-->
+        <scene sceneID="aKA-wX-ZfO">
+            <objects>
+                <viewController title="Edit Sidebar" storyboardIdentifier="sidebarVc" showSeguePresentationStyle="single" id="9oQ-a1-8IN" customClass="EditSidebarViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" misplaced="YES" id="rW9-MT-MxE">
+                        <rect key="frame" x="0.0" y="0.0" width="360" height="222"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <visualEffectView blendingMode="behindWindow" material="sidebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="X1c-J0-hmU">
+                                <rect key="frame" x="0.0" y="0.0" width="360" height="150"/>
+                                <subviews>
+                                    <stackView distribution="fillProportionally" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QEF-GU-7Hc">
+                                        <rect key="frame" x="0.0" y="0.0" width="360" height="150"/>
+                                        <subviews>
+                                            <box verticalHuggingPriority="1000" boxType="custom" cornerRadius="4" title="Histogram Blunt" translatesAutoresizingMaskIntoConstraints="NO" id="DJ3-Hc-qYI">
+                                                <rect key="frame" x="0.0" y="0.0" width="360" height="150"/>
+                                                <view key="contentView" id="IV5-qy-LmM">
+                                                    <rect key="frame" x="1" y="1" width="358" height="148"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="150" id="quq-gE-scR"/>
+                                                </constraints>
+                                                <color key="fillColor" name="systemYellowColor" catalog="System" colorSpace="catalog"/>
+                                            </box>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="QEF-GU-7Hc" secondAttribute="trailing" id="0lC-yC-8Jh"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="JtJ-sI-MdW"/>
+                                    <constraint firstItem="QEF-GU-7Hc" firstAttribute="leading" secondItem="X1c-J0-hmU" secondAttribute="leading" id="L8Y-El-oG6"/>
+                                    <constraint firstAttribute="bottom" secondItem="QEF-GU-7Hc" secondAttribute="bottom" id="cCd-a9-mqJ"/>
+                                    <constraint firstItem="QEF-GU-7Hc" firstAttribute="top" secondItem="X1c-J0-hmU" secondAttribute="top" id="rRA-Zn-fr1"/>
+                                </constraints>
+                            </visualEffectView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="X1c-J0-hmU" firstAttribute="leading" secondItem="rW9-MT-MxE" secondAttribute="leading" id="ED6-WJ-DlH"/>
+                            <constraint firstAttribute="trailing" secondItem="X1c-J0-hmU" secondAttribute="trailing" id="Q9L-kp-FUR"/>
+                            <constraint firstItem="X1c-J0-hmU" firstAttribute="top" secondItem="mVq-3B-Nu8" secondAttribute="top" id="fFf-Hh-GeJ"/>
+                            <constraint firstAttribute="bottom" secondItem="X1c-J0-hmU" secondAttribute="bottom" id="ngP-dM-8GO"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="mVq-3B-Nu8"/>
+                        <viewLayoutGuide key="layoutMargins" id="gcR-4L-BZZ"/>
+                    </view>
+                    <connections>
+                        <outlet property="inspectorContainer" destination="QEF-GU-7Hc" id="Vmj-c7-IWo"/>
+                    </connections>
+                </viewController>
+                <customObject id="j6L-Pb-HlJ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="651" y="-496"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="fdK-fp-ylq">
+            <objects>
+                <viewController storyboardIdentifier="bitch" id="W6o-fi-BpI" sceneMemberID="viewController">
+                    <view key="view" id="j2w-JX-UWJ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u6F-Xp-Wel">
+                                <rect key="frame" x="20" y="164" width="280" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="bitchass label" drawsBackground="YES" id="mdz-xf-mO9">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="u6F-Xp-Wel" firstAttribute="top" secondItem="j2w-JX-UWJ" secondAttribute="top" constant="20" symbolic="YES" id="5tn-rh-RIK"/>
+                            <constraint firstAttribute="trailing" secondItem="u6F-Xp-Wel" secondAttribute="trailing" constant="20" symbolic="YES" id="Nv8-Vi-KmB"/>
+                            <constraint firstItem="u6F-Xp-Wel" firstAttribute="leading" secondItem="j2w-JX-UWJ" secondAttribute="leading" constant="20" symbolic="YES" id="qcM-Pn-QBj"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="QXg-0Z-9N0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1146" y="-530"/>
         </scene>
         <!--Edit Secondary View Controller-->
         <scene sceneID="C2d-HZ-cwy">
