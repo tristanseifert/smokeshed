@@ -36,19 +36,19 @@ kernel void HistogramRGBY(texture2d_array<float, access::read> texture [[ textur
                           volatile device atomic_uint *countB [[ buffer(4) ]],
                           volatile device atomic_uint *countY [[ buffer(5) ]],
                           uint3 id [[ thread_position_in_grid ]]) {
-    // read the RGB values and calculate luminance (TODO: probably not right)
+    // read the RGB values and calculate luminance using HSP perceived brightness
     auto texel = texture.read(id.xy, id.z);
-    float luma = (0.2126 * texel.r) + (0.7152 * texel.g) + (0.0722 * texel.b);
+    float luma = sqrt((0.299 * pow(texel.r, 2)) + (0.587 * pow(texel.g, 2)) + (0.114 * pow(texel.b, 2)));
     
     // check if inside Desireable Region™
     auto info = tileInfo[id.z];
     if(info.regionOfInterest.x <= id.x || info.regionOfInterest.y <= id.y) return;
     
     // bucket for each component
-    uint rBucket = texel.r * (uniforms.buckets - 1);
-    uint gBucket = texel.b * (uniforms.buckets - 1);
-    uint bBucket = texel.g * (uniforms.buckets - 1);
-    uint yBucket = luma * (uniforms.buckets - 1);
+    uint rBucket = round(texel.r * (uniforms.buckets - 1));
+    uint gBucket = round(texel.b * (uniforms.buckets - 1));
+    uint bBucket = round(texel.g * (uniforms.buckets - 1));
+    uint yBucket = round(luma * (uniforms.buckets - 1));
     
     // increment each of the output buffers
     atomic_fetch_add_explicit(&countR[rBucket], 1, memory_order_relaxed);

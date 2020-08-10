@@ -32,6 +32,9 @@ class HistogramView: NSView, CALayerDelegate {
     /// Curve layer for the luminance channel
     private var yLayer: CAShapeLayer!
     
+    /// Bounds used when calculating histogram curves
+    private var curveFrame: NSRect!
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.commonInit()
@@ -59,6 +62,7 @@ class HistogramView: NSView, CALayerDelegate {
         self.postsFrameChangedNotifications = true
         self.noteObs.append(c.addObserver(forName: NSView.frameDidChangeNotification, object: self,
                                           queue: nil, using: self.updatePaths(_:)))
+        self.curveFrame = self.bounds
         
         // set up layers (stacked in B -> G -> R -> Y) order
         self.wantsLayer = true
@@ -108,16 +112,15 @@ class HistogramView: NSView, CALayerDelegate {
      */
     private func layOutSublayers() {
         let frame = self.bounds
-        let curveFrame = frame.insetBy(dx: 1, dy: 1)
-    
-        DDLogInfo("Frame for curves: \(curveFrame)")
+        
+        self.curveFrame = frame.insetBy(dx: 1, dy: 1)
         
         DispatchQueue.main.async {
             self.curveContainer.frame = frame
-            self.rLayer.frame = curveFrame
-            self.gLayer.frame = curveFrame
-            self.bLayer.frame = curveFrame
-            self.yLayer.frame = curveFrame
+            self.rLayer.frame = self.curveFrame
+            self.gLayer.frame = self.curveFrame
+            self.bLayer.frame = self.curveFrame
+            self.yLayer.frame = self.curveFrame
         }
     }
     
@@ -171,49 +174,43 @@ class HistogramView: NSView, CALayerDelegate {
         
         // clear paths if no data
         guard let _ = self.data else {
-            self.rLayer.path = self.makeZeroPath()
-            self.gLayer.path = self.makeZeroPath()
-            self.bLayer.path = self.makeZeroPath()
-            self.yLayer.path = self.makeZeroPath()
+            let zero = self.makeZeroPath()
+            self.rLayer.path = zero
+            self.gLayer.path = zero
+            self.bLayer.path = zero
+            self.yLayer.path = zero
             return
         }
         
         // otherwise, recalculate paths for data
-        DispatchQueue.main.async {
-            self.rLayer.path = self.pathForComponent(.r)
-            self.gLayer.path = self.pathForComponent(.g)
-            self.bLayer.path = self.pathForComponent(.b)
-            self.yLayer.path = self.pathForComponent(.y)
-        }
+        self.setPathsFromData(animate: false)
     }
     
     /**
      * Creates a "zero" path for a channel.
      */
     private func makeZeroPath() -> CGPath {
-        let curveSz = self.bounds.size
+        let curveSz = self.curveFrame.size
         
-        let path = NSBezierPath()
-        path.move(to: NSPoint(x: 0, y: curveSz.height))
-        
+        var points: [NSPoint] = [
+            NSPoint(x: 0, y: curveSz.height)
+        ]
         for i in 0..<Self.histogramBuckets {
-            let x = CGFloat(i) * (curveSz.width / CGFloat(Self.histogramBuckets))
-            let pt = NSPoint(x: x, y: curveSz.height)
-            
-            path.move(to: pt)
+            let x = CGFloat(i) * (curveSz.width / CGFloat(Self.histogramBuckets - 1))
+            points.append(NSPoint(x: x, y: curveSz.height))
         }
-        
-        path.move(to: NSPoint(x: curveSz.width, y: curveSz.height))
-        path.move(to: NSPoint(x: 0, y: curveSz.height))
-        
-        return path.cgPath
+        points.append(NSPoint(x: curveSz.width, y: curveSz.height))
+
+        let curve = NSBezierPath()
+        curve.interpolateHermite(points)
+        return curve.cgPath
     }
     
     /**
      * Gets a path for the given color channel.
      */
-    private func pathForComponent(_ component: Component) -> CGPath {
-        let curveSz = self.bounds.insetBy(dx: 1, dy: 1).size
+    private func pathForComponent(_ component: Component) -> NSBezierPath {
+        let curveSz = self.curveFrame.size
         let data = self.relativeData![component]!
         
         // interpolate the histogram points
@@ -222,9 +219,9 @@ class HistogramView: NSView, CALayerDelegate {
         ]
         
         for i in 0..<data.count {
-//            let x = CGFloat(i) * (curveSz.width / CGFloat(data.count))
             let x = CGFloat(i) * (curveSz.width / CGFloat(Self.histogramBuckets - 1))
-            let y = curveSz.height - ((curveSz.height - 5) * CGFloat(data[i]))
+            // +1 on height so the bottom line is hidden
+            let y = (curveSz.height + 1) - ((curveSz.height - Self.topCurvePadding) * CGFloat(data[i]))
 
             points.append(NSPoint(x: x, y: y))
         }
@@ -233,7 +230,61 @@ class HistogramView: NSView, CALayerDelegate {
 
         let curve = NSBezierPath()
         curve.interpolateHermite(points)
-        return curve.cgPath
+        return curve
+    }
+    
+    /**
+     * Sets the paths on the histogram layers to correspond to the currently loaded data.
+     *
+     * - Note: It is programmer error to call this without loaded data.
+     */
+    private func setPathsFromData(animate: Bool) {
+        let rPath = self.pathForComponent(.r)
+        let gPath = self.pathForComponent(.b)
+        let bPath = self.pathForComponent(.g)
+        let yPath = self.pathForComponent(.y)
+        
+        DispatchQueue.main.async {
+            self.setPath(rPath, layer: self.rLayer, animate: animate)
+            self.setPath(gPath, layer: self.gLayer, animate: animate)
+            self.setPath(bPath, layer: self.bLayer, animate: animate)
+            self.setPath(yPath, layer: self.yLayer, animate: animate)
+        }
+    }
+    
+    /**
+     * Updates the path of the given shape layer, optionally with animation.
+     */
+    private func setPath(_ path: NSBezierPath, layer: CAShapeLayer, animate: Bool = false) {
+        // bail if no animation, or shape layer has no path set
+        if layer.path == nil || !animate {
+            layer.path = path.cgPath
+            return
+        }
+        
+        // remove old animations before starting a transaction
+        layer.removeAnimation(forKey: "path")
+        CATransaction.begin()
+        
+        // on completion, we manually remove the animation and set the path
+        CATransaction.setCompletionBlock {
+            layer.path = path.cgPath
+            layer.removeAnimation(forKey: "path")
+        }
+        
+        // set up the animation
+        let anim = CABasicAnimation(keyPath: "path")
+        anim.toValue = path.cgPath
+        
+        anim.duration = Self.pathAnimationDuration
+        anim.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        
+        anim.fillMode = .both
+        anim.isRemovedOnCompletion = false
+        
+        // add transaction and commit
+        layer.add(anim, forKey: anim.keyPath)
+        CATransaction.commit()
     }
     
     // MARK: - Setters
@@ -263,12 +314,7 @@ class HistogramView: NSView, CALayerDelegate {
         self.calculateRelativeHistogram(hist)
         
         // then create and set the paths (using animation)
-        DispatchQueue.main.async {
-            self.rLayer.path = self.pathForComponent(.r)
-            self.gLayer.path = self.pathForComponent(.g)
-            self.bLayer.path = self.pathForComponent(.b)
-            self.yLayer.path = self.pathForComponent(.y)
-        }
+        self.setPathsFromData(animate: true)
         
         // TODO: hide 'no selection' UI
     }
@@ -313,8 +359,10 @@ class HistogramView: NSView, CALayerDelegate {
     }
     
     // MARK: - Constants
+    /// Space between the top of the histogram view and the peak of the histogram
+    static let topCurvePadding = CGFloat(2)
     /// Duration of the interpolation animation between histogram curves
-    static let pathAnimationDuration = CGFloat(0.33)
+    static let pathAnimationDuration = CFTimeInterval(0.33)
     /// The number of histogram buckets the view expects to display.
     static let histogramBuckets = 256
     
