@@ -32,6 +32,11 @@
 		6A03ED1824E08860009B6714 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A03ED1724E08860009B6714 /* Assets.xcassets */; };
 		6A03ED1A24E0917E009B6714 /* InspectorContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A03ED1924E0917E009B6714 /* InspectorContainerViewController.swift */; };
 		6A07AB0024E0AE2600A0BBF0 /* FlippedClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A07AAFF24E0AE2600A0BBF0 /* FlippedClipView.swift */; };
+		6A07AB0224E0BD0B00A0BBF0 /* InspectorItem.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A07AB0124E0BD0B00A0BBF0 /* InspectorItem.strings */; };
+		6A07AB0524E0BF1E00A0BBF0 /* HistogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A07AB0424E0BF1E00A0BBF0 /* HistogramView.swift */; };
+		6A07AB0724E0C05500A0BBF0 /* EditSidebarHistogramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A07AB0624E0C05500A0BBF0 /* EditSidebarHistogramViewController.swift */; };
+		6A07AB0924E0C66800A0BBF0 /* HistogramView.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A07AB0824E0C66800A0BBF0 /* HistogramView.xcassets */; };
+		6A07AB0B24E0DD2800A0BBF0 /* BezierPathHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A07AB0A24E0DD2800A0BBF0 /* BezierPathHelpers.swift */; };
 		6A0BA36424CF83F2006035BE /* TiledImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36324CF83F2006035BE /* TiledImage.swift */; };
 		6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36524CF8486006035BE /* TiledImageScaler.swift */; };
 		6A0BA36924CFF5B9006035BE /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */; };
@@ -464,6 +469,11 @@
 		6A03ED1724E08860009B6714 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "app_macos/src/Custom UI/Inspectors/Assets.xcassets"; sourceTree = "<group>"; };
 		6A03ED1924E0917E009B6714 /* InspectorContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InspectorContainerViewController.swift; path = "app_macos/src/Custom UI/Inspectors/InspectorContainerViewController.swift"; sourceTree = "<group>"; };
 		6A07AAFF24E0AE2600A0BBF0 /* FlippedClipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlippedClipView.swift; path = app_macos/src/Helpers/FlippedClipView.swift; sourceTree = "<group>"; };
+		6A07AB0124E0BD0B00A0BBF0 /* InspectorItem.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InspectorItem.strings; path = "app_macos/src/Custom UI/Inspectors/InspectorItem.strings"; sourceTree = "<group>"; };
+		6A07AB0424E0BF1E00A0BBF0 /* HistogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HistogramView.swift; path = "app_macos/src/Custom UI/Histogram/HistogramView.swift"; sourceTree = "<group>"; };
+		6A07AB0624E0C05500A0BBF0 /* EditSidebarHistogramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditSidebarHistogramViewController.swift; path = "app_macos/src/Edit View/Edit Sidebar/EditSidebarHistogramViewController.swift"; sourceTree = "<group>"; };
+		6A07AB0824E0C66800A0BBF0 /* HistogramView.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = HistogramView.xcassets; path = "app_macos/src/Custom UI/Histogram/HistogramView.xcassets"; sourceTree = "<group>"; };
+		6A07AB0A24E0DD2800A0BBF0 /* BezierPathHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BezierPathHelpers.swift; path = app_macos/src/Helpers/BezierPathHelpers.swift; sourceTree = "<group>"; };
 		6A0BA36324CF83F2006035BE /* TiledImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImage.swift; path = frameworks/Waterpipe/src/Tiling/TiledImage.swift; sourceTree = "<group>"; };
 		6A0BA36524CF8486006035BE /* TiledImageScaler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageScaler.swift; path = frameworks/Waterpipe/src/Tiling/TiledImageScaler.swift; sourceTree = "<group>"; };
 		6A0BA36824CFF5B8006035BE /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RenderPipeline.swift; path = frameworks/Waterpipe/src/Pipeline/RenderPipeline.swift; sourceTree = "<group>"; };
@@ -872,6 +882,7 @@
 			isa = PBXGroup;
 			children = (
 				6A03ED0F24E08184009B6714 /* EditSidebarViewController.swift */,
+				6A07AB0624E0C05500A0BBF0 /* EditSidebarHistogramViewController.swift */,
 			);
 			name = Sidebar;
 			sourceTree = "<group>";
@@ -879,6 +890,7 @@
 		6A03ED1124E085B7009B6714 /* Custom UI */ = {
 			isa = PBXGroup;
 			children = (
+				6A07AB0324E0BEF600A0BBF0 /* Histogram */,
 				6A03ED1424E0878F009B6714 /* Inspector */,
 			);
 			name = "Custom UI";
@@ -890,9 +902,19 @@
 				6A03ED1924E0917E009B6714 /* InspectorContainerViewController.swift */,
 				6A03ED1224E0866A009B6714 /* InspectorItemViewController.swift */,
 				6A03ED1524E087AB009B6714 /* InspectorItemTitleBar.swift */,
+				6A07AB0124E0BD0B00A0BBF0 /* InspectorItem.strings */,
 				6A03ED1724E08860009B6714 /* Assets.xcassets */,
 			);
 			name = Inspector;
+			sourceTree = "<group>";
+		};
+		6A07AB0324E0BEF600A0BBF0 /* Histogram */ = {
+			isa = PBXGroup;
+			children = (
+				6A07AB0424E0BF1E00A0BBF0 /* HistogramView.swift */,
+				6A07AB0824E0C66800A0BBF0 /* HistogramView.xcassets */,
+			);
+			name = Histogram;
 			sourceTree = "<group>";
 		};
 		6A0BA36224CF83D7006035BE /* Tiling */ = {
@@ -1414,6 +1436,7 @@
 			children = (
 				6A03ED0C24E08048009B6714 /* SplitViewHelpers.swift */,
 				6A07AAFF24E0AE2600A0BBF0 /* FlippedClipView.swift */,
+				6A07AB0A24E0DD2800A0BBF0 /* BezierPathHelpers.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -2263,7 +2286,9 @@
 				6A9D00E524A70C9E007566A5 /* Preferences.storyboard in Resources */,
 				6A2D4D1D24A4392B002AAB53 /* Sidebar.strings in Resources */,
 				6A5B5D9624C39620003BC002 /* Edit View.xcassets in Resources */,
+				6A07AB0924E0C66800A0BBF0 /* HistogramView.xcassets in Resources */,
 				6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */,
+				6A07AB0224E0BD0B00A0BBF0 /* InspectorItem.strings in Resources */,
 				6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */,
 				6ABD369C2495EE6E005F80EE /* LibraryBrowserBase.strings in Resources */,
 				6ABD36982495C9EB005F80EE /* MainWindowController.strings in Resources */,
@@ -2400,11 +2425,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A587F7024A8500E009696E9 /* GridCellDetailPreferencesController.swift in Sources */,
+				6A07AB0B24E0DD2800A0BBF0 /* BezierPathHelpers.swift in Sources */,
 				6A872A0524BBD42F00D50C49 /* RendererXPCProtocolHelpers.swift in Sources */,
 				6A03ECFC24DB8CBC009B6714 /* EditViewDebugWindowController.swift in Sources */,
 				6A5B5D9824C39BDA003BC002 /* ImageRenderView.swift in Sources */,
 				6A962C2B248F3ABC0088E1DB /* LibraryOptionsController.swift in Sources */,
 				6AD8CFE6248E0A79009AF452 /* EditViewController.swift in Sources */,
+				6A07AB0724E0C05500A0BBF0 /* EditSidebarHistogramViewController.swift in Sources */,
 				6A9D00F224A71D6A007566A5 /* InitialDefaults.swift in Sources */,
 				6ABD3689249572D2005F80EE /* LibraryViewMenuProvider.swift in Sources */,
 				6ABD368224956DA9005F80EE /* LibraryCollectionView.swift in Sources */,
@@ -2422,6 +2449,7 @@
 				6A03ED1024E08184009B6714 /* EditSidebarViewController.swift in Sources */,
 				6A03ED1324E0866A009B6714 /* InspectorItemViewController.swift in Sources */,
 				6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */,
+				6A07AB0524E0BF1E00A0BBF0 /* HistogramView.swift in Sources */,
 				6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */,
 				6A872A0224BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */,
 				6A03ED1624E087AB009B6714 /* InspectorItemTitleBar.swift in Sources */,

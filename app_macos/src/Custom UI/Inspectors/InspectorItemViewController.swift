@@ -14,6 +14,9 @@ import CocoaLumberjackSwift
  * be expanded/collapsed and dragged.
  */
 class InspectorItemViewController: NSViewController {
+    /// Whether content is visible or not
+    private(set) public var contentVisible: Bool = true
+    
     // MARK: - Initialization
     /// Content view controller
     private var content: NSViewController!
@@ -112,5 +115,36 @@ class InspectorItemViewController: NSViewController {
         
         // done!
         self.view = wrapper
+    }
+    
+    /**
+     * Toggles the visibility of the content view controller.
+     */
+    internal func toggleContent(_ sender: Any?) {
+        self.contentVisible.toggle()
+        
+        if self.contentVisible {
+            self.content.view.isHidden = false
+            
+            NSAnimationContext.runAnimationGroup({ ctx in
+                ctx.duration = 0.2
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                
+                self.contentHeightConstraint.animator().constant = 200
+                self.content.view.animator().alphaValue = 1
+            }, completionHandler: {
+                
+            })
+        } else {
+            NSAnimationContext.runAnimationGroup({ ctx in
+                ctx.duration = 0.2
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                
+                self.contentHeightConstraint.animator().constant = 0
+                self.content.view.animator().alphaValue = 0
+            }, completionHandler: {
+                self.content.view.isHidden = true
+            })
+        }
     }
 }

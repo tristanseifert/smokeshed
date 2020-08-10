@@ -60,6 +60,13 @@ internal class EditSidebarViewController: NSViewController {
         self.inspector.addItem(item)
     }
     
+    /**
+     * Removes all notification observers.
+     */
+    deinit {
+        self.noteObs.forEach(NotificationCenter.default.removeObserver)
+    }
+    
     // MARK: - Edit view sync
     /**
      * The edit view that this sidebar belongs to has updated its contents texture, because the render service has finished rendering

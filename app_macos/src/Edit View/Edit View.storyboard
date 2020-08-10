@@ -363,28 +363,26 @@
         <scene sceneID="aKA-wX-ZfO">
             <objects>
                 <viewController title="Edit Sidebar" storyboardIdentifier="sidebarVc" showSeguePresentationStyle="single" id="9oQ-a1-8IN" customClass="EditSidebarViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="rW9-MT-MxE">
+                    <view key="view" id="rW9-MT-MxE">
                         <rect key="frame" x="0.0" y="0.0" width="360" height="222"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="sidebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="X1c-J0-hmU">
-                                <rect key="frame" x="0.0" y="0.0" width="360" height="150"/>
+                                <rect key="frame" x="0.0" y="0.0" width="360" height="170"/>
                                 <subviews>
                                     <stackView distribution="fillProportionally" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QEF-GU-7Hc">
-                                        <rect key="frame" x="0.0" y="0.0" width="360" height="150"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="360" height="170"/>
                                         <subviews>
-                                            <box verticalHuggingPriority="1000" boxType="custom" cornerRadius="4" title="Histogram Blunt" translatesAutoresizingMaskIntoConstraints="NO" id="DJ3-Hc-qYI">
-                                                <rect key="frame" x="0.0" y="0.0" width="360" height="150"/>
-                                                <view key="contentView" id="IV5-qy-LmM">
-                                                    <rect key="frame" x="1" y="1" width="358" height="148"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                </view>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="150" id="quq-gE-scR"/>
-                                                </constraints>
-                                                <color key="fillColor" name="systemYellowColor" catalog="System" colorSpace="catalog"/>
-                                            </box>
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="mKt-4f-av5">
+                                                <rect key="frame" x="0.0" y="0.0" width="360" height="170"/>
+                                                <connections>
+                                                    <segue destination="vFo-5d-Zw2" kind="embed" id="Dl5-t4-rq1"/>
+                                                </connections>
+                                            </containerView>
                                         </subviews>
+                                        <constraints>
+                                            <constraint firstItem="mKt-4f-av5" firstAttribute="width" secondItem="QEF-GU-7Hc" secondAttribute="width" id="Scw-hl-D1B"/>
+                                        </constraints>
                                         <visibilityPriorities>
                                             <integer value="1000"/>
                                         </visibilityPriorities>
@@ -638,6 +636,38 @@
                 <customObject id="y9U-EX-frm" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="692" y="413"/>
+        </scene>
+        <!--Histogram-->
+        <scene sceneID="l6x-CZ-fiL">
+            <objects>
+                <viewController title="Histogram" showSeguePresentationStyle="single" id="vFo-5d-Zw2" userLabel="Histogram" customClass="EditSidebarHistogramViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Ioy-kC-21l">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="170"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="wdM-RX-a2E" customClass="HistogramView" customModule="SmokeShed" customModuleProvider="target">
+                                <rect key="frame" x="10" y="10" width="300" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="CLj-eL-7Oq"/>
+                                    <constraint firstAttribute="width" secondItem="wdM-RX-a2E" secondAttribute="height" multiplier="2:1" id="kVN-8F-UsM"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="250" id="zHG-md-m9x"/>
+                                </constraints>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="wdM-RX-a2E" firstAttribute="top" secondItem="Ioy-kC-21l" secondAttribute="top" constant="10" id="EpN-Mx-6yL"/>
+                            <constraint firstItem="wdM-RX-a2E" firstAttribute="leading" secondItem="Ioy-kC-21l" secondAttribute="leading" constant="10" id="Geg-Lv-lfx"/>
+                            <constraint firstAttribute="bottom" secondItem="wdM-RX-a2E" secondAttribute="bottom" constant="10" id="KhK-ws-qAe"/>
+                            <constraint firstAttribute="trailing" secondItem="wdM-RX-a2E" secondAttribute="trailing" constant="10" id="VjM-sK-7SI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="histoView" destination="wdM-RX-a2E" id="nlY-US-2f2"/>
+                    </connections>
+                </viewController>
+                <customObject id="9Tl-Gu-hWr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1146" y="-893.5"/>
         </scene>
     </scenes>
     <resources>
