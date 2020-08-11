@@ -8,7 +8,7 @@
 import Foundation
 import UniformTypeIdentifiers
 import Accelerate
-
+import simd
 import Paper
 import CocoaLumberjackSwift
 
@@ -33,6 +33,9 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
     private var reader: CR2Reader!
     /// Decoded raw image
     private var image: CR2Image?
+    
+    /// Sensor  -> Working color space matrix
+    private var sensorMatrix: simd_float3x3?
     
     // MARK: - Initialization
     /**
@@ -137,8 +140,21 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
     /**
      * Adds color space conversion to the start of all pipeline state objects created with this image.
      */
-    func insertProcessingElements(_ pipeline: RenderPipelineState) {
-        // TODO: implement
+    func insertProcessingElements(_ state: RenderPipelineState) throws {
+        // get the color conversion matrix for the image
+        if self.sensorMatrix == nil {
+            guard let modelName = self.image?.meta.cameraModel,
+                  let colorInfo = CameraColorInfo(),
+                  let matrix = try colorInfo.xyzMatrixForModel(modelName) else {
+                throw Errors.noConversionMatrixFor(self.image?.meta.cameraModel)
+            }
+            
+            self.sensorMatrix = matrix
+        }
+        
+        // convert from sensor RGB to working color space
+        let converter = try MatrixMultiply(state.device, matrix: self.sensorMatrix!)
+        state.add(converter, group: .readerImpl)
     }
     
     // MARK: - Type identification
@@ -158,5 +174,7 @@ internal class CR2ImageReaderImpl: ImageReaderImpl {
         case cr2DecodeFailed
         /// An error occurred in converting from the raw pixel format to the pipeline pixel format
         case bufferConvertFailed(_ error: vImage_Error)
+        /// There is no color space conversion matrix for the given camera model
+        case noConversionMatrixFor(_ model: String?)
     }
 }

@@ -72,7 +72,6 @@ int Debayer(debayer_algorithm_t algo, const uint16_t *inPlane,
     CopyAndApplyWB(inPlane, outPlane, width, height, vShift, wb, black);
     
     // invoke the appropriate algorithm
-    fprintf(stderr, "Using algorithm: %d\n", algo);
     switch(algo) {
         case kBayerAlgorithmBilinear:
             return InterpolateBilinear(inPlane, outPlane, width, height, vShift);

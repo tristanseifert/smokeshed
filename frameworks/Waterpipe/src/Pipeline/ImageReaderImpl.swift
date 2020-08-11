@@ -38,7 +38,7 @@ protocol ImageReaderImpl {
     /**
      * Allows the image reader to insert some format specific processing elements at the start of a pipeline state object.
      */
-    func insertProcessingElements(_ pipeline: RenderPipelineState)
+    func insertProcessingElements(_ pipeline: RenderPipelineState) throws
     
     /// If read from a file, URL to the file
     var url: URL? { get }

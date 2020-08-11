@@ -58,6 +58,8 @@
 		6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47B248B696A0044B433 /* Defaults.plist */; };
 		6A0EE480248B6D2A0044B433 /* LibraryPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */; };
 		6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */; };
+		6A128A3E24E2482900E934FB /* MatrixMultiply.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A128A3D24E2482900E934FB /* MatrixMultiply.swift */; };
+		6A128A4024E2506700E934FB /* MatrixMultiply.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6A128A3F24E2506700E934FB /* MatrixMultiply.metal */; };
 		6A12942024AB0DB9001D5D97 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A12941F24AB0DB9001D5D97 /* Prefetcher.swift */; };
 		6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116224A2C74300CD8D36 /* Main.storyboard */; };
 		6A1C116524A2D6B800CD8D36 /* MainWindowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */; };
@@ -488,6 +490,8 @@
 		6A0EE47B248B696A0044B433 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = app_macos/assets/Defaults.plist; sourceTree = "<group>"; };
 		6A0EE47E248B6D2A0044B433 /* LibraryPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryPickerController.swift; path = "app_macos/src/Library UI/LibraryPickerController.swift"; sourceTree = "<group>"; };
 		6A0EE47F248B6D2A0044B433 /* LibraryPickerController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = LibraryPickerController.xib; path = "app_macos/src/Library UI/LibraryPickerController.xib"; sourceTree = "<group>"; };
+		6A128A3D24E2482900E934FB /* MatrixMultiply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MatrixMultiply.swift; path = frameworks/Waterpipe/src/Pipeline/Elements/MatrixMultiply.swift; sourceTree = "<group>"; };
+		6A128A3F24E2506700E934FB /* MatrixMultiply.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; name = MatrixMultiply.metal; path = frameworks/Waterpipe/src/Pipeline/Elements/MatrixMultiply.metal; sourceTree = "<group>"; };
 		6A12941F24AB0DB9001D5D97 /* Prefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Prefetcher.swift; path = "app_macos/src/Thumb Handling/XPC Service/Prefetcher.swift"; sourceTree = "<group>"; };
 		6A1C116224A2C74300CD8D36 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Main.storyboard; path = "app_macos/src/Main Window/Main.storyboard"; sourceTree = "<group>"; };
 		6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowViewController.swift; path = "app_macos/src/Main Window/MainWindowViewController.swift"; sourceTree = "<group>"; };
@@ -935,6 +939,7 @@
 				6A0BA36A24CFF816006035BE /* RenderPipelineImage.swift */,
 				6A0BA36E24CFF9AC006035BE /* RenderPipelineState.swift */,
 				6A0BA36C24CFF91D006035BE /* Image Reading */,
+				6A128A3C24E247EE00E934FB /* Elements */,
 			);
 			name = "Render Pipeline";
 			sourceTree = "<group>";
@@ -1002,6 +1007,15 @@
 				6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */,
 			);
 			name = "Library UI";
+			sourceTree = "<group>";
+		};
+		6A128A3C24E247EE00E934FB /* Elements */ = {
+			isa = PBXGroup;
+			children = (
+				6A128A3D24E2482900E934FB /* MatrixMultiply.swift */,
+				6A128A3F24E2506700E934FB /* MatrixMultiply.metal */,
+			);
+			name = Elements;
 			sourceTree = "<group>";
 		};
 		6A2C5EF2248C8B5A009EA409 /* CoreData Store */ = {
@@ -2509,6 +2523,7 @@
 			files = (
 				6A0BA36424CF83F2006035BE /* TiledImage.swift in Sources */,
 				6A0BA36624CF8486006035BE /* TiledImageScaler.swift in Sources */,
+				6A128A3E24E2482900E934FB /* MatrixMultiply.swift in Sources */,
 				6A03ED0924DFCB81009B6714 /* HistogramCalculation.swift in Sources */,
 				6A0BA36B24CFF816006035BE /* RenderPipelineImage.swift in Sources */,
 				6A0BA36F24CFF9AC006035BE /* RenderPipelineState.swift in Sources */,
@@ -2516,6 +2531,7 @@
 				6A0BA37624D0EA32006035BE /* CR2ImageReaderImpl.swift in Sources */,
 				6A03ECFE24DBBF22009B6714 /* TextureFiller.swift in Sources */,
 				6A0BA37324D0E77F006035BE /* ImageReaderImpl.swift in Sources */,
+				6A128A4024E2506700E934FB /* MatrixMultiply.metal in Sources */,
 				6A03ED0724DFCAF8009B6714 /* HistogramCalculation.metal in Sources */,
 				6A8B2EE924C7AB5C009FB581 /* TextureMap.metal in Sources */,
 				6A6D10A324D79749008B0E93 /* TiledImageRenderer.swift in Sources */,

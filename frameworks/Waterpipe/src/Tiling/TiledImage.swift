@@ -27,6 +27,13 @@ public class TiledImage {
     private(set) public var tileSize: UInt = 0
     /// Original image size
     private(set) public var imageSize: CGSize = .zero
+    /// Pixel format of the underlying texture
+    public var pixelFormat: MTLPixelFormat {
+        if let texture = self.texture {
+            return texture.pixelFormat
+        }
+        return .invalid
+    }
 
     /// Number of tiles per row 
     public var tilesPerRow: UInt {
@@ -177,6 +184,17 @@ public class TiledImage {
     }
     
     // MARK: Helpers
+    /**
+     * Informs that the image has been read from.
+     *
+     * This is really just used in case we're backed by a temporary texture.
+     */
+    internal func didRead() {
+        if let temp = self.tempImage as? MPSTemporaryImage {
+            temp.readCount -= 1
+        }
+    }
+    
     /**
      * Returns the texture descripto to hold the data for an image with the given size and pixel format.
      */

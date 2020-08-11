@@ -6,8 +6,9 @@
 //
 
 import Foundation
-
 import Metal
+import MetalPerformanceShaders
+import CocoaLumberjackSwift
 
 /**
  * Main interface to the Metal-based image processing pipeline. Each instance of this class is bound to a particular Metal device,
@@ -66,6 +67,9 @@ public class RenderPipeline {
         self.states.add(state)
         progress.resignCurrent()
         
+        // add the default elements
+        try image.addElements(state)
+        
         // TODO: more stuff
         return state
     }
@@ -76,32 +80,41 @@ public class RenderPipeline {
      * - Note: Progress can be observed.
      */
     public func render(_ state: RenderPipelineState, _ image: TiledImage) throws {
-        let progress = Progress(totalUnitCount: 2)
+        let progress = Progress(totalUnitCount: 3)
         // validate device
         guard self.device.registryID == state.device.registryID else {
             throw Errors.invalidDevice
         }
-
-        // for now, just copy the texture to output
-        progress.becomeCurrent(withPendingUnitCount: 1)
+        // get a buffer to execute on
         guard let commandBuffer = self.commandQueue.makeCommandBuffer() else {
             throw Errors.makeCommandBufferFailed
         }
-        guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
-            throw Errors.makeCommandBufferFailed
+        
+        do {
+            // perform rendering
+            progress.becomeCurrent(withPendingUnitCount: 1)
+            let renderOutput = try state.render(buffer: commandBuffer)
+            progress.resignCurrent()
+            
+            // copy render output temp texture into the output image
+            progress.becomeCurrent(withPendingUnitCount: 1)
+            guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+                throw Errors.makeCommandBufferFailed
+            }
+            encoder.copy(from: renderOutput.texture!, to: image.texture)
+            renderOutput.didRead()
+            
+            encoder.endEncoding()
+            progress.resignCurrent()
+        } catch {
+            DDLogError("Failed to render \(state): \(error)")
+            throw error
         }
-        
-        encoder.copy(from: state.image.tiledImage!.texture!, to: image.texture)
-        
-        encoder.endEncoding()
-        progress.resignCurrent()
         
         // execute and wait
         progress.becomeCurrent(withPendingUnitCount: 1)
-        
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
-        
         progress.resignCurrent()
     }
     

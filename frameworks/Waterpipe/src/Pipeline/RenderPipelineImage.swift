@@ -109,6 +109,13 @@ public class RenderPipelineImage {
         self.isDecoded = true
     }
     
+    /**
+     * Adds the processing elements needed for the image display to the pipeline state.
+     */
+    internal func addElements(_ state: RenderPipelineState) throws {
+        try self.image.insertProcessingElements(state)
+    }
+    
     // MARK: - Errors
     public enum Errors: Error {
         /// Failed to read image at the given url
