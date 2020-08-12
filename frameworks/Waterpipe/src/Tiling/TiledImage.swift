@@ -51,6 +51,9 @@ public class TiledImage {
     private(set) internal var texture: MTLTexture! = nil
     /// If backed by a temporary image, this is the image.
     private(set) internal var tempImage: MPSImage? = nil
+    
+    /// Buffer containing information about each of the tiles
+    private(set) internal var tileInfoBuffer: MTLBuffer!
 
     // MARK: - Initialization
     /**
@@ -78,7 +81,13 @@ public class TiledImage {
             self.texture = texture
         }
 
+        // calculate tile info and allocate the info buffer
         self.tileInfo = Self.tileInfoForImage(imageSize, tileSize)
+        
+        guard let infoBuf = try? self.makeTileInfoBuffer() else {
+            return nil
+        }
+        self.tileInfoBuffer = infoBuf
     }
 
     /**
@@ -98,7 +107,13 @@ public class TiledImage {
         self.tempImage = image
         self.texture = image.texture
 
+        // calculate tile info and allocate the info buffer
         self.tileInfo = Self.tileInfoForImage(imageSize, tileSize)
+        
+        guard let infoBuf = try? self.makeTileInfoBuffer() else {
+            return nil
+        }
+        self.tileInfoBuffer = infoBuf
     }
     
     /**
@@ -114,7 +129,12 @@ public class TiledImage {
         self.tileSize = archive.tileSize
         self.imageSize = archive.imageSize
         
+        // decode tile info and allocate the GPU side buffer
         self.tileInfo = archive.tileInfo
+        guard let infoBuf = try? self.makeTileInfoBuffer() else {
+            return nil
+        }
+        self.tileInfoBuffer = infoBuf
     }
 
     /**
@@ -269,6 +289,29 @@ public class TiledImage {
     }
     
     /**
+     * Creates a buffer of vertex data for the given tiled image.
+     */
+    private func makeTileInfoBuffer() throws -> MTLBuffer {
+        var data: [TileBufferEntry] = []
+        
+        // add entries for each tile
+        for i in 0..<self.numTiles {
+            let visibleRegion = self.visibleRegionForTile(i)!
+            let visible = SIMD2<Float>(Float(visibleRegion.width), Float(visibleRegion.height))
+            
+            let origin = self.originForTile(i)!
+            let pos = SIMD2<Float>(Float(origin.x), Float(origin.y))
+            
+            data.append(TileBufferEntry(position: pos, visibleRegion: visible, slice: i)
+)
+        }
+        
+        // create a buffer
+        let vertexBufSz = data.count * MemoryLayout<TileBufferEntry>.stride
+        return self.device.makeBuffer(bytes: data, length: vertexBufSz)!
+    }
+    
+    /**
      * Returns an XPC-friendly representation of a tiled image.
      */
     public func toArchive() -> TiledImageArchive? {
@@ -313,6 +356,37 @@ public class TiledImage {
     }
 
     // MARK: - Types
+    /**
+     * Entry in the tile "tile info buffer"; this contains an entry for each tile (slice) of the texture, defining some information about it.
+     */
+    public struct TileBufferEntry {
+        public init(position: SIMD2<Float>, visibleRegion: SIMD2<Float>, slice: Int) {
+            self.position = position
+            self.visible = visibleRegion
+        }
+        
+        /// Relative image position (x, y) of the tile
+        var position = SIMD2<Float>()
+        /// Visible region of this slice
+        var visible = SIMD2<Float>()
+        
+        internal static func makeDescriptor() -> MTLVertexDescriptor {
+            let vertexDesc = MTLVertexDescriptor()
+            
+            vertexDesc.attributes[0].format = .float2
+            vertexDesc.attributes[0].bufferIndex = 0
+            vertexDesc.attributes[0].offset = 0
+            
+            vertexDesc.attributes[1].format = .float2
+            vertexDesc.attributes[1].bufferIndex = 0
+            vertexDesc.attributes[1].offset = MemoryLayout<SIMD2<Float>>.stride
+            
+            vertexDesc.layouts[0].stride = MemoryLayout<TileBufferEntry>.stride
+            
+            return vertexDesc
+        }
+    }
+    
     /**
      * Per tile metadata
      */

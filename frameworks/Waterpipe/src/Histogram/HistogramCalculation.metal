@@ -21,6 +21,8 @@ typedef struct {
  * Information on each tile sampled (index by Z coord)
  */
 typedef struct {
+    // Position (in image pixel coordinates)
+    float2 position;
     // Visible region of the tile (ignore pixels outside it)
     float2 regionOfInterest;
 } TileInfo;

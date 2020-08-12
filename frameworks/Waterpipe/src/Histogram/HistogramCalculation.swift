@@ -77,19 +77,6 @@ public class HistogramCalculator {
             throw Errors.failedResourceAlloc
         }
         
-        // create per-tile info buffer
-        var tileInfo: [TileInfo] = []
-        
-        for i in 0..<image.numTiles {
-            let region = image.visibleRegionForTile(i)
-            tileInfo.append(TileInfo(region!))
-        }
-        
-        let infoBufSz = tileInfo.count * MemoryLayout<TileInfo>.stride
-        guard let infoBuf = self.device.makeBuffer(bytes: tileInfo, length: infoBufSz) else {
-            throw Errors.failedResourceAlloc
-        }
-        
         // allocate the output buffers
         var output = HistogramData(buckets: buckets)
         
@@ -117,7 +104,7 @@ public class HistogramCalculator {
         encoder.setTexture(image.texture, index: 0)
         
         encoder.setBuffer(uniformBuf, offset: 0, index: 0)
-        encoder.setBuffer(infoBuf, offset: 0, index: 1)
+        encoder.setBuffer(image.tileInfoBuffer!, offset: 0, index: 1)
         
         for i in 0..<4 {
             encoder.setBuffer(outBuffers[i], offset: 0, index: (i + 2))
@@ -218,21 +205,6 @@ public class HistogramCalculator {
     private struct Uniform {
         /// Number of buckets in the histogram
         var buckets = UInt()
-    }
-    
-    /**
-     * Per-tile information for the compute kernel
-     */
-    private struct TileInfo {
-        /**
-         * Create a new tile info with the given size.
-         */
-        init(_ size: CGSize) {
-            self.visible = SIMD2<Float>(Float(size.width), Float(size.height));
-        }
-        
-        /// Visible region of the tile
-        var visible = SIMD2<Float>()
     }
     
     // MARK: - Errors
