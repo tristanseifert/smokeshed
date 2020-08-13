@@ -30,15 +30,17 @@ class EditSidebarHistogramViewController: NSViewController {
      * Adds an observer for the "image view rendered" notification, such that we can update the histogram as needed.
      */
     override func viewDidLoad() {
-        let c = NotificationCenter.default
         super.viewDidLoad()
-        
-        // observe rendering on the content view
-        if let parent = self.parent as? EditSidebarViewController {
-            self.noteObs.append(c.addObserver(forName: .renderViewUpdatedImage,
-                                              object: parent.editView.renderView, queue: nil,
-                                              using: self.imageDidRender(_:)))
-        }
+    }
+    
+    /**
+     * Associates the histogram controller with the given edit sidebar.
+     */
+    internal func associate(sidebar: EditSidebarViewController) {
+        let c = NotificationCenter.default
+        self.noteObs.append(c.addObserver(forName: .renderViewUpdatedImage,
+                                          object: sidebar.editView.renderView, queue: nil,
+                                          using: self.imageDidRender(_:)))
     }
     
     /**

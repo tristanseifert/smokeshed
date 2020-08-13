@@ -20,6 +20,14 @@ class InspectorItemViewController: NSViewController {
     // MARK: - Initialization
     /// Content view controller
     private var content: NSViewController!
+    
+    /// Height of the content view, prior to collapsing
+    private var restoreContentHeight: CGFloat = 0
+    
+    /// Image containing snapshot of the sidebar view as it's collapsing
+    private var collapseSnapshot: NSImage? = nil
+    /// Image view in which the collapse snapshot is shown
+    private var collapseSnapshotView: NSImageView! = nil
     /// Constraint for the height of the content
     private var contentHeightConstraint: NSLayoutConstraint!
     
@@ -113,6 +121,16 @@ class InspectorItemViewController: NSViewController {
         contentBottom.priority = .required
         contentBottom.isActive = true
         
+        // create the image view that covers everything (for the snapshot)
+        self.collapseSnapshotView = NSImageView()
+        self.collapseSnapshotView.imageAlignment = .alignTopLeft
+        self.collapseSnapshotView.imageScaling = .scaleNone
+        self.collapseSnapshotView.isEditable = false
+        self.collapseSnapshotView.imageFrameStyle = .none
+        self.collapseSnapshotView.isHidden = true
+        
+        wrapper.addSubview(self.collapseSnapshotView)
+        
         // done!
         self.view = wrapper
     }
@@ -124,27 +142,63 @@ class InspectorItemViewController: NSViewController {
         self.contentVisible.toggle()
         
         if self.contentVisible {
-            self.content.view.isHidden = false
+            NSAnimationContext.runAnimationGroup({ ctx in
+                ctx.duration = 0.2
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                
+                self.collapseSnapshotView.animator().bounds.size.height = self.restoreContentHeight
+                self.contentHeightConstraint.animator().constant = self.restoreContentHeight
+                
+                self.collapseSnapshotView?.animator().alphaValue = 1
+            }, completionHandler: {
+                self.collapseSnapshotView?.isHidden = true
+                self.content.view.isHidden = false
+                
+                self.collapseSnapshot = nil
+            })
+        } else {
+            // create the snapshot image and prepare the image view
+            self.makeContentSnapshot()
+            self.collapseSnapshotView?.image = self.collapseSnapshot
+            
+            self.collapseSnapshotView?.isHidden = false
+            self.content.view.isHidden = true
+            
+            self.restoreContentHeight = self.content.view.frame.height
+            
+            self.collapseSnapshotView.frame = self.content.view.frame
+            self.collapseSnapshotView.bounds.size.height = self.restoreContentHeight
             
             NSAnimationContext.runAnimationGroup({ ctx in
                 ctx.duration = 0.2
                 ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                 
-                self.contentHeightConstraint.animator().constant = 200
-                self.content.view.animator().alphaValue = 1
-            }, completionHandler: {
-                
-            })
-        } else {
-            NSAnimationContext.runAnimationGroup({ ctx in
-                ctx.duration = 0.2
-                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                
+                self.collapseSnapshotView.animator().bounds.size.height = 0
                 self.contentHeightConstraint.animator().constant = 0
-                self.content.view.animator().alphaValue = 0
+                
+                self.collapseSnapshotView.animator().alphaValue = 0
             }, completionHandler: {
-                self.content.view.isHidden = true
+                
             })
         }
+    }
+    
+    /**
+     * Takes a snapshot of the content view. This is used to have an image representation that's used during the collapse animation.
+     */
+    private func makeContentSnapshot() {
+        guard let rep = self.content.view.bitmapImageRepForCachingDisplay(in: self.content.view.visibleRect) else {
+            DDLogError("Failed to create snapshot for \(self.content.view) (\(self)")
+            self.collapseSnapshot = nil
+            return
+        }
+        
+        self.content.view.cacheDisplay(in: self.content.view.visibleRect, to: rep)
+        
+        // create the image
+        let image = NSImage(size: self.content.view.visibleRect.size)
+        image.addRepresentation(rep)
+        
+        self.collapseSnapshot = image
     }
 }

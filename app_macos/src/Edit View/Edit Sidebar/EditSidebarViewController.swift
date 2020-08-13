@@ -49,6 +49,14 @@ internal class EditSidebarViewController: NSViewController {
         width.priority = .defaultHigh
         width.isActive = true
         
+        // create item for histogram
+        let histoVc = self.storyboard!.instantiateController(withIdentifier: "inspector.histogram") as! EditSidebarHistogramViewController
+        histoVc.associate(sidebar: self)
+        
+        let histoItem = InspectorItemViewController(content: histoVc, title: "Histogram")
+        self.inspector.addItem(histoItem)
+        
+        
         // create a bullshit item
         guard let sb = self.storyboard,
               let vc = sb.instantiateController(withIdentifier: "bitch") as? NSViewController else {
