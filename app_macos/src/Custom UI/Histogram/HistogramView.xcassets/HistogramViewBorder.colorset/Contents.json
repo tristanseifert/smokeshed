@@ -2,11 +2,8 @@
   "colors" : [
     {
       "color" : {
-        "color-space" : "gray-gamma-22",
-        "components" : {
-          "alpha" : "0.825",
-          "white" : "0.150"
-        }
+        "platform" : "osx",
+        "reference" : "tertiaryLabelColor"
       },
       "idiom" : "mac"
     }

@@ -21,6 +21,10 @@ class EditSidebarHistogramViewController: NSViewController {
 
     /// Histogram view
     @IBOutlet private var histoView: HistogramView!
+    /// Box showing the "calculating histogram" loading indicator
+    @IBOutlet private var calculatingOverlay: NSBox!
+    /// Activity indicator for the histogram progress
+    @IBOutlet private var calculatingProgressIndicator: NSProgressIndicator!
     
     // MARK: - View lifecycle
     /// Notification observers to be removed on dealloc
@@ -31,6 +35,10 @@ class EditSidebarHistogramViewController: NSViewController {
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // hide the "calculating histogram" box
+        self.calculatingOverlay.isHidden = true
+        self.calculatingOverlay.alphaValue = 0
     }
     
     /**
@@ -39,7 +47,8 @@ class EditSidebarHistogramViewController: NSViewController {
     internal func associate(sidebar: EditSidebarViewController) {
         let c = NotificationCenter.default
         self.noteObs.append(c.addObserver(forName: .renderViewUpdatedImage,
-                                          object: sidebar.editView.renderView, queue: nil,
+                                          object: sidebar.editView.renderView,
+                                          queue: OperationQueue.main,
                                           using: self.imageDidRender(_:)))
     }
     
@@ -60,6 +69,18 @@ class EditSidebarHistogramViewController: NSViewController {
             return
         }
         
+        // show the calculation overlay
+        self.calculatingOverlay.isHidden = false
+        self.calculatingProgressIndicator.startAnimation(self)
+        
+        NSAnimationContext.runAnimationGroup({ ctx in
+            ctx.duration = 0.2
+            ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+          
+            self.calculatingOverlay.animator().alphaValue = 1
+        })
+        let animateOutAfter = DispatchTime.now() + .milliseconds(200)
+        
         // perform work on background queue
         let queue = DispatchQueue.global(qos: .userInteractive)
         queue.async {
@@ -68,6 +89,19 @@ class EditSidebarHistogramViewController: NSViewController {
             } catch {
                 DDLogError("Failed to update histogram: \(error)")
             }
+            
+            // hide the calculation overlay (TODO: could be optimized)
+            DispatchQueue.main.asyncAfter(deadline: animateOutAfter, execute: {
+                NSAnimationContext.runAnimationGroup({ ctx in
+                    ctx.duration = 0.2
+                    ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                  
+                    self.calculatingOverlay.animator().alphaValue = 0
+                }, completionHandler: {
+                    self.calculatingOverlay.isHidden = true
+                    self.calculatingProgressIndicator.stopAnimation(self)
+                })
+            })
         }
     }
     

@@ -637,21 +637,68 @@
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="250" id="zHG-md-m9x"/>
                                 </constraints>
                             </customView>
+                            <box boxType="custom" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="LRa-Yp-mMJ">
+                                <rect key="frame" x="10" y="10" width="300" height="32"/>
+                                <view key="contentView" id="Zyg-Pe-wzd">
+                                    <rect key="frame" x="1" y="1" width="298" height="30"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <visualEffectView wantsLayer="YES" blendingMode="withinWindow" material="HUDWindow" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="Myb-Mr-nv5">
+                                            <rect key="frame" x="0.0" y="0.0" width="298" height="30"/>
+                                            <subviews>
+                                                <progressIndicator wantsLayer="YES" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="OpL-dp-xx8">
+                                                    <rect key="frame" x="10" y="7" width="16" height="16"/>
+                                                </progressIndicator>
+                                                <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lUX-J4-zcO">
+                                                    <rect key="frame" x="30" y="7" width="147" height="16"/>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Calculating histogram…" id="oty-Fm-cV2">
+                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="OpL-dp-xx8" firstAttribute="centerY" secondItem="lUX-J4-zcO" secondAttribute="centerY" id="0t2-eC-9xK"/>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="lUX-J4-zcO" secondAttribute="trailing" constant="20" symbolic="YES" id="Ku0-b7-Adh"/>
+                                                <constraint firstItem="lUX-J4-zcO" firstAttribute="centerY" secondItem="Myb-Mr-nv5" secondAttribute="centerY" id="Nwt-Pq-ch4"/>
+                                                <constraint firstItem="lUX-J4-zcO" firstAttribute="leading" secondItem="OpL-dp-xx8" secondAttribute="trailing" constant="6" id="cHM-XL-YBw"/>
+                                                <constraint firstItem="OpL-dp-xx8" firstAttribute="leading" secondItem="Myb-Mr-nv5" secondAttribute="leading" constant="10" id="hdG-fP-11c"/>
+                                            </constraints>
+                                        </visualEffectView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="Myb-Mr-nv5" firstAttribute="leading" secondItem="Zyg-Pe-wzd" secondAttribute="leading" id="8JG-GI-cnS"/>
+                                        <constraint firstAttribute="trailing" secondItem="Myb-Mr-nv5" secondAttribute="trailing" id="AoQ-pj-fwz"/>
+                                        <constraint firstItem="Myb-Mr-nv5" firstAttribute="top" secondItem="Zyg-Pe-wzd" secondAttribute="top" id="OnU-Db-4mM"/>
+                                        <constraint firstAttribute="bottom" secondItem="Myb-Mr-nv5" secondAttribute="bottom" id="T7J-GS-Wof"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="bHn-iN-Gkg"/>
+                                </constraints>
+                                <color key="borderColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            </box>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="LRa-Yp-mMJ" secondAttribute="trailing" constant="10" id="CaV-bX-VTn"/>
                             <constraint firstItem="wdM-RX-a2E" firstAttribute="top" secondItem="Ioy-kC-21l" secondAttribute="top" constant="10" id="EpN-Mx-6yL"/>
                             <constraint firstItem="wdM-RX-a2E" firstAttribute="leading" secondItem="Ioy-kC-21l" secondAttribute="leading" constant="10" id="Geg-Lv-lfx"/>
+                            <constraint firstAttribute="bottom" secondItem="LRa-Yp-mMJ" secondAttribute="bottom" constant="10" id="Hlg-xD-2dk"/>
                             <constraint firstAttribute="bottom" secondItem="wdM-RX-a2E" secondAttribute="bottom" constant="10" id="KhK-ws-qAe"/>
+                            <constraint firstItem="LRa-Yp-mMJ" firstAttribute="leading" secondItem="Ioy-kC-21l" secondAttribute="leading" constant="10" id="No8-QZ-G4g"/>
                             <constraint firstAttribute="trailing" secondItem="wdM-RX-a2E" secondAttribute="trailing" constant="10" id="VjM-sK-7SI"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="calculatingOverlay" destination="LRa-Yp-mMJ" id="Ud7-UW-N8n"/>
+                        <outlet property="calculatingProgressIndicator" destination="OpL-dp-xx8" id="1kb-Ea-1kL"/>
                         <outlet property="histoView" destination="wdM-RX-a2E" id="nlY-US-2f2"/>
                     </connections>
                 </viewController>
                 <customObject id="9Tl-Gu-hWr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1146" y="-893.5"/>
+            <point key="canvasLocation" x="1146" y="-894"/>
         </scene>
     </scenes>
     <resources>
