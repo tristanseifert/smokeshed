@@ -1,0 +1,3 @@
+[submodule "Dependencies/LibRaw"]
+	path = Dependencies/LibRaw
+	url = https://github.com/LibRaw/LibRaw.git

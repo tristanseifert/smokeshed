@@ -405,11 +405,11 @@
             <objects>
                 <viewController storyboardIdentifier="bitch" id="W6o-fi-BpI" sceneMemberID="viewController">
                     <view key="view" id="j2w-JX-UWJ">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="101"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u6F-Xp-Wel">
-                                <rect key="frame" x="18" y="50" width="284" height="31"/>
+                                <rect key="frame" x="18" y="50" width="284" height="30"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="bitchass label" id="mdz-xf-mO9">
                                     <font key="font" textStyle="largeTitle" name=".SFNS-Regular"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

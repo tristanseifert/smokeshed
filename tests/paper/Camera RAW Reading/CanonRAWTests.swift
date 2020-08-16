@@ -87,6 +87,19 @@ class CanonRAWTests: XCTestCase {
             }
         }
     }
+    
+    /**
+     * Tests reading `birb.cr2` using the LibRaw reader.
+     */
+    func testCr2BirbLibRaw() throws {
+        let url = Bundle(for: type(of: self)).url(forResource: "birb",
+                                                  withExtension: "cr2")!
+        
+        let reader = try LibRawReader(fromUrl: url, decodeRawData: true, decodeThumbs: true)
+        try reader.decode()
+        
+        DDLogInfo("Reader: \(reader)")
+    }
 
     // MARK: - Test Artifacts
     /**
