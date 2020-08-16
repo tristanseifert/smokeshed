@@ -20,6 +20,9 @@ extern NSErrorDomain const PAPLibRawErrorDomain;
 @property (nonatomic) NSArray<NSImage *> *thumbs;
 #endif
 
+/// Size of the decoded image
+@property (nonatomic) CGSize size;
+
 /// Should black level subtraction be performed when decoding?
 @property (nonatomic) BOOL subtractBlackLevel;
 /// Whether the maximum value of the image is scaled
@@ -32,7 +35,7 @@ extern NSErrorDomain const PAPLibRawErrorDomain;
 - (BOOL) unpackThumbsWithError:(NSError * _Nullable __autoreleasing *) error;
 
 - (BOOL) unpackRawDataWithError:(NSError * _Nullable __autoreleasing *) error;
-- (NSData * _Nullable) debayerRawData:(NSError * _Nullable __autoreleasing *) error;
+- (NSMutableData * _Nullable) debayerRawData:(NSError * _Nullable __autoreleasing *) error;
 
 @end
 

@@ -62,7 +62,8 @@ internal class ImageReader {
      */
     private static let readers: [ImageReaderImpl.Type] = [
         // camera raw formats
-        CR2ImageReaderImpl.self
+        LibRawImageReaderImpl.self,
+//        CR2ImageReaderImpl.self
     ]
     
     // MARK: - Types

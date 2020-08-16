@@ -29,6 +29,11 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
 /// Output image buffer
 @property (nonatomic) NSMutableData *imageBuffer;
 
+/// Histogram used for color space conversion
+@property (nonatomic) int *histogram;
+/// Gamma table used in color space conversion
+@property (nonatomic) uint16_t *gamma;
+
 - (void) updateOutThumbs;
 
 - (BOOL) foundationErrorFrom:(int) error to:(NSError  * _Nullable  __autoreleasing *) error;
@@ -78,6 +83,13 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
         if(image) {
             CGImageRelease(image);
         }
+    }
+    
+    // color conversion
+    if(self.gamma) {
+        free(self.gamma);
+    } if(self.histogram) {
+        free(self.histogram);
     }
     
     // ensure we don't leak the libraw instance
@@ -157,19 +169,24 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
         return NO;
     }
     
+    // populate image info
+    self.size = CGSizeMake(self.raw->imgdata.sizes.width, self.raw->imgdata.sizes.height);
+    
     return YES;
 }
 
 /**
  * Debayers raw data.
  */
-- (NSData * _Nullable) debayerRawData:(NSError * _Nullable __autoreleasing *) error {
+- (NSMutableData * _Nullable) debayerRawData:(NSError * _Nullable __autoreleasing *) error {
     DDAssert(self.raw != nil, @"LibRaw not initialized");
     
-    // allocate output buffer
+    // allocate output buffer (or bail if already done)
     if(self.imageBuffer == nil) {
         NSUInteger length = (self.raw->imgdata.sizes.width * 4 * sizeof(uint16_t)) * self.raw->imgdata.sizes.height;
         self.imageBuffer = [NSMutableData dataWithLength:length];
+    } else {
+        return self.imageBuffer;
     }
     
     // copy bayer data
@@ -187,9 +204,11 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
     }
     
     // adjust black level
-    TSRawAdjustBlackLevel(&self.raw->imgdata, outBuf);
-    TSRawSubtractBlack(&self.raw->imgdata,outBuf);
-    
+    if(self.subtractBlackLevel) {
+        TSRawAdjustBlackLevel(&self.raw->imgdata, outBuf);
+        TSRawSubtractBlack(&self.raw->imgdata,outBuf);
+    }
+        
     // white balance (color scaling) and pre-interpolation
     TSRawPreInterpolationApplyWB(&self.raw->imgdata, outBuf);
     TSRawPreInterpolation(&self.raw->imgdata, outBuf);
@@ -199,13 +218,18 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
     ahd_interpolate_mod(&self.raw->imgdata, outBuf);
 //        lmmse_interpolate(&self.raw->imgdata, outBuf);
     
-    // debug
-    for(int i = 0; i < 512; i++) {
-        uint16_t *data = (uint16_t *) self.imageBuffer.bytes;
-        fprintf(stderr, "i=%d R=%d G=%d B=%d G2=%d\n", i,
-                data[(i * 4) + 0], data[(i * 4) + 1], data[(i * 4) + 2], data[(i * 4) + 3]);
-        
+    // convert color espacen
+    if(!self.histogram) {
+        static const size_t kHistogramSz = sizeof(int) * 4 * 0x2000;
+        self.histogram = (int *) malloc(kHistogramSz);
+        memset(self.histogram, 0, kHistogramSz);
+    } if(!self.gamma) {
+        static const size_t kGammaSz = sizeof(uint16_t) * 0x10000;
+        self.gamma = (uint16_t *) malloc(kGammaSz);
+        memset(self.gamma, 0, kGammaSz);
     }
+    
+    TSRawConvertToRGB(&self.raw->imgdata, outBuf, outBuf, self.histogram, self.gamma);
 
     
     return self.imageBuffer;

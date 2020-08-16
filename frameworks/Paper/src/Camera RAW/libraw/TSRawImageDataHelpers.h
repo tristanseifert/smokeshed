@@ -89,7 +89,7 @@ void TSRawPostInterpolationMedianFilter(libraw_data_t *libRaw, uint16_t (*image)
  * times four for four possible colours.
  * @param gammaCurve Gamma curve buffer
  */
-void TSRawConvertToRGB(libraw_data_t *libRaw, uint16_t (*image)[4], uint16_t (*outBuf)[3], int *histogram, uint16_t *gammaCurve);
+void TSRawConvertToRGB(libraw_data_t *libRaw, uint16_t (*image)[4], uint16_t (*outBuf)[4], int *histogram, uint16_t *gammaCurve);
 
 /**
  * Uses bilinear interpolation to interpolate the value of a single component at

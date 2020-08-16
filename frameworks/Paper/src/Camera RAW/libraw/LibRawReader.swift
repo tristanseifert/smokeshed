@@ -20,13 +20,18 @@ public class LibRawReader {
     private var reader: PAPLibRawReader!
     
     /// Debayered image data
-    private var debayered: Data? = nil
+    private(set) public var debayered: NSMutableData? = nil
     
     // MARK: - Initialization
     /// Whether the thumb data should be decoded
     private var decodeThumbs = false
     /// Whether raw image data should be decoded
     private var decodeRaw = false
+    
+    /// Size of the original image
+    public var size: CGSize {
+        return self.reader.size
+    }
     
     /**
      * Creates a raw file reader by reading from the given URL.

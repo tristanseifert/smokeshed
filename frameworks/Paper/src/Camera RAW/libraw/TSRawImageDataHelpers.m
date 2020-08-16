@@ -425,7 +425,7 @@ void TSRawPostInterpolationMedianFilter(libraw_data_t *libRaw, uint16_t (*image)
  * times four for four possible colours.
  * @param gammaCurve Gamma curve buffer
  */
-void TSRawConvertToRGB(libraw_data_t *libRaw, uint16_t (*image)[4], uint16_t (*outBuf)[3], int *histogram, uint16_t *gammaCurve) {
+void TSRawConvertToRGB(libraw_data_t *libRaw, uint16_t (*image)[4], uint16_t (*outBuf)[4], int *histogram, uint16_t *gammaCurve) {
 	size_t i, j, k;
 	size_t row, col, c;
 	uint16_t *img;
@@ -552,7 +552,7 @@ void TSRawConvertToRGB(libraw_data_t *libRaw, uint16_t (*image)[4], uint16_t (*o
 	outPtr = outBuf[0];
 	
 	for(row = 0; row < height; row++) {
-		for(col = 0; col < width; col++, img += 4, outPtr += 3) {
+		for(col = 0; col < width; col++, img += 4, outPtr += 4) {
 			for(c = 0; c < 3; c++) {
 				// apply curve
 				outPtr[c] = libRaw->color.curve[gammaCurve[img[c]]];
