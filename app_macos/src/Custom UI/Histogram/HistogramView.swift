@@ -191,15 +191,16 @@ class HistogramView: NSView, CALayerDelegate {
      */
     private func makeZeroPath() -> CGPath {
         let curveSz = self.curveFrame.size
+        let maxY = curveSz.height + Self.bottomCurveShift
         
         var points: [NSPoint] = [
-            NSPoint(x: 0, y: curveSz.height)
+            NSPoint(x: 0, y: maxY)
         ]
         for i in 0..<Self.histogramBuckets {
             let x = CGFloat(i) * (curveSz.width / CGFloat(Self.histogramBuckets - 1))
-            points.append(NSPoint(x: x, y: curveSz.height))
+            points.append(NSPoint(x: x, y: maxY))
         }
-        points.append(NSPoint(x: curveSz.width, y: curveSz.height))
+        points.append(NSPoint(x: curveSz.width, y: maxY))
 
         let curve = NSBezierPath()
         curve.interpolateHermite(points)
@@ -211,22 +212,24 @@ class HistogramView: NSView, CALayerDelegate {
      */
     private func pathForComponent(_ component: Component) -> NSBezierPath {
         let curveSz = self.curveFrame.size
+        let maxY = curveSz.height + Self.bottomCurveShift
+        
         let data = self.relativeData![component]!
         
         // interpolate the histogram points
         var points: [NSPoint] = [
-            NSPoint(x: 0, y: curveSz.height)
+            NSPoint(x: 0, y: maxY)
         ]
         
         for i in 0..<data.count {
             let x = CGFloat(i) * (curveSz.width / CGFloat(Self.histogramBuckets - 1))
             // +1 on height so the bottom line is hidden
-            let y = (curveSz.height + 1) - ((curveSz.height - Self.topCurvePadding) * CGFloat(data[i]))
+            let y = maxY - ((curveSz.height - Self.topCurvePadding) * CGFloat(data[i]))
 
             points.append(NSPoint(x: x, y: y))
         }
 
-        points.append(NSPoint(x: curveSz.width, y: curveSz.height))
+        points.append(NSPoint(x: curveSz.width, y: maxY))
 
         let curve = NSBezierPath()
         curve.interpolateHermite(points)
@@ -359,8 +362,10 @@ class HistogramView: NSView, CALayerDelegate {
     }
     
     // MARK: - Constants
+    /// Offset from the bottom at which the histogram's floor is at
+    static let bottomCurveShift = CGFloat(2)
     /// Space between the top of the histogram view and the peak of the histogram
-    static let topCurvePadding = CGFloat(2)
+    static let topCurvePadding = CGFloat(1)
     /// Duration of the interpolation animation between histogram curves
     static let pathAnimationDuration = CFTimeInterval(0.33)
     /// The number of histogram buckets the view expects to display.
