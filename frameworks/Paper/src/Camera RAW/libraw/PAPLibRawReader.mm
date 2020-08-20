@@ -116,8 +116,6 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
     }
     [self updateOutThumbs];
     
-    DDLogVerbose(@"Thumbs: %@", self.thumbs);
-    
     // done
     return YES;
 }

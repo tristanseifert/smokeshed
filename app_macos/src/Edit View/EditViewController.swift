@@ -250,10 +250,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     }
     
     // MARK: - Editing sidebar
-    /// Edit sidebar view controller
-    private var editVc: EditSidebarViewController! = nil
-    /// Split view item for the edit view controller
-    private var editSplitItem: NSSplitViewItem! = nil
+    /// Edit tools window controller
+    private var editWc: NSWindowController! = nil
     
     /**
      * Shows the edit-specific split controls on the right side of the split view.
@@ -261,26 +259,19 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * This should be called immediately before the view is to appear.
      */
     private func showEditSidebar() {
-        // instantiate the view controller if needed
-        if self.editVc == nil {
+        // instantiate the window controller if needed
+        if self.editWc == nil {
             guard let sb = self.storyboard,
-                  let vc = sb.instantiateController(withIdentifier: "sidebarVc") as? EditSidebarViewController else {
-                DDLogError("Failed to instantiate edit sidebar controller")
-                return
+                  let wc = sb.instantiateController(withIdentifier: "editToolsWindow") as? EditSidebarWindowController else {
+                fatalError("Failed to instantiate edit window controller")
             }
-            vc.editView = self
-            self.editVc = vc
-        }
-        
-        // create split item if needed
-        if self.editSplitItem == nil {
-            self.editSplitItem = NSSplitViewItem(viewController: self.editVc)
+            
+            wc.editView = self
+            self.editWc = wc
         }
         
         // show that bitch
-        if let split = self.enclosingSplitViewController {
-            split.splitViewItems.append(self.editSplitItem)
-        }
+        self.editWc.showWindow(self)
     }
     
     /**
@@ -289,9 +280,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * This should be called immediately before the view is to disappear.
      */
     private func hideEditSidebar() {
-        if let split = self.enclosingSplitViewController,
-           let itemIdx = split.splitViewItems.firstIndex(of: self.editSplitItem) {
-            split.splitViewItems.remove(at: itemIdx)
+        if let wc = self.editWc, let window = wc.window, window.isVisible {
+            window.orderOut(self)
         }
     }
     

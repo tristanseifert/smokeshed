@@ -19,7 +19,7 @@ class InspectorItemViewController: NSViewController {
     
     // MARK: - Initialization
     /// Content view controller
-    private var content: NSViewController!
+    private(set) internal var content: NSViewController!
     
     /// Height of the content view, prior to collapsing
     private var restoreContentHeight: CGFloat = 0
@@ -83,13 +83,15 @@ class InspectorItemViewController: NSViewController {
         wrapper.addSubview(self.content.view)
         
         // then the content controller (constrain it to its desired height)
-//        let desiredHeight = self.content.preferredContentSize.height
-        let desiredHeight = CGFloat(200)
+        var preferredHeight = self.content.preferredContentSize.height
+        if preferredHeight == 0 {
+            preferredHeight = self.content.view.bounds.height
+        }
         
         let contentHeight = NSLayoutConstraint(item: self.content.view, attribute: .height,
                                                relatedBy: .equal, toItem: nil,
                                                attribute: .notAnAttribute, multiplier: 0,
-                                               constant: desiredHeight)
+                                               constant: preferredHeight)
         contentHeight.priority = .required
         contentHeight.isActive = true
         self.contentHeightConstraint = contentHeight

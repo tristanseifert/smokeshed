@@ -65,6 +65,8 @@
 		6A1C116524A2D6B800CD8D36 /* MainWindowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */; };
 		6A1C116724A2E37E00CD8D36 /* Library View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116624A2E37E00CD8D36 /* Library View.storyboard */; };
 		6A1C116924A3030600CD8D36 /* Map View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1C116824A3030600CD8D36 /* Map View.storyboard */; };
+		6A2ABF6024EE4941005BDAC3 /* EditSidebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2ABF5F24EE4941005BDAC3 /* EditSidebarWindowController.swift */; };
+		6A2ABF6224EE4B48005BDAC3 /* EditSidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2ABF6124EE4B48005BDAC3 /* EditSidebarItem.swift */; };
 		6A2C5EF4248C8CAD009EA409 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */; };
 		6A2C5EF6248C8ECA009EA409 /* LibraryStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */; };
 		6A2C5F52248CB611009EA409 /* AlbumContainer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2C5F44248CB5F7009EA409 /* AlbumContainer+CoreDataClass.swift */; };
@@ -227,6 +229,7 @@
 		6A9E24E324E8FBC80006A39A /* TSRawImageDataHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E24E124E8FBC80006A39A /* TSRawImageDataHelpers.m */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6A9E24E424E8FBC80006A39A /* TSRawImageDataHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E24E224E8FBC80006A39A /* TSRawImageDataHelpers.h */; };
 		6A9E24E624E99A720006A39A /* LibRawImageReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E24E524E99A720006A39A /* LibRawImageReaderImpl.swift */; };
+		6A9E24E924EB39350006A39A /* liblensfun.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9E24E824EB39350006A39A /* liblensfun.a */; };
 		6A9E827A249AE833004BE66A /* decompress.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E8278249AE833004BE66A /* decompress.h */; };
 		6A9E827B249AE833004BE66A /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A9E8279249AE833004BE66A /* decompress.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6A9E827D249AED35004BE66A /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9E827C249AED21004BE66A /* huffman.h */; };
@@ -509,6 +512,8 @@
 		6A1C116424A2D6B800CD8D36 /* MainWindowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowViewController.swift; path = "app_macos/src/Main Window/MainWindowViewController.swift"; sourceTree = "<group>"; };
 		6A1C116624A2E37E00CD8D36 /* Library View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Library View.storyboard"; path = "app_macos/src/Library View/Library View.storyboard"; sourceTree = "<group>"; };
 		6A1C116824A3030600CD8D36 /* Map View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Map View.storyboard"; path = "app_macos/src/Map View/Map View.storyboard"; sourceTree = "<group>"; };
+		6A2ABF5F24EE4941005BDAC3 /* EditSidebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditSidebarWindowController.swift; path = "app_macos/src/Edit View/Edit Sidebar/EditSidebarWindowController.swift"; sourceTree = "<group>"; };
+		6A2ABF6124EE4B48005BDAC3 /* EditSidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditSidebarItem.swift; path = "app_macos/src/Edit View/Edit Sidebar/EditSidebarItem.swift"; sourceTree = "<group>"; };
 		6A2C5EF3248C8CAD009EA409 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryStore.swift; path = "frameworks/Smokeshop/src/CoreData Store/LibraryStore.swift"; sourceTree = "<group>"; };
 		6A2C5EF5248C8ECA009EA409 /* LibraryStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryStoreError.swift; path = "frameworks/Smokeshop/src/CoreData Store/LibraryStoreError.swift"; sourceTree = "<group>"; };
 		6A2C5F44248CB5F7009EA409 /* AlbumContainer+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AlbumContainer+CoreDataClass.swift"; path = "frameworks/Smokeshop/src/CoreData Store/Model Subclasses/AlbumContainer+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -662,6 +667,7 @@
 		6A9E24E124E8FBC80006A39A /* TSRawImageDataHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSRawImageDataHelpers.m; path = "frameworks/Paper/src/Camera RAW/libraw/TSRawImageDataHelpers.m"; sourceTree = "<group>"; };
 		6A9E24E224E8FBC80006A39A /* TSRawImageDataHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSRawImageDataHelpers.h; path = "frameworks/Paper/src/Camera RAW/libraw/TSRawImageDataHelpers.h"; sourceTree = "<group>"; };
 		6A9E24E524E99A720006A39A /* LibRawImageReaderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibRawImageReaderImpl.swift; path = frameworks/Waterpipe/src/Pipeline/LibRawImageReaderImpl.swift; sourceTree = "<group>"; };
+		6A9E24E824EB39350006A39A /* liblensfun.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblensfun.a; path = Dependencies/lensfun/build/libs/lensfun/liblensfun.a; sourceTree = "<group>"; };
 		6A9E8278249AE833004BE66A /* decompress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = decompress.h; path = "frameworks/Paper/src/JPEG Decoding/decompress.h"; sourceTree = "<group>"; };
 		6A9E8279249AE833004BE66A /* decompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = decompress.c; path = "frameworks/Paper/src/JPEG Decoding/decompress.c"; sourceTree = "<group>"; };
 		6A9E827C249AED21004BE66A /* huffman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "frameworks/Paper/src/JPEG Decoding/huffman.h"; sourceTree = "<group>"; };
@@ -797,6 +803,7 @@
 				6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A8B2EEC24C7ABEA009FB581 /* MetalKit.framework in Frameworks */,
 				6A4CEF19248B357F00145E49 /* Smokeshop.framework in Frameworks */,
+				6A9E24E924EB39350006A39A /* liblensfun.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -912,6 +919,8 @@
 			children = (
 				6A03ED0F24E08184009B6714 /* EditSidebarViewController.swift */,
 				6A07AB0624E0C05500A0BBF0 /* EditSidebarHistogramViewController.swift */,
+				6A2ABF5F24EE4941005BDAC3 /* EditSidebarWindowController.swift */,
+				6A2ABF6124EE4B48005BDAC3 /* EditSidebarItem.swift */,
 			);
 			name = Sidebar;
 			sourceTree = "<group>";
@@ -1287,6 +1296,7 @@
 		6A4CEEFD248B339E00145E49 /* Image Processing (Waterpipe) */ = {
 			isa = PBXGroup;
 			children = (
+				6A9E24E724EB39180006A39A /* lensfun */,
 				6A03ED0524DFCA60009B6714 /* Histogram */,
 				6A0BA36724CFF55C006035BE /* Render Pipeline */,
 				6A0BA36224CF83D7006035BE /* Tiling */,
@@ -1737,6 +1747,14 @@
 				6A9E24D824E8FBC00006A39A /* lmmse_interpolate.m */,
 			);
 			name = Interpolation;
+			sourceTree = "<group>";
+		};
+		6A9E24E724EB39180006A39A /* lensfun */ = {
+			isa = PBXGroup;
+			children = (
+				6A9E24E824EB39350006A39A /* liblensfun.a */,
+			);
+			name = lensfun;
 			sourceTree = "<group>";
 		};
 		6A9E8277249AE7EF004BE66A /* C Decompressor */ = {
@@ -2519,10 +2537,12 @@
 				6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */,
 				6A03ECFA24DB6BDC009B6714 /* EditViewDebugViewController.swift in Sources */,
 				6A03ED1024E08184009B6714 /* EditSidebarViewController.swift in Sources */,
+				6A2ABF6224EE4B48005BDAC3 /* EditSidebarItem.swift in Sources */,
 				6A03ED1324E0866A009B6714 /* InspectorItemViewController.swift in Sources */,
 				6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */,
 				6A07AB0524E0BF1E00A0BBF0 /* HistogramView.swift in Sources */,
 				6ABD369E2495FE9C005F80EE /* MetadataOutlineDataSource.swift in Sources */,
+				6A2ABF6024EE4941005BDAC3 /* EditSidebarWindowController.swift in Sources */,
 				6A872A0224BBD0D700D50C49 /* RendererXPCProtocol.swift in Sources */,
 				6A03ED1624E087AB009B6714 /* InspectorItemTitleBar.swift in Sources */,
 				6A1C116524A2D6B800CD8D36 /* MainWindowViewController.swift in Sources */,
@@ -3552,12 +3572,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Dependencies/lensfun/include\"",
+					"\"$(SRCROOT)/Dependencies/lensfun/build\"",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/frameworks/Waterpipe/assets/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/lensfun/build/libs/lensfun",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3631,12 +3659,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Dependencies/lensfun/include\"",
+					"\"$(SRCROOT)/Dependencies/lensfun/build\"",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/frameworks/Waterpipe/assets/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/lensfun/build/libs/lensfun",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

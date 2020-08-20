@@ -13,7 +13,7 @@ import Cocoa
  */
 class InspectorContainerViewController: NSViewController {
     /// Inspector items currently in this container
-    @objc dynamic private var items: [InspectorItemViewController] = []
+    @objc dynamic private(set) internal var items: [InspectorItemViewController] = []
     
     // MARK: - View lifecycle
     /// Scroll view

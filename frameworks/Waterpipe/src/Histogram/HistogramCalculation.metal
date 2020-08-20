@@ -13,6 +13,10 @@ using namespace metal;
  * Uniforms passed into the compute kernel
  */
 typedef struct {
+    // Minimum pixel value
+    float min;
+    // Maximum pixel value
+    float max;
     // Number of buckets of histogram data
     uint buckets;
 } UniformIn;
@@ -38,9 +42,16 @@ kernel void HistogramRGBY(texture2d_array<float, access::read> texture [[ textur
                           volatile device atomic_uint *countB [[ buffer(4) ]],
                           volatile device atomic_uint *countY [[ buffer(5) ]],
                           uint3 id [[ thread_position_in_grid ]]) {
-    // read the RGB values and calculate luminance using HSP perceived brightness
+    // sample the array texture; scale by range
     auto texel = texture.read(id.xy, id.z);
+    
+    float range = uniforms.max - uniforms.min;
+    texel -= float4(uniforms.min, uniforms.min, uniforms.min, uniforms.min);
+    texel *= float4(1.0/range, 1.0/range, 1.0/range, 1.0/range);
+
+    // Calculate luminance using HSP perceived brightness
     float luma = sqrt((0.299 * pow(texel.r, 2)) + (0.587 * pow(texel.g, 2)) + (0.114 * pow(texel.b, 2)));
+
     
     // check if inside Desireable Region™
     auto info = tileInfo[id.z];

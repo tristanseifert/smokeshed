@@ -19,6 +19,8 @@ class HistogramView: NSView, CALayerDelegate {
     
     /// Notification observers to be removed on dealloc
     private var noteObs: [NSObjectProtocol] = []
+    /// KVOs for observing user defaults changes on layout keys
+    private var kvos: [NSKeyValueObservation] = []
     
     // MARK: - Initialization
     /// Container for the shape layers
@@ -86,6 +88,15 @@ class HistogramView: NSView, CALayerDelegate {
         self.layer?.addSublayer(self.curveContainer)
         
         self.layOutSublayers()
+        
+        // register the defaults observers and update
+        self.kvos.append(UserDefaults.standard.observe(\.histogramShowLuma, options: .initial) { [weak self] _, _ in
+            DispatchQueue.main.async {
+                let shown = UserDefaults.standard.histogramShowLuma
+                // TODO: pretty animation?
+                self?.yLayer.isHidden = !shown
+            }
+        })
     }
     
     /**
@@ -386,4 +397,17 @@ class HistogramView: NSView, CALayerDelegate {
         .b: NSColor(named: "HistogramCurveBlueStroke")!,
         .y: NSColor(named: "HistogramCurveLumaStroke")!,
     ]
+}
+
+/// Super fun extensions for histogram UI config
+fileprivate extension UserDefaults {
+    /// Do histogram views calculate a luminance channel?
+    @objc dynamic var histogramShowLuma: Bool {
+        get {
+            return self.bool(forKey: "histogramShowLuma")
+        }
+        set {
+            self.set(newValue, forKey: "histogramShowLuma")
+        }
+    }
 }

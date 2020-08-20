@@ -13,6 +13,8 @@
 	</dict>
 	<key>standard</key>
 	<dict>
+		<key>histogramShowLuma</key>
+		<true/>
 		<key>importCopyFiles</key>
 		<true/>
 		<key>gridCellSequenceNumber</key>

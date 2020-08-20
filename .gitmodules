@@ -1,3 +1,6 @@
 [submodule "Dependencies/LibRaw"]
 	path = Dependencies/LibRaw
 	url = https://github.com/LibRaw/LibRaw.git
+[submodule "Dependencies/lensfun"]
+	path = Dependencies/lensfun
+	url = https://github.com/lensfun/lensfun.git

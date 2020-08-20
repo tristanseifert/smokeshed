@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17140" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="878-Oo-XwP">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="878-Oo-XwP">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17140"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -39,6 +38,7 @@
                         <tabViewItem label="Importing" image="square.grid.3x1.folder.badge.plus" catalog="system" id="P36-UZ-29Y"/>
                         <tabViewItem label="Thumbnails" identifier="" image="rectangle.and.text.magnifyingglass" catalog="system" id="pnq-Dh-pvA"/>
                         <tabViewItem label="Rendering" image="doc.badge.gearshape" catalog="system" id="Nwy-C5-7Ta"/>
+                        <tabViewItem label="Editing" image="pencil" catalog="system" id="bas-9x-993"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="HoW-uU-1NE">
                         <rect key="frame" x="0.0" y="0.0" width="181" height="158"/>
@@ -54,6 +54,7 @@
                         <segue destination="l8y-l3-hGh" kind="relationship" relationship="tabItems" id="8AU-cr-Prm"/>
                         <segue destination="3zq-It-y78" kind="relationship" relationship="tabItems" id="XIB-md-kVp"/>
                         <segue destination="hN9-J0-XGS" kind="relationship" relationship="tabItems" id="bFO-8p-Rvy"/>
+                        <segue destination="uaC-lP-3yW" kind="relationship" relationship="tabItems" id="do3-B6-mHU"/>
                     </connections>
                 </tabViewController>
                 <customObject id="7yU-it-CRY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -455,7 +456,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <slider toolTip="Change the size of the in-memory cache holding undecoded thumbnail data as read from disk." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Va-Tk-gOo">
-                                <rect key="frame" x="220" y="272" width="289" height="24"/>
+                                <rect key="frame" x="220" y="273" width="289" height="24"/>
                                 <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="134217728" maxValue="1073741824" doubleValue="440401920" tickMarkPosition="above" numberOfTickMarks="15" sliderType="linear" id="dGT-kk-grj"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeChunkCache" id="kUC-Bk-Dfx">
@@ -624,7 +625,7 @@ DQ
                                 </view>
                             </box>
                             <button toolTip="When checked, the size of the thumbnail work queue is dynamically adjusted based on the system's load." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf4-nz-Tre">
-                                <rect key="frame" x="226" y="249.5" width="262" height="18.5"/>
+                                <rect key="frame" x="226" y="251.5" width="262" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Automatically manage work queue size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PIc-zS-nKt">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -643,7 +644,7 @@ DQ
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="217" width="19" height="28"/>
+                                <rect key="frame" x="363" y="220" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="EBQ-TV-p8A">
@@ -655,7 +656,7 @@ DQ
                                 </connections>
                             </stepper>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-UR-ynk">
-                                <rect key="frame" x="141" y="251" width="81" height="16"/>
+                                <rect key="frame" x="141" y="253" width="81" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Work queue:" id="Jgf-Zm-RKY">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -663,7 +664,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l4Z-39-HBz" userLabel="Thread Count">
-                                <rect key="frame" x="311" y="221" width="50" height="21"/>
+                                <rect key="frame" x="311" y="223" width="50" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="PWz-U1-I5J"/>
                                 </constraints>
@@ -685,7 +686,7 @@ DQ
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-sJ-nbr">
-                                <rect key="frame" x="247" y="224" width="58" height="16"/>
+                                <rect key="frame" x="247" y="226" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Threads:" id="fcb-Rg-D7h">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -693,7 +694,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="90L-k4-Pul">
-                                <rect key="frame" x="18" y="195" width="204" height="16"/>
+                                <rect key="frame" x="18" y="197" width="204" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="fi4-cs-Wt8"/>
                                 </constraints>
@@ -704,7 +705,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <pathControl verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zfV-0V-amW">
-                                <rect key="frame" x="228" y="191" width="352" height="22"/>
+                                <rect key="frame" x="228" y="193" width="352" height="22"/>
                                 <pathCell key="cell" selectable="YES" alignment="left" id="n6e-8u-uEi">
                                     <font key="font" metaFont="system"/>
                                     <url key="url" string="file://localhost/Applications/"/>
@@ -724,7 +725,7 @@ DQ
                                 </connections>
                             </pathControl>
                             <button toolTip="Move thumbnail data to a different location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ReY-Dp-MOk">
-                                <rect key="frame" x="222" y="160" width="128" height="27"/>
+                                <rect key="frame" x="222" y="162" width="128" height="27"/>
                                 <buttonCell key="cell" type="push" title="Change Directory…" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LG8-Gq-oVj">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -739,7 +740,7 @@ DQ
                                 </connections>
                             </button>
                             <button toolTip="Move thumbnail data back to its default location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mTa-eg-UPV">
-                                <rect key="frame" x="346" y="160" width="113" height="27"/>
+                                <rect key="frame" x="346" y="162" width="113" height="27"/>
                                 <buttonCell key="cell" type="push" title="Reset to Default" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RIP-YD-s9o">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -927,7 +928,7 @@ DQ
                 <window title="Thumb Move Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="38d-WL-rhi" userLabel="Progress Sheet">
                     <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                     <rect key="contentRect" x="-2135" y="318" width="375" height="128"/>
-                    <rect key="screenRect" x="-1440" y="-691" width="1440" height="2535"/>
+                    <rect key="screenRect" x="-2560" y="0.0" width="2560" height="1440"/>
                     <view key="contentView" id="E0c-GG-6dn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="128"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1233,10 +1234,62 @@ DQ
             </objects>
             <point key="canvasLocation" x="877" y="868"/>
         </scene>
+        <!--Editing-->
+        <scene sceneID="CcM-b9-H7s">
+            <objects>
+                <viewController title="Editing" id="uaC-lP-3yW" sceneMemberID="viewController">
+                    <view key="view" id="qYE-zs-QoC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YYL-td-W1a">
+                                <rect key="frame" x="18" y="264" width="204" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="jFL-aU-A60"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Histogram:" id="Tra-JO-jmj">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button toolTip="Histogram views can show a calculated luminance (Y) channel in addition to the color components." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oG4-X2-9dD">
+                                <rect key="frame" x="226" y="263" width="176" height="18"/>
+                                <buttonCell key="cell" type="check" title="Show luminance channel" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="I9G-D1-bis">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="blO-lu-IGf" name="value" keyPath="values.histogramShowLuma" id="9Wr-4A-N0d">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="YYL-td-W1a" firstAttribute="leading" secondItem="qYE-zs-QoC" secondAttribute="leading" constant="20" symbolic="YES" id="0Qp-UK-OcI"/>
+                            <constraint firstItem="oG4-X2-9dD" firstAttribute="top" secondItem="qYE-zs-QoC" secondAttribute="top" constant="20" symbolic="YES" id="1YS-pu-r4K"/>
+                            <constraint firstItem="oG4-X2-9dD" firstAttribute="leading" secondItem="YYL-td-W1a" secondAttribute="trailing" constant="8" symbolic="YES" id="HAV-s0-dLJ"/>
+                            <constraint firstItem="YYL-td-W1a" firstAttribute="firstBaseline" secondItem="oG4-X2-9dD" secondAttribute="firstBaseline" id="Y1D-Ed-5sK"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="mYS-kj-0oO" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController id="blO-lu-IGf"/>
+            </objects>
+            <point key="canvasLocation" x="877" y="1225"/>
+        </scene>
     </scenes>
     <resources>
         <image name="NSRefreshFreestandingTemplate" width="15" height="15"/>
         <image name="doc.badge.gearshape" catalog="system" width="15" height="17"/>
+        <image name="pencil" catalog="system" width="14" height="13"/>
         <image name="photo.on.rectangle.angled" catalog="system" width="21" height="17"/>
         <image name="rectangle.and.text.magnifyingglass" catalog="system" width="20" height="15"/>
         <image name="square.grid.3x1.folder.badge.plus" catalog="system" width="19" height="14"/>

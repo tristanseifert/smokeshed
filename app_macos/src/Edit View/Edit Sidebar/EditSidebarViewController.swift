@@ -14,7 +14,22 @@ import CocoaLumberjackSwift
  */
 internal class EditSidebarViewController: NSViewController {
     /// Edit view controller this sidebar belongs to
-    internal var editView: EditViewController! = nil
+    internal var editView: EditViewController! = nil {
+        didSet {
+            let c = NotificationCenter.default
+            
+            // remove old observations
+            self.noteObs.forEach(c.removeObserver)
+            self.noteObs.removeAll()
+            
+            // observe rendering on the content view
+            if let view = self.editView?.renderView {
+                self.noteObs.append(c.addObserver(forName: .renderViewUpdatedImage,
+                                                  object: view, queue: nil,
+                                                  using: self.imageDidRender(_:)))
+            }
+        }
+    }
 
     // MARK: - View Lifecycle
     /// Notification observers to be removed on dealloc
@@ -29,13 +44,6 @@ internal class EditSidebarViewController: NSViewController {
      * Initializes the inspectors.
      */
     override func viewDidLoad() {
-        let c = NotificationCenter.default
-        
-        // observe rendering on the content view
-        self.noteObs.append(c.addObserver(forName: .renderViewUpdatedImage,
-                                          object: self.editView.renderView, queue: nil,
-                                          using: self.imageDidRender(_:)))
-        
         // create an inspector controller
         self.inspector = InspectorContainerViewController()
         
@@ -51,7 +59,6 @@ internal class EditSidebarViewController: NSViewController {
         
         // create item for histogram
         let histoVc = self.storyboard!.instantiateController(withIdentifier: "inspector.histogram") as! EditSidebarHistogramViewController
-        histoVc.associate(sidebar: self)
         
         let histoItem = InspectorItemViewController(content: histoVc, title: "Histogram")
         self.inspector.addItem(histoItem)
@@ -82,5 +89,14 @@ internal class EditSidebarViewController: NSViewController {
      */
     private func imageDidRender(_ note: Notification) {
         DDLogVerbose("Render view rendered: \(note)")
+    
+        // call into all inspector items
+        self.inspector.items.forEach {
+            if let sidebarItem = $0.content as? EditSidebarItem {
+                DispatchQueue.main.async {
+                    sidebarItem.imageRendered(note)
+                }
+            }
+        }
     }
 }

@@ -59,9 +59,12 @@ public class HistogramCalculator {
      *
      * - Note: This method runs synchronously on the caller thread.
      */
-    public func calculateHistogram(_ image: TiledImage, buckets: UInt = 256) throws -> HistogramData {
+    public func calculateHistogram(_ image: TiledImage, buckets: UInt = 256, min: Float = 0.0,
+                                   max: Float = 1.0) throws -> HistogramData {
         precondition(image.device.registryID == self.device.registryID)
         precondition(buckets >= 1)
+        
+        precondition(min < max)
         
         // calculate the threadgroup sizes
         let w = self.state.threadExecutionWidth
@@ -72,6 +75,10 @@ public class HistogramCalculator {
         
         // create uniform and per-tile info buffer
         var uniform = Uniform(buckets: buckets)
+        
+        uniform.min = min
+        uniform.max = max
+        
         guard let uniformBuf = self.device.makeBuffer(bytes: &uniform,
                                                       length: MemoryLayout<Uniform>.stride) else {
             throw Errors.failedResourceAlloc
@@ -203,6 +210,11 @@ public class HistogramCalculator {
      * Uniform buffer for compute kernel
      */
     private struct Uniform {
+        /// Minimum pixel value (all below are placed to 0th bucket)
+        var min: Float = 0.0
+        /// Maximum pixel value (all above are clipped & placed in max bucket)
+        var max: Float = 1.0
+
         /// Number of buckets in the histogram
         var buckets = UInt()
     }

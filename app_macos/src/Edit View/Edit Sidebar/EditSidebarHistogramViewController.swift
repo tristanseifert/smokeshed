@@ -9,11 +9,12 @@ import Cocoa
 import Metal
 import CocoaLumberjackSwift
 import Waterpipe
+import Smokeshop
 
 /**
  * Handles displaying the histogram in the sidebar of the edit view
  */
-class EditSidebarHistogramViewController: NSViewController {
+class EditSidebarHistogramViewController: NSViewController, EditSidebarItem {
     /// Most recently used Metal device
     private var device: MTLDevice? = nil
     /// Histogram calculator
@@ -36,20 +37,12 @@ class EditSidebarHistogramViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // default size
+        self.preferredContentSize = NSSize(width: 320, height: 194)
+        
         // hide the "calculating histogram" box
         self.calculatingOverlay.isHidden = true
         self.calculatingOverlay.alphaValue = 0
-    }
-    
-    /**
-     * Associates the histogram controller with the given edit sidebar.
-     */
-    internal func associate(sidebar: EditSidebarViewController) {
-        let c = NotificationCenter.default
-        self.noteObs.append(c.addObserver(forName: .renderViewUpdatedImage,
-                                          object: sidebar.editView.renderView,
-                                          queue: OperationQueue.main,
-                                          using: self.imageDidRender(_:)))
     }
     
     /**
@@ -57,6 +50,23 @@ class EditSidebarHistogramViewController: NSViewController {
      */
     deinit {
         self.noteObs.forEach(NotificationCenter.default.removeObserver)
+    }
+    
+    // MARK: - Notifications
+    /**
+     * The actively selected image changed changed
+     */
+    func imageChanged(_ to: Image?) {
+        
+    }
+    
+    /**
+     * Image view has updated, so update the histogram.
+     */
+    func imageRendered(_ note: Notification?) {
+        if let note = note {
+            self.imageDidRender(note)
+        }
     }
     
     // MARK: - Edit view sync
