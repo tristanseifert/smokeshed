@@ -53,7 +53,9 @@ class InspectorItemViewController: NSViewController {
      */
     override func loadView() {
         let wrapper = NSView()
+        
         wrapper.translatesAutoresizingMaskIntoConstraints = false
+        wrapper.setContentHuggingPriority(.defaultLow, for: .horizontal)
         
         // add title bar
         let titleBar = InspectorItemTitleBar(item: self)
@@ -63,18 +65,21 @@ class InspectorItemViewController: NSViewController {
         let titleTop = NSLayoutConstraint(item: titleBar, attribute: .top,
                                           relatedBy: .equal, toItem: wrapper,
                                           attribute: .top, multiplier: 1, constant: 0)
+        titleTop.identifier = "InspectorTitleBarTop"
         titleTop.priority = .required
         titleTop.isActive = true
         
         let titleLeading = NSLayoutConstraint(item: titleBar, attribute: .leading,
                                               relatedBy: .equal, toItem: wrapper,
                                               attribute: .leading, multiplier: 1, constant: 0)
+        titleLeading.identifier = "InspectorTitleBarLeading"
         titleLeading.priority = .required
         titleLeading.isActive = true
         
         let titleTrailing = NSLayoutConstraint(item: titleBar, attribute: .trailing,
                                                relatedBy: .equal, toItem: wrapper,
                                                attribute: .trailing, multiplier: 1, constant: 0)
+        titleTrailing.identifier = "InspectorTitleBarTrailing"
         titleTrailing.priority = .required
         titleTrailing.isActive = true
         
@@ -88,10 +93,11 @@ class InspectorItemViewController: NSViewController {
             preferredHeight = self.content.view.bounds.height
         }
         
-        let contentHeight = NSLayoutConstraint(item: self.content.view, attribute: .height,
+        let contentHeight = NSLayoutConstraint(item: wrapper, attribute: .height,
                                                relatedBy: .equal, toItem: nil,
                                                attribute: .notAnAttribute, multiplier: 0,
-                                               constant: preferredHeight)
+                                               constant: preferredHeight + InspectorItemTitleBar.height)
+        contentHeight.identifier = "InspectorContentHeight"
         contentHeight.priority = .required
         contentHeight.isActive = true
         self.contentHeightConstraint = contentHeight
@@ -100,6 +106,7 @@ class InspectorItemViewController: NSViewController {
         let contentTop = NSLayoutConstraint(item: self.content.view, attribute: .top,
                                             relatedBy: .equal, toItem: titleBar, attribute: .bottom,
                                             multiplier: 1, constant: 0)
+        contentTop.identifier = "InspectorContentTop"
         contentTop.priority = .required
         contentTop.isActive = true
         
@@ -107,12 +114,14 @@ class InspectorItemViewController: NSViewController {
         let contentLeading = NSLayoutConstraint(item: self.content.view, attribute: .leading,
                                                 relatedBy: .equal, toItem: wrapper,
                                                 attribute: .leading, multiplier: 1, constant: 0)
+        contentLeading.identifier = "InspectorContentLeading"
         contentLeading.priority = .required
         contentLeading.isActive = true
         
         let contentTrailing = NSLayoutConstraint(item: self.content.view, attribute: .trailing,
                                                  relatedBy: .equal, toItem: wrapper,
                                                  attribute: .trailing, multiplier: 1, constant: 0)
+        contentTrailing.identifier = "InspectorContentTrailing"
         contentTrailing.priority = .required
         contentTrailing.isActive = true
         
@@ -120,6 +129,7 @@ class InspectorItemViewController: NSViewController {
         let contentBottom = NSLayoutConstraint(item: self.content.view, attribute: .bottom,
                                                relatedBy: .equal, toItem: wrapper,
                                                attribute: .bottom, multiplier: 1, constant: 0)
+        contentBottom.identifier = "InspectorContentBottom"
         contentBottom.priority = .required
         contentBottom.isActive = true
         
@@ -131,7 +141,7 @@ class InspectorItemViewController: NSViewController {
         self.collapseSnapshotView.imageFrameStyle = .none
         self.collapseSnapshotView.isHidden = true
         
-        wrapper.addSubview(self.collapseSnapshotView)
+        wrapper.addSubview(self.collapseSnapshotView, positioned: .below, relativeTo: titleBar)
         
         // done!
         self.view = wrapper
@@ -166,7 +176,7 @@ class InspectorItemViewController: NSViewController {
             self.collapseSnapshotView?.isHidden = false
             self.content.view.isHidden = true
             
-            self.restoreContentHeight = self.content.view.frame.height
+            self.restoreContentHeight = self.content.view.frame.height + InspectorItemTitleBar.height
             
             self.collapseSnapshotView.frame = self.content.view.frame
             self.collapseSnapshotView.bounds.size.height = self.restoreContentHeight
@@ -176,7 +186,7 @@ class InspectorItemViewController: NSViewController {
                 ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                 
                 self.collapseSnapshotView.animator().bounds.size.height = 0
-                self.contentHeightConstraint.animator().constant = 0
+                self.contentHeightConstraint.animator().constant = InspectorItemTitleBar.height
                 
                 self.collapseSnapshotView.animator().alphaValue = 0
             }, completionHandler: {

@@ -20,7 +20,7 @@ class InspectorItemTitleBar: NSView {
     }
     
     /// Height of the title bar
-    static let height: CGFloat = 24
+    internal static let height: CGFloat = 24
     
     // MARK: - Initialization
     /// Item controller to which the title bar belongs
@@ -38,6 +38,12 @@ class InspectorItemTitleBar: NSView {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.wantsLayer = true
         
+        self.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        self.setContentHuggingPriority(.required, for: .vertical)
+        
+        self.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        self.setContentCompressionResistancePriority(.required, for: .vertical)
+        
         // set up a tracking area to update the cursor
         self.cursorTracking = NSTrackingArea(rect: .zero,
                                              options: [.inVisibleRect, .activeInKeyWindow, .cursorUpdate],
@@ -48,6 +54,7 @@ class InspectorItemTitleBar: NSView {
         let c = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: nil,
                                    attribute: .notAnAttribute, multiplier: 0,
                                    constant: Self.height)
+        c.identifier = "TitleBarHeight"
         c.priority = .required
         self.addConstraint(c)
         
@@ -74,18 +81,21 @@ class InspectorItemTitleBar: NSView {
         let leading = NSLayoutConstraint(item: self.titleLabel!, attribute: .leading,
                                          relatedBy: .equal, toItem: self, attribute: .leading,
                                          multiplier: 1, constant: 5)
+        leading.identifier = "TitleBarLabelLeading"
         leading.priority = .required
         leading.isActive = true
         
         let trailing = NSLayoutConstraint(item: self.titleLabel!, attribute: .trailing,
                                           relatedBy: .greaterThanOrEqual, toItem: self,
                                           attribute: .trailing, multiplier: 1, constant: -5)
+        trailing.identifier = "TitleBarLabelTrailing"
         trailing.priority = .defaultLow
 //        trailing.isActive = true
 
         let centerY = NSLayoutConstraint(item: self.titleLabel!, attribute: .centerY,
                                          relatedBy: .equal, toItem: self, attribute: .centerY,
                                          multiplier: 1, constant: -1)
+        centerY.identifier = "TitleBarLabelCenterY"
         centerY.priority = .required
         centerY.isActive = true
         

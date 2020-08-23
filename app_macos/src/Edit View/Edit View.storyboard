@@ -419,7 +419,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="u6F-Xp-Wel" firstAttribute="top" secondItem="j2w-JX-UWJ" secondAttribute="top" constant="20" symbolic="YES" id="5tn-rh-RIK"/>
-                            <constraint firstAttribute="bottom" secondItem="u6F-Xp-Wel" secondAttribute="bottom" constant="50" id="Ljr-aO-xdZ"/>
+                            <constraint firstAttribute="bottom" secondItem="u6F-Xp-Wel" secondAttribute="bottom" priority="750" constant="50" id="Ljr-aO-xdZ"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="u6F-Xp-Wel" secondAttribute="trailing" constant="20" symbolic="YES" id="Nv8-Vi-KmB"/>
                             <constraint firstItem="u6F-Xp-Wel" firstAttribute="leading" secondItem="j2w-JX-UWJ" secondAttribute="leading" constant="20" symbolic="YES" id="qcM-Pn-QBj"/>
                         </constraints>
@@ -603,7 +603,7 @@
                                         <rect key="frame" x="169" y="0.0" width="334" height="32"/>
                                     </customView>
                                     <slider toolTip="Change how many images are shown per row." horizontalHuggingPriority="500" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hI4-4D-a7e">
-                                        <rect key="frame" x="499" y="5" width="137" height="18"/>
+                                        <rect key="frame" x="499" y="6" width="137" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="125" id="RzB-1X-iFT"/>
                                         </constraints>
@@ -709,7 +709,7 @@
                             <constraint firstItem="wdM-RX-a2E" firstAttribute="top" secondItem="Ioy-kC-21l" secondAttribute="top" constant="10" id="EpN-Mx-6yL"/>
                             <constraint firstItem="wdM-RX-a2E" firstAttribute="leading" secondItem="Ioy-kC-21l" secondAttribute="leading" constant="10" id="Geg-Lv-lfx"/>
                             <constraint firstAttribute="bottom" secondItem="LRa-Yp-mMJ" secondAttribute="bottom" constant="10" id="Hlg-xD-2dk"/>
-                            <constraint firstAttribute="bottom" secondItem="wdM-RX-a2E" secondAttribute="bottom" constant="10" id="KhK-ws-qAe"/>
+                            <constraint firstAttribute="bottom" secondItem="wdM-RX-a2E" secondAttribute="bottom" priority="750" constant="10" id="KhK-ws-qAe"/>
                             <constraint firstItem="LRa-Yp-mMJ" firstAttribute="leading" secondItem="Ioy-kC-21l" secondAttribute="leading" constant="10" id="No8-QZ-G4g"/>
                             <constraint firstAttribute="trailing" secondItem="wdM-RX-a2E" secondAttribute="trailing" constant="10" id="VjM-sK-7SI"/>
                         </constraints>

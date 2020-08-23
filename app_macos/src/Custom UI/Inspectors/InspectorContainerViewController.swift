@@ -27,6 +27,7 @@ class InspectorContainerViewController: NSViewController {
     override func loadView() {
         let wrapper = NSView()
         wrapper.translatesAutoresizingMaskIntoConstraints = false
+        wrapper.setContentHuggingPriority(.defaultLow, for: .horizontal)
         
         // set up content stack view
         self.stack = NSStackView()
