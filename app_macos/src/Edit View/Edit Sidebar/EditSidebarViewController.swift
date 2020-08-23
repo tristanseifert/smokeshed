@@ -37,8 +37,9 @@ internal class EditSidebarViewController: NSViewController {
     
     /// Inspector container
     private var inspector: InspectorContainerViewController!
-    /// View that shall contain the inspectors
-    @IBOutlet private var inspectorContainer: NSStackView!
+    
+    /// Effect view that contains the inspector
+    @IBOutlet private var contentView: NSVisualEffectView!
     
     /**
      * Initializes the inspectors.
@@ -48,14 +49,15 @@ internal class EditSidebarViewController: NSViewController {
         self.inspector = InspectorContainerViewController()
         
         self.addChild(self.inspector)
-        self.inspectorContainer.addView(self.inspector.view, in: .center)
+        self.contentView.addSubview(self.inspector.view)
         
-        // set the constraints on it
-        let width = NSLayoutConstraint(item: self.inspector.view, attribute: .width,
-                                       relatedBy: .equal, toItem: self.inspectorContainer!,
-                                       attribute: .width, multiplier: 1, constant: 0)
-        width.priority = .defaultHigh
-        width.isActive = true
+        // set the constraints on it        
+        NSLayoutConstraint.activate([
+            self.inspector.view.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.inspector.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.inspector.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.inspector.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
+        ])
         
         // create item for histogram
         let histoVc = self.storyboard!.instantiateController(withIdentifier: "inspector.histogram") as! EditSidebarHistogramViewController

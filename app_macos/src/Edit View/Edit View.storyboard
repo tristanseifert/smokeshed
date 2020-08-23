@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="j9g-cF-0uh">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17154"/>
-        <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -359,47 +358,6 @@
             </objects>
             <point key="canvasLocation" x="-18" y="413"/>
         </scene>
-        <!--Edit Sidebar-->
-        <scene sceneID="aKA-wX-ZfO">
-            <objects>
-                <viewController title="Edit Sidebar" storyboardIdentifier="sidebarVc" id="9oQ-a1-8IN" customClass="EditSidebarViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="rW9-MT-MxE">
-                        <rect key="frame" x="0.0" y="0.0" width="360" height="222"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <visualEffectView blendingMode="behindWindow" material="sidebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="X1c-J0-hmU">
-                                <rect key="frame" x="0.0" y="0.0" width="360" height="170"/>
-                                <subviews>
-                                    <stackView distribution="fillProportionally" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QEF-GU-7Hc">
-                                        <rect key="frame" x="0.0" y="0.0" width="360" height="170"/>
-                                    </stackView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="QEF-GU-7Hc" secondAttribute="trailing" id="0lC-yC-8Jh"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="JtJ-sI-MdW"/>
-                                    <constraint firstItem="QEF-GU-7Hc" firstAttribute="leading" secondItem="X1c-J0-hmU" secondAttribute="leading" id="L8Y-El-oG6"/>
-                                    <constraint firstAttribute="bottom" secondItem="QEF-GU-7Hc" secondAttribute="bottom" id="cCd-a9-mqJ"/>
-                                    <constraint firstItem="QEF-GU-7Hc" firstAttribute="top" secondItem="X1c-J0-hmU" secondAttribute="top" id="rRA-Zn-fr1"/>
-                                </constraints>
-                            </visualEffectView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="X1c-J0-hmU" firstAttribute="leading" secondItem="rW9-MT-MxE" secondAttribute="leading" id="ED6-WJ-DlH"/>
-                            <constraint firstAttribute="trailing" secondItem="X1c-J0-hmU" secondAttribute="trailing" id="Q9L-kp-FUR"/>
-                            <constraint firstItem="X1c-J0-hmU" firstAttribute="top" secondItem="mVq-3B-Nu8" secondAttribute="top" id="fFf-Hh-GeJ"/>
-                            <constraint firstAttribute="bottom" secondItem="X1c-J0-hmU" secondAttribute="bottom" id="ngP-dM-8GO"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="mVq-3B-Nu8"/>
-                        <viewLayoutGuide key="layoutMargins" id="gcR-4L-BZZ"/>
-                    </view>
-                    <connections>
-                        <outlet property="inspectorContainer" destination="QEF-GU-7Hc" id="Vmj-c7-IWo"/>
-                    </connections>
-                </viewController>
-                <customObject id="j6L-Pb-HlJ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1287" y="-264"/>
-        </scene>
         <!--View Controller-->
         <scene sceneID="fdK-fp-ylq">
             <objects>
@@ -447,9 +405,6 @@
                             <outlet property="delegate" destination="tlX-sg-BSR" id="1my-oZ-UlQ"/>
                         </connections>
                     </window>
-                    <connections>
-                        <segue destination="9oQ-a1-8IN" kind="relationship" relationship="window.shadowedContentViewController" id="3FQ-WM-dW7"/>
-                    </connections>
                 </windowController>
                 <customObject id="sGZ-3G-V3h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

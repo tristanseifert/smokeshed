@@ -81,6 +81,8 @@ class ImageRenderView: MTKView {
     }
     
     // MARK: - Image display
+    /// Library containing the currently showing image
+    private var currentLibrary: LibraryBundle? = nil
     /// Currently showing image
     private var currentImage: Image? = nil
     
@@ -90,6 +92,9 @@ class ImageRenderView: MTKView {
     internal func setImage(_ library: LibraryBundle, _ image: Image, _ callback: @escaping (Result<Void, Error>) -> Void) {
         self.thumbTexture = nil
         self.renderOutput = nil
+        
+        self.currentLibrary = library
+        self.currentImage = image
         
         // we must have a renderer
         guard self.renderer != nil else {
@@ -151,12 +156,13 @@ class ImageRenderView: MTKView {
         
         // renderer
         self.renderer = nil
+        self.renderOutput = nil
     }
     
     /**
      * Creates the Metal resources needed to display content on-screen.
      */
-    private func createMetalResources() {
+    private func createMetalResources(_ rendererCallback: ((Result<DisplayImageRenderer, Error>) -> Void)? = nil) {
         precondition(self.device != nil, "Render device must be set")
         
         do {
@@ -175,7 +181,7 @@ class ImageRenderView: MTKView {
                                                              self.colorPixelFormat)
             
             // renderer
-            self.createRenderer()
+            self.createRenderer(rendererCallback)
         } catch {
             DDLogError("Failed to create metal resources: \(error)")
         }
@@ -301,7 +307,28 @@ class ImageRenderView: MTKView {
         
         // create resources on the new device
         self.device = newDevice
-        self.createMetalResources()
+        
+        if self.currentLibrary != nil, self.currentImage != nil {
+            DDLogInfo("Reloading image \(self.currentImage!) due to device change (new: \(self.device!))")
+            
+            
+            self.createMetalResources() { res in
+                DispatchQueue.main.async {
+                    self.setImage(self.currentLibrary!, self.currentImage!) { res in
+                        do {
+                            let _ = try res.get()
+                            DispatchQueue.main.async {
+                                self.needsDisplay = true
+                            }
+                        } catch {
+                            DDLogError("Failed to reload image: \(error)")
+                        }
+                    }                    
+                }
+            }
+        } else {
+            self.createMetalResources()
+        }
         
         // we need to re-display the view
         self.needsDisplay = true
@@ -312,6 +339,20 @@ class ImageRenderView: MTKView {
      */
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
+        
+        guard let window = self.window, let preferred = self.preferredDevice else {
+            return
+        }
+        
+        DDLogVerbose("Preferred device ImageRenderView in \(window): \(preferred)")
+        self.updateDevice()
+    }
+    
+    /**
+     * View has been shown again; we need to make sure the Metal resources are appropriately set.
+     */
+    override func viewDidUnhide() {
+        super.viewDidUnhide()
         
         guard let window = self.window, let preferred = self.preferredDevice else {
             return
@@ -506,6 +547,16 @@ class ImageRenderView: MTKView {
      * Draw the viewport texture
      */
     private func drawViewport(_ encoder: MTLRenderCommandEncoder) throws {
+        // we need a new viewport image if the device changed
+        guard let image = self.renderOutput else {
+            // TODO: should this be fatal?
+            return
+        }
+        guard image.device.registryID == self.device!.registryID else {
+            DDLogError("Tiled image \(image) is for device \(image.device!); expected \(self.device!)")
+            return
+        }
+        
         // create the region
         var region = MTLRegion()
         region.origin = MTLOriginMake(Int(self.viewport.origin.x), Int(self.viewport.origin.y), 0)
@@ -514,8 +565,8 @@ class ImageRenderView: MTKView {
         // draw that shiz
         let scaledSize = self.convertToBacking(self.frame.size)
         
-        try self.tiledImageRenderer.draw(image: self.renderOutput!, region: region,
-                                         outputSize: scaledSize, encoder)
+        try self.tiledImageRenderer.draw(image: image, region: region, outputSize: scaledSize,
+                                         encoder)
     }
     
     // MARK: - Renderer
@@ -525,7 +576,7 @@ class ImageRenderView: MTKView {
     /**
      * Instantiates a new renderer for the current Metal device.
      */
-    private func createRenderer() {
+    private func createRenderer(_ callback: ((Result<DisplayImageRenderer, Error>) -> Void)? = nil) {
         self.renderer = nil
         
         RenderManager.shared.getDisplayRenderer(self.device) { [weak self] res in
@@ -535,6 +586,10 @@ class ImageRenderView: MTKView {
                 self?.renderer = renderer
             } catch {
                 DDLogError("Failed to get renderer: \(error)")
+            }
+            
+            if let cb = callback {
+                cb(res)
             }
         }
     }

@@ -15,12 +15,21 @@ import Metal
 public class RenderPipelineImage {
     private var image: ImageReaderImpl
     
+    /// If the image is transient, we expect to use it once and then never again. This is the case for batch exports, for example.
+    private(set) public var isTransient: Bool
+    
     /// URL from which the image was read originally
     private(set) public var url: URL
     /// Size of the image
     public var size: CGSize {
         return self.image.size
     }
+    
+    /**
+     * Cache for intermediate representations of the image that may be used later. This is used to cache the raw RGB data immediately
+     * after decoding the image, before any transformations are applied.
+     */
+    private var cache: PipelineCache!
 
     // MARK: - Initialization
     /**
@@ -31,13 +40,21 @@ public class RenderPipelineImage {
      *
      * - Note: `Progress` reporting is supported. All processing takes place synchronously.
      */
-    public init(url: URL) throws {
+    public init(url: URL, transient: Bool = false) throws {
         // try to read image
         guard let image = try ImageReader.shared.read(url: url) else {
             throw Errors.readImageFailed(url)
         }
+        
+        self.isTransient = transient
         self.url = url
         self.image = image
+        
+        if transient {
+            self.cache = PipelineCache([.passthrough])
+        } else {
+            self.cache = PipelineCache()
+        }
     }
     
     // MARK: - Decoding
