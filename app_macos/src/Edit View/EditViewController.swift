@@ -100,8 +100,8 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     struct StateKeys {
         /// Whether the secondary view  is open
         static let secondaryVisible = "EditViewController.secondaryVisible"
-        /// Reference to secondary window controller
-        static let secondaryWC = "EditViewController.secondaryWC"
+        /// Whether the edit controls view  is open
+        static let controlsVisible = "EditViewController.controlsVisible"
     }
     
     /**
@@ -122,6 +122,14 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                 DDLogVerbose("View not in hierarchy, should open: \(self.shouldOpenSecondaryView)")
             }
         }
+        
+        // edit controls
+        if let controls = self.editWc, let window = controls.window {
+            controls.encodeRestorableState(with: coder)
+            
+            // TODO: better
+            coder.encode(window.isVisible, forKey: StateKeys.controlsVisible)
+        }
     }
     
     /**
@@ -135,6 +143,9 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         }
 
         super.restoreState(with: coder)
+        
+        // restore state of the edit controls
+        self.editWc.restoreState(with: coder)
         
         // re-open the secondary view if visible
         if self.view.superview != nil {
@@ -160,12 +171,11 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     private var secondarySelectionObs: NSKeyValueObservation? = nil
     
     /// Window controller for the secondary view controller
-    private lazy var secondaryWc: NSWindowController? = {
+    private lazy var secondaryWc: NSWindowController! = {
         // get the window controller
         guard let sb = self.storyboard,
               let wc = sb.instantiateController(withIdentifier: "secondaryWindowController") as? NSWindowController else {
-            DDLogError("Failed to instantiate secondary window controller")
-            return nil
+            fatalError("Failed to instantiate secondary window controller")
         }
         
         // set up some initial state of the secondary controller
@@ -251,7 +261,16 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
     
     // MARK: - Editing sidebar
     /// Edit tools window controller
-    private var editWc: NSWindowController! = nil
+    private lazy var editWc: NSWindowController! = {
+        guard let sb = self.storyboard,
+              let wc = sb.instantiateController(withIdentifier: "editToolsWindow") as? EditSidebarWindowController else {
+            fatalError("Failed to instantiate edit window controller")
+        }
+        
+        wc.editView = self
+        
+        return wc
+    }()
     
     /**
      * Shows the edit-specific split controls on the right side of the split view.
@@ -259,17 +278,6 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      * This should be called immediately before the view is to appear.
      */
     private func showEditSidebar() {
-        // instantiate the window controller if needed
-        if self.editWc == nil {
-            guard let sb = self.storyboard,
-                  let wc = sb.instantiateController(withIdentifier: "editToolsWindow") as? EditSidebarWindowController else {
-                fatalError("Failed to instantiate edit window controller")
-            }
-            
-            wc.editView = self
-            self.editWc = wc
-        }
-        
         // show that bitch
         self.editWc.showWindow(self)
     }

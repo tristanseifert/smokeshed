@@ -10,6 +10,12 @@ import Cocoa
 import CocoaLumberjackSwift
 
 class EditSidebarWindowController: NSWindowController {
+    // MARK: - State restoration
+    private struct StateKeys {
+        /// Window location (frame)
+        static let frame = "EditSidebarWindowController.window.frame"
+    }
+    
     /// Inspector container
     private var inspector: InspectorContainerViewController!
     
@@ -57,7 +63,7 @@ class EditSidebarWindowController: NSWindowController {
         }
 
         let item = InspectorItemViewController(content: vc, title: "bitch controller")
-        self.inspector.addItem(item)        
+        self.inspector.addItem(item)
     }
     
     /**
@@ -65,6 +71,35 @@ class EditSidebarWindowController: NSWindowController {
      */
     deinit {
         self.noteObs.forEach(NotificationCenter.default.removeObserver)
+    }
+    
+    // MARK: - State restoration
+    /**
+     * Encodes the size and position of the window.
+     */
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+    
+        if self.window?.isVisible ?? false {
+            DDLogVerbose("Encoding edit controls window size: \(self.window!.frame)")
+            coder.encode(self.window!.frame, forKey: StateKeys.frame)
+        }
+    }
+    
+    /**
+     * Restores the size/position of the window.
+     */
+    override func restoreState(with coder: NSCoder) {
+        super.restoreState(with: coder)
+        
+        // restore window position
+        let frame = coder.decodeRect(forKey: StateKeys.frame)
+        DDLogVerbose("Restored edit controls window size: \(frame)")
+        
+        if frame != .zero, let minSize = self.window?.minSize, frame.width > minSize.width,
+           frame.height > minSize.height {
+            self.window?.setFrame(frame, display: false)
+        }
     }
     
     // MARK: - Edit view sync
