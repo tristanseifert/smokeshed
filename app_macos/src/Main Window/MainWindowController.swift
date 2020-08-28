@@ -216,12 +216,26 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
     private var libraryOptions: LibraryOptionsController! = nil
     /// Import controller
     internal var importer = ImportHandler()
+    
+    /// From the device importing
+    private var deviceImportView: NSViewController? = nil
 
     /**
      * Opens the "import from device" view.
      */
     @IBAction func importFromDevice(_ sender: Any) {
-
+        // load the device import window controller from storyboard if needed
+        if self.deviceImportView == nil {
+            let storyboard = NSStoryboard(name: "Importing", bundle: nil)
+            self.deviceImportView = storyboard.instantiateInitialController()
+        }
+        
+        // show it
+        guard let vc = self.deviceImportView else {
+            fatalError("Failed to load device import controller")
+        }
+        
+        self.window?.contentViewController?.presentAsSheet(vc)
     }
 
     /**

@@ -1,0 +1,10 @@
+/* 
+  Importing.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200828.
+  
+*/
+
+/// Device name: unknown
+"device.name.unknown" = "(Unknown device)";
