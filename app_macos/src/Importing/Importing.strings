@@ -8,3 +8,9 @@
 
 /// Device name: unknown
 "device.name.unknown" = "(Unknown device)";
+
+/// Sidebar: devices section title
+"sidebar.devices.title" = "Devices";
+
+/// Sidebar: files section title
+"sidebar.files.title" = "Files";
