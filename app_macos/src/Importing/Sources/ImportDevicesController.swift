@@ -169,10 +169,28 @@ internal class ImportDevicesController: NSObject, ICDeviceBrowserDelegate {
                 item.representedObject = device.device
                 item.viewIdentifier = SidebarItem.deviceItemType
                 item.menuProvider = self.menuProvider(_:_:)
+                item.sourceProvider = self.sourceFor(_:)
                 
                 self.sidebarItem.children.append(item)
             }
         }
+    }
+    
+    // MARK: Sources
+    /**
+     * Creates an import source for the given device.
+     */
+    private func sourceFor(_ item: SidebarItem) -> ImportSource {
+        do {
+            if let camera = item.representedObject as? ICCameraDevice {
+                return try ImageCaptureCameraSource(camera)
+            }
+        } catch {
+            DDLogError("Failed to create capture source: \(error)")
+            NSApp.presentError(error)
+        }
+        
+        fatalError("Unsupported device: \(String(describing: item.representedObject))")
     }
     
     // MARK: Context menus

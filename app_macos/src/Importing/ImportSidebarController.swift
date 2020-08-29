@@ -141,6 +141,8 @@ internal class ImportSidebarController: NSViewController, NSOutlineViewDataSourc
         
         /// Menu provider callback
         var menuProvider: ((SidebarItem, NSMenu?) -> NSMenu?)?
+        /// Data source provider; invoked when the item is selected and we want to show its contents
+        var sourceProvider: ((SidebarItem) -> ImportSource)?
         
         /// Group item type
         static let groupItemType = NSUserInterfaceItemIdentifier(rawValue: "GroupItem")
@@ -239,6 +241,21 @@ internal class ImportSidebarController: NSViewController, NSOutlineViewDataSourc
         }
         
         return provider(item, menu)
+    }
+    
+    /**
+     * On changed selection, invoke the source provider of the selected item and use it to populate the content list.
+     */
+    func outlineViewSelectionDidChange(_ notification: Notification) {
+        // get the item provider and invoke it
+        guard let item = self.outlineView.item(atRow: self.outlineView.selectedRow) as? SidebarItem,
+              let provider = item.sourceProvider
+              else {
+            self.representedObject = nil
+            return
+        }
+        
+        self.representedObject = provider(item)
     }
     
     // MARK: Sidebar helpers

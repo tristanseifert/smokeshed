@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="9qJ-VA-Iuj">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17154"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -39,13 +40,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jjt-5h-muq">
-                                <rect key="frame" x="0.0" y="0.0" width="293" height="436"/>
+                                <rect key="frame" x="0.0" y="0.0" width="293" height="446"/>
                                 <clipView key="contentView" drawsBackground="NO" id="Paz-n8-KdS">
-                                    <rect key="frame" x="0.0" y="0.0" width="293" height="436"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="293" height="446"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" usesAutomaticRowHeights="YES" viewBased="YES" indentationPerLevel="13" outlineTableColumn="oY3-Tk-EaZ" id="5vj-0G-5Wm" customClass="DeluxeOutlineView" customModule="SmokeShed" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="293" height="436"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="293" height="446"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -204,14 +205,87 @@
             </objects>
             <point key="canvasLocation" x="1082.5" y="-502.5"/>
         </scene>
-        <!--View Controller-->
+        <!--Import Preview Controller-->
         <scene sceneID="7Gf-kh-KRL">
             <objects>
-                <viewController id="FXf-wE-qQs" sceneMemberID="viewController">
+                <viewController id="FXf-wE-qQs" customClass="ImportPreviewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="jMS-8d-oMe">
                         <rect key="frame" x="0.0" y="0.0" width="744" height="563"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kh8-7i-MNH">
+                                <rect key="frame" x="0.0" y="27" width="744" height="536"/>
+                                <clipView key="contentView" drawsBackground="NO" id="Gqq-p0-vE3">
+                                    <rect key="frame" x="0.0" y="0.0" width="744" height="536"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <collectionView id="gNt-6q-SwD">
+                                            <rect key="frame" x="0.0" y="0.0" width="744" height="158"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" sectionHeadersPinToVisibleBounds="YES" id="K3d-qV-lv1">
+                                                <size key="itemSize" width="250" height="175"/>
+                                                <size key="headerReferenceSize" width="0.0" height="32"/>
+                                            </collectionViewFlowLayout>
+                                            <color key="primaryBackgroundColor" name="ImportImageGridBackground"/>
+                                            <connections>
+                                                <outlet property="dataSource" destination="FXf-wE-qQs" id="HFD-Rc-OU1"/>
+                                                <outlet property="delegate" destination="FXf-wE-qQs" id="Sej-xb-axE"/>
+                                            </connections>
+                                        </collectionView>
+                                    </subviews>
+                                    <color key="backgroundColor" name="ImportImageGridBackground"/>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="U9r-bz-FLP">
+                                    <rect key="frame" x="1" y="144" width="233" height="15"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="FaB-Gm-vTB">
+                                    <rect key="frame" x="234" y="1" width="15" height="143"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                            <stackView orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rU8-DM-t8W">
+                                <rect key="frame" x="0.0" y="0.0" width="744" height="26"/>
+                                <edgeInsets key="edgeInsets" left="10" right="10" top="5" bottom="5"/>
+                                <beginningViews>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avr-Cz-arI">
+                                        <rect key="frame" x="8" y="4" width="121" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Hide duplicates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="SC3-Ck-B2F">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="FXf-wE-qQs" name="value" keyPath="self.hideDuplicates" id="3uR-I3-LNg"/>
+                                        </connections>
+                                    </button>
+                                </beginningViews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="aRj-vB-bKF">
+                                <rect key="frame" x="0.0" y="24" width="744" height="5"/>
+                            </box>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Kh8-7i-MNH" firstAttribute="top" secondItem="jMS-8d-oMe" secondAttribute="top" id="3Ot-zb-Eey"/>
+                            <constraint firstAttribute="trailing" secondItem="rU8-DM-t8W" secondAttribute="trailing" id="8I4-9t-yOx"/>
+                            <constraint firstItem="rU8-DM-t8W" firstAttribute="leading" secondItem="jMS-8d-oMe" secondAttribute="leading" id="Bbb-oX-LkK"/>
+                            <constraint firstItem="Kh8-7i-MNH" firstAttribute="leading" secondItem="jMS-8d-oMe" secondAttribute="leading" id="Pqq-8T-4vu"/>
+                            <constraint firstAttribute="bottom" secondItem="rU8-DM-t8W" secondAttribute="bottom" id="WaB-60-YhG"/>
+                            <constraint firstItem="aRj-vB-bKF" firstAttribute="trailing" secondItem="rU8-DM-t8W" secondAttribute="trailing" id="bOy-yJ-bdZ"/>
+                            <constraint firstItem="aRj-vB-bKF" firstAttribute="top" secondItem="Kh8-7i-MNH" secondAttribute="bottom" id="etm-KW-rGe"/>
+                            <constraint firstItem="aRj-vB-bKF" firstAttribute="leading" secondItem="rU8-DM-t8W" secondAttribute="leading" id="jRy-Tj-A1V"/>
+                            <constraint firstAttribute="trailing" secondItem="Kh8-7i-MNH" secondAttribute="trailing" id="od4-az-sXU"/>
+                            <constraint firstItem="rU8-DM-t8W" firstAttribute="top" secondItem="aRj-vB-bKF" secondAttribute="bottom" id="tFf-OL-aCW"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="collection" destination="gNt-6q-SwD" id="bmU-Ms-dy3"/>
+                    </connections>
                 </viewController>
                 <customObject id="l0u-Vp-81B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -320,5 +394,8 @@ Gw
     </scenes>
     <resources>
         <image name="camera" catalog="system" width="19" height="15"/>
+        <namedColor name="ImportImageGridBackground">
+            <color white="0.33300000429153442" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
     </resources>
 </document>

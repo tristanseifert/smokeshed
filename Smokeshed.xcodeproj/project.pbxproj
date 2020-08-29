@@ -243,8 +243,10 @@
 		6AA47BE324F8C0B400295FC9 /* ImportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA47BE224F8C0B400295FC9 /* ImportViewController.swift */; };
 		6AA47BE524F8C8D500295FC9 /* Importing.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6AA47BE424F8C8D500295FC9 /* Importing.strings */; };
 		6AA47BE724F9988A00295FC9 /* ImportSidebarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA47BE624F9988A00295FC9 /* ImportSidebarController.swift */; };
-		6AA47BE924F99F5900295FC9 /* ImportDevicesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA47BE824F99F5900295FC9 /* ImportDevicesController.swift */; };
 		6AA47BEC24F9B23D00295FC9 /* DeluxeOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA47BEB24F9B23D00295FC9 /* DeluxeOutlineView.swift */; };
+		6AA47BEE24F9B81C00295FC9 /* Importing.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6AA47BED24F9B81C00295FC9 /* Importing.xcassets */; };
+		6AA47BF324F9B97100295FC9 /* ImportSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA47BF224F9B97100295FC9 /* ImportSource.swift */; };
+		6AA47BF524F9B99600295FC9 /* ImportDevicesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA47BF424F9B99600295FC9 /* ImportDevicesController.swift */; };
 		6AAC4568249F3A93009B9AFF /* debayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC4566249F3A93009B9AFF /* debayer.h */; };
 		6AAC4569249F3A93009B9AFF /* debayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC4567249F3A93009B9AFF /* debayer.c */; settings = {COMPILER_FLAGS = "-Ofast"; }; };
 		6AAC456C249F48C0009B9AFF /* PAPDebayerer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC456A249F48C0009B9AFF /* PAPDebayerer.h */; };
@@ -303,6 +305,11 @@
 		6AE51ABF249D98580091A550 /* TIFFMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */; };
 		6AE51AC1249DC41D0091A550 /* Fraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51AC0249DC41D0091A550 /* Fraction.swift */; };
 		6AE51AC3249EABF40091A550 /* ImageIOMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE51AC2249EABF40091A550 /* ImageIOMetadataReader.swift */; };
+		6AEC227724F9BC6900B97C7F /* ImportPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEC227624F9BC6900B97C7F /* ImportPreviewController.swift */; };
+		6AEC227B24F9BD8900B97C7F /* ImportPreviewCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEC227A24F9BD8900B97C7F /* ImportPreviewCollectionItem.swift */; };
+		6AEC227D24F9C16F00B97C7F /* ImportPreviewCollectionItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AEC227C24F9C16F00B97C7F /* ImportPreviewCollectionItem.xib */; };
+		6AEC227F24F9C7D000B97C7F /* ImageCaptureCameraSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEC227E24F9C7D000B97C7F /* ImageCaptureCameraSource.swift */; };
+		6AEC228124F9CBDB00B97C7F /* DirectoryImportSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEC228024F9CBDB00B97C7F /* DirectoryImportSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -690,8 +697,10 @@
 		6AA47BE224F8C0B400295FC9 /* ImportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportViewController.swift; path = app_macos/src/Importing/ImportViewController.swift; sourceTree = "<group>"; };
 		6AA47BE424F8C8D500295FC9 /* Importing.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Importing.strings; path = app_macos/src/Importing/Importing.strings; sourceTree = "<group>"; };
 		6AA47BE624F9988A00295FC9 /* ImportSidebarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportSidebarController.swift; path = app_macos/src/Importing/ImportSidebarController.swift; sourceTree = "<group>"; };
-		6AA47BE824F99F5900295FC9 /* ImportDevicesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportDevicesController.swift; path = app_macos/src/Importing/ImportDevicesController.swift; sourceTree = "<group>"; };
 		6AA47BEB24F9B23D00295FC9 /* DeluxeOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeluxeOutlineView.swift; path = "app_macos/src/Custom UI/DeluxeOutlineView.swift"; sourceTree = "<group>"; };
+		6AA47BED24F9B81C00295FC9 /* Importing.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Importing.xcassets; path = app_macos/src/Importing/Importing.xcassets; sourceTree = "<group>"; };
+		6AA47BF224F9B97100295FC9 /* ImportSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportSource.swift; path = app_macos/src/Importing/Sources/ImportSource.swift; sourceTree = "<group>"; };
+		6AA47BF424F9B99600295FC9 /* ImportDevicesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImportDevicesController.swift; path = app_macos/src/Importing/Sources/ImportDevicesController.swift; sourceTree = "<group>"; };
 		6AAC4566249F3A93009B9AFF /* debayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = debayer.h; path = frameworks/Paper/src/Debayering/debayer.h; sourceTree = "<group>"; };
 		6AAC4567249F3A93009B9AFF /* debayer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = debayer.c; path = frameworks/Paper/src/Debayering/debayer.c; sourceTree = "<group>"; };
 		6AAC456A249F48C0009B9AFF /* PAPDebayerer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PAPDebayerer.h; path = frameworks/Paper/src/Debayering/PAPDebayerer.h; sourceTree = "<group>"; };
@@ -751,6 +760,11 @@
 		6AE51ABE249D98580091A550 /* TIFFMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TIFFMetadataReader.swift; path = frameworks/Paper/src/Metadata/TIFFMetadataReader.swift; sourceTree = "<group>"; };
 		6AE51AC0249DC41D0091A550 /* Fraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Fraction.swift; path = frameworks/Paper/src/Helpers/Fraction.swift; sourceTree = "<group>"; };
 		6AE51AC2249EABF40091A550 /* ImageIOMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageIOMetadataReader.swift; path = frameworks/Paper/src/Metadata/ImageIOMetadataReader.swift; sourceTree = "<group>"; };
+		6AEC227624F9BC6900B97C7F /* ImportPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportPreviewController.swift; path = app_macos/src/Importing/ImportPreviewController.swift; sourceTree = "<group>"; };
+		6AEC227A24F9BD8900B97C7F /* ImportPreviewCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImportPreviewCollectionItem.swift; path = app_macos/src/Importing/ImportPreviewCollectionItem.swift; sourceTree = "<group>"; };
+		6AEC227C24F9C16F00B97C7F /* ImportPreviewCollectionItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ImportPreviewCollectionItem.xib; path = app_macos/src/Importing/ImportPreviewCollectionItem.xib; sourceTree = "<group>"; };
+		6AEC227E24F9C7D000B97C7F /* ImageCaptureCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageCaptureCameraSource.swift; path = app_macos/src/Importing/Sources/ImageCaptureCameraSource.swift; sourceTree = "<group>"; };
+		6AEC228024F9CBDB00B97C7F /* DirectoryImportSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DirectoryImportSource.swift; path = app_macos/src/Importing/Sources/DirectoryImportSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1805,19 +1819,49 @@
 			children = (
 				6AA47BE024F8C03000295FC9 /* Importing.storyboard */,
 				6AA47BE224F8C0B400295FC9 /* ImportViewController.swift */,
-				6AA47BE424F8C8D500295FC9 /* Importing.strings */,
-				6AA47BE624F9988A00295FC9 /* ImportSidebarController.swift */,
-				6AA47BEA24F99F9000295FC9 /* Devices */,
+				6AA47BEF24F9B93B00295FC9 /* Preview */,
+				6AA47BF024F9B95100295FC9 /* Sources */,
+				6AEC227824F9BC7500B97C7F /* Resources */,
 			);
 			name = Importing;
 			sourceTree = "<group>";
 		};
-		6AA47BEA24F99F9000295FC9 /* Devices */ = {
+		6AA47BEA24F99F9000295FC9 /* Device */ = {
 			isa = PBXGroup;
 			children = (
-				6AA47BE824F99F5900295FC9 /* ImportDevicesController.swift */,
+				6AA47BF424F9B99600295FC9 /* ImportDevicesController.swift */,
+				6AEC227E24F9C7D000B97C7F /* ImageCaptureCameraSource.swift */,
 			);
-			name = Devices;
+			name = Device;
+			sourceTree = "<group>";
+		};
+		6AA47BEF24F9B93B00295FC9 /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+				6AEC227624F9BC6900B97C7F /* ImportPreviewController.swift */,
+				6AEC227A24F9BD8900B97C7F /* ImportPreviewCollectionItem.swift */,
+				6AEC227C24F9C16F00B97C7F /* ImportPreviewCollectionItem.xib */,
+			);
+			name = Preview;
+			sourceTree = "<group>";
+		};
+		6AA47BF024F9B95100295FC9 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				6AA47BE624F9988A00295FC9 /* ImportSidebarController.swift */,
+				6AA47BF224F9B97100295FC9 /* ImportSource.swift */,
+				6AA47BEA24F99F9000295FC9 /* Device */,
+				6AA47BF124F9B95900295FC9 /* File */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		6AA47BF124F9B95900295FC9 /* File */ = {
+			isa = PBXGroup;
+			children = (
+				6AEC228024F9CBDB00B97C7F /* DirectoryImportSource.swift */,
+			);
+			name = File;
 			sourceTree = "<group>";
 		};
 		6AAC4565249F3A77009B9AFF /* Debayering */ = {
@@ -2088,6 +2132,15 @@
 				6A587F7B24A98FF9009696E9 /* MetadataTypes+Localization.swift */,
 			);
 			name = "Metadata Support";
+			sourceTree = "<group>";
+		};
+		6AEC227824F9BC7500B97C7F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6AA47BED24F9B81C00295FC9 /* Importing.xcassets */,
+				6AA47BE424F8C8D500295FC9 /* Importing.strings */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2436,7 +2489,9 @@
 				6A1C116324A2C74300CD8D36 /* Main.storyboard in Resources */,
 				6ABD36922495AEEA005F80EE /* LibraryViewController.strings in Resources */,
 				6A0EE47C248B696A0044B433 /* Defaults.plist in Resources */,
+				6AEC227D24F9C16F00B97C7F /* ImportPreviewCollectionItem.xib in Resources */,
 				6A962C28248F191E0088E1DB /* Library View.xcassets in Resources */,
+				6AA47BEE24F9B81C00295FC9 /* Importing.xcassets in Resources */,
 				6ABD36902495ADE0005F80EE /* LibraryViewController.stringsdict in Resources */,
 				6AAF473824A3055A00572AB3 /* Edit View.storyboard in Resources */,
 				6A0EE481248B6D2A0044B433 /* LibraryPickerController.xib in Resources */,
@@ -2572,12 +2627,13 @@
 				6A9D00F224A71D6A007566A5 /* InitialDefaults.swift in Sources */,
 				6ABD3689249572D2005F80EE /* LibraryViewMenuProvider.swift in Sources */,
 				6ABD368224956DA9005F80EE /* LibraryCollectionView.swift in Sources */,
+				6AA47BF324F9B97100295FC9 /* ImportSource.swift in Sources */,
 				6AA47BE724F9988A00295FC9 /* ImportSidebarController.swift in Sources */,
-				6AA47BE924F99F5900295FC9 /* ImportDevicesController.swift in Sources */,
 				6A03ED0D24E08048009B6714 /* SplitViewHelpers.swift in Sources */,
 				6AAF473D24A3230C00572AB3 /* MainWindowTabController.swift in Sources */,
 				6AA47BE324F8C0B400295FC9 /* ImportViewController.swift in Sources */,
 				6A9664652490680500F757A1 /* LibraryCollectionItemView.swift in Sources */,
+				6AEC227F24F9C7D000B97C7F /* ImageCaptureCameraSource.swift in Sources */,
 				6A03ED1A24E0917E009B6714 /* InspectorContainerViewController.swift in Sources */,
 				6A07AB0024E0AE2600A0BBF0 /* FlippedClipView.swift in Sources */,
 				6A8729B824BB801B00D50C49 /* EditSecondaryWindowController.swift in Sources */,
@@ -2588,6 +2644,7 @@
 				6A03ECFA24DB6BDC009B6714 /* EditViewDebugViewController.swift in Sources */,
 				6A03ED1024E08184009B6714 /* EditSidebarViewController.swift in Sources */,
 				6A2ABF6224EE4B48005BDAC3 /* EditSidebarItem.swift in Sources */,
+				6AA47BF524F9B99600295FC9 /* ImportDevicesController.swift in Sources */,
 				6A03ED1324E0866A009B6714 /* InspectorItemViewController.swift in Sources */,
 				6A9D00F424A71F8D007566A5 /* PreferencesWindowController.swift in Sources */,
 				6A07AB0524E0BF1E00A0BBF0 /* HistogramView.swift in Sources */,
@@ -2599,6 +2656,8 @@
 				6A587F6E24A7F83B009696E9 /* PreferencesTabController.swift in Sources */,
 				6A94C8B12491CB8F008FCE90 /* LibraryCollectionHeaderView.swift in Sources */,
 				6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */,
+				6AEC228124F9CBDB00B97C7F /* DirectoryImportSource.swift in Sources */,
+				6AEC227B24F9BD8900B97C7F /* ImportPreviewCollectionItem.swift in Sources */,
 				6A660C5624C4AEFA0012CFD8 /* DisplayImageRenderer.swift in Sources */,
 				6A9D00E924A71318007566A5 /* ThumbPreferencesViewController.swift in Sources */,
 				6A020D2A2491EFB1006F5093 /* ThumbHandler.swift in Sources */,
@@ -2613,6 +2672,7 @@
 				6A7F226A24C123EB0051438F /* RenderPreferencesViewController.swift in Sources */,
 				6AD8CFE1248E064D009AF452 /* MapViewController.swift in Sources */,
 				6AD8CFD8248DFAF3009AF452 /* LibraryViewController.swift in Sources */,
+				6AEC227724F9BC6900B97C7F /* ImportPreviewController.swift in Sources */,
 				6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */,
 				6AAF473B24A3229500572AB3 /* SidebarController.swift in Sources */,
 				6A587F7224A85E70009696E9 /* UserDefaults+GridCell.swift in Sources */,
