@@ -35,18 +35,17 @@
         <scene sceneID="z8D-BW-pOW">
             <objects>
                 <viewController title="Import Source" id="rxg-ex-uOh" customClass="ImportSidebarController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="DX5-jY-omi">
-                        <rect key="frame" x="0.0" y="0.0" width="293" height="436"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <view key="view" translatesAutoresizingMaskIntoConstraints="NO" id="DX5-jY-omi">
+                        <rect key="frame" x="0.0" y="0.0" width="293" height="491"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jjt-5h-muq">
-                                <rect key="frame" x="0.0" y="0.0" width="293" height="446"/>
+                                <rect key="frame" x="0.0" y="0.0" width="293" height="491"/>
                                 <clipView key="contentView" drawsBackground="NO" id="Paz-n8-KdS">
-                                    <rect key="frame" x="0.0" y="0.0" width="293" height="446"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="293" height="491"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" usesAutomaticRowHeights="YES" viewBased="YES" indentationPerLevel="13" outlineTableColumn="oY3-Tk-EaZ" id="5vj-0G-5Wm" customClass="DeluxeOutlineView" customModule="SmokeShed" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="293" height="446"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="293" height="491"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -64,9 +63,8 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
-                                                        <tableCellView identifier="GroupItem" misplaced="YES" id="QOr-WN-vSR" userLabel="Group Header">
-                                                            <rect key="frame" x="11" y="0.0" width="270" height="17"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <tableCellView identifier="GroupItem" translatesAutoresizingMaskIntoConstraints="NO" id="QOr-WN-vSR" userLabel="Group Header">
+                                                            <rect key="frame" x="11" y="0.0" width="270" height="22"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1t0-Gd-z9V">
                                                                     <rect key="frame" x="0.0" y="3" width="270" height="16"/>
@@ -91,7 +89,7 @@
                                                             </connections>
                                                         </tableCellView>
                                                         <tableCellView identifier="DeviceItem" id="Ii5-ew-GQm" userLabel="Device Cell">
-                                                            <rect key="frame" x="11" y="17" width="270" height="32"/>
+                                                            <rect key="frame" x="11" y="22" width="270" height="32"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UXR-LK-1OQ">
@@ -111,7 +109,7 @@
                                                                     </connections>
                                                                 </imageView>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="eS5-xX-5AR">
-                                                                    <rect key="frame" x="34" y="8" width="185" height="16"/>
+                                                                    <rect key="frame" x="34" y="8" width="187" height="16"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Device Type" id="NTG-YR-cKb">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -126,7 +124,7 @@
                                                                     </connections>
                                                                 </textField>
                                                                 <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xYK-ag-eno" userLabel="Count Badge">
-                                                                    <rect key="frame" x="221" y="6" width="45" height="17"/>
+                                                                    <rect key="frame" x="223" y="6" width="43" height="18"/>
                                                                     <buttonCell key="cell" type="inline" title="Count" bezelStyle="inline" alignment="center" enabled="NO" borderStyle="border" inset="2" id="zZD-mt-sIA">
                                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                         <font key="font" metaFont="smallSystemBold"/>
@@ -300,7 +298,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wMl-U6-AgO">
-                                <rect key="frame" x="668" y="13" width="87" height="32"/>
+                                <rect key="frame" x="680" y="13" width="75" height="32"/>
                                 <buttonCell key="cell" type="push" title="Import" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3lr-lu-jB4">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -313,7 +311,7 @@ DQ
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oBo-s8-kwk">
-                                <rect key="frame" x="583" y="13" width="87" height="32"/>
+                                <rect key="frame" x="607" y="13" width="75" height="32"/>
                                 <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nsa-Xw-Huj">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>

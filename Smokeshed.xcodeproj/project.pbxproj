@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,6 @@
 		6A020D3A24920A6C006F5093 /* ThumbHandler.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 6A020D2F24920A6C006F5093 /* ThumbHandler.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6A020D4024920A8C006F5093 /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
 		6A020D4424920A8C006F5093 /* Waterpipe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF03248B348800145E49 /* Waterpipe.framework */; };
-		6A020D4924920AAF006F5093 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A020D5124920C15006F5093 /* XPCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5024920C15006F5093 /* XPCDelegate.swift */; };
 		6A020D5224920C97006F5093 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D4D24920B41006F5093 /* main.swift */; };
 		6A020D5424920D63006F5093 /* ThumbXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A020D5324920D63006F5093 /* ThumbXPCProtocol.swift */; };
@@ -48,7 +47,6 @@
 		6A0BA37624D0EA32006035BE /* CR2ImageReaderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BA37524D0EA32006035BE /* CR2ImageReaderImpl.swift */; };
 		6A0BA38724D23C65006035BE /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
 		6A0BA38824D23C65006035BE /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
-		6A0BA38924D23C65006035BE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A0BA38B24D23C65006035BE /* birb.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D00D724A5D3B9007566A5 /* birb.cr2 */; };
 		6A0BA38E24D23C65006035BE /* froge.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */; };
 		6A0BA39024D23C65006035BE /* meow.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE3024BA408E00F734F0 /* meow.cr2 */; };
@@ -88,7 +86,6 @@
 		6A4CEEB7248B272300145E49 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEB6248B272300145E49 /* Icons.xcassets */; };
 		6A4CEEBB248B273D00145E49 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CEEBA248B273D00145E49 /* MainMenu.xib */; };
 		6A4CEEC2248B27BE00145E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */; };
-		6A4CEECC248B283600145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A4CEEE1248B2F8E00145E49 /* Smokeshop.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */; };
 		6A4CEEE2248B2F8E00145E49 /* Smokeshop.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6A4CEEEE248B301600145E49 /* SmokeShop.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4CEEED248B301600145E49 /* SmokeShop.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -100,7 +97,6 @@
 		6A4CEF2E248B5A5600145E49 /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
 		6A4CEF2F248B5A5600145E49 /* Bowl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6A4CEF34248B5F5500145E49 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4CEF33248B5F5500145E49 /* Logger.swift */; };
-		6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A4DEE2B24BA33C300F734F0 /* Paper-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4DEE2A24BA33BF00F734F0 /* Paper-Swift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A4DEE2D24BA35BE00F734F0 /* froge.cr2 in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2C24BA35BE00F734F0 /* froge.cr2 */; };
 		6A4DEE2F24BA3F2D00F734F0 /* CamToXYZAliases.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A4DEE2E24BA3F2D00F734F0 /* CamToXYZAliases.plist */; };
@@ -143,7 +139,6 @@
 		6A8729D824BBCBA200D50C49 /* Waterpipe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF03248B348800145E49 /* Waterpipe.framework */; };
 		6A8729D924BBCBA200D50C49 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A9D00E124A6DAA1007566A5 /* ImageIO.framework */; };
 		6A8729DB24BBCBA200D50C49 /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
-		6A8729DC24BBCBA200D50C49 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A8729E524BBCBE900D50C49 /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
 		6A8729EC24BBCCB800D50C49 /* Renderer.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 6A8729E324BBCBA200D50C49 /* Renderer.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6A8729EF24BBCCD800D50C49 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8729EE24BBCCD800D50C49 /* main.swift */; };
@@ -163,8 +158,6 @@
 		6A903FC8248B8E2400BD1602 /* LibraryHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FC7248B8E2400BD1602 /* LibraryHistoryManager.swift */; };
 		6A903FCC248C5D2B00BD1602 /* Library UI.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A903FCB248C5D2B00BD1602 /* Library UI.xcassets */; };
 		6A903FCF248C621200BD1602 /* LibraryBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FCE248C621200BD1602 /* LibraryBundle.swift */; };
-		6A903FD0248C623800BD1602 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6A903FD7248C66DD00BD1602 /* LibraryBundleError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD6248C66DD00BD1602 /* LibraryBundleError.swift */; };
 		6A903FD9248C6D5400BD1602 /* LibraryMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A903FD8248C6D5400BD1602 /* LibraryMeta.swift */; };
 		6A9315932493122F00A9F9B4 /* ThumbServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9315922493122F00A9F9B4 /* ThumbServer.swift */; };
@@ -264,6 +257,18 @@
 		6AAC459624A07C21009B9AFF /* Library+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */; };
 		6AAC459A24A07EF2009B9AFF /* ChunkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459924A07EF2009B9AFF /* ChunkManager.swift */; };
 		6AAC459C24A08152009B9AFF /* ChunkRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAC459B24A08152009B9AFF /* ChunkRef.swift */; };
+		6AAEFE5826261D6500BD21DF /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */; };
+		6AAEFE5926261D6500BD21DF /* CocoaLumberjack.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6AAEFE5A26261D6500BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */; };
+		6AAEFE5B26261D6500BD21DF /* CocoaLumberjackSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6AAEFE8426261DD300BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */; };
+		6AAEFE8D26261DDF00BD21DF /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */; };
+		6AAEFE9F26261DF400BD21DF /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */; };
+		6AAEFEA126261DF500BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */; };
+		6AAEFEB326261DFD00BD21DF /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */; };
+		6AAEFEB526261DFD00BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */; };
+		6AAEFEC726261E0400BD21DF /* CocoaLumberjack.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */; };
+		6AAEFEC926261E0400BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */; };
 		6AAF473824A3055A00572AB3 /* Edit View.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6AAF473724A3055A00572AB3 /* Edit View.storyboard */; };
 		6AAF473B24A3229500572AB3 /* SidebarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAF473A24A3229500572AB3 /* SidebarController.swift */; };
 		6AAF473D24A3230C00572AB3 /* MainWindowTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAF473C24A3230C00572AB3 /* MainWindowTabController.swift */; };
@@ -282,12 +287,10 @@
 		6ABD36A72496B94A005F80EE /* MetaHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36A62496B94A005F80EE /* MetaHelper.swift */; };
 		6ABD36A92496BBB3005F80EE /* CameraFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36A82496BBB3005F80EE /* CameraFinder.swift */; };
 		6ABD36AC2496BF33005F80EE /* GPSLocation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36AB2496BF32005F80EE /* GPSLocation+CoreDataProperties.swift */; };
-		6ABD36BB2496D1FB005F80EE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6ABD36C52496D282005F80EE /* Paper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6ABD36C82496D408005F80EE /* TIFFReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36C72496D408005F80EE /* TIFFReader.swift */; };
 		6ABD36CC2496DB93005F80EE /* TIFFDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36CB2496DB93005F80EE /* TIFFDirectory.swift */; };
 		6ABD36D82496F0EC005F80EE /* Paper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36C02496D1FB005F80EE /* Paper.framework */; };
-		6ABD36E02496F146005F80EE /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */; };
 		6ABD36E12496F14F005F80EE /* Bowl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A4CEF26248B59CE00145E49 /* Bowl.framework */; };
 		6ABD36F324970645005F80EE /* TIFFTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD36F224970644005F80EE /* TIFFTag.swift */; };
 		6ABD36F724971EF3005F80EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ABD36F624971EEF005F80EE /* Cocoa.framework */; };
@@ -467,8 +470,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				6AAEFE5B26261D6500BD21DF /* CocoaLumberjackSwift.xcframework in Embed Frameworks */,
 				6ABD36C52496D282005F80EE /* Paper.framework in Embed Frameworks */,
 				6A4CEF16248B352500145E49 /* Waterpipe.framework in Embed Frameworks */,
+				6AAEFE5926261D6500BD21DF /* CocoaLumberjack.xcframework in Embed Frameworks */,
 				6A4CEEE2248B2F8E00145E49 /* Smokeshop.framework in Embed Frameworks */,
 				6A4CEF2F248B5A5600145E49 /* Bowl.framework in Embed Frameworks */,
 			);
@@ -552,10 +557,6 @@
 		6A4CEEBC248B274800145E49 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = app_macos/assets/Info.plist; sourceTree = "<group>"; };
 		6A4CEEBD248B274800145E49 /* SmokeShed.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = SmokeShed.entitlements; path = app_macos/assets/SmokeShed.entitlements; sourceTree = "<group>"; };
 		6A4CEEC1248B27BD00145E49 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = app_macos/src/Initialization/AppDelegate.swift; sourceTree = "<group>"; };
-		6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/Mac/CocoaLumberjack.framework; sourceTree = "<group>"; };
-		6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = Carthage/Build/Mac/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
-		6A4CEED0248B28C100145E49 /* CarthageInputs.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; name = CarthageInputs.xcfilelist; path = app_macos/deps/CarthageInputs.xcfilelist; sourceTree = "<group>"; };
-		6A4CEED2248B292100145E49 /* CarthageOutputs.xcfilelist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcfilelist; name = CarthageOutputs.xcfilelist; path = app_macos/deps/CarthageOutputs.xcfilelist; sourceTree = "<group>"; };
 		6A4CEEDA248B2F8E00145E49 /* Smokeshop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Smokeshop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A4CEEEB248B300B00145E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = frameworks/Smokeshop/assets/Info.plist; sourceTree = "<group>"; };
 		6A4CEEED248B301600145E49 /* SmokeShop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmokeShop.h; path = frameworks/Smokeshop/src/include/SmokeShop.h; sourceTree = "<group>"; };
@@ -719,6 +720,8 @@
 		6AAC459024A07C21009B9AFF /* Library+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Library+CoreDataClass.swift"; path = "app_macos/src/Thumb Handling/XPC Service/Directory/Library+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6AAC459924A07EF2009B9AFF /* ChunkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChunkManager.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ChunkManager.swift"; sourceTree = "<group>"; };
 		6AAC459B24A08152009B9AFF /* ChunkRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChunkRef.swift; path = "app_macos/src/Thumb Handling/XPC Service/Directory/ChunkRef.swift"; sourceTree = "<group>"; };
+		6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CocoaLumberjack.xcframework; path = Carthage/Build/CocoaLumberjack.xcframework; sourceTree = "<group>"; };
+		6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CocoaLumberjackSwift.xcframework; path = Carthage/Build/CocoaLumberjackSwift.xcframework; sourceTree = "<group>"; };
 		6AAF473724A3055A00572AB3 /* Edit View.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Edit View.storyboard"; path = "app_macos/src/Edit View/Edit View.storyboard"; sourceTree = "<group>"; };
 		6AAF473A24A3229500572AB3 /* SidebarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarController.swift; path = app_macos/src/Sidebar/SidebarController.swift; sourceTree = "<group>"; };
 		6AAF473C24A3230C00572AB3 /* MainWindowTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindowTabController.swift; path = "app_macos/src/Main Window/MainWindowTabController.swift"; sourceTree = "<group>"; };
@@ -776,7 +779,6 @@
 				6A020D4424920A8C006F5093 /* Waterpipe.framework in Frameworks */,
 				6A9D00E224A6DAA1007566A5 /* ImageIO.framework in Frameworks */,
 				6A020D4024920A8C006F5093 /* Bowl.framework in Frameworks */,
-				6A020D4924920AAF006F5093 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A53A34F24CA4C1500764089 /* Paper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -788,7 +790,6 @@
 				6A0BA39A24D23CB9006035BE /* Waterpipe.framework in Frameworks */,
 				6A0BA38724D23C65006035BE /* Bowl.framework in Frameworks */,
 				6A0BA38824D23C65006035BE /* Paper.framework in Frameworks */,
-				6A0BA38924D23C65006035BE /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -798,12 +799,13 @@
 			files = (
 				6A4CEF15248B352500145E49 /* Waterpipe.framework in Frameworks */,
 				6A5CAC0C24C2719E00BF55BA /* Metal.framework in Frameworks */,
-				6A4CEECC248B283600145E49 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A5B5D9A24C39BEB003BC002 /* MetalKit.framework in Frameworks */,
 				6A5CAC0B24C2719900BF55BA /* MapKit.framework in Frameworks */,
 				6ABD36F724971EF3005F80EE /* Cocoa.framework in Frameworks */,
 				6A4CEF2E248B5A5600145E49 /* Bowl.framework in Frameworks */,
+				6AAEFE5A26261D6500BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				6A587F7524A86766009696E9 /* UniformTypeIdentifiers.framework in Frameworks */,
+				6AAEFE5826261D6500BD21DF /* CocoaLumberjack.xcframework in Frameworks */,
 				6A4CEEE1248B2F8E00145E49 /* Smokeshop.framework in Frameworks */,
 				6A660C5824C4C7CC0012CFD8 /* MetalPerformanceShaders.framework in Frameworks */,
 			);
@@ -813,9 +815,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AAEFEC926261E0400BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				6A5CAC0624C267F400BF55BA /* Paper.framework in Frameworks */,
 				6A9315AD2493443E00A9F9B4 /* CoreLocation.framework in Frameworks */,
-				6A903FD0248C623800BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
+				6AAEFEC726261E0400BD21DF /* CocoaLumberjack.xcframework in Frameworks */,
 				6A9315AB2493443800A9F9B4 /* CoreData.framework in Frameworks */,
 				6A9D00B224A5C9E9007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
 			);
@@ -825,10 +828,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AAEFEB326261DFD00BD21DF /* CocoaLumberjack.xcframework in Frameworks */,
 				6A0BA36D24CFF950006035BE /* UniformTypeIdentifiers.framework in Frameworks */,
+				6AAEFEB526261DFD00BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				6A9315A52493441C00A9F9B4 /* QuartzCore.framework in Frameworks */,
 				6A9315A72493442000A9F9B4 /* Metal.framework in Frameworks */,
-				6A903FD3248C623D00BD1602 /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A8B2EEC24C7ABEA009FB581 /* MetalKit.framework in Frameworks */,
 				6A4CEF19248B357F00145E49 /* Smokeshop.framework in Frameworks */,
 				6A9E24E924EB39350006A39A /* liblensfun.a in Frameworks */,
@@ -839,8 +843,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AAEFEA126261DF500BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				6A8729FB24BBCF8700D50C49 /* Security.framework in Frameworks */,
-				6A4CEF36248B62D700145E49 /* CocoaLumberjackSwift.framework in Frameworks */,
+				6AAEFE9F26261DF400BD21DF /* CocoaLumberjack.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -853,7 +858,6 @@
 				6A8729D824BBCBA200D50C49 /* Waterpipe.framework in Frameworks */,
 				6A8729D924BBCBA200D50C49 /* ImageIO.framework in Frameworks */,
 				6A8729DB24BBCBA200D50C49 /* Bowl.framework in Frameworks */,
-				6A8729DC24BBCBA200D50C49 /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -861,9 +865,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AAEFE8426261DD300BD21DF /* CocoaLumberjackSwift.xcframework in Frameworks */,
 				6A9D00B324A5C9F3007566A5 /* UniformTypeIdentifiers.framework in Frameworks */,
+				6AAEFE8D26261DDF00BD21DF /* CocoaLumberjack.xcframework in Frameworks */,
 				6AAC4577249FFF19009B9AFF /* Accelerate.framework in Frameworks */,
-				6ABD36BB2496D1FB005F80EE /* CocoaLumberjackSwift.framework in Frameworks */,
 				6A9E24CF24E858150006A39A /* libraw_r.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -874,7 +879,6 @@
 			files = (
 				6ABD36E12496F14F005F80EE /* Bowl.framework in Frameworks */,
 				6ABD36D82496F0EC005F80EE /* Paper.framework in Frameworks */,
-				6ABD36E02496F146005F80EE /* CocoaLumberjackSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1232,29 +1236,9 @@
 			name = Initialization;
 			sourceTree = "<group>";
 		};
-		6A4CEEC4248B27FC00145E49 /* Carthage */ = {
-			isa = PBXGroup;
-			children = (
-				6A4CEED2248B292100145E49 /* CarthageOutputs.xcfilelist */,
-				6A4CEED0248B28C100145E49 /* CarthageInputs.xcfilelist */,
-			);
-			name = Carthage;
-			sourceTree = "<group>";
-		};
-		6A4CEEC7248B283600145E49 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				6A4CEEC8248B283600145E49 /* CocoaLumberjack.framework */,
-				6A4CEEC9248B283600145E49 /* CocoaLumberjackSwift.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		6A4CEED1248B290700145E49 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				6A4CEEC4248B27FC00145E49 /* Carthage */,
-				6A4CEEC7248B283600145E49 /* Frameworks */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -1903,6 +1887,8 @@
 		6AAC4575249FFF18009B9AFF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6AAEFE5626261D6500BD21DF /* CocoaLumberjack.xcframework */,
+				6AAEFE5726261D6500BD21DF /* CocoaLumberjackSwift.xcframework */,
 				6A660C5724C4C7CB0012CFD8 /* MetalPerformanceShaders.framework */,
 				6A5B5D9924C39BEB003BC002 /* MetalKit.framework */,
 				6A5CAC0A24C2719900BF55BA /* MapKit.framework */,
@@ -2245,7 +2231,6 @@
 				6A4CEE96248B259500145E49 /* Sources */,
 				6A4CEE97248B259500145E49 /* Frameworks */,
 				6A4CEE98248B259500145E49 /* Resources */,
-				6A4CEECF248B288600145E49 /* Copy Carthage frameworks */,
 				6A4CEEE6248B2F8E00145E49 /* Embed Frameworks */,
 				6A020D3E24920A6C006F5093 /* Embed XPC Services */,
 			);
@@ -2384,7 +2369,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					6A020D2E24920A6C006F5093 = {
 						CreatedOnToolsVersion = 11.5;
@@ -2555,29 +2540,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6A4CEECF248B288600145E49 /* Copy Carthage frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/app_macos/deps/CarthageInputs.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "Copy Carthage frameworks";
-			outputFileListPaths = (
-				"$(SRCROOT)/app_macos/deps/CarthageOutputs.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6A020D2B24920A6C006F5093 /* Sources */ = {
@@ -2959,6 +2921,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -2967,10 +2930,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3042,6 +3001,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "app_macos/src/Thumb Handling/XPC Service/ThumbHandler.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3050,10 +3010,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3339,6 +3295,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/app_macos/assets/SmokeShed.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3347,10 +3304,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3418,6 +3371,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/app_macos/assets/SmokeShed.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3426,10 +3380,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3500,10 +3450,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3587,10 +3534,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3666,10 +3610,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3759,10 +3700,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3845,10 +3783,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3930,10 +3864,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3997,6 +3927,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "app_macos/src/Rendering/XPC Service/Resources/Renderer.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -4005,10 +3936,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -4077,6 +4004,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "app_macos/src/Rendering/XPC Service/Resources/Renderer.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -4085,10 +4013,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4160,10 +4084,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -4253,10 +4173,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "";
