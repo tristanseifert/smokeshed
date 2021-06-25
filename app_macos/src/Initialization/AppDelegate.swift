@@ -25,6 +25,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         // load the bowl
         Bowl.Logger.setup()
         
+        if let info = Bundle.main.infoDictionary,
+           let vers = info[kCFBundleVersionKey as String] as? String,
+           let build = info["CFBundleShortVersionString"] as? String {
+            DDLogWarn("Starting up (version \(vers), build \(build))")
+        }
+        
         // register user defaults
         InitialDefaults.register()
     }

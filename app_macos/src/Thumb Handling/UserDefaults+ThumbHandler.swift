@@ -11,6 +11,15 @@ import Foundation
  * Adds keys to the user defaults for the thumbnail service.
  */
 extension UserDefaults {
+    /// Is the chunk cache automatically sized?
+    @objc dynamic var thumbChunkCacheSizeAuto: Bool {
+        get {
+            return self.bool(forKey: "thumbChunkCacheSizeAuto")
+        }
+        set {
+            set(newValue, forKey: "thumbChunkCacheSizeAuto")
+        }
+    }
     /// Size of the thumbnail chunk cache, in bytes.
     @objc dynamic var thumbChunkCacheSize: Int {
         get {

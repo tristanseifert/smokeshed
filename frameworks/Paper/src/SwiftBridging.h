@@ -15,6 +15,9 @@
 // CR2
 #import "CR2Unslicer.h"
 
+// LibRaw reading
+#import "PAPLibRawReader.h"
+
 // Debayering
 #import "PAPDebayerer.h"
 

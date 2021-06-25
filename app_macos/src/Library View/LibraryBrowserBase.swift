@@ -581,6 +581,9 @@ NSFetchedResultsControllerDelegate {
             cell.sequenceNumber = (path[1] + 1)
             cell.libraryUrl = self.library.url
             cell.representedObject = self.fetchReqCtrl.object(at: path)
+            
+            // ensure the selection status is remembered
+            cell.isSelected = view.selectionIndexPaths.contains(path)
 
             return cell
         })
@@ -696,7 +699,23 @@ NSFetchedResultsControllerDelegate {
         self.updateRepresentedObj()
         self.parent?.invalidateRestorableState()
     }
-
+    
+    // MARK: Selection
+    /**
+     * Updates the selection to include these images, if visible.
+     */
+    internal func select(_ images: [Image]) {
+        let paths = images.compactMap(self.fetchReqCtrl.indexPath)
+        
+        if !Thread.isMainThread {
+            DispatchQueue.main.async {
+                self.collection.selectionIndexPaths = Set(paths)
+            }
+        } else {
+            self.collection.selectionIndexPaths = Set(paths)
+        }
+    }
+    
     /**
      * Updates the represented object of the view controller; this is set to an array encompassing the
      * selection of the collection view.

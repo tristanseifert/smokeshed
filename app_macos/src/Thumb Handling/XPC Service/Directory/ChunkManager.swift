@@ -70,11 +70,12 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         self.kvos.append(urlObs)
         
         // observe cache size changes
-        let sizeObs = UserDefaults.standard.observe(\.thumbChunkCacheSize)
-        { _, _ in
+        self.kvos.append(UserDefaults.standard.observe(\.thumbChunkCacheSize) { _, _ in
             self.refreshSettings()
-        }
-        self.kvos.append(sizeObs)
+        })
+        self.kvos.append(UserDefaults.standard.observe(\.thumbChunkCacheSizeAuto) { _, _ in
+            self.refreshSettings()
+        })
         
         // register for reload config notification
         self.refreshSettings()
@@ -107,14 +108,30 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
      * Updates the size of the thumbnail cache based on configuration.
      */
     private func refreshSettings() {
-        // get the new cache size
-        let new = UserDefaults.standard.thumbChunkCacheSize
-        
-        if new > (1024 * 1024 * 16) {
-            DDLogVerbose("New thumb cache size: \(new)")
-            self.chunkCache.totalCostLimit = new
+        if UserDefaults.standard.thumbChunkCacheSizeAuto {
+            /**
+             * For automatic cache sizing, allow the cache to grow to up to 1/25th of system memory. Also enforce that the cache
+             * should be at least 128MB (which it will be for all Macs with at least 4 GB of memory) but that it does not consume
+             * more than 10% of the total system memory.
+             *
+             * TODO: We can probably be smarter about this
+             */
+            let totalMem = ProcessInfo.processInfo.physicalMemory
+            let maxCacheSize = UInt64(Double(totalMem) * 0.1)
+            let cacheSize = max(min((totalMem / 25), maxCacheSize), (128 * 1024 * 1024))
+            
+            DDLogVerbose("Automatically sized chunk cache: \(cacheSize) bytes (max cache size: \(maxCacheSize))")
+            self.chunkCache.totalCostLimit = Int(clamping: cacheSize)
         } else {
-            DDLogWarn("Ignoring too small cache size: \(new)")
+            // get the new cache size
+            let new = UserDefaults.standard.thumbChunkCacheSize
+            
+            if new > (1024 * 1024 * 16) {
+                DDLogVerbose("New thumb cache size: \(new)")
+                self.chunkCache.totalCostLimit = new
+            } else {
+                DDLogWarn("Ignoring too small cache size: \(new)")
+            }
         }
     }
     

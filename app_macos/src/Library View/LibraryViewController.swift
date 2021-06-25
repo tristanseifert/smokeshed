@@ -27,7 +27,13 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
             
             self.animateDataSourceUpdates = false
             self.fetchReqChanged = true
-            self.fetch()
+            
+            // force fetch next time if not visible
+            if self.view.superview == nil {
+                self.shouldFetchOnAppear = true
+            } else {
+                self.fetch()
+            }
         }
     }
     
@@ -42,6 +48,8 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
     // MARK: View Lifecycle
     /// Whether animations should be run or not
     private var shouldAnimate: Bool = false
+    /// Is this the first time the view controller has appeared?
+    private var shouldFetchOnAppear: Bool = true
 
     /**
      * Initiaizes CoreData contexts for displaying data once the view has loaded.
@@ -69,7 +77,11 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
 
         // ensure the grid is updated properly
         self.reflowContent()
-        self.fetch()
+        
+        if self.shouldFetchOnAppear {
+            self.fetch()
+            self.shouldFetchOnAppear = false
+        }
     }
     /**
      * Adds an observer on window size changes. This is used to reflow the content grid as needed.
@@ -277,7 +289,21 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
      * inspector.
      */
     func openEditorForImages(_ images: [Image]) {
-        DDLogDebug("Switching to editor for: \(images)")
+        guard !images.isEmpty,
+              let tabs = self.parent as? MainWindowTabController,
+              let editItem = tabs.tabViewItems.first(where: { item in
+                if let str = item.identifier as? String {
+                    return str == "edit"
+                }
+                return false
+              }),
+              let edit = editItem.viewController as? EditViewController else {
+            return
+        }
+        
+        // enter the editor
+        edit.openImage(images.first!)
+        tabs.selectedTabViewItemIndex = tabs.tabViewItems.firstIndex(of: editItem)!
     }
     
     /**

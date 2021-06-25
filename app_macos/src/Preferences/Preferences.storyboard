@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="878-Oo-XwP">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="878-Oo-XwP">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -37,9 +37,11 @@
                         <tabViewItem label="Library" image="photo.on.rectangle.angled" catalog="system" id="IZL-pg-GFx"/>
                         <tabViewItem label="Importing" image="square.grid.3x1.folder.badge.plus" catalog="system" id="P36-UZ-29Y"/>
                         <tabViewItem label="Thumbnails" identifier="" image="rectangle.and.text.magnifyingglass" catalog="system" id="pnq-Dh-pvA"/>
+                        <tabViewItem label="Rendering" image="doc.badge.gearshape" catalog="system" id="Nwy-C5-7Ta"/>
+                        <tabViewItem label="Editing" image="pencil" catalog="system" id="bas-9x-993"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="HoW-uU-1NE">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="500"/>
+                        <rect key="frame" x="0.0" y="0.0" width="181" height="158"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <font key="font" metaFont="message"/>
                         <connections>
@@ -51,11 +53,13 @@
                         <segue destination="8fh-SO-nJI" kind="relationship" relationship="tabItems" id="vdO-HG-yOa"/>
                         <segue destination="l8y-l3-hGh" kind="relationship" relationship="tabItems" id="8AU-cr-Prm"/>
                         <segue destination="3zq-It-y78" kind="relationship" relationship="tabItems" id="XIB-md-kVp"/>
+                        <segue destination="hN9-J0-XGS" kind="relationship" relationship="tabItems" id="bFO-8p-Rvy"/>
+                        <segue destination="uaC-lP-3yW" kind="relationship" relationship="tabItems" id="do3-B6-mHU"/>
                     </connections>
                 </tabViewController>
                 <customObject id="7yU-it-CRY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="140" y="20.5"/>
+            <point key="canvasLocation" x="-78.5" y="-122"/>
         </scene>
         <!--General-->
         <scene sceneID="i9m-iH-df7">
@@ -77,7 +81,7 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sqd-6q-gJr">
-                                <rect key="frame" x="226" y="263" width="172" height="18"/>
+                                <rect key="frame" x="226" y="262.5" width="172" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Show sequence number" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="kFY-Ij-E59">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -87,7 +91,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mad-b0-n2s">
-                                <rect key="frame" x="226" y="241" width="172" height="18"/>
+                                <rect key="frame" x="226" y="239.5" width="172" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Show image information" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="d3h-9i-48L">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -97,7 +101,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C3o-pk-cN0">
-                                <rect key="frame" x="226" y="193" width="105" height="18"/>
+                                <rect key="frame" x="226" y="191.5" width="105" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Show ratings" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Zlx-SF-e9C">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -107,7 +111,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="myu-yY-Gu5">
-                                <rect key="frame" x="243" y="211" width="96" height="27"/>
+                                <rect key="frame" x="243" y="210" width="96" height="27"/>
                                 <buttonCell key="cell" type="push" title="Edit Layout…" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f5T-DG-rqC">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -118,7 +122,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="V76-Vq-Eha">
-                                <rect key="frame" x="226" y="149" width="204" height="18"/>
+                                <rect key="frame" x="226" y="145.5" width="204" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Change appearance on hover" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="DWv-0u-Ebg">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -128,7 +132,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kyF-rC-D5I">
-                                <rect key="frame" x="247" y="171" width="224" height="18"/>
+                                <rect key="frame" x="247" y="168.5" width="224" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Only when hovering over the cell" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="mk5-Lb-qU2">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -230,14 +234,14 @@ DQ
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pbt-tm-DUm">
+                            <scrollView wantsLayer="YES" borderType="line" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Pbt-tm-DUm">
                                 <rect key="frame" x="285" y="60" width="250" height="313"/>
                                 <clipView key="contentView" id="KG6-Bj-YGK">
                                     <rect key="frame" x="1" y="1" width="248" height="311"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <collectionView id="VRT-oQ-i0p">
-                                            <rect key="frame" x="0.0" y="0.0" width="248" height="158"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="248" height="311"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <collectionViewFlowLayout key="collectionViewLayout" id="vH7-ui-nm7">
                                                 <size key="itemSize" width="1" height="1"/>
@@ -255,11 +259,11 @@ DQ
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="g1K-6v-wp1"/>
                                 </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="BOP-7P-Oii">
-                                    <rect key="frame" x="1" y="133" width="118" height="16"/>
+                                    <rect key="frame" x="-100" y="-100" width="118" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="hkK-Ns-I73">
-                                    <rect key="frame" x="103" y="1" width="16" height="148"/>
+                                    <rect key="frame" x="233" y="1" width="16" height="311"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
@@ -402,7 +406,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GfN-P5-ZF2">
-                                <rect key="frame" x="226" y="263" width="230" height="18"/>
+                                <rect key="frame" x="226" y="262.5" width="230" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Copy files to library during import" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8Z3-nE-a8c">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -434,14 +438,14 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3zg-l3-GgI">
-                                <rect key="frame" x="17.5" y="16" width="25" height="25"/>
+                                <rect key="frame" x="17" y="16" width="25" height="25"/>
                                 <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PdJ-ab-r9w">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vdh-Bq-Wij">
-                                <rect key="frame" x="18" y="301" width="204" height="16"/>
+                                <rect key="frame" x="18" y="302" width="204" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="vsu-q2-NwD"/>
                                 </constraints>
@@ -452,15 +456,19 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <slider toolTip="Change the size of the in-memory cache holding undecoded thumbnail data as read from disk." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Va-Tk-gOo">
-                                <rect key="frame" x="220" y="292" width="289" height="28"/>
+                                <rect key="frame" x="220" y="268" width="289" height="28"/>
                                 <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="134217728" maxValue="1073741824" doubleValue="440401920" tickMarkPosition="above" numberOfTickMarks="15" sliderType="linear" id="dGT-kk-grj"/>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="tPU-q0-jgJ"/>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeChunkCache" id="kUC-Bk-Dfx">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.chunkCacheSize" id="BBf-ED-c3T"/>
                                 </connections>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZO0-J4-3Tq">
-                                <rect key="frame" x="503" y="301" width="79" height="16"/>
+                                <rect key="frame" x="503" y="277" width="79" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="75" id="hot-9h-89n"/>
                                 </constraints>
@@ -510,7 +518,7 @@ DQ
                                                                 </connections>
                                                             </textField>
                                                             <button toolTip="Recalculate the disk space used by thumbnail data." horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="lva-1R-BM5" userLabel="Recalculate button">
-                                                                <rect key="frame" x="40" y="-2" width="16" height="19"/>
+                                                                <rect key="frame" x="40" y="0.0" width="16" height="16"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="16" id="LoV-Jg-32n"/>
                                                                     <constraint firstAttribute="height" constant="16" id="fJQ-kg-Zyy"/>
@@ -597,6 +605,11 @@ DQ
                                             </buttonCell>
                                             <connections>
                                                 <action selector="revealThumbStorageDir:" target="3zq-It-y78" id="XCv-AW-QnQ"/>
+                                                <binding destination="3zq-It-y78" name="enabled" keyPath="self.maintenance" id="nit-y3-n6W">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">NSIsNotNil</string>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -612,13 +625,12 @@ DQ
                                 </view>
                             </box>
                             <button toolTip="When checked, the size of the thumbnail work queue is dynamically adjusted based on the system's load." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Tf4-nz-Tre">
-                                <rect key="frame" x="226" y="263" width="262" height="18"/>
+                                <rect key="frame" x="226" y="248.5" width="262" height="18.5"/>
                                 <buttonCell key="cell" type="check" title="Automatically manage work queue size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PIc-zS-nKt">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="k0p-Fk-70i"/>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.autoSizeGeneratorQueue" id="w21-Qv-bdy">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="1"/>
@@ -628,10 +640,11 @@ DQ
                                             <bool key="NSValidatesImmediately" value="YES"/>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="k0p-Fk-70i"/>
                                 </connections>
                             </button>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaS-7b-j0p">
-                                <rect key="frame" x="363" y="232" width="19" height="28"/>
+                                <rect key="frame" x="363" y="216" width="19" height="28"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="255" doubleValue="16" id="VpX-AS-1RW"/>
                                 <connections>
                                     <binding destination="3zq-It-y78" name="enabled" keyPath="self.autoSizeGeneratorQueue" id="EBQ-TV-p8A">
@@ -643,7 +656,7 @@ DQ
                                 </connections>
                             </stepper>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9IV-UR-ynk">
-                                <rect key="frame" x="141" y="264" width="81" height="16"/>
+                                <rect key="frame" x="141" y="250" width="81" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Work queue:" id="Jgf-Zm-RKY">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -651,7 +664,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l4Z-39-HBz" userLabel="Thread Count">
-                                <rect key="frame" x="311" y="235" width="50" height="21"/>
+                                <rect key="frame" x="311" y="220" width="50" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="PWz-U1-I5J"/>
                                 </constraints>
@@ -673,7 +686,7 @@ DQ
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F0i-sJ-nbr">
-                                <rect key="frame" x="247" y="238" width="58" height="16"/>
+                                <rect key="frame" x="247" y="223" width="58" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Threads:" id="fcb-Rg-D7h">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -681,7 +694,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="90L-k4-Pul">
-                                <rect key="frame" x="18" y="209" width="204" height="16"/>
+                                <rect key="frame" x="18" y="194" width="204" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="fi4-cs-Wt8"/>
                                 </constraints>
@@ -692,7 +705,7 @@ DQ
                                 </textFieldCell>
                             </textField>
                             <pathControl verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zfV-0V-amW">
-                                <rect key="frame" x="228" y="205" width="352" height="22"/>
+                                <rect key="frame" x="228" y="190" width="352" height="22"/>
                                 <pathCell key="cell" selectable="YES" alignment="left" id="n6e-8u-uEi">
                                     <font key="font" metaFont="system"/>
                                     <url key="url" string="file://localhost/Applications/"/>
@@ -707,12 +720,12 @@ DQ
                                             <string key="NSValueTransformerName">NSIsNotNil</string>
                                         </dictionary>
                                     </binding>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="RCI-Mw-Xst"/>
                                     <binding destination="3zq-It-y78" name="value" keyPath="self.storageLocation" id="x8E-vH-hfM"/>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="RCI-Mw-Xst"/>
                                 </connections>
                             </pathControl>
                             <button toolTip="Move thumbnail data to a different location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ReY-Dp-MOk">
-                                <rect key="frame" x="222" y="174" width="128" height="27"/>
+                                <rect key="frame" x="222" y="159" width="128" height="27"/>
                                 <buttonCell key="cell" type="push" title="Change Directory…" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LG8-Gq-oVj">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -727,29 +740,82 @@ DQ
                                 </connections>
                             </button>
                             <button toolTip="Move thumbnail data back to its default location" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mTa-eg-UPV">
-                                <rect key="frame" x="346" y="174" width="113" height="27"/>
+                                <rect key="frame" x="346" y="159" width="113" height="27"/>
                                 <buttonCell key="cell" type="push" title="Reset to Default" alternateTitle="Reset to Default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RIP-YD-s9o">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="resetStorageLocation:" target="3zq-It-y78" id="rCq-0m-HAQ"/>
-                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.storageLocation" id="GVe-2f-lyo">
-                                        <dictionary key="options">
-                                            <string key="NSValueTransformerName">NSIsNotNil</string>
-                                        </dictionary>
-                                    </binding>
                                     <binding destination="3zq-It-y78" name="hidden" keyPath="self.optPressed" previousBinding="GVe-2f-lyo" id="DwF-bk-ize">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
                                     </binding>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.storageLocation" id="GVe-2f-lyo">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8kB-u6-8Bz">
+                                <rect key="frame" x="52" y="22" width="227" height="16"/>
+                                <subviews>
+                                    <progressIndicator maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="kKK-eS-VSe">
+                                        <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
+                                        <connections>
+                                            <binding destination="3zq-It-y78" name="animate" keyPath="self.xpcPrefsAvailable" id="vSK-c7-LbF">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </progressIndicator>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lp9-zY-AMJ">
+                                        <rect key="frame" x="18" y="0.0" width="211" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Connecting to thumbnail service…" id="tGr-bl-j59">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="hidden" keyPath="self.xpcPrefsAvailable" id="ONt-Iw-BA1"/>
+                                </connections>
+                            </stackView>
+                            <button toolTip="Allow Smokeshed to automatically manage the size of the chunk cache." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iEq-Cc-aAY">
+                                <rect key="frame" x="226" y="301" width="176" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically size cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UHg-4H-DRJ">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="3zq-It-y78" name="value" keyPath="self.autoSizeChunkCache" id="sUr-pA-0KL">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="3zq-It-y78" name="enabled" keyPath="self.xpcPrefsAvailable" id="S5J-Ok-LJ3"/>
                                 </connections>
                             </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="NaS-7b-j0p" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="top" id="17L-ei-Ryh"/>
-                            <constraint firstItem="vdh-Bq-Wij" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="42F-hV-rix"/>
+                            <constraint firstItem="iEq-Cc-aAY" firstAttribute="leading" secondItem="vdh-Bq-Wij" secondAttribute="trailing" constant="8" symbolic="YES" id="4rC-sR-PMt"/>
                             <constraint firstItem="ReY-Dp-MOk" firstAttribute="top" secondItem="zfV-0V-amW" secondAttribute="bottom" constant="8" symbolic="YES" id="503-aj-Oji"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="firstBaseline" secondItem="0Va-Tk-gOo" secondAttribute="firstBaseline" id="5Ca-Ex-hKH"/>
                             <constraint firstItem="90L-k4-Pul" firstAttribute="trailing" secondItem="vdh-Bq-Wij" secondAttribute="trailing" id="5Th-H4-ShT"/>
@@ -758,11 +824,11 @@ DQ
                             <constraint firstItem="bKl-AK-EBP" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="BUk-hX-J7k"/>
                             <constraint firstItem="l4Z-39-HBz" firstAttribute="top" secondItem="Tf4-nz-Tre" secondAttribute="bottom" constant="8" symbolic="YES" id="C1a-vs-7QS"/>
                             <constraint firstItem="zfV-0V-amW" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="CSd-2A-rRw"/>
-                            <constraint firstItem="0Va-Tk-gOo" firstAttribute="top" secondItem="Mzt-gk-6Sa" secondAttribute="top" constant="20" symbolic="YES" id="Ckh-DJ-mTX"/>
                             <constraint firstAttribute="trailing" secondItem="bKl-AK-EBP" secondAttribute="trailing" constant="20" symbolic="YES" id="Esb-sT-x3v"/>
-                            <constraint firstItem="Tf4-nz-Tre" firstAttribute="top" secondItem="0Va-Tk-gOo" secondAttribute="bottom" multiplier="1.25" constant="8" symbolic="YES" id="H57-hp-UFG"/>
+                            <constraint firstItem="Tf4-nz-Tre" firstAttribute="top" secondItem="0Va-Tk-gOo" secondAttribute="bottom" constant="8" symbolic="YES" id="H57-hp-UFG"/>
                             <constraint firstItem="l4Z-39-HBz" firstAttribute="leading" secondItem="F0i-sJ-nbr" secondAttribute="trailing" constant="8" symbolic="YES" id="Hj4-qE-z0t"/>
                             <constraint firstItem="0Va-Tk-gOo" firstAttribute="leading" secondItem="vdh-Bq-Wij" secondAttribute="trailing" constant="8" symbolic="YES" id="ILO-8w-gOQ"/>
+                            <constraint firstItem="8kB-u6-8Bz" firstAttribute="centerY" secondItem="3zg-l3-GgI" secondAttribute="centerY" id="L7w-W5-cPu"/>
                             <constraint firstItem="3zg-l3-GgI" firstAttribute="top" secondItem="bKl-AK-EBP" secondAttribute="bottom" constant="12" symbolic="YES" id="NJK-i2-rBz"/>
                             <constraint firstAttribute="trailing" secondItem="ZO0-J4-3Tq" secondAttribute="trailing" constant="20" symbolic="YES" id="OWP-r2-znI"/>
                             <constraint firstItem="vdh-Bq-Wij" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="Q5E-Ge-qIX"/>
@@ -771,6 +837,7 @@ DQ
                             <constraint firstItem="NaS-7b-j0p" firstAttribute="leading" secondItem="l4Z-39-HBz" secondAttribute="trailing" constant="5" id="T4T-0T-DYy"/>
                             <constraint firstItem="ReY-Dp-MOk" firstAttribute="leading" secondItem="zfV-0V-amW" secondAttribute="leading" id="UXI-Qn-TLC"/>
                             <constraint firstItem="Tf4-nz-Tre" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="leading" id="X49-Bg-xjz"/>
+                            <constraint firstItem="0Va-Tk-gOo" firstAttribute="top" secondItem="iEq-Cc-aAY" secondAttribute="bottom" constant="8" symbolic="YES" id="aWI-1n-XwB"/>
                             <constraint firstItem="ZO0-J4-3Tq" firstAttribute="leading" secondItem="0Va-Tk-gOo" secondAttribute="trailing" constant="4" id="bA3-p3-euu"/>
                             <constraint firstItem="9IV-UR-ynk" firstAttribute="firstBaseline" secondItem="Tf4-nz-Tre" secondAttribute="firstBaseline" id="dpZ-NB-DFx"/>
                             <constraint firstItem="3zg-l3-GgI" firstAttribute="leading" secondItem="Mzt-gk-6Sa" secondAttribute="leading" constant="20" symbolic="YES" id="e8O-5l-d6d"/>
@@ -780,7 +847,10 @@ DQ
                             <constraint firstItem="zfV-0V-amW" firstAttribute="top" secondItem="l4Z-39-HBz" secondAttribute="bottom" constant="8" symbolic="YES" id="jXs-Y3-Jmk"/>
                             <constraint firstAttribute="bottom" secondItem="3zg-l3-GgI" secondAttribute="bottom" constant="20" symbolic="YES" id="q3B-fy-se1"/>
                             <constraint firstAttribute="trailing" secondItem="zfV-0V-amW" secondAttribute="trailing" constant="20" symbolic="YES" id="snj-fD-0mM"/>
+                            <constraint firstItem="8kB-u6-8Bz" firstAttribute="leading" secondItem="3zg-l3-GgI" secondAttribute="trailing" constant="12" symbolic="YES" id="t56-Gc-FPT"/>
                             <constraint firstItem="F0i-sJ-nbr" firstAttribute="firstBaseline" secondItem="l4Z-39-HBz" secondAttribute="firstBaseline" id="uxO-U0-yOk"/>
+                            <constraint firstItem="iEq-Cc-aAY" firstAttribute="top" secondItem="Mzt-gk-6Sa" secondAttribute="top" constant="20" symbolic="YES" id="vF5-mX-jwS"/>
+                            <constraint firstItem="vdh-Bq-Wij" firstAttribute="firstBaseline" secondItem="iEq-Cc-aAY" secondAttribute="firstBaseline" id="vlv-ZW-PdH"/>
                         </constraints>
                     </view>
                     <connections>
@@ -857,9 +927,8 @@ DQ
                 </customView>
                 <window title="Thumb Move Progress" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="38d-WL-rhi" userLabel="Progress Sheet">
                     <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-                    <rect key="contentRect" x="-2135" y="318" width="375" height="178"/>
-                    <rect key="screenRect" x="-1440" y="-290" width="1440" height="2535"/>
-                    <value key="minSize" type="size" width="375" height="178"/>
+                    <rect key="contentRect" x="-2135" y="318" width="375" height="128"/>
+                    <rect key="screenRect" x="-2560" y="0.0" width="2560" height="1415"/>
                     <view key="contentView" id="E0c-GG-6dn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="128"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -939,13 +1008,290 @@ DQ
                     </view>
                 </window>
             </objects>
-            <point key="canvasLocation" x="877" y="626"/>
+            <point key="canvasLocation" x="877" y="482"/>
+        </scene>
+        <!--Rendering-->
+        <scene sceneID="QLR-B4-gHH">
+            <objects>
+                <viewController title="Rendering" id="hN9-J0-XGS" customClass="RenderPreferencesViewController" customModule="SmokeShed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="n3p-CW-q6N">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wnc-gT-ef9">
+                                <rect key="frame" x="18" y="264" width="204" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="Tqh-Ag-ZLX"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Offline rendering:" id="j0T-Cy-bpL">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button toolTip="Allow Smokeshed to automatically select the most optimal device for offline renders." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NRy-CA-sEh">
+                                <rect key="frame" x="226" y="262.5" width="192" height="18.5"/>
+                                <buttonCell key="cell" type="check" title="Automatically select device" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="YfA-99-RfU">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="saveServicePrefs:" target="hN9-J0-XGS" id="lQX-zE-SBA"/>
+                                    <binding destination="hN9-J0-XGS" name="value" keyPath="self.autoselectOfflineRenderDevice" id="iK0-wG-x5n"/>
+                                    <binding destination="hN9-J0-XGS" name="enabled" keyPath="self.xpcPrefsAvailable" id="0ki-Xf-l85"/>
+                                </connections>
+                            </button>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="971-Wl-sgp">
+                                <rect key="frame" x="17" y="16" width="25" height="25"/>
+                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8t6-RB-ai6">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oaa-4m-b8E">
+                                <rect key="frame" x="247" y="236" width="50" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Device:" id="G9B-QA-W7Z">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Z26-yy-UaA">
+                                <rect key="frame" x="301" y="231" width="171" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="(default device name)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" selectedItem="kH1-J2-iLL" id="8l9-iw-zie">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" autoenablesItems="NO" id="Hhq-Dd-oeK">
+                                        <items>
+                                            <menuItem title="Default Device" enabled="NO" id="sQr-Fp-llh"/>
+                                            <menuItem title="(default device name)" state="on" id="kH1-J2-iLL">
+                                                <connections>
+                                                    <action selector="selectDefaultForOfflineGpu:" target="hN9-J0-XGS" id="b2C-Dd-TCy"/>
+                                                    <binding destination="hN9-J0-XGS" name="title" keyPath="self.defaultGpuName" id="Csp-Rg-w9F"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="q70-Rf-BNm"/>
+                                            <menuItem title="All Devices" enabled="NO" id="foH-52-zFJ">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Item Placeholder" tag="69" id="cJ6-lq-y09"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="hN9-J0-XGS" name="enabled" keyPath="self.autoselectOfflineRenderDevice" id="TOY-uu-fbQ">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="hN9-J0-XGS" name="contentValues" keyPath="self.gpuDeviceNames" id="8DK-By-6dI">
+                                        <dictionary key="options">
+                                            <integer key="NSContentPlacementTag" value="69"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="hN9-J0-XGS" name="selectedIndex" keyPath="self.offlineRenderDeviceIdx" previousBinding="8DK-By-6dI" id="elA-P7-7b2">
+                                        <dictionary key="options">
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2MU-lj-50i">
+                                <rect key="frame" x="112" y="210" width="110" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Display rendering:" id="BWC-G9-mVr">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button toolTip="When checked, the graphics device that is driving the display will be used to render full size images." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fol-R5-jvg">
+                                <rect key="frame" x="226" y="208.5" width="199" height="18.5"/>
+                                <buttonCell key="cell" type="check" title="Always match display device" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="9Q7-4D-dzf">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="saveServicePrefs:" target="hN9-J0-XGS" id="CC3-XS-PfJ"/>
+                                    <binding destination="hN9-J0-XGS" name="value" keyPath="self.matchDisplayDevice" id="dlc-J0-RmE"/>
+                                    <binding destination="hN9-J0-XGS" name="enabled" keyPath="self.xpcPrefsAvailable" id="k5u-vX-kXc"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WXW-ic-3g5">
+                                <rect key="frame" x="247" y="182" width="50" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Device:" id="ETH-wy-wu0">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ik0-mu-Or8">
+                                <rect key="frame" x="301" y="177" width="171" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="(default device name)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="moZ-DA-mPQ" id="V4x-Xt-WVX">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="P1A-ex-1UT">
+                                        <items>
+                                            <menuItem title="Default Device" enabled="NO" id="q0U-Nw-Ipy"/>
+                                            <menuItem title="(default device name)" state="on" id="moZ-DA-mPQ">
+                                                <connections>
+                                                    <action selector="selectDefaultForDisplayGpu:" target="hN9-J0-XGS" id="wif-yJ-PUU"/>
+                                                    <binding destination="hN9-J0-XGS" name="title" keyPath="self.defaultGpuName" id="2ol-s8-pUk"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="La2-oO-5Yf"/>
+                                            <menuItem title="All Devices" enabled="NO" id="dWf-Ln-PyZ">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Item Placeholder" tag="69" id="NuF-Qj-pZD"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="hN9-J0-XGS" name="selectedIndex" keyPath="self.displayRenderDeviceIdx" previousBinding="feg-Z0-iVG" id="q2X-zW-Qqh">
+                                        <dictionary key="options">
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="hN9-J0-XGS" name="contentValues" keyPath="self.gpuDeviceNames" id="feg-Z0-iVG">
+                                        <dictionary key="options">
+                                            <integer key="NSContentPlacementTag" value="69"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="hN9-J0-XGS" name="enabled" keyPath="self.matchDisplayDevice" id="yuR-Ud-PNz">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2EN-7g-fDX">
+                                <rect key="frame" x="52" y="22" width="219" height="16"/>
+                                <subviews>
+                                    <progressIndicator maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="0Yd-JF-pmt">
+                                        <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
+                                        <connections>
+                                            <binding destination="hN9-J0-XGS" name="animate" keyPath="self.xpcPrefsAvailable" id="pL0-mf-doi">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </progressIndicator>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zaM-sh-5gH">
+                                        <rect key="frame" x="18" y="0.0" width="203" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Connecting to renderer service…" id="Orj-rr-6s5">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                                <connections>
+                                    <binding destination="hN9-J0-XGS" name="hidden" keyPath="self.xpcPrefsAvailable" id="wIc-oz-G7G"/>
+                                </connections>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Z26-yy-UaA" secondAttribute="trailing" constant="20" symbolic="YES" id="0Af-UZ-Jd1"/>
+                            <constraint firstItem="Wnc-gT-ef9" firstAttribute="leading" secondItem="n3p-CW-q6N" secondAttribute="leading" constant="20" symbolic="YES" id="3vW-4G-Xg0"/>
+                            <constraint firstItem="Wnc-gT-ef9" firstAttribute="firstBaseline" secondItem="NRy-CA-sEh" secondAttribute="firstBaseline" id="7LZ-4a-vKf"/>
+                            <constraint firstItem="ik0-mu-Or8" firstAttribute="top" secondItem="fol-R5-jvg" secondAttribute="bottom" constant="8" id="BS7-88-OhF"/>
+                            <constraint firstItem="Z26-yy-UaA" firstAttribute="top" secondItem="NRy-CA-sEh" secondAttribute="bottom" constant="8" id="Bf6-7e-22u"/>
+                            <constraint firstItem="fol-R5-jvg" firstAttribute="leading" secondItem="2MU-lj-50i" secondAttribute="trailing" constant="8" symbolic="YES" id="DMZ-1V-LdE"/>
+                            <constraint firstItem="ik0-mu-Or8" firstAttribute="width" secondItem="Z26-yy-UaA" secondAttribute="width" id="Fdq-2z-PyH"/>
+                            <constraint firstItem="Z26-yy-UaA" firstAttribute="leading" secondItem="oaa-4m-b8E" secondAttribute="trailing" constant="8" symbolic="YES" id="I8o-0A-ZQ6"/>
+                            <constraint firstAttribute="bottom" secondItem="971-Wl-sgp" secondAttribute="bottom" constant="20" symbolic="YES" id="LaS-m4-DtW"/>
+                            <constraint firstItem="oaa-4m-b8E" firstAttribute="firstBaseline" secondItem="Z26-yy-UaA" secondAttribute="firstBaseline" id="Ln2-aL-3Gh"/>
+                            <constraint firstItem="NRy-CA-sEh" firstAttribute="leading" secondItem="Wnc-gT-ef9" secondAttribute="trailing" constant="8" symbolic="YES" id="Nmq-ns-ax2"/>
+                            <constraint firstItem="NRy-CA-sEh" firstAttribute="top" secondItem="n3p-CW-q6N" secondAttribute="top" constant="20" symbolic="YES" id="VX7-fh-2jD"/>
+                            <constraint firstItem="oaa-4m-b8E" firstAttribute="leading" secondItem="NRy-CA-sEh" secondAttribute="leading" constant="21" id="Zfb-o5-5gp"/>
+                            <constraint firstItem="2MU-lj-50i" firstAttribute="width" secondItem="Wnc-gT-ef9" secondAttribute="width" multiplier="0.53" id="dfD-lo-kUo"/>
+                            <constraint firstItem="971-Wl-sgp" firstAttribute="leading" secondItem="n3p-CW-q6N" secondAttribute="leading" constant="20" symbolic="YES" id="i8B-6C-7pL"/>
+                            <constraint firstItem="2MU-lj-50i" firstAttribute="trailing" secondItem="Wnc-gT-ef9" secondAttribute="trailing" id="lmA-Px-AJF"/>
+                            <constraint firstItem="WXW-ic-3g5" firstAttribute="leading" secondItem="fol-R5-jvg" secondAttribute="leading" constant="21" id="nNd-DV-bQ9"/>
+                            <constraint firstItem="ik0-mu-Or8" firstAttribute="leading" secondItem="WXW-ic-3g5" secondAttribute="trailing" constant="8" symbolic="YES" id="peg-VH-iQp"/>
+                            <constraint firstItem="2EN-7g-fDX" firstAttribute="leading" secondItem="971-Wl-sgp" secondAttribute="trailing" constant="12" symbolic="YES" id="tiK-tP-CRS"/>
+                            <constraint firstItem="2EN-7g-fDX" firstAttribute="centerY" secondItem="971-Wl-sgp" secondAttribute="centerY" id="u2f-gC-01J"/>
+                            <constraint firstItem="2MU-lj-50i" firstAttribute="firstBaseline" secondItem="fol-R5-jvg" secondAttribute="firstBaseline" id="wk9-It-BLq"/>
+                            <constraint firstItem="WXW-ic-3g5" firstAttribute="firstBaseline" secondItem="ik0-mu-Or8" secondAttribute="firstBaseline" id="xK6-Xb-1n6"/>
+                            <constraint firstItem="fol-R5-jvg" firstAttribute="top" secondItem="Z26-yy-UaA" secondAttribute="bottom" constant="8" symbolic="YES" id="yfa-sO-2SR"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="39T-HJ-sBB" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="877" y="868"/>
+        </scene>
+        <!--Editing-->
+        <scene sceneID="CcM-b9-H7s">
+            <objects>
+                <viewController title="Editing" id="uaC-lP-3yW" sceneMemberID="viewController">
+                    <view key="view" id="qYE-zs-QoC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YYL-td-W1a">
+                                <rect key="frame" x="18" y="264" width="204" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="jFL-aU-A60"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Histogram:" id="Tra-JO-jmj">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button toolTip="Histogram views can show a calculated luminance (Y) channel in addition to the color components." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oG4-X2-9dD">
+                                <rect key="frame" x="226" y="263" width="176" height="18"/>
+                                <buttonCell key="cell" type="check" title="Show luminance channel" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="I9G-D1-bis">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="blO-lu-IGf" name="value" keyPath="values.histogramShowLuma" id="9Wr-4A-N0d">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="YYL-td-W1a" firstAttribute="leading" secondItem="qYE-zs-QoC" secondAttribute="leading" constant="20" symbolic="YES" id="0Qp-UK-OcI"/>
+                            <constraint firstItem="oG4-X2-9dD" firstAttribute="top" secondItem="qYE-zs-QoC" secondAttribute="top" constant="20" symbolic="YES" id="1YS-pu-r4K"/>
+                            <constraint firstItem="oG4-X2-9dD" firstAttribute="leading" secondItem="YYL-td-W1a" secondAttribute="trailing" constant="8" symbolic="YES" id="HAV-s0-dLJ"/>
+                            <constraint firstItem="YYL-td-W1a" firstAttribute="firstBaseline" secondItem="oG4-X2-9dD" secondAttribute="firstBaseline" id="Y1D-Ed-5sK"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="mYS-kj-0oO" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController id="blO-lu-IGf"/>
+            </objects>
+            <point key="canvasLocation" x="877" y="1225"/>
         </scene>
     </scenes>
     <resources>
-        <image name="NSRefreshFreestandingTemplate" width="15" height="13"/>
-        <image name="photo.on.rectangle.angled" catalog="system" width="21" height="15"/>
-        <image name="rectangle.and.text.magnifyingglass" catalog="system" width="20" height="13"/>
-        <image name="square.grid.3x1.folder.badge.plus" catalog="system" width="20" height="12"/>
+        <image name="NSRefreshFreestandingTemplate" width="14" height="14"/>
+        <image name="doc.badge.gearshape" catalog="system" width="15" height="17"/>
+        <image name="pencil" catalog="system" width="14" height="13"/>
+        <image name="photo.on.rectangle.angled" catalog="system" width="21" height="17"/>
+        <image name="rectangle.and.text.magnifyingglass" catalog="system" width="20" height="15"/>
+        <image name="square.grid.3x1.folder.badge.plus" catalog="system" width="19" height="14"/>
     </resources>
 </document>

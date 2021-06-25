@@ -39,45 +39,24 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
     
     // MARK: - Initialization
     /**
+     * Remove observers for notifications on dealloc.
+     */
+    deinit {
+        self.tearDownNotifications()
+    }
+    
+    /**
      * Creates the default items for the sidebar.
      */
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // different cell types
-        let groupItemType = NSUserInterfaceItemIdentifier(rawValue: "GroupItem")
-        let imageCountType = NSUserInterfaceItemIdentifier(rawValue: "ImageCountItem")
-        
-        // all images item
-        let allImages = OutlineItem()
-        allImages.viewIdentifier = imageCountType
-        allImages.title = NSLocalizedString("images.all.title",
-                                          tableName: "Sidebar",
-                                          bundle: Bundle.main, value: "",
-                                          comment: "All images item")
-        allImages.icon = NSImage(systemSymbolName: "photo.on.rectangle.angled",
-                                accessibilityDescription: "All photos icon")
-        allImages.allowsMultipleSelect = false
-        
-        self.root.append(allImages)
-        self.shortcutsController.allItem = allImages
-        
-        // last import
-        let last = OutlineItem()
-        last.viewIdentifier = imageCountType
-        last.title = NSLocalizedString("images.last_import.title",
-                                          tableName: "Sidebar",
-                                          bundle: Bundle.main, value: "",
-                                          comment: "Last import item")
-        last.icon = NSImage(systemSymbolName: "clock.arrow.circlepath",
-                                accessibilityDescription: "Last Import icon")
-        
-        self.root.append(last)
-        self.shortcutsController.lastImportItem = last
+        // shortcut items
+        self.shortcutsController.createItems(&self.root)
         
         // albums
         let albums = OutlineItem()
-        albums.viewIdentifier = groupItemType
+        albums.viewIdentifier = OutlineItem.groupItemType
         albums.title = NSLocalizedString("albums.group.title",
                                           tableName: "Sidebar",
                                           bundle: Bundle.main, value: "",
@@ -87,7 +66,7 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         
         // images group
         let images = OutlineItem()
-        images.viewIdentifier = groupItemType
+        images.viewIdentifier = OutlineItem.groupItemType
         images.title = NSLocalizedString("images.group.title",
                                           tableName: "Sidebar",
                                           bundle: Bundle.main, value: "",
@@ -99,6 +78,9 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         
         // update the view
         self.outline.reloadData()
+        
+        // install the notification observers
+        self.setUpNotifications()
     }
 
     /**
@@ -110,6 +92,91 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         if self.outline.selectedRowIndexes.isEmpty {
             self.outline.selectRowIndexes(IndexSet(integer: 0),
                                           byExtendingSelection: false)
+        }
+    }
+    
+    // MARK: - State restoration
+    private struct StateKeys {
+        /// Array of expanded item identifiers
+        static let expandedIdentifiers = "SidebarController.expanded"
+        /// Array of selected item identifiers
+        static let selectionIdentifiers = "SidebarController.selection"
+    }
+    
+    /// Array containing identifiers of all expanded items
+    private var expandedItemIdentifiers: [String] = []
+    
+    /**
+     * Attempt to restore the sidebar selection.
+     */
+    override func restoreState(with coder: NSCoder) {
+        super.restoreState(with: coder)
+        
+        // restore expanded items
+        if let obj = coder.decodeObject(forKey: StateKeys.expandedIdentifiers),
+           let identifiers = obj as? [String] {
+            DDLogDebug("Expanding sidebar items: \(identifiers)")
+            
+            for identifier in identifiers {
+                for item in self.root {
+                    // is it this item or one of its children?
+                    if let found = item.itemForSelectionIdentifier(identifier) {
+                        self.outline.expandItem(found)
+                    }
+                }
+            }
+        }
+        
+        // try to read the string identifiers
+        if let obj = coder.decodeObject(forKey: StateKeys.selectionIdentifiers),
+              let identifiers = obj as? [String] {
+            var indices: [Int] = []
+            
+            for identifier in identifiers {
+                // check each root item
+                for item in self.root {
+                    // is it this item or one of its children?
+                    if let found = item.itemForSelectionIdentifier(identifier) {
+                        let row = self.outline.row(forItem: found)
+                        if row >= 0 {
+                            indices.append(row)
+                        }
+                        
+                        break
+                    }
+                }
+            }
+            
+            DDLogDebug("Selected sidebar items: \(identifiers) (indices \(indices))")
+            self.outline.selectRowIndexes(IndexSet(indices), byExtendingSelection: false)
+        }
+    }
+    
+    /**
+     * Saves the current sidebar selection.
+     */
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        
+        // save identifiers of all selected items
+        var identifiers: [String] = []
+        
+        for index in self.outline.selectedRowIndexes {
+            if let item = self.outline.item(atRow: index) as? OutlineItem,
+               let identifier = item.selectionIdentifier {
+                identifiers.append(identifier)
+            }
+        }
+        
+        if !identifiers.isEmpty {
+            DDLogDebug("Selected sidebar items: \(identifiers)")
+            coder.encode(identifiers, forKey: StateKeys.selectionIdentifiers)
+        }
+        
+        // save identifiers of all expanded item
+        if !self.expandedItemIdentifiers.isEmpty {
+            DDLogDebug("Expanded sidebar items: \(self.expandedItemIdentifiers)")
+            coder.encode(self.expandedItemIdentifiers, forKey: StateKeys.expandedIdentifiers)
         }
     }
     
@@ -213,6 +280,36 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         return nil
     }
     
+    /**
+     * Notes that the given outline item was expanded.
+     */
+    func outlineViewItemDidExpand(_ notification: Notification) {
+        guard let obj = notification.userInfo?["NSObject"] else {
+            return
+        }
+        
+        if let item = obj as? OutlineItem,
+           let identifier = item.selectionIdentifier {
+            self.expandedItemIdentifiers.append(identifier)
+            self.invalidateRestorableState()
+        }
+    }
+    
+    /**
+     * Notes that the given outline item is no longer expanded.
+     */
+    func outlineViewItemDidCollapse(_ notification: Notification) {
+        guard let obj = notification.userInfo?["NSObject"] else {
+            return
+        }
+        
+        if let item = obj as? OutlineItem,
+           let identifier = item.selectionIdentifier {
+            self.expandedItemIdentifiers.removeAll(where: { $0 == identifier })
+            self.invalidateRestorableState()
+        }
+    }
+    
     // MARK: Selection
     /// Predicate for filtering images to match the sidebar selection; may be nil if no filter needed
     @objc dynamic var filter: NSPredicate? = nil
@@ -220,7 +317,7 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
     /**
      * The outline view's selection changed; build a new compound predicate.
      */
-    func outlineViewSelectionDidChange(_ notification: Notification) {
+    func outlineViewSelectionDidChange(_: Notification) {
         var predicates: [NSPredicate] = []
         
         // get all selected items and their predicates
@@ -233,6 +330,8 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
                 predicates.append(pred)
             }
         }
+        
+        self.invalidateRestorableState()
         
         // if no predicates, remove filter
         guard !predicates.isEmpty else {
@@ -252,6 +351,50 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         let view = outline.makeView(withIdentifier: ident, owner: self) as? NSTableCellView
         view?.objectValue = value
         return view
+    }
+    
+    // MARK: - Notifications
+    /// Installed notification observers
+    private var noteObservers: [NSObjectProtocol] = []
+    
+    /**
+     * Installs notification handlers.
+     */
+    private func setUpNotifications() {
+        let nc = NotificationCenter.default
+        
+        // sidebar item updated
+        let o1 = nc.addObserver(forName: .sidebarItemUpdated, object: nil, queue: nil,
+                                using: self.handleItemChangedNotif(_:))
+        self.noteObservers.append(o1)
+    }
+    
+    /**
+     * Tears down all notification handlers we previously installed.
+     */
+    private func tearDownNotifications() {
+        for observer in self.noteObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    /**
+     * Notification handler for "sidebar item updated" notification. The object of the notification is the item, if any.
+     */
+    private func handleItemChangedNotif(_ note: Notification) {
+        guard let updated = note.object as? OutlineItem else {
+            return
+        }
+        
+        // see if there is an intersection between the selected items and the changed item
+        let selected = self.outline.selectedRowIndexes.compactMap({
+            return self.outline.item(atRow: $0) as? OutlineItem
+        })
+        
+        if selected.contains(updated) {
+            // if so, force an update of the current filters
+            self.outlineViewSelectionDidChange(note)
+        }
     }
     
     // MARK: - Types
@@ -285,6 +428,9 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         
         /// Stringified badge value
         @objc dynamic private var badgeString: String! = nil
+        
+        /// Identifier for selection restoration (if nil, do not persist selection)
+        @objc dynamic var selectionIdentifier: String? = nil
         
         /// Children of this item
         var children: [OutlineItem] = []
@@ -328,6 +474,41 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         func updateCountFromChildren() {
             self.badgeValue = self.children.reduce(0, { $0 + $1.badgeValue })
         }
+        
+        /**
+         * Recursively searches all child items for an item with the given selection identifier.
+         */
+        func itemForSelectionIdentifier(_ identifier: String) -> OutlineItem? {
+            // does the identifier match ours?
+            if self.selectionIdentifier == identifier {
+                return self
+            }
+            
+            // search all children
+            for child in self.children {
+                // check that child
+                if let found = child.itemForSelectionIdentifier(identifier) {
+                    return found
+                }
+            }
+            
+            // failed to find it
+            return nil
+        }
+        
+        /// Group item type
+        static let groupItemType = NSUserInterfaceItemIdentifier(rawValue: "GroupItem")
+        /// Name, icon, with badge cell
+        static let imageCountType = NSUserInterfaceItemIdentifier(rawValue: "ImageCountItem")
     }
+}
+
+extension Notification.Name {
+    /**
+     * A sidebar item was modified.
+     *
+     * The sidebar filters will be updated accordingly if the item is currently selected.
+     */
+    internal static let sidebarItemUpdated = Notification.Name("me.tseifert.smokeshed.sidebar.item.updated")
 }
 

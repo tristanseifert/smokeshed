@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import CoreImage
 import UniformTypeIdentifiers
 
 import Smokeshop
@@ -90,6 +91,14 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     /// Decoding this view is not supported
     required init?(coder: NSCoder) {
         return nil
+    }
+    
+    /**
+     * Remove observers on deinit.
+     */
+    deinit {
+        // remove old thumb observer
+        self.removeThumbObserver()
     }
 
     // MARK: - Layer setup
@@ -801,6 +810,9 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
 
     // MARK: - State updating
+    /// Token for the thumbnail observer
+    private var thumbObserverToken: UUID? = nil
+    
     /**
      * View is about to appear; finalize the UI prior to display.
      */
@@ -824,6 +836,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         }
         self.image = nil
 
+        self.removeThumbObserver()
         self.refreshThumb()
     }
 
@@ -952,9 +965,11 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                 self.surface = nil
             }
 
+            self.removeThumbObserver()
+            
             return
         }
-
+        
         // if no surface, request a thumb
         if self.surface == nil {
             return self.requestThumb(image)
@@ -967,9 +982,39 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     }
 
     /**
+     * Removes an existing thumb observer.
+     */
+    private func removeThumbObserver() {
+        if let token = self.thumbObserverToken {
+            ThumbHandler.shared.removeThumbObserver(token)
+            self.thumbObserverToken = nil
+        }
+    }
+    
+    /**
+     * Adds a thumb observer for the given image.
+     */
+    private func addThumbObserver(_ image: Image) {
+        self.thumbObserverToken = ThumbHandler.shared.addThumbObserver(imageId: image.identifier!)
+        { [weak self, weak image] (libId, imageId) in
+            DDLogVerbose("Thumb updated for \(imageId)")
+            
+            if let image = image, let cell = self {
+                DispatchQueue.main.async {
+                    cell.requestThumb(image)
+                }
+            }
+        }
+    }
+    
+    /**
      * Actually performs the request for a new thumbnail image.
      */
     private func requestThumb(_ image: Image) {
+        // set up an observer
+        self.removeThumbObserver()
+        self.addThumbObserver(image)
+        
         // calculate the pixel size needed
         var thumbSize = self.imageContainer.bounds.size
         thumbSize.width = thumbSize.width * self.imageContainer.contentsScale
@@ -984,8 +1029,6 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
         ThumbHandler.shared.get(image, thumbSize, { (imageId, result) in
             // bail if image id doesn't match or the image was clared out
             if imageId != image.identifier! || self.image == nil || self.image?.identifier != imageId {
-                DDLogWarn("Received thumbnail for \(imageId) in cell for \(String(describing: self.image?.identifier!))")
-
                 // release the surface
                 do {
                     let surface = try result.get()
@@ -1024,7 +1067,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
                     // set a… caution icon ig
                     DispatchQueue.main.async {
-                        self.imageContainer.contents = NSImage(named: NSImage.cautionName)
+                        self.imageContainer.contents = nil
                         self.setNeedsDisplay(self.bounds)
                 }
             }

@@ -61,12 +61,18 @@
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is required to import images from memory cards and attached cameras.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Access to network volumes is required to access images saved on network shares.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library access is required to import images from memory cards and attached cameras.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Access to removable volumes is required to import images from memory cards and connected cameras.</string>
 	<key>NSSupportsAutomaticTermination</key>
 	<false/>
 	<key>NSSupportsSuddenTermination</key>

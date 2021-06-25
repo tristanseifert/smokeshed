@@ -1,0 +1,29 @@
+/* 
+  RenderPreferencesViewController.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200716.
+  
+*/
+
+
+/**
+ * Format strings for GPU name, depending on its physical location. Each format string has the
+ * following arguments defined:
+ *
+ * - 1: Device name
+ * - 2: Location number
+ * - 3: "Is removable" string
+ * - 4: "Is low power" string
+ * - 5: "Is headless" string
+ */
+/// Built in GPU
+"gpu.name.builtin" = "%1$@ (built-in)";
+/// In a slot (location number is slot number)
+"gpu.name.slot" = "%1$@ (Slot %2$d)";
+/// External (most likely Thunderbolt)
+"gpu.name.external" = "%1$@ (Port %2$d, removable: %3$@)";
+/// Unspecified location
+"gpu.name.unspecified" = "%1$@";
+/// Unknown location (shouldn't be visible unless MTLDeviceLocation changes)
+"gpu.name.default" = "%1$@";

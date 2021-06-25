@@ -514,7 +514,7 @@ public class CR2Reader {
         self.unslicer.trimBorders(borders as [NSNumber])
         
         // store trimmed size
-        self.image.rawValuesSize = CGSize(width: self.sensor.effectiveWidth,
+        self.image.visibleImageSize = CGSize(width: self.sensor.effectiveWidth,
                                           height: self.sensor.effectiveHeight)
     }
     

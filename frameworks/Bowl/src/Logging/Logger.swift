@@ -45,6 +45,7 @@ public class Logger {
         
         let fileLogger = DDFileLogger(logFileManager: manager)
         fileLogger.rollingFrequency = TimeInterval(3600 * 24 * 7)
+        fileLogger.maximumFileSize = 0
         
         DDLog.add(fileLogger)
     }

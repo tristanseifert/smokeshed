@@ -152,6 +152,9 @@ internal class Generator {
                         $0.imageId == request.imageId
                     })
                     self.newInFlightSem.signal()
+                    
+                    // post the notification
+                    self.postThumbCreatedNotif(request)
                 }
             }
             
@@ -194,6 +197,9 @@ internal class Generator {
                         $0.imageId == thumb.1.imageId
                     })
                     self.updateInFlightSem.signal()
+                    
+                    // post the notification
+                    self.postThumbUpdatedNotif(thumb.1)
                 }
             }
             
@@ -230,7 +236,15 @@ internal class Generator {
             for thumb in thumbs {
                 self.queue.addOperation {
                     do {
+                        let libraryId = thumb.library?.identifier
+                        let thumbId = thumb.imageIdentifier
+                        
                         try self.discardThumb(thumb)
+                        
+                        // post the notification
+                        if let libraryId = libraryId, let thumbId = thumbId {
+                            self.postThumbDiscardedNotif(libraryId, thumbId)
+                        }
                     } catch {
                         DDLogError("Failed to remove thumb \(thumb): \(error)")
                     }
@@ -262,6 +276,44 @@ internal class Generator {
         self.newInFlightSem.signal()
         
         return inFlight
+    }
+    
+    // MARK: - Notifications
+    /**
+     * Posts a notification indicating that a thumbnail was created.
+     */
+    private func postThumbCreatedNotif(_ request: ThumbRequest) {
+        // build user info
+        let info = [
+            "created": [
+                [request.libraryId, request.imageId]
+            ]
+        ]
+        
+        // post it
+        NotificationCenter.default.post(name: .thumbCreated, object: nil, userInfo: info)
+    }
+    
+    /**
+     * Posts a notification indicating that a thumbnail was updated.
+     */
+    private func postThumbUpdatedNotif(_ request: ThumbRequest) {
+        // build user info
+        let info = [
+            "updated": [
+                [request.libraryId, request.imageId]
+            ]
+        ]
+        
+        // post it
+        NotificationCenter.default.post(name: .thumbUpdated, object: nil, userInfo: info)
+    }
+    
+    /**
+     * Posts a notification indicating that a thumbnail was removed.
+     */
+    private func postThumbDiscardedNotif(_ libraryId: UUID, _ imageId: UUID) {
+        
     }
     
     // MARK: - Generation

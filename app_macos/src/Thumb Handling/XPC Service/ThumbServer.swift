@@ -26,12 +26,33 @@ class ThumbServer: ThumbXPCProtocol {
     
     /// Maintenance endpoint
     private var maintenance: MaintenanceEndpoint! = nil
+    
+    /// handler proxy object to call into when thumbs are updated
+    private(set) internal var eventHandlerProxy: ThumbXPCHandler? = nil
+    
+    // MARK: - Initialization
+    /**
+     * Initialize a new thumb server.
+     */
+    init() {
+        self.addThumbObservers()
+    }
+    
+    /**
+     * Ensure thumbs observers are removed on dealloc.
+     */
+    deinit {
+        self.removeThumbObservers()
+    }
 
     // MARK: - XPC Calls
     /**
      * Loads the thumbnail directory, if not done already.
      */
-    func wakeUp(withReply reply: @escaping (Error?) -> Void) {
+    func wakeUp(handler: ThumbXPCHandler, withReply reply: @escaping (Error?) -> Void) {
+        /// XPC proxy for the event handler, it must be stored
+        self.eventHandlerProxy = handler
+        
         // open thumbnail directory if needed
         if self.directory == nil {
             do {
@@ -156,10 +177,95 @@ class ThumbServer: ThumbXPCProtocol {
         reply(self.maintenance.endpoint)
     }
     
+    // MARK: Notifications handling
+    /// Notification observers
+    private var thumbNotificationObs: [NSObjectProtocol] = []
+    
+    /// Queue on which thumb creation/update notifications are posted
+    private var thumbNotificationQueue: OperationQueue = {
+       let queue = OperationQueue()
+        
+        queue.qualityOfService = .utility
+        queue.name = "Thumb Notification Observer Queue"
+        queue.maxConcurrentOperationCount = 1
+        
+        return queue
+    }()
+    
+    /**
+     * Add observers for thumb notifications
+     */
+    private func addThumbObservers() {
+        let c = NotificationCenter.default
+        
+        // thumb created
+        let o1 = c.addObserver(forName: .thumbCreated, object: nil,
+                               queue: self.thumbNotificationQueue) { notif in
+            if let created = notif.userInfo?["created"] as? [[UUID]] {
+                for obj in created {
+                    // there must be two items
+                    guard obj.count == 2 else { continue }
+                    
+                    let libraryId = obj[0]
+                    let imageId = obj[1]
+                    
+                    self.eventHandlerProxy?.thumbChanged(inLibrary: libraryId, imageId)
+                }
+            }
+        }
+        self.thumbNotificationObs.append(o1)
+        
+        // thumb updated
+        let o2 = c.addObserver(forName: .thumbUpdated, object: nil,
+                               queue: self.thumbNotificationQueue) { notif in
+            if let created = notif.userInfo?["updated"] as? [[UUID]] {
+                for obj in created {
+                    // there must be two items
+                    guard obj.count == 2 else { continue }
+                    
+                    let libraryId = obj[0]
+                    let imageId = obj[1]
+                    
+                    self.eventHandlerProxy?.thumbChanged(inLibrary: libraryId, imageId)
+                }
+            }
+        }
+        self.thumbNotificationObs.append(o2)
+    }
+    
+    /**
+     * Removes thumb notification observers.
+     */
+    private func removeThumbObservers() {
+        let c = NotificationCenter.default
+        
+        for obs in self.thumbNotificationObs {
+            c.removeObserver(obs)
+        }
+    }
+    
     // MARK: - Errors
     // XPC errors
     private enum XPCError: Error {
         /// Request is in flight, retry later
         case requestInFlight
     }
+}
+
+extension Notification.Name {
+    /**
+     * Thumbnail was created notification
+     *
+     * Info dictionary contains an array of two-element arrays, containing first the library id, then the image id, of the thumbnails for
+     * which data was created.
+     */
+    internal static let thumbCreated = Notification.Name("me.tseifert.smokeshed.xpc.hand.thumb.created")
+    
+    /**
+     * Thumbnail was updated notification
+     *
+     * Info dictionary contains an array of two-element arrays, containing first the library id, then the image id, of the thumbnails for
+     * which data was updated.
+     */
+    internal static let thumbUpdated = Notification.Name("me.tseifert.smokeshed.xpc.hand.thumb.updated")
 }

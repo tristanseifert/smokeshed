@@ -52,9 +52,10 @@ internal class Retriever {
         self.queue.addOperation {
             do {
                 // validate the request
-                guard let size = request.size else {
-                    DDLogError("Invalid request: \(request)")
-                    throw RetrieverErrors.invalidRequest
+                var size = CGSize.zero
+                
+                if let reqSize = request.size {
+                    size = reqSize
                 }
                 // get thumbnail from the store
                 guard let thumb = try self.directory.getThumb(request: request) else {
@@ -101,8 +102,19 @@ internal class Retriever {
         }
         
         // try to find the most suitable image
-        let edge = max(size.width, size.height)
-        return try self.closestImage(src, Int(edge))
+        if size == .zero {
+            // get the first non-square image
+            guard let image = CGImageSourceCreateImageAtIndex(src, 2,
+                                  Self.createImageOptions as CFDictionary) else {
+                throw RetrieverErrors.imageCreateFailed(0)
+            }
+            
+            return image
+        } else {
+            // otherwise, find the closest sized thumb
+            let edge = max(size.width, size.height)
+            return try self.closestImage(src, Int(edge))
+        }
     }
     
     /**

@@ -40,7 +40,7 @@ internal class LensFinder {
             NSPredicate(format: "exifLensModel == %@", model)
         ]
         if let id = lensId {
-            predicates.append(NSPredicate(format: "exifLensId == %i", id))
+            predicates.append(NSPredicate(format: "exifLensId == %i", Int64(truncatingIfNeeded: id)))
         }
 
         req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
@@ -80,7 +80,7 @@ internal class LensFinder {
             lens.name = model
 
             if let id = id {
-                lens.exifLensId = Int64(id)
+                lens.exifLensId = Int64(truncatingIfNeeded: id)
             }
 
             // try to save it

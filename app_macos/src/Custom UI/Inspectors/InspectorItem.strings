@@ -1,0 +1,12 @@
+/* 
+  InspectorItem.strings
+  Smokeshed
+
+  Created by Tristan Seifert on 20200809.
+  
+*/
+
+/// Title bar tool tip with collapsed content (1 = title)
+"title.tooltip.collapsed" = "Expand \"%1$@\"";
+/// Title bar tool tip with expanded content (1 = title)
+"title.tooltip.expanded" = "Collapse \"%1$@\"";

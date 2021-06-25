@@ -69,25 +69,6 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
     public func listener(_ listener: NSXPCListener, shouldAcceptNewConnection new: NSXPCConnection) -> Bool {
         DDLogVerbose("Connection to maintenance endpoint: \(new)")
         
-        do {
-            // get a reference to its code signature and its info
-            let code = try XPCCSHelpers.getXpcGuest(new)
-            let info = try XPCCSHelpers.getSigningInfo(code)
-
-            // ensure the signature satisfies our checks
-            try XPCCSHelpers.validateSignatureState(info)
-            try XPCCSHelpers.validateSignature(code)
-            
-            // ensure the app id is whitelisted
-            guard let identifier = info["identifier"] as? String,
-                  Self.allowedIdentifiers.contains(identifier) else {
-                throw MaintenanceErrors.connectionForbidden(info["identifier"])
-            }
-        } catch {
-            DDLogError("Failed to validate connecting client (\(new)): \(error)")
-            return false
-        }
-        
         // create the connection
         new.exportedInterface = ThumbXPCProtocolHelpers.makeMaintenanceEndpoint()
         new.exportedObject = self

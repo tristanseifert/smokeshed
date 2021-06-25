@@ -36,6 +36,8 @@ import CocoaLumberjackSwift
     private var imageUrlBase: URL? = nil
     /// Bookmark data for the image url
     private var imageUrlBookmark: Data?
+    /// Bookmark data for the base url
+    private var imageUrlBaseBookmark: Data?
     
     /// Size of the thumbnail that's desired
     public var size: CGSize? = nil
@@ -64,15 +66,30 @@ import CocoaLumberjackSwift
             }
             self.imageUrl = url
             
-            // create bookmark
-            let relinquish = url.startAccessingSecurityScopedResource()
+            // create bookmark for library
+            var relinquish = libraryUrl.startAccessingSecurityScopedResource()
             
             do {
-                let bm = try url.bookmarkData(options: .minimalBookmark,
+                let bm = try libraryUrl.bookmarkData(options: [.minimalBookmark],
+                                                     includingResourceValuesForKeys: nil,
+                                                     relativeTo: nil)
+                self.imageUrlBaseBookmark = bm
+            } catch {
+                DDLogError("Failed to create bookmark for library url \(libraryUrl): \(error)")
+            }
+            
+            if relinquish {
+                libraryUrl.stopAccessingSecurityScopedResource()
+            }
+            
+            // create bookmark for the image url
+            relinquish = url.startAccessingSecurityScopedResource()
+            
+            do {
+                let bm = try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess],
                                               includingResourceValuesForKeys: nil,
                                               relativeTo: self.imageUrlBase)
                 self.imageUrlBookmark = bm
-            
             } catch {
                 DDLogError("Failed to create bookmark for \(url): \(error)")
             }
@@ -98,6 +115,10 @@ import CocoaLumberjackSwift
         if let bookmark = self.imageUrlBookmark {
             coder.encode(bookmark, forKey: "imageUrlBookmark")
             coder.encode(self.imageUrlBase, forKey: "imageUrlBase")
+            
+            if let data = self.imageUrlBaseBookmark {
+                coder.encode(data, forKey: "imageUrlBaseBookmark")
+            }
         } else if let url = self.imageUrl {
             coder.encode(url, forKey: "imageUrl")
         }
@@ -116,11 +137,25 @@ import CocoaLumberjackSwift
         // attempt to decode the url by resolving the bookmark or just taking the raw url value
         if let bookmark = coder.decodeObject(forKey: "imageUrlBookmark") as? Data {
             do {
-                let base = coder.decodeObject(forKey: "imageUrlBase") as? URL
+                // decode base url bookmark or read it
+                var base: URL! = coder.decodeObject(forKey: "imageUrlBase") as? URL
+                
+                if let data = coder.decodeObject(forKey: "imageUrlBaseBookmark") as? Data {
+                    // this is just a minimal bookmark
+                    do {
+                        var isStale: Bool = false
+                        let url = try URL(resolvingBookmarkData: data, options: [.withoutUI],
+                                          relativeTo: nil, bookmarkDataIsStale: &isStale)
+                        base = url
+                    } catch {
+                        DDLogError("Failed to decode base url bookmark data (\(data)): \(error)")
+                        return nil
+                    }
+                }
                 
                 var isStale: Bool = false
                 let url = try URL(resolvingBookmarkData: bookmark,
-                                  options: [.withoutUI],
+                                  options: [.withoutUI, .withSecurityScope],
                                   relativeTo: base, bookmarkDataIsStale: &isStale)
                 self.imageUrl = url
             } catch {
@@ -159,11 +194,11 @@ import CocoaLumberjackSwift
 /**
  * Defines the interface implemented by the thumbnail XPC service.
  */
-@objc public protocol ThumbXPCProtocol {
+@objc protocol ThumbXPCProtocol {
     /**
      * Initializes the XPC service and load the thumbnail directory.
      */
-    func wakeUp(withReply reply: @escaping (Error?) -> Void)
+    func wakeUp(handler: ThumbXPCHandler, withReply reply: @escaping (Error?) -> Void)
     
     /**
      * Opens a library.
@@ -212,7 +247,7 @@ import CocoaLumberjackSwift
 /**
  * Defines the interface exposed by the maintenance endpoint.
  */
-@objc public protocol ThumbXPCMaintenanceEndpoint {
+@objc protocol ThumbXPCMaintenanceEndpoint {
     /**
      * Calculates the total disk space used to store thumbnail data.
      */
@@ -240,6 +275,16 @@ import CocoaLumberjackSwift
 }
 
 /**
+ * Interface of the app-side event handler for the thumb server.
+ */
+@objc protocol ThumbXPCHandler {
+    /**
+     * Thumbnail data for the given (libraryId, imageId) tuple was changed.
+     */
+    func thumbChanged(inLibrary library: UUID, _ imageId: UUID)
+}
+
+/**
  * String dictionary keys for the XPC service configuration
  */
 public enum ThumbXPCConfigKey: String {
@@ -247,6 +292,8 @@ public enum ThumbXPCConfigKey: String {
     case workQueueSizeAuto = "thumbWorkQueueSizeAuto"
     /// If the thumb work queue is statically sized, number of threads to allocate
     case workQueueSize = "thumbWorkQueueSize"
+    /// Should the chunk cache be sized automatically?
+    case chunkCacheSizeAuto = "thumbChunkCacheSizeAuto"
     /// How big the in memory chunk cache is, in bytes
     case chunkCacheSize = "thumbChunkCacheSize"
     /// Where is thumbnail data stored?
@@ -256,11 +303,11 @@ public enum ThumbXPCConfigKey: String {
 /**
  * Some helper functions for working with the XPC protocol
  */
-class ThumbXPCProtocolHelpers {
+internal class ThumbXPCProtocolHelpers {
     /**
      * Creates a reference to the thumb XPC protocol, with all functions configured as needed.
      */
-    public class func make() -> NSXPCInterface {
+    class func make() -> NSXPCInterface {
         let int = NSXPCInterface(with: ThumbXPCProtocol.self)
 
         // set up the get() request
@@ -283,7 +330,7 @@ class ThumbXPCProtocolHelpers {
                        for: #selector(ThumbXPCProtocol.get(_:withReply:)),
                        argumentIndex: 1, ofReply: true)
         
-
+        // generate, discard, prefetch
         int.setClasses(thumbReqClass,
                        for: #selector(ThumbXPCProtocol.generate(_:)),
                        argumentIndex: 0, ofReply: false)
@@ -294,14 +341,28 @@ class ThumbXPCProtocolHelpers {
                        for: #selector(ThumbXPCProtocol.prefetch(_:)),
                        argumentIndex: 0, ofReply: false)
 
+        // handler interface
+        int.setInterface(Self.makeHandler(),
+                         for: #selector(ThumbXPCProtocol.wakeUp(handler:withReply:)),
+                         argumentIndex: 0, ofReply: false)
+        
         return int
     }
     
     /**
      * Creates an interface describing the maintenance endpoint protocol.
      */
-    public class func makeMaintenanceEndpoint() -> NSXPCInterface {
+    class func makeMaintenanceEndpoint() -> NSXPCInterface {
         let int = NSXPCInterface(with: ThumbXPCMaintenanceEndpoint.self)
+        
+        return int
+    }
+    
+    /**
+     * Creates an interface describing the maintenance endpoint protocol.
+     */
+    public class func makeHandler() -> NSXPCInterface {
+        let int = NSXPCInterface(with: ThumbXPCHandler.self)
         
         return int
     }
