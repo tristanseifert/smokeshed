@@ -8,14 +8,17 @@
 import Foundation
 import CoreData
 import ImageIO
+import OSLog
 
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Provides an interface to read existing thumbnails from the directory and reading images out of chunks.
  */
 internal class Retriever {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: Retriever.self).bundleIdentifier!,
+                                         category: "Retriever")
+    
     /// Data store containing thumbnail metadata
     private var directory: ThumbDirectory!
     

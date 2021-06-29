@@ -6,13 +6,15 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * View controller subclass for the controls sidebar shown on the right of the edit view.
  */
 internal class EditSidebarViewController: NSViewController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: EditSidebarViewController.self).bundleIdentifier!,
+                                         category: "EditSidebarViewController")
+    
     /// Edit view controller this sidebar belongs to
     internal var editView: EditViewController! = nil {
         didSet {
@@ -69,7 +71,7 @@ internal class EditSidebarViewController: NSViewController {
         // create a bullshit item
         guard let sb = self.storyboard,
               let vc = sb.instantiateController(withIdentifier: "bitch") as? NSViewController else {
-            DDLogError("Failed to instantiate controller")
+            Self.logger.error("Failed to instantiate controller")
             return
         }
 
@@ -90,7 +92,7 @@ internal class EditSidebarViewController: NSViewController {
      * new data.
      */
     private func imageDidRender(_ note: Notification) {
-        DDLogVerbose("Render view rendered: \(note)")
+        Self.logger.debug("Render view rendered: \(note)")
     
         // call into all inspector items
         self.inspector.items.forEach {

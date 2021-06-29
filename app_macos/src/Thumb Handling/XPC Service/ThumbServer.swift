@@ -7,14 +7,18 @@
 
 import Foundation
 import CoreGraphics
+import IOSurface
+import OSLog
 
 import Waterpipe
-import CocoaLumberjackSwift
 
 /**
  * Provides the interface used by XPC clients to generate and request thumbnail images.
  */
 class ThumbServer: ThumbXPCProtocol {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ThumbServer.self).bundleIdentifier!,
+                                         category: "ThumbServer")
+    
     /// Thumbnail directory
     private var directory: ThumbDirectory! = nil
     /// Generator for creating/deleting thumbs
@@ -61,7 +65,7 @@ class ThumbServer: ThumbXPCProtocol {
                 self.retriever = Retriever(self.directory)
                 self.prefetcher = Prefetcher(self.directory)
             } catch {
-                DDLogError("Failed to open thumb directory: \(error)")
+                Self.logger.error("Failed to open thumb directory: \(error.localizedDescription)")
                 return reply(error)
             }
             
@@ -78,12 +82,12 @@ class ThumbServer: ThumbXPCProtocol {
      * Opens a library with the given UUID. This will create an entry for it in the library directory if needed.
      */
     func openLibrary(_ libraryId: UUID, withReply reply: @escaping (Error?) -> Void) {
-        DDLogVerbose("Opening thumb library: \(libraryId)")
+        Self.logger.debug("Opening thumb library: \(libraryId)")
         
         do {
             try self.directory.openLibrary(libraryId)
         } catch {
-            DDLogError("Failed to open library: \(error)")
+            Self.logger.error("Failed to open library: \(error.localizedDescription)")
             return reply(error)
         }
         
@@ -102,7 +106,7 @@ class ThumbServer: ThumbXPCProtocol {
             // then, save the object context
             try self.directory.save()
         } catch {
-            DDLogError("Failed to save thumbnail data: \(error)")
+            Self.logger.error("Failed to save thumbnail data: \(error.localizedDescription)")
             return reply(error)
         }
         
@@ -158,7 +162,7 @@ class ThumbServer: ThumbXPCProtocol {
                 
             // propagate failures to caller
             case .failure(let error):
-                DDLogError("Failed to create thumb: \(error)")
+                Self.logger.error("Failed to create thumb: \(error.localizedDescription)")
                 reply(request, nil, error)
             }
         }

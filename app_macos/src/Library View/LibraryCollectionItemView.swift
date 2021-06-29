@@ -8,15 +8,18 @@
 import Cocoa
 import CoreImage
 import UniformTypeIdentifiers
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Renders a single image in the library view collection. For performance reasons, this is done entirely using
  * CALayers rather than views.
  */
 class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScaleDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryCollectionItemView.self).bundleIdentifier!,
+                                         category: "LibraryCollectionItemView")
+    
     /// Image to display info about
     @objc dynamic var image: Image! = nil {
         /**
@@ -934,7 +937,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     @IBAction private func setRating(_ sender: Any) {
         guard let image = self.image,
               let indicator = sender as? NSLevelIndicator else {
-            DDLogWarn("Invalid image (\(String(describing: self.image))) or sender (\(sender)): \(self)")
+            Self.logger.warning("Invalid image (\(String(describing: self.image))) or sender (\(String(describing: sender)): \(self)")
             return
         }
         
@@ -997,7 +1000,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
     private func addThumbObserver(_ image: Image) {
         self.thumbObserverToken = ThumbHandler.shared.addThumbObserver(imageId: image.identifier!)
         { [weak self, weak image] (libId, imageId) in
-            DDLogVerbose("Thumb updated for \(imageId)")
+            Self.logger.trace("Thumb updated for \(imageId)")
             
             if let image = image, let cell = self {
                 DispatchQueue.main.async {
@@ -1034,7 +1037,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
                     let surface = try result.get()
                     surface.decrementUseCount()
                 } catch {
-                    DDLogError("Failed to get thumbnail for \(imageId): \(error)")
+                    Self.logger.error("Failed to get thumbnail for \(imageId): \(error.localizedDescription)")
                 }
 
                 return
@@ -1063,7 +1066,7 @@ class LibraryCollectionItemView: NSView, CALayerDelegate, NSViewLayerContentScal
 
                 // something went wrong getting the thumbnail
                 case .failure(let error):
-                    DDLogError("Failed to get thumbnail for \(imageId): \(error)")
+                    Self.logger.error("Failed to get thumbnail for \(imageId): \(error.localizedDescription)")
 
                     // set a… caution icon ig
                     DispatchQueue.main.async {

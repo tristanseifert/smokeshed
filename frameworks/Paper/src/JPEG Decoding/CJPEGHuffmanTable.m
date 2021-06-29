@@ -8,8 +8,6 @@
 #import "CJPEGHuffmanTable.h"
 #import "CJPEGHuffmanTable+Private.h"
 
-#import "Logging.h"
-
 #import "huffman.h"
 
 @implementation CJPEGHuffmanTable
@@ -18,7 +16,7 @@
     self = [super init];
     if (self) {
         self.huff = JPEGHuffmanNew();
-        DDAssert(self.huff, @"Failed to allocate Huffman table");
+        NSAssert(self.huff, @"Failed to allocate Huffman table");
     }
     return self;
 }
@@ -31,7 +29,7 @@
         andValue:(uint8_t) value {
     int err;
     err = JPEGHuffmanAdd(self.huff, code, bits, value);
-    DDAssert(err == 0, @"Failed to add code: %d", err);
+    NSAssert(err == 0, @"Failed to add code: %d", err);
 }
 
 @end

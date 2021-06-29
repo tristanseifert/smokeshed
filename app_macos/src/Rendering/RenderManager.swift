@@ -6,13 +6,16 @@
 //
 
 import Foundation
-
-import CocoaLumberjackSwift
+import Metal
+import OSLog
 
 /**
  * Manages the connection to the renderer service.
  */
 class RenderManager {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: RenderManager.self).bundleIdentifier!,
+                                         category: "RenderManager")
+    
     /// Shared instance of the render manager
     public static var shared = RenderManager()
 
@@ -40,19 +43,19 @@ class RenderManager {
 
         // on invalidation, we must re-create the xpc connection
         self.xpc.invalidationHandler = {
-            DDLogWarn("Renderer XPC connection invalidated!")
+            Self.logger.warning("Renderer XPC connection invalidated!")
             self.xpc = nil
         }
         
         // don't have to do anything on interruption, this should work automatically
         self.xpc.interruptionHandler = {
-            DDLogInfo("Renderer XPC connection interrupted; reconnecting")
+            Self.logger.info("Renderer XPC connection interrupted; reconnecting")
         }
         
         // connect that shit and get service
         self.xpc.resume()
         self.renderer = self.xpc.remoteObjectProxyWithErrorHandler() { error in
-            DDLogError("Failed to get renderer XPC service remote proxy: \(error)")
+            Self.logger.error("Failed to get renderer XPC service remote proxy: \(error.localizedDescription)")
         } as? RendererXPCProtocol
     }
     
@@ -108,7 +111,7 @@ class RenderManager {
      */
     public func closeMaintenanceEndpoint() {
         guard self.maintenanceRefCount != 0 else {
-            DDLogError("Attempt to decrement ref count past 0")
+            Self.logger.error("Attempt to decrement ref count past 0")
             return
         }
         

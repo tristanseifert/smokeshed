@@ -6,10 +6,10 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Provides a read-only data source for an outline view to display an image's metadata.
@@ -17,6 +17,9 @@ import CocoaLumberjackSwift
  * This does not support multiple selection.
  */
 class MetadataOutlineDataSource: NSObject, NSOutlineViewDataSource, NSOutlineViewDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: MetadataOutlineDataSource.self).bundleIdentifier!,
+                                         category: "MetadataOutlineDataSource")
+    
     /// Image for which metadata is to be displayed
     internal var image: Image? = nil {
         didSet {
@@ -126,7 +129,7 @@ class MetadataOutlineDataSource: NSObject, NSOutlineViewDataSource, NSOutlineVie
             }
             // this should NOT happen
             else {
-                DDLogError("Unknown container type with children: \(container)")
+                Self.logger.error("Unknown container type with children: \(container)")
                 return NSNull()
             }
         }
@@ -219,7 +222,7 @@ class MetadataOutlineDataSource: NSObject, NSOutlineViewDataSource, NSOutlineVie
             }
 
             // unknown
-            DDLogWarn("Unknown object type: \(container) \(String(describing: container.value))")
+            Self.logger.warning("Unknown object type: \(container) \(String(describing: container.value))")
         }
 
         // can't handle this type of object

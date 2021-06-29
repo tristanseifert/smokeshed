@@ -6,7 +6,6 @@
 //
 
 import Cocoa
-import CocoaLumberjackSwift
 
 /**
  * Renders the title bar for an inspector item.

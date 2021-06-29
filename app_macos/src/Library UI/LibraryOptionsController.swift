@@ -6,11 +6,14 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 class LibraryOptionsController: NSWindowController, NSWindowDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryOptionsController.self).bundleIdentifier!,
+                                         category: "LibraryOptionsController")
+    
     /// Library whose options we're adjusting
     private var library: LibraryBundle! = nil
 
@@ -107,7 +110,7 @@ class LibraryOptionsController: NSWindowController, NSWindowDelegate {
             try self.library.write()
             self.window!.sheetParent?.endSheet(self.window!, returnCode: .OK)
         } catch {
-            DDLogError("Failed to save library changes: \(error)")
+            Self.logger.error("Failed to save library changes: \(error.localizedDescription)")
 
             let wrapper = OptionsError.failedToSave(error)
 

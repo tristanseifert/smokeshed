@@ -6,10 +6,12 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 class EditSidebarWindowController: NSWindowController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: EditSidebarWindowController.self).bundleIdentifier!,
+                                         category: "EditSidebarWindowController")
+    
     // MARK: - State restoration
     private struct StateKeys {
         /// Window location (frame)
@@ -58,7 +60,7 @@ class EditSidebarWindowController: NSWindowController {
         // create a bullshit item
         guard let sb = self.storyboard,
               let vc = sb.instantiateController(withIdentifier: "bitch") as? NSViewController else {
-            DDLogError("Failed to instantiate controller")
+            Self.logger.error("Failed to instantiate controller")
             return
         }
 
@@ -81,7 +83,7 @@ class EditSidebarWindowController: NSWindowController {
         super.encodeRestorableState(with: coder)
     
         if self.window?.isVisible ?? false {
-            DDLogVerbose("Encoding edit controls window size: \(self.window!.frame)")
+            Self.logger.trace("Encoding edit controls window size: \(self.window!.frame.debugDescription)")
             coder.encode(self.window!.frame, forKey: StateKeys.frame)
         }
     }
@@ -94,7 +96,7 @@ class EditSidebarWindowController: NSWindowController {
         
         // restore window position
         let frame = coder.decodeRect(forKey: StateKeys.frame)
-        DDLogVerbose("Restored edit controls window size: \(frame)")
+        Self.logger.trace("Restored edit controls window size: \(frame.debugDescription)")
         
         if frame != .zero, let minSize = self.window?.minSize, frame.width > minSize.width,
            frame.height > minSize.height {
@@ -108,7 +110,7 @@ class EditSidebarWindowController: NSWindowController {
      * new data.
      */
     private func imageDidRender(_ note: Notification) {
-        DDLogVerbose("Render view rendered: \(note)")
+        Self.logger.trace("Render view rendered: \(note)")
     
         // call into all inspector items
         self.inspector.items.forEach {

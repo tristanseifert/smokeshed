@@ -11,14 +11,17 @@
 #import "lmmse_interpolate.h"
 #import "ahd_interpolate_mod.h"
 
-#import "Logging.h"
 #import <libraw.h>
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <ImageIO/ImageIO.h>
 #import <Cocoa/Cocoa.h>
+#import <os/log.h>
 
 NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
+
+// logger instance shared by all LibRAW readers
+static os_log_t gLogger = nil;
 
 @interface PAPLibRawReader ()
 
@@ -53,6 +56,11 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
     
     self = [super init];
     if (self) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            gLogger = os_log_create("me.tseifert.smokeshed.paper", "PAPLibRawReader");
+        });
+        
         self.cgThumbs = [NSMutableArray new];
         
         // try to read file
@@ -101,7 +109,7 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
  * Loads thumbnails from the raw image.
  */
 - (BOOL) unpackThumbsWithError:(NSError * _Nullable __autoreleasing *) error {
-    DDAssert(self.raw != nil, @"LibRaw not initialized");
+    NSAssert(self.raw != nil, @"LibRaw not initialized");
     
     // unpack thumbnail data
     int err = self.raw->unpack_thumb();
@@ -159,7 +167,7 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
  * Decodes the raw image data.
  */
 - (BOOL) unpackRawDataWithError:(NSError * _Nullable __autoreleasing *) error {
-    DDAssert(self.raw != nil, @"LibRaw not initialized");
+    NSAssert(self.raw != nil, @"LibRaw not initialized");
     
     // unpack raw image data
     int err = self.raw->unpack();
@@ -177,7 +185,7 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
  * Debayers raw data.
  */
 - (NSMutableData * _Nullable) debayerRawData:(NSError * _Nullable __autoreleasing *) error {
-    DDAssert(self.raw != nil, @"LibRaw not initialized");
+    NSAssert(self.raw != nil, @"LibRaw not initialized");
     
     // allocate output buffer (or bail if already done)
     if(self.imageBuffer == nil) {
@@ -196,7 +204,7 @@ NSErrorDomain const PAPLibRawErrorDomain = @"PAPLibRawErrorDomain";
     if(self.raw->imgdata.idata.filters || self.raw->imgdata.idata.colors == 1) { // bayer, one component
         TSRawCopyBayerData(&self.raw->imgdata, cblack, &dmax, outBuf);
     } else {
-        DDLogError(@"Got an unsupported RAW format: filters = 0x%08x, colours = %i",
+        os_log_error(gLogger, "Got an unsupported RAW format: filters = 0x%x, colours = %i",
                    self.raw->imgdata.idata.filters, self.raw->imgdata.idata.colors);
         return nil;
     }

@@ -8,14 +8,17 @@
 import Foundation
 import CoreGraphics
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Represents a thumbnail request (either to generate or retrieve)
  */
 @objc(ThumbRequest_XPC) public class ThumbRequest: NSObject, NSSecureCoding {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ThumbRequest.self).bundleIdentifier!,
+                                         category: "ThumbRequest")
+    
     public override var description: String {
         return String(format: "<ThumbRequest: lib %@ img %@ (url %@) size %@>",
                       self.libraryId as CVarArg, self.imageId as CVarArg,
@@ -75,7 +78,7 @@ import CocoaLumberjackSwift
                                                      relativeTo: nil)
                 self.imageUrlBaseBookmark = bm
             } catch {
-                DDLogError("Failed to create bookmark for library url \(libraryUrl): \(error)")
+                Self.logger.error("Failed to create bookmark for library url \(libraryUrl): \(error.localizedDescription)")
             }
             
             if relinquish {
@@ -91,7 +94,7 @@ import CocoaLumberjackSwift
                                               relativeTo: self.imageUrlBase)
                 self.imageUrlBookmark = bm
             } catch {
-                DDLogError("Failed to create bookmark for \(url): \(error)")
+                Self.logger.error("Failed to create bookmark for \(url): \(error.localizedDescription)")
             }
             
             if relinquish {
@@ -148,7 +151,7 @@ import CocoaLumberjackSwift
                                           relativeTo: nil, bookmarkDataIsStale: &isStale)
                         base = url
                     } catch {
-                        DDLogError("Failed to decode base url bookmark data (\(data)): \(error)")
+                        Self.logger.error("Failed to decode base url bookmark data (\(data)): \(error.localizedDescription)")
                         return nil
                     }
                 }
@@ -159,7 +162,7 @@ import CocoaLumberjackSwift
                                   relativeTo: base, bookmarkDataIsStale: &isStale)
                 self.imageUrl = url
             } catch {
-                DDLogError("Failed to decode url bookmark data (\(bookmark)): \(error)")
+                Self.logger.error("Failed to decode url bookmark data (\(bookmark)): \(error.localizedDescription)")
                 return nil
             }
         } else if let url = coder.decodeObject(forKey: "imageUrl") as? URL {

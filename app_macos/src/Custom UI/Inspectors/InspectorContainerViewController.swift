@@ -7,8 +7,6 @@
 
 import Cocoa
 
-import CocoaLumberjackSwift
-
 /**
  * Serves as a container for multiple inspector items, each of which has its own title bar and content controller. Inspector items can be
  * torn off into their own windows, if desired.

@@ -6,14 +6,16 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * This view controller wraps another view controller (the actual content of an inspector item) and adds a "title bar" that allows the item to
  * be expanded/collapsed and dragged.
  */
 class InspectorItemViewController: NSViewController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: InspectorItemViewController.self).bundleIdentifier!,
+                                         category: "InspectorItemViewController")
+    
     /// Whether content is visible or not
     private(set) public var contentVisible: Bool = true
     
@@ -200,7 +202,7 @@ class InspectorItemViewController: NSViewController {
      */
     private func makeContentSnapshot() {
         guard let rep = self.content.view.bitmapImageRepForCachingDisplay(in: self.content.view.visibleRect) else {
-            DDLogError("Failed to create snapshot for \(self.content.view) (\(self)")
+            Self.logger.error("Failed to create snapshot for \(self.content.view) (\(self))")
             self.collapseSnapshot = nil
             return
         }

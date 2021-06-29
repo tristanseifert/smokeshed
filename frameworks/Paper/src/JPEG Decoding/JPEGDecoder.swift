@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 /**
  * Decodes JPEG images encoded using the lossless encoding scheme.
  *

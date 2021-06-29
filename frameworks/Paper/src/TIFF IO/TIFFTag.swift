@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 extension TIFFReader {
     // MARK: - Base tag
     /**

@@ -9,8 +9,6 @@ import Foundation
 
 import ImageIO
 
-import CocoaLumberjackSwift
-
 /**
  * Gets image metadata using the system's ImageIO framework.
  */

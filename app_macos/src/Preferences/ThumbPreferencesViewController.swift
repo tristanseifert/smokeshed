@@ -7,11 +7,14 @@
 
 import Cocoa
 import UniformTypeIdentifiers
+import OSLog
 
 import Bowl
-import CocoaLumberjackSwift
 
 class ThumbPreferencesViewController: NSViewController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ThumbPreferencesViewController.self).bundleIdentifier!,
+                                         category: "ThumbPreferencesViewController")
+    
     /// Maintenance endpoint of the thumb service
     @objc dynamic weak private var maintenance: ThumbXPCMaintenanceEndpoint!
     
@@ -205,7 +208,7 @@ class ThumbPreferencesViewController: NSViewController {
         self.maintenance.getSpaceUsed() { (size, error) in
             // present error
             if let error = error {
-                DDLogError("Failed to size cache: \(error)")
+                Self.logger.error("Failed to size cache: \(error.localizedDescription)")
                 
                 DispatchQueue.main.async {
                     self.presentError(error, modalFor: self.view.window!, delegate: nil,
@@ -278,7 +281,7 @@ class ThumbPreferencesViewController: NSViewController {
         }
         
         // move it
-        DDLogInfo("Moving thumbs to: \(url)")
+        Self.logger.info("Moving thumbs to: \(url)")
         panel.orderOut(nil)
         
         self.moveLibrary(url, copy: self.shouldCopyThumbData,
@@ -372,7 +375,7 @@ class ThumbPreferencesViewController: NSViewController {
         
         // was there an error?
         if let err = error {
-            DDLogError("Failed to move thumbs: \(err)")
+            Self.logger.error("Failed to move thumbs: \(err.localizedDescription)")
             
             DispatchQueue.main.async {
                 self.presentError(err, modalFor: self.view.window!, delegate: nil, didPresent: nil,
@@ -381,7 +384,7 @@ class ThumbPreferencesViewController: NSViewController {
         }
         // success?
         else {
-            DDLogInfo("Success, finished moving")
+            Self.logger.info("Success, finished moving")
             
             self.getSpaceUsed(nil)
             self.updateStoragePath(nil)

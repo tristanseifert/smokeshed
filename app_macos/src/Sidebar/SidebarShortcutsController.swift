@@ -5,16 +5,20 @@
 //  Created by Tristan Seifert on 20200624.
 //
 
+import AppKit
 import Foundation
 import CoreData
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Manages the "all photos" and "last import"  sidebar items.
  */
 internal class SidebarShortcutsController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: SidebarShortcutsController.self).bundleIdentifier!,
+                                         category: "SidebarShortcutsController")
+    
     /// Library being displayed by this sidebar
     internal var library: LibraryBundle! {
         didSet {
@@ -159,7 +163,7 @@ internal class SidebarShortcutsController {
                 self?.allItem?.badgeValue = count as! Int
             }
         } catch {
-            DDLogError("Failed to count images: \(error)")
+            Self.logger.error("Failed to count images: \(error.localizedDescription)")
             return
         }
     }
@@ -200,7 +204,7 @@ internal class SidebarShortcutsController {
             let res = try self.mainCtx.fetch(self.mostRecentlyImportedFetchReq)
             
             guard let obj = res.first as? Image else {
-                DDLogError("Failed to convert results for latest import date: \(res)")
+                Self.logger.error("Failed to convert results for latest import date: \(res)")
                 return
             }
             
@@ -210,7 +214,7 @@ internal class SidebarShortcutsController {
             
             self.mostRecentImport = obj.dateImported
         } catch {
-            DDLogError("Failed to retrieve latest import date: \(error)")
+            Self.logger.error("Failed to retrieve latest import date: \(error.localizedDescription)")
             return
         }
         
@@ -247,7 +251,7 @@ internal class SidebarShortcutsController {
             DispatchQueue.main.async { [weak self] in
                 self?.lastImportItem?.badgeValue = 0
             }
-            DDLogError("Failed to count images in last import: \(error)")
+            Self.logger.error("Failed to count images in last import: \(error.localizedDescription)")
             return
         }
     }

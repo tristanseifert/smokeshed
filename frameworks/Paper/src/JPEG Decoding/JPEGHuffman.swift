@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 class JPEGHuffman {
     /// Decoder that is using the decoder
     private weak var jpeg: JPEGDecoder?

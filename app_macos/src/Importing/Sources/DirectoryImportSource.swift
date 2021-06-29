@@ -5,15 +5,18 @@
 //  Created by Tristan Seifert on 20200828.
 //
 
+import AppKit
 import Foundation
 import UniformTypeIdentifiers
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * An import source that (possibly recursively) enumerates the contents of a directory for image files.
  */
 internal class DirectoryImportSource: ImportSource {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: DirectoryImportSource.self).bundleIdentifier!,
+                                         category: "DirectoryImportSource")
+    
     /// Source type
     var type: ImportSourceType = .file
     /// Display name of the device
@@ -60,7 +63,7 @@ internal class DirectoryImportSource: ImportSource {
         var items: [ImportSourceItem] = []
         
         for case let fileURL as URL in e {
-            DDLogInfo("url: \(fileURL)")
+            Self.logger.trace("url: \(fileURL)")
             
             // create the item
             if let item = try Item(fileURL) {

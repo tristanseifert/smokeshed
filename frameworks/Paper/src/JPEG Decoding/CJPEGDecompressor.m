@@ -9,8 +9,6 @@
 #import "CJPEGDecompressor+Private.h"
 #import "CJPEGHuffmanTable+Private.h"
 
-#import "Logging.h"
-
 #import "decompress.h"
 #import "huffman.h"
 
@@ -28,14 +26,14 @@
 
         // create decompressor
         self.dec = JPEGDecompressorNew(cols, rows, bits, planes);
-        DDAssert(self.dec != nil, @"JPEGDecompressorNew() failed");
+        NSAssert(self.dec != nil, @"JPEGDecompressorNew() failed");
 
         // allocate bit plane
         NSUInteger planeBytes = cols * rows * 2 * planes;
         self.output = [NSMutableData dataWithLength:planeBytes];
 
         err = JPEGDecompressorSetOutput(self.dec, self.output.mutableBytes, self.output.length);
-        DDAssert(err == 0, @"Failed to add plane: %d", err);
+        NSAssert(err == 0, @"Failed to add plane: %d", err);
     }
     return self;
 }
@@ -52,7 +50,7 @@
 
     int err = JPEGDecompressorSetInput(self.dec, input.bytes,
                                        input.length);
-    DDAssert(err == 0, @"Failed to set input: %d", err);
+    NSAssert(err == 0, @"Failed to set input: %d", err);
 }
 
 /**
@@ -62,7 +60,7 @@
     _predictor = predictor;
 
     int err = JPEGDecompressorSetPredictionAlgo(self.dec, predictor);
-    DDAssert(err == 0, @"Failed to set predictor: %d", err);
+    NSAssert(err == 0, @"Failed to set predictor: %d", err);
 }
 
 /**
@@ -74,7 +72,7 @@
 
     self.tables[@(slot)] = table;
     err = JPEGDecompressorAddTable(self.dec, slot, table.huff);
-    DDAssert(err == 0, @"Failed to add table: %d", err);
+    NSAssert(err == 0, @"Failed to add table: %d", err);
 }
 
 /**
@@ -84,7 +82,7 @@
     int err;
 
     err = JPEGDecompressorSetTableForPlane(self.dec, plane, index);
-    DDAssert(err == 0, @"Failed to set table index: %d", err);
+    NSAssert(err == 0, @"Failed to set table index: %d", err);
 }
 
 /**

@@ -8,13 +8,15 @@
 import Foundation
 import CoreGraphics
 import UniformTypeIdentifiers
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Provides an interface to extract thumbnails of a given size from a variety of image formats.
  */
 public class ThumbReader {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ThumbReader.self).bundleIdentifier!,
+                                         category: "ThumbReader")
+    
     /// Actual reader implementation for the file
     private var reader: ThumbReaderImpl!
     
@@ -37,7 +39,7 @@ public class ThumbReader {
                     self.reader = try reader.init(withFileAt: url)
                     break
                 } catch {
-                    DDLogError("Failed to create reader for type \(type) (at \(url)): \(error)")
+                    Self.logger.error("Failed to create reader for type \(type) (at \(url)): \(error.localizedDescription, privacy: .public)")
                     return nil
                 }
             }
@@ -52,7 +54,7 @@ public class ThumbReader {
         do {
             try self.reader.decode()
         } catch {
-            DDLogError("Failed to decode \(type) (at \(url)): \(error)")
+            Self.logger.error("Failed to decode \(type) (at \(url)): \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }

@@ -6,15 +6,19 @@
 //
 
 import Foundation
+import OSLog
+import CoreData
 
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Given some image metadata, this class will try to find a matching lens in the library's data store, or create
  * one if needed.
  */
 internal class LensFinder {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LensFinder.self).bundleIdentifier!,
+                                         category: "LensFinder")
+    
     /// Context for data store operations; you must set this
     internal var context: NSManagedObjectContext! = nil
 
@@ -27,7 +31,7 @@ internal class LensFinder {
 
         // read the model string and lens id
         guard let model = meta.lensModel else {
-            DDLogWarn("Failed to get lens model from metadata: \(meta)")
+            Self.logger.warning("Failed to get lens model from metadata: \(meta)")
             return nil
         }
 

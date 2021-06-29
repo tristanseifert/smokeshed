@@ -9,8 +9,6 @@ import Foundation
 import Metal
 import simd
 
-import CocoaLumberjackSwift
-
 public class TextureFiller {
     /// Device on which the filler operates
     private(set) public var device: MTLDevice

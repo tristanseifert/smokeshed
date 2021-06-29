@@ -6,15 +6,18 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Implements the main window's sidebar: an outline view allowing the user to select from shortcuts, their
  * images sorted by days, and their albums.
  */
 class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataSource, NSOutlineViewDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: SidebarController.self).bundleIdentifier!,
+                                         category: "SidebarController")
+    
     /// Currently opened library
     internal var library: LibraryBundle! {
         didSet {
@@ -115,7 +118,7 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         // restore expanded items
         if let obj = coder.decodeObject(forKey: StateKeys.expandedIdentifiers),
            let identifiers = obj as? [String] {
-            DDLogDebug("Expanding sidebar items: \(identifiers)")
+            Self.logger.trace("Expanding sidebar items: \(identifiers)")
             
             for identifier in identifiers {
                 for item in self.root {
@@ -147,7 +150,7 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
                 }
             }
             
-            DDLogDebug("Selected sidebar items: \(identifiers) (indices \(indices))")
+            Self.logger.debug("Selected sidebar items: \(identifiers) (indices \(indices))")
             self.outline.selectRowIndexes(IndexSet(indices), byExtendingSelection: false)
         }
     }
@@ -169,13 +172,13 @@ class SidebarController: NSViewController, MainWindowContent, NSOutlineViewDataS
         }
         
         if !identifiers.isEmpty {
-            DDLogDebug("Selected sidebar items: \(identifiers)")
+            Self.logger.debug("Selected sidebar items: \(identifiers)")
             coder.encode(identifiers, forKey: StateKeys.selectionIdentifiers)
         }
         
         // save identifiers of all expanded item
         if !self.expandedItemIdentifiers.isEmpty {
-            DDLogDebug("Expanded sidebar items: \(self.expandedItemIdentifiers)")
+            Self.logger.debug("Expanded sidebar items: \(self.expandedItemIdentifiers)")
             coder.encode(self.expandedItemIdentifiers, forKey: StateKeys.expandedIdentifiers)
         }
     }

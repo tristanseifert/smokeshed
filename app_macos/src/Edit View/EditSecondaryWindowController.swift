@@ -7,8 +7,6 @@
 
 import Cocoa
 
-import CocoaLumberjackSwift
-
 class EditSecondaryWindowController: NSWindowController {
     // MARK: - State restoration
     private struct StateKeys {

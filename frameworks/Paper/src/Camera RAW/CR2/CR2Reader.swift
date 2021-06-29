@@ -7,8 +7,7 @@
 
 import Foundation
 import CoreGraphics
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Implements an event-driven reader for the Canon RAW version 2 files.
@@ -17,6 +16,9 @@ import CocoaLumberjackSwift
  * the existing TIFF file reader.
  */
 public class CR2Reader {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: CR2Reader.self).bundleIdentifier!,
+                                         category: "CR2Reader")
+    
     /// Data object containing the RAW file data
     private var data: Data
 
@@ -125,7 +127,7 @@ public class CR2Reader {
         if major != 2 {
             throw HeaderError.unsupportedVersion(fileMajor: major, fileMinor: minor)
         } else if minor != 0 {
-            DDLogWarn("Minor version is not 0 - this has not been tested!")
+            Self.logger.warning("Minor version is not 0 - this has not been tested!")
             throw HeaderError.unsupportedVersion(fileMajor: major, fileMinor: minor)
         }
 

@@ -8,7 +8,6 @@
 import Cocoa
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Provides the primary image inspector controller, which automatically binds to the selected images.

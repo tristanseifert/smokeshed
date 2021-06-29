@@ -6,14 +6,16 @@
 //
 
 import Foundation
-
+import OSLog
 import Bowl
-import CocoaLumberjackSwift
 
 /**
  * Implements the XPC listener delegate.
  */
 internal class XPCDelegate: NSObject, NSXPCListenerDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: XPCDelegate.self).bundleIdentifier!,
+                                         category: "XPCDelegate")
+    
     /// Render server
     private var server = RenderServer()
     
@@ -30,7 +32,7 @@ internal class XPCDelegate: NSObject, NSXPCListenerDelegate {
      * its code signature.
      */
     public func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-        DDLogVerbose("Received connection request from \(newConnection)")
+        Self.logger.debug("Received connection request from \(newConnection)")
 
         // if we get here, the connection should proceed
         newConnection.exportedInterface = RendererXPCProtocolHelpers.makeRemote()

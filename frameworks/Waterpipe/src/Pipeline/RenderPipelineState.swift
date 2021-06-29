@@ -9,8 +9,6 @@ import Foundation
 import Metal
 import MetalPerformanceShaders
 
-import CocoaLumberjackSwift
-
 /**
  * A render pipeline state object contains a fully decoded image (decoded from camera raw formats or other sources) as well as
  * its metadata. It serves as the endpoint for processing a single image.

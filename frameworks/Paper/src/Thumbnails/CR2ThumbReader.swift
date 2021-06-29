@@ -7,13 +7,15 @@
 
 import Foundation
 import UniformTypeIdentifiers
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Extracts existing JPEG (and RGB interleaved bitmap) thumbnails from a CR2 file.
  */
 internal class CR2ThumbReader: ThumbReaderImpl {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: CR2ThumbReader.self).bundleIdentifier!,
+                                         category: "CR2ThumbReader")
+    
     /// CR2 reader instance
     private var reader: CR2Reader!
     /// Decoded raw image
@@ -45,7 +47,7 @@ internal class CR2ThumbReader: ThumbReaderImpl {
         precondition(self.image != nil, "Invalid CR2 image; did you forget to call decode()?")
         
         guard !self.image.thumbs.isEmpty else {
-            DDLogWarn("Failed to decode thumbs: \(String(describing: self.reader)): \(String(describing: self.image))")
+            Self.logger.warning("Failed to decode thumbs: \(String(describing: self.reader)): \(String(describing: self.image))")
             return nil
         }
         

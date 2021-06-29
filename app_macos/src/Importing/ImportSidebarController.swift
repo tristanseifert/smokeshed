@@ -8,8 +8,6 @@
 import Cocoa
 import ImageCaptureCore
 
-import CocoaLumberjackSwift
-
 /**
  * Drives a sidebar for the import window that allows device selection.
  *

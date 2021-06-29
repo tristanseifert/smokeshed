@@ -6,13 +6,15 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Handles displaying a grid of images to the user from an import source.
  */
 class ImportPreviewController: NSViewController, NSCollectionViewDataSource {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ImportPreviewController.self).bundleIdentifier!,
+                                         category: "ImportPreviewController")
+    
     /// Grid view in which the thumbs from the device are shown
     @IBOutlet private var collection: NSCollectionView!
     
@@ -46,7 +48,7 @@ class ImportPreviewController: NSViewController, NSCollectionViewDataSource {
      * Updates the UI to reflect the state of a new source.
      */
     private func updateSource() {
-        DDLogVerbose("Updating source: \(String(describing: self.representedObject))")
+        Self.logger.trace("Updating source: \(String(describing: self.representedObject))")
         
         // clean up previous source state
         self.sourceImages.removeAll()
@@ -56,7 +58,7 @@ class ImportPreviewController: NSViewController, NSCollectionViewDataSource {
             do {
                 self.sourceImages = try source.getImages()
             } catch {
-                DDLogError("Failed to get images from source \(source): \(error)")
+                Self.logger.error("Failed to get images from source \(String(describing: source)): \(error.localizedDescription)")
             }
         }
         

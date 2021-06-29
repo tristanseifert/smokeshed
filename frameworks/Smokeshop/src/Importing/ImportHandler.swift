@@ -7,8 +7,9 @@
 
 import Foundation
 import UniformTypeIdentifiers
+import CoreData
 
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Handles importing images to the library.
@@ -17,6 +18,9 @@ import CocoaLumberjackSwift
  * been provided, we enumerate the contents of the directory, and attempt to import each file found.
  */
 public class ImportHandler {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ImportHandler.self).bundleIdentifier!,
+                                         category: "ImportHandler")
+    
     /// Library into which images are to be imported
     public var library: LibraryBundle? {
         didSet {
@@ -104,11 +108,11 @@ public class ImportHandler {
             urls.forEach({
                 _ = $0.startAccessingSecurityScopedResource()
             })
-            DDLogDebug("Import input urls: \(urls)")
+            Self.logger.debug("Import input urls: \(urls)")
             
             do {
                 let flattened = try self.flattenUrls(urls)
-                DDLogDebug("Flattened to \(flattened.count) URLs")
+                Self.logger.debug("Flattened to \(flattened.count) URLs")
                 
                 // if no URLs returned, complete job
                 if flattened.isEmpty {
@@ -125,7 +129,7 @@ public class ImportHandler {
                             try self.importSingle(url, importDate: importDate)
                         } catch {
                             // TODO: signal this error somehow
-                            DDLogError("Failed to import '\(url)': \(error)")
+                            Self.logger.error("Failed to import '\(url)': \(error.localizedDescription)")
                         }
                         
                         if relinquish {
@@ -139,14 +143,14 @@ public class ImportHandler {
                             do {
                                 try self.context.save()
                             } catch {
-                                DDLogError("Failed to save context after import: \(error)")
+                                Self.logger.error("Failed to save context after import: \(error.localizedDescription)")
                             }
                         }
                     }
                 }
             } catch {
                 // TODO: signal this error somehow
-                DDLogError("Failed to flatten URLs: \(error)")
+                Self.logger.error("Failed to flatten URLs: \(error.localizedDescription)")
             }
             
             // after all imports complete, save context
@@ -154,7 +158,7 @@ public class ImportHandler {
                 do {
                     try self.context.save()
                 } catch {
-                    DDLogError("Failed to save context after import: \(error)")
+                    Self.logger.error("Failed to save context after import: \(error.localizedDescription)")
                 }
                 
                 // relinquish access to the URLs
@@ -187,7 +191,7 @@ public class ImportHandler {
                 do {
                     try m.trashItem(at: $0, resultingItemURL: nil)
                 } catch {
-                    DDLogError("Failed to delete image '\($0)' from disk: \(error)")
+                    Self.logger.error("Failed to delete image '\($0)' from disk: \(error.localizedDescription)")
                 }
 
                 if relinquish {
@@ -235,7 +239,7 @@ public class ImportHandler {
                         }
                     }
                 } catch {
-                    DDLogError("Failed to remove images from library: \(error)")
+                    Self.logger.error("Failed to remove images from library: \(error.localizedDescription)")
                     removeFiles.cancel()
 
                     if let handler = completion {
@@ -276,7 +280,7 @@ public class ImportHandler {
             }
             // file didn't exist… shouldn't have been passed in
             else {
-                DDLogError("Skipping import of nonexistent URL '\(url)'")
+                Self.logger.error("Skipping import of nonexistent URL '\(url)'")
             }
         })
 

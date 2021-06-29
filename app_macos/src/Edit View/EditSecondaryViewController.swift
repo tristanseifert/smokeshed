@@ -7,8 +7,6 @@
 
 import Cocoa
 
-import CocoaLumberjackSwift
-
 /**
  * View controller responsible for the edit view's secondary display, which is a grid of images from the library, filtered according to the
  * current sidebar filters.

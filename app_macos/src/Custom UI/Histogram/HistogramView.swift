@@ -6,7 +6,7 @@
 //
 
 import Cocoa
-import CocoaLumberjackSwift
+
 import Waterpipe
 
 /**
@@ -356,7 +356,7 @@ class HistogramView: NSView, CALayerDelegate {
      * The current histogram is animated to blank, and a "no selection" indicator is displayed.
      */
     private func showNoSelection() {
-        DDLogVerbose("Histogram: show no selection UI")
+        print("Histogram: show no selection UI")
     }
     
     // MARK: - Types

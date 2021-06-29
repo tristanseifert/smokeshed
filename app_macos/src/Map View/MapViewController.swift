@@ -8,7 +8,6 @@
 import Cocoa
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 class MapViewController: NSViewController, NSMenuItemValidation, MainWindowContent {
     /// Library that is being browsed

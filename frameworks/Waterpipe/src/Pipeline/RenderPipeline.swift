@@ -8,7 +8,7 @@
 import Foundation
 import Metal
 import MetalPerformanceShaders
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Main interface to the Metal-based image processing pipeline. Each instance of this class is bound to a particular Metal device,
@@ -16,6 +16,9 @@ import CocoaLumberjackSwift
  * different pipeline steps and settings before rendering, and re-used multiple times.
  */
 public class RenderPipeline {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: RenderPipeline.self).bundleIdentifier!,
+                                         category: "RenderPipeline")
+    
     /// Render device to use for the pipeline
     private(set) public var device: MTLDevice! = nil
     /// Command queue used for pipeline tasks (such as decoding images)
@@ -107,7 +110,7 @@ public class RenderPipeline {
             encoder.endEncoding()
             progress.resignCurrent()
         } catch {
-            DDLogError("Failed to render \(state): \(error)")
+            Self.logger.error("Failed to render \(String(describing: state)): \(error.localizedDescription)")
             throw error
         }
         

@@ -7,7 +7,8 @@
 
 import Cocoa
 import Metal
-import CocoaLumberjackSwift
+import OSLog
+
 import Waterpipe
 import Smokeshop
 
@@ -15,6 +16,9 @@ import Smokeshop
  * Handles displaying the histogram in the sidebar of the edit view
  */
 class EditSidebarHistogramViewController: NSViewController, EditSidebarItem {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: EditSidebarHistogramViewController.self).bundleIdentifier!,
+                                         category: "EditSidebarHistogramViewController")
+    
     /// Most recently used Metal device
     private var device: MTLDevice? = nil
     /// Histogram calculator
@@ -97,7 +101,7 @@ class EditSidebarHistogramViewController: NSViewController, EditSidebarItem {
             do {
                 try self.updateHistogram(for: image)
             } catch {
-                DDLogError("Failed to update histogram: \(error)")
+                Self.logger.error("Failed to update histogram: \(error.localizedDescription)")
             }
             
             // hide the calculation overlay (TODO: could be optimized)

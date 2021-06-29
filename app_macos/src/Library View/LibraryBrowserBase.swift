@@ -6,9 +6,9 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * This is a basic view controller subclass that's controls display of a collection of images in a grid view.
@@ -16,6 +16,9 @@ import CocoaLumberjackSwift
 class LibraryBrowserBase: NSViewController, NSMenuItemValidation,
     NSCollectionViewPrefetching, NSCollectionViewDelegate,
 NSFetchedResultsControllerDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryBrowserBase.self).bundleIdentifier!,
+                                         category: "LibraryBrowserBase")
+    
     /// Library that is being browsed
     public var library: LibraryBundle! = nil {
         didSet {
@@ -206,19 +209,19 @@ NSFetchedResultsControllerDelegate {
     internal func urlToImages(_ url: URL) -> IndexPath? {
         // get persistent store coordinator
         guard let psc = self.ctx.persistentStoreCoordinator else {
-            DDLogError("Persistent store coordinator is required")
+            Self.logger.error("Persistent store coordinator is required")
             return nil
         }
 
         // get an object id for it
         guard let id = psc.managedObjectID(forURIRepresentation: url) else {
-            DDLogInfo("Failed to get object id from '\(url)'")
+            Self.logger.warning("Failed to get object id from '\(url)'")
             return nil
         }
 
         // get an object
         guard let image = self.ctx.object(with: id) as? Image else {
-            DDLogInfo("Failed to get image for id \(id)")
+            Self.logger.warning("Failed to get image for id \(id)")
             return nil
         }
 
@@ -289,7 +292,7 @@ NSFetchedResultsControllerDelegate {
             }
             self.restoreAfterFetchBlock.removeAll()
         } catch {
-            DDLogError("Failed to execute fetch request: \(error)")
+            Self.logger.error("Failed to execute fetch request: \(error.localizedDescription)")
             self.presentError(error, modalFor: self.view.window!, delegate: nil, didPresent: nil, contextInfo: nil)
         }
     }
@@ -591,7 +594,7 @@ NSFetchedResultsControllerDelegate {
         // give it its section header provider as well
         self.dataSource.supplementaryViewProvider = { (view, kind, path) in
             guard kind == NSCollectionView.elementKindSectionHeader else {
-                DDLogError("Unsupported supplementary item kind '\(kind)' for path \(path)")
+                Self.logger.error("Unsupported supplementary item kind '\(kind)' for path \(path)")
                 return nil
             }
             // ensure we want grouping (otherwise we get a single ugly 'unknown' header)

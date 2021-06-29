@@ -8,13 +8,15 @@
 
 import Foundation
 import CoreData
-
+import OSLog
 import Bowl
 import Paper
-import CocoaLumberjackSwift
 
 @objc(Image)
 public class Image: NSManagedObject {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: Image.self).bundleIdentifier!,
+                                         category: "Image+CoreData")
+    
     // MARK: Object lifecycle
     /**
      * Sets a randomly generated identifier when the image is first created, and sets up default values for
@@ -69,7 +71,7 @@ public class Image: NSManagedObject {
                 do {
                     self.rawMetadata = try encoder.encode(meta)
                 } catch {
-                    DDLogError("Failed to encode metadata for \(self.objectID): \(error)")
+                    Self.logger.error("Failed to encode metadata for \(self.objectID): \(error.localizedDescription)")
                 }
             } else {
                 self.rawMetadata = nil
@@ -94,13 +96,13 @@ public class Image: NSManagedObject {
 
                 // update bookmark if stale
                 if isStale {
-                    DDLogWarn("TODO: implement updating stale bookmark (url \(url), base \(String(describing: base))")
+                    Self.logger.warning("TODO: implement updating stale bookmark (url \(url), base \(String(describing: base))")
                 }
 
                 // return the url
                 return url
             } catch {
-                DDLogError("Failed to decode bookmark data (\(bookmark), base \(String(describing: base))) for image \(self.objectID): \(error)")
+                Self.logger.error("Failed to decode bookmark data (\(bookmark), base \(String(describing: base))) for image \(self.objectID): \(error.localizedDescription)")
             }
         }
 
@@ -141,7 +143,7 @@ public class Image: NSManagedObject {
             do {
                 self.metadata = try decoder.decode(ImageMeta.self, from: data)
             } catch {
-                DDLogError("Failed to decode metadata for \(self.objectID): \(error)")
+                Self.logger.error("Failed to decode metadata for \(self.objectID): \(error.localizedDescription)")
             }
         }
     }
@@ -154,7 +156,7 @@ public class Image: NSManagedObject {
         get {
             guard let w = self.pvtImageSize?["w"] as? Double,
                   let h = self.pvtImageSize?["h"] as? Double else {
-                DDLogError("Failed to decode stored image size '\(String(describing: self.pvtImageSize))'")
+                      Self.logger.error("Failed to decode stored image size '\(String(describing: self.pvtImageSize))'")
                 return CGSize(width: -1, height: -1)
             }
 

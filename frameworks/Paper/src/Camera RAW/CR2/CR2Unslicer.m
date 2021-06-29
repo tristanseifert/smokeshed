@@ -8,7 +8,6 @@
 #import "CR2Unslicer.h"
 #import "CJPEGDecompressor.h"
 #import "CJPEGDecompressor+Private.h"
-#import "Logging.h"
 
 #import "unslice.h"
 
@@ -58,12 +57,12 @@
     }
 
     uint16_t *outPtr = self.output.mutableBytes;
-    DDAssert(outPtr, @"Failed to get output pointer");
+    NSAssert(outPtr, @"Failed to get output pointer");
 
     // call into C code
     err = CR2Unslice(dec, outPtr, slices, self.sensorSize.width,
                      self.sensorSize.height);
-    DDAssert(outPtr, @"Failed to unslice: %d", err);
+    NSAssert(outPtr, @"Failed to unslice: %d", err);
 }
 
 /**
@@ -73,7 +72,7 @@
  */
 - (NSUInteger) calculateBayerShiftWithBorders:(NSArray<NSNumber *> *) inBorders {
     // validate inputs
-    DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
+    NSAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
     
     // build inputs
     size_t borders[] = {
@@ -82,7 +81,7 @@
     };
 
     uint16_t *outPtr = self.output.mutableBytes;
-    DDAssert(outPtr, @"Failed to get output pointer");
+    NSAssert(outPtr, @"Failed to get output pointer");
     
     return CR2CalculateBayerShift(outPtr, self.sensorSize.width, borders);
 }
@@ -94,7 +93,7 @@
     uint16_t outLevels[4];
     
     // convert borders
-    DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
+    NSAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
     
     size_t borders[] = {
         inBorders[0].unsignedIntegerValue, inBorders[1].unsignedIntegerValue,
@@ -103,7 +102,7 @@
 
     // get pointers
     uint16_t *plane = self.output.mutableBytes;
-    DDAssert(plane, @"Failed to get output pointer");
+    NSAssert(plane, @"Failed to get output pointer");
     
     // do it
     CR2CalculateBlackLevel(plane, self.sensorSize.width,
@@ -124,7 +123,7 @@
  */
 - (void) trimBorders:(NSArray<NSNumber *> *) inBorders {
     // validate inputs
-    DDAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
+    NSAssert(inBorders.count == 4, @"Invalid border array length: %lu", inBorders.count);
     
     // build inputs
     size_t borders[] = {
@@ -133,11 +132,11 @@
     };
 
     uint16_t *outPtr = self.output.mutableBytes;
-    DDAssert(outPtr, @"Failed to get output pointer");
+    NSAssert(outPtr, @"Failed to get output pointer");
     
     // do it and resize the buffer
     size_t new = CR2Trim(outPtr, self.sensorSize.width, borders);
-    DDAssert(new > 0, @"Failed to trim image");
+    NSAssert(new > 0, @"Failed to trim image");
     
     [self.output setLength:new];
 }

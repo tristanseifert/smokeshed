@@ -9,9 +9,7 @@ import Foundation
 import ImageIO
 import CoreGraphics
 import UniformTypeIdentifiers
-
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Provides some helpers to extract basic information from an image's metadata dictionary.

@@ -6,14 +6,18 @@
 //
 
 import Foundation
+import OSLog
 
-import CocoaLumberjackSwift
+import Metal
 
 /**
  * Implements the render server, which provides the XPC interface to the app for rendering. It also allows dispensing of renderer
  * instances.
  */
 internal class RenderServer: RendererXPCProtocol {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: RenderServer.self).bundleIdentifier!,
+                                         category: "RenderServer")
+    
     /**
      * An array keeping track of all currently active renderers.
      *
@@ -37,13 +41,13 @@ internal class RenderServer: RendererXPCProtocol {
             guard let obj = note.userInfo,
                   let id = obj["identifier"] as? UUID,
                   let renderer = self?.renderers[id] else {
-                DDLogWarn("Failed to get renderer from release notification: \(note)")
+                Self.logger.warning("Failed to get renderer from release notification: \(note)")
                 return
             }
             
-            DDLogVerbose("Releasing renderer \(renderer) (have: \(self?.renderers.count ?? 0))")
+            Self.logger.debug("Releasing renderer \(String(describing: renderer)) (have: \(self?.renderers.count ?? 0))")
             self?.renderers.removeValue(forKey: id)
-            DDLogVerbose("Total renderers remaining: \(self?.renderers.count ?? 0)")
+            Self.logger.debug("Total renderers remaining: \(self?.renderers.count ?? 0)")
         }
     }
     
