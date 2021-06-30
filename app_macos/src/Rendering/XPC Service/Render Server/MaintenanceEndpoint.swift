@@ -6,10 +6,12 @@
 //
 
 import Foundation
-
-import CocoaLumberjackSwift
+import OSLog
 
 internal class MaintenanceEndpoint: NSObject, RendererMaintenanceXPCProtocol, NSXPCListenerDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: MaintenanceEndpoint.self).bundleIdentifier!,
+                                         category: "MaintenanceEndpoint")
+    
     /// Queue on which the XPC connection is created
     private var listenQueue = DispatchQueue(label: "Maintenance Endpoint")
     
@@ -55,7 +57,7 @@ internal class MaintenanceEndpoint: NSObject, RendererMaintenanceXPCProtocol, NS
      * Determines if the caller is allowed to access this interface.
      */
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection new: NSXPCConnection) -> Bool {
-        DDLogVerbose("Connection to maintenance endpoint: \(new)")
+        Self.logger.debug("Connection to maintenance endpoint: \(new)")
         
         // create the connection
         new.exportedInterface = RendererXPCProtocolHelpers.makeMaintenanceEp()

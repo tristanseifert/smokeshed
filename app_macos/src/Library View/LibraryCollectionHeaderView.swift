@@ -6,13 +6,15 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * These views are used to render the section headers in the library view. They display a date
  */
 class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHeaderView {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryCollectionHeaderView.self).bundleIdentifier!,
+                                         category: "LibraryCollectionHeaderView")
+    
     /// Reference to the collection view; used to determine how to interpret header value
     internal weak var owner: LibraryBrowserBase! = nil
 
@@ -59,7 +61,7 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
                 // handle ratings
                 if self.owner.groupBy == .rating {
                     guard let number = Int(sec.name, radix: 10) else {
-                        DDLogVerbose("Failed to parse number from sec name '\(sec.name)'")
+                        Self.logger.warning("Failed to parse number from sec name '\(sec.name)'")
                         return
                     }
 
@@ -73,7 +75,7 @@ class LibraryCollectionHeaderView: NSVisualEffectView, NSCollectionViewSectionHe
                 } else {
                     // convert the name into a date
                     guard let date = LibraryCollectionHeaderView.inFormatter.date(from: sec.name) else {
-                        DDLogVerbose("Failed to parse date from sec name '\(sec.name)'")
+                        Self.logger.warning("Failed to parse date from sec name '\(sec.name)'")
                         return
                     }
 

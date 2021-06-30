@@ -7,8 +7,6 @@
 
 import Cocoa
 
-import CocoaLumberjackSwift
-
 class MainWindowViewController: NSSplitViewController, NSMenuItemValidation, NSToolbarDelegate {
     /// Filter for the sidebar selection
     @objc dynamic var sidebarFilter: NSPredicate?

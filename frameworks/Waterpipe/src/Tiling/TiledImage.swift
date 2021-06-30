@@ -10,8 +10,6 @@ import simd
 import Metal
 import MetalPerformanceShaders
 
-import CocoaLumberjackSwift
-
 /**
  * Represents an image to be run through the processing chain, but sliced up into equal sized tiles.
  *

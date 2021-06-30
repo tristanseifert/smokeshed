@@ -6,17 +6,19 @@
 //
 
 import Foundation
-
+import OSLog
 import Metal
 import MetalKit
 
 import Waterpipe
-import CocoaLumberjackSwift
 
 /**
  * Implements a renderer optimized for user interactive display.
  */
 internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProtocol {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: UserInteractiveRenderer.self).bundleIdentifier!,
+                                         category: "UserInteractiveRenderer")
+    
     /// Device used for rendering
     private(set) internal var device: MTLDevice
     
@@ -46,7 +48,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         self.device = device
         super.init()
         
-        DDLogVerbose("Created UI renderer for device \(device)")
+        Self.logger.debug("Created UI renderer for device \(String(describing: device))")
 
         // create render pipeline
         self.pipeline = RenderPipeline(device: device)
@@ -59,7 +61,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
      * Closes all graphics resources.
      */
     deinit {
-        DDLogVerbose("Releasing UI renderer \(self)")
+        Self.logger.debug("Releasing UI renderer \(String(describing: self))")
     }
     
     // MARK: - XPC interface
@@ -102,7 +104,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
             
             reply(nil, self.renderOutput!.toArchive())
         } catch {
-            DDLogError("Failed to set descriptor: \(error) (desc: \(descriptor), renderer \(self))")
+            Self.logger.error("Failed to set descriptor: \(error.localizedDescription) (desc: \(descriptor), renderer \(String(describing: self))")
             reply(error, nil)
         }
         
@@ -120,7 +122,7 @@ internal class UserInteractiveRenderer: Renderer, RendererUserInteractiveXPCProt
         do {
             try self.draw()
         } catch {
-            DDLogError("Failed to redraw: \(error)")
+            Self.logger.error("Failed to redraw: \(error.localizedDescription)")
             return reply(error)
         }
 

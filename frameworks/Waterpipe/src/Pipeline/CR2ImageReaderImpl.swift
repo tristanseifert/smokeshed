@@ -10,7 +10,6 @@ import UniformTypeIdentifiers
 import Accelerate
 import simd
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Implements support for reading Canon CR2 files.

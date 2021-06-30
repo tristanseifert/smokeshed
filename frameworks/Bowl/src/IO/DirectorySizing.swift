@@ -8,8 +8,10 @@
 //
 
 import Foundation
+import OSLog
 
-import CocoaLumberjackSwift
+fileprivate var logger = Logger(subsystem: Bundle(for: ContainerHelper.self).bundleIdentifier!,
+                                     category: "DirectorySizing")
 
 extension URL {
     fileprivate var fileSize: Int? {
@@ -17,7 +19,7 @@ extension URL {
             let val = try self.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey])
             return val.totalFileAllocatedSize ?? val.fileAllocatedSize
         } catch {
-            DDLogError("Failed to get properties for '\(self)': \(error)")
+            logger.warning("Failed to get properties for '\(self.absoluteString, privacy: .public)': \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }

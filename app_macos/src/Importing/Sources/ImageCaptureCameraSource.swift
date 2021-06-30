@@ -8,13 +8,15 @@
 import Foundation
 import ImageCaptureCore
 import UniformTypeIdentifiers
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Implements an image capture source that works with ImageCapture framework.
  */
 internal class ImageCaptureCameraSource: ImportSource {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ImageCaptureCameraSource.self).bundleIdentifier!,
+                                         category: "ImageCaptureCameraSource")
+    
     /// Source type
     var type: ImportSourceType = .camera
     /// Display name of the device
@@ -57,7 +59,7 @@ internal class ImageCaptureCameraSource: ImportSource {
         
         // otherwise, enumerate the device's contents
         guard let items = self.device.mediaFiles else {
-            DDLogWarn("No items on device: \(String(describing: self.device))")
+            Self.logger.warning("No items on device: \(String(describing: self.device))")
             return []
         }
         

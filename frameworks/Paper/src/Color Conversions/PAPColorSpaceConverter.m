@@ -9,8 +9,6 @@
 
 #import "PAPColorSpaceConverter.h"
 
-#import "Logging.h"
-
 #import "colorspace.h"
 
 NSString *PAPColorSpaceConverterErrorDomain = @"PAPColorSpaceConverterErrorDomain";
@@ -41,11 +39,11 @@ NSString *PAPColorSpaceConverterErrorDomain = @"PAPColorSpaceConverterErrorDomai
         NSURL *url = [b URLForResource:@"CamToXYZInfo" withExtension:@"plist"];
         
         self.camToXyzInfo = [NSDictionary dictionaryWithContentsOfURL:url];
-        DDAssert(self.camToXyzInfo != nil, @"Failed to load XYZ matrices from %@", url);
+        NSAssert(self.camToXyzInfo != nil, @"Failed to load XYZ matrices from %@", url);
         
         url = [b URLForResource:@"CamToXYZAliases" withExtension:@"plist"];
         self.aliases = [NSDictionary dictionaryWithContentsOfURL:url];
-        DDAssert(self.aliases != nil, @"Failed to load alias info from %@", url);
+        NSAssert(self.aliases != nil, @"Failed to load alias info from %@", url);
     }
     
     return self;
@@ -93,7 +91,7 @@ NSString *PAPColorSpaceConverterErrorDomain = @"PAPColorSpaceConverterErrorDomai
     
     // get data pointers
     uint16_t *ptr = pixels.mutableBytes;
-    DDAssert(ptr, @"Failed to get mutable pixel pointer from %@", pixels);
+    NSAssert(ptr, @"Failed to get mutable pixel pointer from %@", pixels);
     
     // run conversion
     err = ConvertToWorking(ptr, size.width, size.height, (double *) camXyz);

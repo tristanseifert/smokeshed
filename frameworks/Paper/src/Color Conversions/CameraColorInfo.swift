@@ -7,8 +7,7 @@
 
 import Foundation
 import simd
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Allows queries against the database of camera models to conversion matrices.
@@ -16,6 +15,9 @@ import CocoaLumberjackSwift
  * These conversion matricies are used to convert from the camera sensors' native color space to the XYZ working space.
  */
 public class CameraColorInfo {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: CameraColorInfo.self).bundleIdentifier!,
+                                         category: "CameraColorInfo")
+    
     /**
      * Map of camera model -> XYZ matrices. Each matrix is stored with each component multiplied by 10000.
      */
@@ -41,7 +43,7 @@ public class CameraColorInfo {
             let xyzPlist = try PropertyListSerialization.propertyList(from: xyzData,
                                                                       options: [], format: nil)
             guard let camToXyz = xyzPlist as? [String: Any] else {
-                DDLogError("Invalid xyz plist: \(xyzPlist)")
+                Self.logger.error("Invalid xyz plist: \(String(describing: xyzPlist))")
                 return nil
             }
             self.camToXyz = camToXyz
@@ -54,12 +56,12 @@ public class CameraColorInfo {
                                                                           options: [],
                                                                           format: nil)
             guard let aliases = aliasesPlist as? [String: String] else {
-                DDLogError("Invalid alias plist: \(aliasesPlist)")
+                Self.logger.error("Invalid alias plist: \(String(describing: aliasesPlist))")
                 return nil
             }
             self.modelNameAliases = aliases
         } catch {
-            DDLogError("Failed to load color info: \(error)")
+            Self.logger.error("Failed to load color info: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }

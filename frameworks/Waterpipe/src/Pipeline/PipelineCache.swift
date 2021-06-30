@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 /**
  * Provides a mechanism to cache arbitrary objects in main memory. The cache is aware of the system's memory needs and will decide
  * what data is actually kept around based on some heuristics.

@@ -9,7 +9,6 @@ import Cocoa
 import ImageCaptureCore
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Drives the main import window UI, enumerating connected devices.

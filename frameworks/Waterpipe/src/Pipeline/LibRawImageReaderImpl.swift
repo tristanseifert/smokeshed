@@ -10,7 +10,6 @@ import UniformTypeIdentifiers
 import Accelerate
 
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Implements support for reading generic camera raw files, using LibRaw.

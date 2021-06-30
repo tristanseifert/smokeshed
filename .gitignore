@@ -1,9 +1,5 @@
 # xcode stuff that changes per users
 xcuserdata/
 
-# Carthage artifacts
-Carthage/Build
-Carthage/Checkouts
-
 # command line build output
 build/

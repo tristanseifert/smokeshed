@@ -8,15 +8,19 @@
 import Foundation
 import CoreData
 import UniformTypeIdentifiers
+import ImageIO
+import OSLog
 
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * This class handles generating thumbnail images, writing them to chunks and updating the thumbnail
  * directory. It also contains logic to delete existing thumbnails.
  */
 internal class Generator {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: Generator.self).bundleIdentifier!,
+                                         category: "Generator")
+    
     /// Data store containing thumbnail metadata
     private var directory: ThumbDirectory!
     
@@ -70,13 +74,13 @@ internal class Generator {
     private func refreshSettings() {        
         // should the queue be sized automatically?
         if UserDefaults.standard.thumbWorkQueueSizeAuto {
-            DDLogDebug("Switched to automatic generator queue sizing")
+            Self.logger.debug("Switched to automatic generator queue sizing")
             self.queue.maxConcurrentOperationCount = OperationQueue.defaultMaxConcurrentOperationCount
         }
         // use an user-configured size
         else {
             let workers = abs(UserDefaults.standard.thumbWorkQueueSize)
-            DDLogDebug("User-defined generator queue size: \(workers)")
+            Self.logger.debug("User-defined generator queue size: \(workers)")
             
             self.queue.maxConcurrentOperationCount = workers
         }
@@ -137,7 +141,7 @@ internal class Generator {
                     do {
                         try self.generateNew(request)
                     } catch {
-                        DDLogError("Creating new thumb for \(request) failed: \(error)")
+                        Self.logger.error("Creating new thumb for \(request) failed: \(error.localizedDescription)")
                     }
                     
                     // relinquish access to bookmark if needed
@@ -182,7 +186,7 @@ internal class Generator {
                     do {
                         try self.updateExisting(thumb.0, thumb.1)
                     } catch {
-                        DDLogError("Updating thumb for \(thumb) failed: \(error)")
+                        Self.logger.error("Updating thumb for \(String(describing: thumb)) failed: \(error.localizedDescription)")
                     }
                     
                     // relinquish access to bookmark if needed
@@ -210,11 +214,11 @@ internal class Generator {
                 do {
                     try self.directory.save()
                 } catch {
-                    DDLogError("Failed to save directory: \(error)")
+                    Self.logger.error("Failed to save directory: \(error.localizedDescription)")
                 }
             }
         } catch {
-            DDLogError("generate(_:) failed: \(error) (requests: \(requests))")
+            Self.logger.error("generate(_:) failed: \(error.localizedDescription) (requests: \(requests))")
         }
     }
     
@@ -229,7 +233,7 @@ internal class Generator {
             }
             
             if thumbs.count != requests.count {
-                DDLogWarn("discard(_:) count mistmatch: requests \(requests) thumbs \(thumbs)")
+                Self.logger.warning("discard(_:) count mistmatch: requests \(requests) thumbs \(thumbs)")
             }
             
             // discard them and their chunk data asynchronously
@@ -246,7 +250,7 @@ internal class Generator {
                             self.postThumbDiscardedNotif(libraryId, thumbId)
                         }
                     } catch {
-                        DDLogError("Failed to remove thumb \(thumb): \(error)")
+                        Self.logger.error("Failed to remove thumb \(thumb): \(error.localizedDescription)")
                     }
                 }
             }
@@ -256,11 +260,11 @@ internal class Generator {
                 do {
                     try self.directory.save()
                 } catch {
-                    DDLogError("Failed to save directory: \(error)")
+                    Self.logger.error("Failed to save directory: \(error.localizedDescription)")
                 }
             }
         } catch {
-            DDLogError("generate(_:) failed: \(error) (requests: \(requests))")
+            Self.logger.error("generate(_:) failed: \(error.localizedDescription) (requests: \(requests))")
         }
     }
     
@@ -548,7 +552,7 @@ internal class Generator {
         }
         
         // remove chunk data
-        DDLogInfo("Removing entry \(entryId) from chunk \(chunkId)")
+        Self.logger.info("Removing entry \(entryId) from chunk \(chunkId)")
         try self.directory.chonker.deleteEntry(inChunk: chunkId,
                                                entryId: entryId)
         

@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 /**
  * Represents a single scan in a JPEG file. Scans are synonymous with passes through compressed data.
  *

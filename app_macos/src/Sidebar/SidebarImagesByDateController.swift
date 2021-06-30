@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import AppKit
 import CoreData
+import OSLog
 
 import Bowl
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Handles the tree of images displayed as the year > date structure in the sidebar.
@@ -18,6 +19,9 @@ import CocoaLumberjackSwift
  * TODO: Speed this up by caching dates and counts for each date
  */
 internal class SidebarImagesByDateController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: SidebarImagesByDateController.self).bundleIdentifier!,
+                                         category: "SidebarImagesByDateController")
+    
     /// Library being displayed by this sidebar
     internal var library: LibraryBundle! {
         didSet {
@@ -162,7 +166,7 @@ internal class SidebarImagesByDateController {
             let res = try self.mainCtx.fetch(self.fetchReq) as! [NSDictionary]
             dates = res.compactMap({ $0["dayCaptured"] as? Date })
         } catch {
-            DDLogError("Failed to retrieve distinct capture dates: \(error)")
+            Self.logger.error("Failed to retrieve distinct capture dates: \(error.localizedDescription)")
             return
         }
         
@@ -217,7 +221,7 @@ internal class SidebarImagesByDateController {
         // does the cache file exist?
         guard let url = self.cacheUrl,
               FileManager.default.fileExists(atPath: url.path) else {
-            DDLogDebug("Not loading sidebar dates cache because cache doesn't exist (url \(String(describing: self.cacheUrl)))")
+                  Self.logger.debug("Not loading sidebar dates cache because cache doesn't exist (url \(String(describing: self.cacheUrl)))")
             return false
         }
         
@@ -230,18 +234,18 @@ internal class SidebarImagesByDateController {
             let reader = PropertyListDecoder()
             cache = try reader.decode(CacheRoot.self, from: data)
         } catch {
-            DDLogError("Failed to read/decode cache from \(url): \(error)")
+            Self.logger.error("Failed to read/decode cache from \(url): \(error.localizedDescription)")
             return false
         }
         
         // validate the read data and copy what we can
         guard cache.version == CacheRoot.currentVersion else {
-            DDLogWarn("Ignoring cache file '\(url)' due to invalid version \(cache.version) (expected \(CacheRoot.currentVersion)")
+            Self.logger.warning("Ignoring cache file '\(url)' due to invalid version \(cache.version) (expected \(CacheRoot.currentVersion)")
             return false
         }
         
         guard cache.dates.count > 0 else {
-            DDLogWarn("Ignoring cache file '\(url)' because date count is 0")
+            Self.logger.warning("Ignoring cache file '\(url)' because date count is 0")
             return false
         }
         
@@ -261,7 +265,7 @@ internal class SidebarImagesByDateController {
     private func saveCache() {
         // ensure there's a cache url
         guard let url = self.cacheUrl else {
-            DDLogError("Request to save sidebar cache with no url (library \(String(describing: self.library)))")
+            Self.logger.error("Request to save sidebar cache with no url (library \(String(describing: self.library)))")
             return
         }
         
@@ -281,7 +285,7 @@ internal class SidebarImagesByDateController {
             // then, write the data blob to disk
             try data.write(to: url, options: .atomic)
         } catch {
-            DDLogError("Failed to write sidebar cache to \(url): \(error)")
+            Self.logger.error("Failed to write sidebar cache to \(url): \(error.localizedDescription)")
             return
         }
     }
@@ -507,7 +511,7 @@ internal class SidebarImagesByDateController {
                 
                 item.badgeValue = count.intValue
             } catch {
-                DDLogError("Failed to update image count for \(date): \(error)")
+                Self.logger.error("Failed to update image count for \(date): \(error.localizedDescription)")
             }
         }
     }

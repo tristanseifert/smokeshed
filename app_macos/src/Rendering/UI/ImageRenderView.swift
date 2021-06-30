@@ -9,13 +9,15 @@ import Cocoa
 import Metal
 import MetalKit
 import MetalPerformanceShaders
+import OSLog
 
 import Waterpipe
 import Smokeshop
 
-import CocoaLumberjackSwift
-
 class ImageRenderView: MTKView {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ImageRenderView.self).bundleIdentifier!,
+                                         category: "ImageRenderView")
+    
     // MARK: - Setup
     /// Notification observer on app quit
     private var quitObs: NSObjectProtocol? = nil
@@ -54,7 +56,7 @@ class ImageRenderView: MTKView {
         if self.device == nil {
             self.updateDevice()
         } else {
-            DDLogDebug("Using device \(String(describing: self.device)) from constructor")
+            Self.logger.debug("Using device \(String(describing: self.device)) from constructor")
             self.createMetalResources()
         }
         
@@ -107,7 +109,7 @@ class ImageRenderView: MTKView {
                 let surface = try res.get()
                 try self.updateThumb(surface)
             } catch {
-                DDLogError("Failed to set thumb, ignoring error: \(error)")
+                Self.logger.error("Failed to set thumb, ignoring error: \(error.localizedDescription)")
             }
         }
 
@@ -122,7 +124,7 @@ class ImageRenderView: MTKView {
                     return callback(res)
                 }
             } catch {
-                DDLogError("Failed to update image: \(error)")
+                Self.logger.error("Failed to update image: \(error.localizedDescription)")
                 return callback(.failure(error))
             }
         }
@@ -183,7 +185,7 @@ class ImageRenderView: MTKView {
             // renderer
             self.createRenderer(rendererCallback)
         } catch {
-            DDLogError("Failed to create metal resources: \(error)")
+            Self.logger.error("Failed to create metal resources: \(error.localizedDescription)")
         }
     }
     
@@ -210,8 +212,6 @@ class ImageRenderView: MTKView {
             projection.columns.1[3] = -screenSpaceOffset // translate
             projection.columns.1[1] = 1 - (screenSpaceOffset / 2) // y scale
         }
-        
-//        DDLogVerbose("Projection matrix: \(projection)")
         
         // update each of the quad drawers
         self.thumbQuad?.projection = projection
@@ -309,7 +309,7 @@ class ImageRenderView: MTKView {
         self.device = newDevice
         
         if self.currentLibrary != nil, self.currentImage != nil {
-            DDLogInfo("Reloading image \(self.currentImage!) due to device change (new: \(self.device!))")
+            Self.logger.info("Reloading image \(self.currentImage!) due to device change (new: \(self.device!.registryID))")
             
             
             self.createMetalResources() { res in
@@ -321,7 +321,7 @@ class ImageRenderView: MTKView {
                                 self.needsDisplay = true
                             }
                         } catch {
-                            DDLogError("Failed to reload image: \(error)")
+                            Self.logger.error("Failed to reload image: \(error.localizedDescription)")
                         }
                     }                    
                 }
@@ -344,7 +344,7 @@ class ImageRenderView: MTKView {
             return
         }
         
-        DDLogVerbose("Preferred device ImageRenderView in \(window): \(preferred)")
+        Self.logger.trace("Preferred device ImageRenderView in \(window): \(preferred.registryID)")
         self.updateDevice()
     }
     
@@ -358,7 +358,7 @@ class ImageRenderView: MTKView {
             return
         }
         
-        DDLogVerbose("Preferred device ImageRenderView in \(window): \(preferred)")
+        Self.logger.trace("Preferred device ImageRenderView in \(window): \(preferred.registryID)")
         self.updateDevice()
     }
 
@@ -405,7 +405,7 @@ class ImageRenderView: MTKView {
             
             buffer.commit()
         } catch {
-            DDLogError("ImageRenderView draw(_:) failed: \(error)")
+            Self.logger.error("ImageRenderView draw(_:) failed: \(error.localizedDescription)")
         }
     }
     
@@ -553,7 +553,7 @@ class ImageRenderView: MTKView {
             return
         }
         guard image.device.registryID == self.device!.registryID else {
-            DDLogError("Tiled image \(image) is for device \(image.device!); expected \(self.device!)")
+            Self.logger.error("Tiled image \(String(describing: image)) is for device \(image.device!.registryID); expected \(self.device!.registryID)")
             return
         }
         
@@ -585,7 +585,7 @@ class ImageRenderView: MTKView {
                 let renderer = try res.get()
                 self?.renderer = renderer
             } catch {
-                DDLogError("Failed to get renderer: \(error)")
+                Self.logger.error("Failed to get renderer: \(error.localizedDescription)")
             }
             
             if let cb = callback {
@@ -613,7 +613,7 @@ class ImageRenderView: MTKView {
                 }
                 self.postImageUpdatedNote()
             } catch {
-                DDLogError("Redraw failed: \(error)")
+                Self.logger.error("Redraw failed: \(error.localizedDescription)")
             }
         }
     }

@@ -8,7 +8,6 @@
 import Foundation
 import Metal
 import simd
-import CocoaLumberjackSwift
 
 /**
  * Calculates a histogram over an image on the GPU.

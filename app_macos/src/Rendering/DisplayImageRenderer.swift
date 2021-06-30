@@ -11,7 +11,6 @@ import Metal
 
 import Waterpipe
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Renders full images for editing into a smaller viewport that is displayed to the user.

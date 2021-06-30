@@ -9,8 +9,6 @@
 #include "TSRawImageDataHelpers.h"
 #include "interpolation_shared.h"
 
-#include "Logging.h"
-
 #include <float.h>
 #include <string.h>
 #include <memory.h>

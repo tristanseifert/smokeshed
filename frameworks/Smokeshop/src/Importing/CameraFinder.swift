@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import CoreData
 
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Given some image metadata, this class will try to find a matching camera in the library's data store, or

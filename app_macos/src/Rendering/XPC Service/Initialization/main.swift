@@ -7,11 +7,6 @@
 
 import Foundation
 
-import Bowl
-
-// set up some of our environment
-Bowl.Logger.setup(component: .renderer)
-
 // allocate XPC delegate and create a listener with it
 let delegate = XPCDelegate()
 

@@ -9,8 +9,6 @@ import Foundation
 import simd
 import Metal
 
-import CocoaLumberjackSwift
-
 public class TiledImageRenderer {
     /// Device used for drawing the tiled image
     private(set) public var device: MTLDevice

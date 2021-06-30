@@ -6,11 +6,14 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemValidation {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: MainWindowController.self).bundleIdentifier!,
+                                         category: "MainWindowController")
+    
     /// Library file that was opened for this window
     public var library: LibraryBundle! = nil {
         didSet {
@@ -100,7 +103,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
             coder.encode(bookmark, forKey: StateKeys.libraryBookmark)
             coder.encode(url.absoluteString, forKey: StateKeys.libraryUrl)
         } catch {
-            DDLogError("Failed to archive library url: \(error)")
+            Self.logger.error("Failed to archive library url: \(error.localizedDescription)")
         }
 
         // store inspector state
@@ -143,7 +146,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
 
         // convert sender to view and display the popover
         guard let view = sender as? NSView else {
-            DDLogError("Failed to convert sender \(sender) to NSView")
+            Self.logger.error("Failed to convert sender \(String(describing: sender)) to NSView")
             return
         }
 
@@ -320,7 +323,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate, NSMenuItemVali
                 do {
                     try ctx.save()
                 } catch {
-                    DDLogError("Failed to save context: \(error)")
+                    Self.logger.error("Failed to save context: \(error.localizedDescription)")
                 }
             }
         }

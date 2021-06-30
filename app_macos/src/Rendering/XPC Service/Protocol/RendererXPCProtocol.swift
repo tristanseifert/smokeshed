@@ -8,9 +8,9 @@
 import Foundation
 import Cocoa
 import Metal
+import OSLog
 
 import Waterpipe
-import CocoaLumberjackSwift
 
 /**
  * Interface of the object exported by the renderer XPC service
@@ -189,6 +189,9 @@ public enum RendererXPCConfigKey: String {
  * Render descriptor
  */
 @objc(RendererXPCJobDescriptor) public class RenderDescriptor: NSObject, NSSecureCoding {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: RenderDescriptor.self).bundleIdentifier!,
+                                         category: "RenderDescriptor")
+    
     /// We support secure coding, required for XPC
     public static var supportsSecureCoding: Bool = true
     
@@ -247,7 +250,7 @@ public enum RendererXPCConfigKey: String {
                                           relativeTo: nil, bookmarkDataIsStale: &isStale)
                         base = url
                     } catch {
-                        DDLogError("Failed to decode base url bookmark data (\(data)): \(error)")
+                        Self.logger.error("Failed to decode base url bookmark data (\(data)): \(error.localizedDescription)")
                         return nil
                     }
                 }
@@ -260,7 +263,7 @@ public enum RendererXPCConfigKey: String {
                                   relativeTo: base, bookmarkDataIsStale: &isStale)
                 self.url = url
             } catch {
-                DDLogError("Failed to decode url bookmark data (\(bookmark)): \(error)")
+                Self.logger.error("Failed to decode url bookmark data (\(bookmark)): \(error.localizedDescription)")
                 return nil
             }
         } else if let url = coder.decodeObject(of: NSURL.self, forKey: "url") as URL? {

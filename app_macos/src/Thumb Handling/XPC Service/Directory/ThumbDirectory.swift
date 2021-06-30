@@ -7,15 +7,17 @@
 
 import Foundation
 import CoreData
+import OSLog
 
 import Bowl
-
-import CocoaLumberjackSwift
 
 /**
  * Persistent store for thumbnail metadata
  */
 internal class ThumbDirectory {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ThumbDirectory.self).bundleIdentifier!,
+                                         category: "ThumbDirectory")
+    
     /// Chunk manager
     private(set) internal var chonker: ChunkManager!
     
@@ -69,7 +71,7 @@ internal class ThumbDirectory {
                                                         withIntermediateDirectories: true,
                                                         attributes: nil)
             } catch {
-                DDLogError("Failed to create thumb container at '\(base)': \(error)")
+                Self.logger.error("Failed to create thumb container at '\(base)': \(error.localizedDescription)")
             }
         }
         
@@ -77,7 +79,7 @@ internal class ThumbDirectory {
         let url = base.appendingPathComponent("ThumbDirectory.sqlite",
                                               isDirectory: false)
         
-        DDLogVerbose("Loading thumb directory from '\(url)'")
+        Self.logger.debug("Loading thumb directory from '\(url)'")
         
         // create a store description
         let opts = [
@@ -166,7 +168,7 @@ internal class ThumbDirectory {
      * - Note: This must be called from the object context's queue.
      */
     private func newLibrary(_ id: UUID) throws {
-        DDLogVerbose("Creating library \(id)")
+        Self.logger.debug("Creating library \(id)")
         
         // create a new library and populate its properties
         guard let new = NSEntityDescription.insertNewObject(forEntityName: "Library",
@@ -179,7 +181,7 @@ internal class ThumbDirectory {
         // ensure it has a permanent id
         try self.mainCtx.obtainPermanentIDs(for: [new])
         
-        DDLogInfo("Created library for id \(id): \(new.objectID)")
+        Self.logger.info("Created library for id \(id): \(new.objectID)")
     }
     
     /**

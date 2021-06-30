@@ -7,14 +7,16 @@
 
 import Foundation
 import CoreData
-
-import CocoaLumberjackSwift
+import OSLog
 
 
 /**
  * Handles prefetching thumbnail data from disk to speed up later thumbnail requests.
  */
 internal class Prefetcher {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: Prefetcher.self).bundleIdentifier!,
+                                         category: "Prefetcher")
+    
     /// Data store containing thumbnail metadata
     private var directory: ThumbDirectory!
         
@@ -53,7 +55,7 @@ internal class Prefetcher {
                 loadedChunks.append(chunkId)
             }
         } catch {
-            DDLogError("prefetch(_:) (requests: \(requests)) failed: \(error)")
+            Self.logger.error("prefetch(_:) (requests: \(requests)) failed: \(error.localizedDescription)")
         }
     }
 }

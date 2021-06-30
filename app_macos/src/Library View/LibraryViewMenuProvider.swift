@@ -6,15 +6,18 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Provides the appropriate menu for the main collection view in the library view.
  */
 class LibraryViewMenuProvider: NSObject, LibraryCollectionViewDelegate,
                                NSMenuItemValidation, NSMenuDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryViewMenuProvider.self).bundleIdentifier!,
+                                         category: "LibraryViewMenuProvider")
+    
     /// Containing library controller
     @IBOutlet private var parent: LibraryViewController!
 
@@ -55,7 +58,7 @@ class LibraryViewMenuProvider: NSObject, LibraryCollectionViewDelegate,
         if let image = self.currentImage {
             self.parent.openEditorForImages([image])
         } else {
-            DDLogError("editImage(_:) called without an image set!")
+            Self.logger.error("editImage(_:) called without an image set!")
             NSSound.beep()
         }
     }
@@ -66,7 +69,7 @@ class LibraryViewMenuProvider: NSObject, LibraryCollectionViewDelegate,
         if let image = self.currentImage {
             self.parent.removeImagesWithConfirmation([image])
         } else {
-            DDLogError("removeImage(_:) called without an image set!")
+            Self.logger.error("removeImage(_:) called without an image set!")
             NSSound.beep()
         }
     }

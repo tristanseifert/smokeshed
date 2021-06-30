@@ -7,15 +7,18 @@
 
 import Foundation
 import CoreData
+import OSLog
 
 import Bowl
-import CocoaLumberjackSwift
 
 /**
  * Implements an endpoint usable by the app to provide information about the thumbnail handler, as well as
  * perform some thumbnail maintenance and optimization.
  */
 class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: MaintenanceEndpoint.self).bundleIdentifier!,
+                                         category: "MaintenanceEndpoint")
+    
     /// Directory storing thumbnail data
     private var directory: ThumbDirectory!
     /// Queue for XPC listening
@@ -67,7 +70,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
      * that the bundle id is in a hardcoded list.
      */
     public func listener(_ listener: NSXPCListener, shouldAcceptNewConnection new: NSXPCConnection) -> Bool {
-        DDLogVerbose("Connection to maintenance endpoint: \(new)")
+        Self.logger.debug("Connection to maintenance endpoint: \(new)")
         
         // create the connection
         new.exportedInterface = ThumbXPCProtocolHelpers.makeMaintenanceEndpoint()
@@ -133,7 +136,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
     func moveThumbStorage(to: URL, copyExisting: Bool, deleteExisting: Bool, withReply reply: @escaping(Error?) -> Void) {
         // bail if old url is the same as new
         guard to != UserDefaults.standard.thumbStorageUrl else {
-            DDLogInfo("Ignoring moveThunbStorage request; origin and destination are identical")
+            Self.logger.warning("Ignoring moveThunbStorage request; origin and destination are identical")
             return reply(nil)
         }
         
@@ -201,7 +204,7 @@ class MaintenanceEndpoint: NSObject, ThumbXPCMaintenanceEndpoint, NSXPCListenerD
             // run success callback
             reply(nil)
         } catch {
-            DDLogError("Failed to move thumb storage to '\(to)': \(error)")
+            Self.logger.error("Failed to move thumb storage to '\(to)': \(error.localizedDescription)")
             reply(error)
         }
         

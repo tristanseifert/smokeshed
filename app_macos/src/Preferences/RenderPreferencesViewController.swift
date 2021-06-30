@@ -7,11 +7,14 @@
 
 import Cocoa
 import Metal
+import OSLog
 
 import Bowl
-import CocoaLumberjackSwift
 
 class RenderPreferencesViewController: NSViewController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: RenderPreferencesViewController.self).bundleIdentifier!,
+                                         category: "RenderPreferencesViewController")
+    
     /// Maintenance endpoint of the renderer service
     @objc dynamic weak private var maintenance: RendererMaintenanceXPCProtocol!
     
@@ -34,7 +37,7 @@ class RenderPreferencesViewController: NSViewController {
             switch res {
             // couldn't get the maintenance endpoint
             case .failure(let err):
-                DDLogError("Failed to get renderer maintenance endpoint: \(err)")
+                Self.logger.error("Failed to get renderer maintenance endpoint: \(err.localizedDescription)")
                 
                 if let window = self.view.window {
                     NSApp.presentError(err, modalFor: window, delegate: nil, didPresent: nil,
@@ -109,7 +112,7 @@ class RenderPreferencesViewController: NSViewController {
     private func setUpGpuObserver() {
         // install the observer
         let (devices, obs) = MTLCopyAllDevicesWithObserver() { device, type in
-            DDLogInfo("Device notification (type \(type)) with device \(device) received")
+            Self.logger.info("Device notification (type \(type.rawValue)) with device \(device.registryID) received")
             
             DispatchQueue.main.async {
                 var devices = self.gpuDevices
@@ -264,7 +267,7 @@ class RenderPreferencesViewController: NSViewController {
                     } else {
                         // TODO: handle the case where it no longer exists
                         // for now, we fall back to the default item being selected
-                        DDLogError("offline rendering GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
+                        Self.logger.error("offline rendering GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                     }
                 }
                 
@@ -276,7 +279,7 @@ class RenderPreferencesViewController: NSViewController {
                         self.displayRenderDeviceIdx = NSNumber(value: index)
                     } else {
                         // TODO: handle the case where it no longer exists
-                        DDLogError("display GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
+                        Self.logger.error("display GPU with registry ID \(id) no longer exists! (devices: \(self.gpuDevices)")
                     }
                 }
                 

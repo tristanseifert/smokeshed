@@ -6,13 +6,15 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Provides debugging controls for the edit view.
  */
 internal class EditViewDebugViewController: NSViewController {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: EditViewDebugViewController.self).bundleIdentifier!,
+                                         category: "EditViewDebugViewController")
+    
     /// Edit view being observed for changes
     internal var editView: ImageRenderView! = nil {
         didSet {
@@ -53,7 +55,7 @@ internal class EditViewDebugViewController: NSViewController {
      * Updates the viewport of the render view.
      */
     @IBAction func setViewport(_ sender: Any?) {
-        DDLogVerbose("Updating viewport to \(self.viewport)")
+        Self.logger.debug("Updating viewport to \(self.viewport.debugDescription)")
         self.editView.viewport = self.viewport
     }
 }

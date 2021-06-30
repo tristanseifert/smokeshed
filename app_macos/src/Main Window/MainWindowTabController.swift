@@ -6,14 +6,16 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Main window content tab controller: this provides an easy way to get at the represented object of the
  * currently selected controller.
  */
 class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: MainWindowTabController.self).bundleIdentifier!,
+                                         category: "MainWindowTabController")
+    
     /// Observers placed on previous tab items
     private var kvos: [NSKeyValueObservation] = []
     
@@ -102,7 +104,7 @@ class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
             }
         }
         
-        DDLogVerbose("Encoded state for these controllers: \(encodedIdentifiers)")
+        Self.logger.trace("Encoded state for these controllers: \(encodedIdentifiers)")
         coder.encode(encodedIdentifiers, forKey: StateKeys.encodedControllers)
     }
     
@@ -114,7 +116,7 @@ class MainWindowTabController: NSTabViewController, NSMenuItemValidation {
         
         // restore each controller's state
         if let encodedIds = coder.decodeObject(forKey: StateKeys.encodedControllers) as? [String] {
-            DDLogVerbose("Decoding state for these controllers: \(encodedIds)")
+            Self.logger.trace("Decoding state for these controllers: \(encodedIds)")
             
             for item in self.tabViewItems {
                 if encodedIds.contains(item.identifier as! String), let vc = item.viewController {

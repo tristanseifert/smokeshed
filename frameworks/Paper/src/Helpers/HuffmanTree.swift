@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 /**
  * A binary tree that's specifically geared towards use in Huffman coding schemes.
  *

@@ -7,8 +7,6 @@
 
 import Cocoa
 
-import CocoaLumberjackSwift
-
 /**
  * Provides some custom behaviors required for the library view
  */

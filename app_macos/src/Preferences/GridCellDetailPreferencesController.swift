@@ -6,14 +6,17 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Allows editing the detail information shown in the grid cells.
  */
 class GridCellDetailPreferencesController: NSViewController, NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: GridCellDetailPreferencesController.self).bundleIdentifier!,
+                                         category: "GridCellDetailPreferencesController")
+    
     /**
      * Registers the cell types.
      */
@@ -34,7 +37,7 @@ class GridCellDetailPreferencesController: NSViewController, NSCollectionViewDel
         // do kind of a hack to get the library
         guard let ad = NSApp.delegate as? AppDelegate,
               let library = ad.library else {
-            DDLogError("Failed to get library from app delegate")
+                  Self.logger.error("Failed to get library from app delegate")
             return
         }
         
@@ -54,7 +57,7 @@ class GridCellDetailPreferencesController: NSViewController, NSCollectionViewDel
             // update the grid
             self.grid.reloadData()
         } catch {
-            DDLogError("Failed to fetch image to show in grid cell detail controller: \(error)")
+            Self.logger.error("Failed to fetch image to show in grid cell detail controller: \(error.localizedDescription)")
             self.image = nil
         }
     }

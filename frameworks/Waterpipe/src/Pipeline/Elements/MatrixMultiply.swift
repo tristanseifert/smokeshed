@@ -8,7 +8,6 @@
 import Foundation
 import Metal
 import simd
-import CocoaLumberjackSwift
 
 import Paper
 

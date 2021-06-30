@@ -8,7 +8,6 @@
 import Cocoa
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Each image in the library is rendered by one of these bad boys.

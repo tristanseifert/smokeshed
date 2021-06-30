@@ -6,14 +6,16 @@
 //
 
 import Foundation
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Implements a transformer that converts between binary data and a CGSize struct. (Really, this encodes the
  * size as an NSValue and encodes that)
  */
 public class SizeTransformer: ValueTransformer {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: SizeTransformer.self).bundleIdentifier!,
+                                         category: "SizeTransformer")
+    
     /**
      * The output of the transformer is binary data.
      */
@@ -39,7 +41,7 @@ public class SizeTransformer: ValueTransformer {
         do {
             return try NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: true)
         } catch {
-            DDLogError("Failed to encode data: \(error)")
+            Self.logger.error("Failed to encode data: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }
@@ -49,18 +51,18 @@ public class SizeTransformer: ValueTransformer {
      */
     public override func reverseTransformedValue(_ value: Any?) -> Any? {
         guard let data = value as? Data else {
-            DDLogError("Failed to get input as data: \(String(describing: value))")
+            Self.logger.error("Failed to get input as data: \(String(describing: value))")
             return nil
         }
         do {
             guard let v = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSValue.self, from: data) else {
-                DDLogError("Failed to unarchive data: \(data)")
+                Self.logger.error("Failed to unarchive data: \(data)")
                 return nil
             }
 
             return v
         } catch {
-            DDLogError("Failed to decode data: \(error)")
+            Self.logger.error("Failed to decode data: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }

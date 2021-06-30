@@ -6,14 +6,17 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Provides an UI to allow picking a library.
  */
 class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableViewDelegate, NSMenuItemValidation {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryPickerController.self).bundleIdentifier!,
+                                         category: "LibraryPickerController")
+    
     /// URL of the library to open
     private var pickedUrl: URL! = nil
     /// Has the error been presented yet?
@@ -465,7 +468,7 @@ class LibraryPickerController: NSWindowController, NSWindowDelegate, NSTableView
             return
         }
 
-        DDLogWarn("Previous library error: \(info.1) (url \(info.0))")
+        Self.logger.warning("Previous library error: \(info.1.localizedDescription) (url \(info.0))")
         
         // build the alert
         let alert = NSAlert(error: info.1)

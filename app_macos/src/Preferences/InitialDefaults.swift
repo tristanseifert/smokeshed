@@ -6,14 +6,17 @@
 //
 
 import Foundation
+import OSLog
 
 import Bowl
-import CocoaLumberjackSwift
 
 /**
  * Handles registration of initial user defaults values across all suites.
  */
 internal class InitialDefaults {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: InitialDefaults.self).bundleIdentifier!,
+                                         category: "InitialDefaults")
+    
     // MARK: - Public interface
     /**
      * Registers the initial values for all user defaults domains.
@@ -21,7 +24,7 @@ internal class InitialDefaults {
     internal static func register() {
         // try to read the defaults
         guard let defaults = NSDictionary(contentsOf: Self.defaultsUrl) else {
-            DDLogError("Failed to load defaults from '\(Self.defaultsUrl)'")
+            Self.logger.error("Failed to load defaults from '\(Self.defaultsUrl)'")
             return
         }
         

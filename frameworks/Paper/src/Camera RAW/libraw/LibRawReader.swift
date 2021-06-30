@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 /**
  * Generic reader for camera raw formats, using the LibRaw library.
  */

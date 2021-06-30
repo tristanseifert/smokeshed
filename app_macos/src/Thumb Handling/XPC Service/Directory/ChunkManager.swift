@@ -7,9 +7,9 @@
 
 import Foundation
 import CoreData
+import OSLog
 
 import Bowl
-import CocoaLumberjackSwift
 
 /**
  * Provides an interface for reading chunks of thumbnail data from disk.
@@ -18,6 +18,9 @@ import CocoaLumberjackSwift
  * new data, provide an entry and it will be added to the most suitable chunk.
  */
 internal class ChunkManager: NSObject, NSCacheDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ChunkManager.self).bundleIdentifier!,
+                                         category: "ChunkManager")
+    
     /// Managed object context specifically for the chunk manager
     private var ctx: NSManagedObjectContext!
     
@@ -61,10 +64,10 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             do {
                 let newUrl = UserDefaults.standard.thumbStorageUrl
                 
-                DDLogInfo("New thumb storage url: \(newUrl)")
+                Self.logger.info("New thumb storage url: \(newUrl)")
                 try self.setChunkDir(newUrl)
             } catch {
-                DDLogError("Failed to update chunk url: \(error)")
+                Self.logger.error("Failed to update chunk url: \(error.localizedDescription)")
             }
         }
         self.kvos.append(urlObs)
@@ -89,7 +92,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         
         let url = bundleUrl.appendingPathComponent("Contents", isDirectory: true)
                            .appendingPathComponent("Chonkery", isDirectory: true)
-        DDLogInfo("Using chunk storage at '\(url)'")
+        Self.logger.info("Using chunk storage at '\(url)'")
         
         if !FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.createDirectory(at: url,
@@ -120,17 +123,17 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             let maxCacheSize = UInt64(Double(totalMem) * 0.1)
             let cacheSize = max(min((totalMem / 25), maxCacheSize), (128 * 1024 * 1024))
             
-            DDLogVerbose("Automatically sized chunk cache: \(cacheSize) bytes (max cache size: \(maxCacheSize))")
+            Self.logger.info("Automatically sized chunk cache: \(cacheSize) bytes (max cache size: \(maxCacheSize))")
             self.chunkCache.totalCostLimit = Int(clamping: cacheSize)
         } else {
             // get the new cache size
             let new = UserDefaults.standard.thumbChunkCacheSize
             
             if new > (1024 * 1024 * 16) {
-                DDLogVerbose("New thumb cache size: \(new)")
+                Self.logger.debug("New thumb cache size: \(new)")
                 self.chunkCache.totalCostLimit = new
             } else {
-                DDLogWarn("Ignoring too small cache size: \(new)")
+                Self.logger.warning("Ignoring too small cache size: \(new)")
             }
         }
     }
@@ -151,7 +154,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
         do {
             try self.setChunkDir(UserDefaults.standard.thumbStorageUrl)
         } catch {
-            DDLogError("Failed to update chunk dir: \(error)")
+            Self.logger.error("Failed to update chunk dir: \(error.localizedDescription)")
         }
         
         self.ioBlocked = false
@@ -366,7 +369,7 @@ internal class ChunkManager: NSObject, NSCacheDelegate {
             do {
                 try self.saveChunk(chunk)
             } catch {
-                DDLogError("Failed to save chunk \(String(describing: chunk)): \(error)")
+                Self.logger.error("Failed to save chunk \(String(describing: chunk)): \(error.localizedDescription)")
             }
         }
     }

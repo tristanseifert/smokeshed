@@ -6,11 +6,14 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 class EditViewController: NSViewController, NSMenuItemValidation, MainWindowContent {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: EditViewController.self).bundleIdentifier!,
+                                         category: "EditViewController")
+    
     /// Library that is being browsed
     public var library: LibraryBundle! {
         didSet {
@@ -116,10 +119,10 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             
             if self.view.superview != nil {
                 coder.encode(window.isVisible, forKey: StateKeys.secondaryVisible)
-                DDLogVerbose("View is in hierarchy, using window visible flag: \(window.isVisible)")
+                Self.logger.trace("View is in hierarchy, using window visible flag: \(window.isVisible)")
             } else {
                 coder.encode(self.shouldOpenSecondaryView, forKey: StateKeys.secondaryVisible)
-                DDLogVerbose("View not in hierarchy, should open: \(self.shouldOpenSecondaryView)")
+                Self.logger.trace("View not in hierarchy, should open: \(self.shouldOpenSecondaryView)")
             }
         }
         
@@ -347,7 +350,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                     self.isLoading = false
                 }
             } catch {
-                DDLogError("Failed to update image: \(error)")
+                Self.logger.error("Failed to update image: \(error.localizedDescription)")
             }
         }
         
@@ -387,7 +390,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
      */
     private func scrollViewBoundsChanged(_ note: Notification) {
         guard let content = note.object as? NSClipView else {
-            DDLogError("Invalid notification object: \(note)")
+            Self.logger.error("Invalid notification object: \(note)")
             return
         }
         
@@ -402,7 +405,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
             viewport.size.height /= zoomScale
         }
         
-//        DDLogVerbose("Viewport after scaling by \(zoomScale): \(viewport)")
+//        Self.logger.trace("Viewport after scaling by \(zoomScale): \(viewport)")
         
         // update the render view
         self.renderView.viewport = viewport
@@ -435,7 +438,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
         
         self.scrollView.magnification = 1
         content.setFrameSize(newSize)
-        DDLogVerbose("New scroll content view size: \(newSize)")
+        Self.logger.trace("New scroll content view size: \(newSize.debugDescription)")
     }
     
     // MARK: No Selection
@@ -564,7 +567,7 @@ class EditViewController: NSViewController, NSMenuItemValidation, MainWindowCont
                 })
                 
                 guard let wc = self.debugWc as? EditViewDebugWindowController else {
-                    DDLogError("Failed to cast debug window: \(String(describing: self.debugWc))")
+                    Self.logger.error("Failed to cast debug window: \(String(describing: self.debugWc))")
                     return
                 }
                 wc.editView = self.renderView

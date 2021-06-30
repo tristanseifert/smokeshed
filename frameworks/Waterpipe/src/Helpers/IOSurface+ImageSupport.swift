@@ -7,10 +7,9 @@
 
 import Foundation
 
+import CoreVideo
 import CoreGraphics
 import IOSurface
-
-import CocoaLumberjackSwift
 
 /**
  * Extends IOSurface to provide some convenience initializers that can create a surface from various image

@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Provides helpers to work with both the application specific and group container. The app container should
@@ -17,6 +17,10 @@ import CocoaLumberjackSwift
  * group container.
  */
 public class ContainerHelper {
+    /// Logger for the container helper class
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ContainerHelper.self).bundleIdentifier!,
+                                         category: "ContainerHelper")
+    
     /// App group name, this must be hardcoded. lol sorry
     public static let groupName = "8QDQ246B94.me.tseifert.SmokeShed"
     
@@ -93,7 +97,7 @@ public class ContainerHelper {
                                        in: .userDomainMask,
                                        appropriateFor: nil, create: true)
         } catch {
-            DDLogError("Failed to get cache dir: \(error)")
+            logger.warning("Failed to get cache dir: \(error.localizedDescription)")
             return nil
         }
     }

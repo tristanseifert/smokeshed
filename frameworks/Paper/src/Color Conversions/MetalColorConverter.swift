@@ -10,8 +10,6 @@ import Foundation
 import Metal
 import simd
 
-import CocoaLumberjackSwift
-
 /**
  * Converts pixel data from a camera specific color space to the working color space.
  */

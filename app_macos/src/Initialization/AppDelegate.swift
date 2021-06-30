@@ -6,13 +6,16 @@
 //
 
 import Cocoa
+import OSLog
 
 import Bowl
 import Smokeshop
-import CocoaLumberjackSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: AppDelegate.self).bundleIdentifier!,
+                                         category: "AppDelegate")
+    
     /// Main window
     var mainWindow: MainWindowController! = nil
 
@@ -23,12 +26,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
      */
     func applicationWillFinishLaunching(_ notification: Notification) {
         // load the bowl
-        Bowl.Logger.setup()
-        
         if let info = Bundle.main.infoDictionary,
            let vers = info[kCFBundleVersionKey as String] as? String,
            let build = info["CFBundleShortVersionString"] as? String {
-            DDLogWarn("Starting up (version \(vers), build \(build))")
+            Self.logger.info("Starting up (version \(vers), build \(build))")
         }
         
         // register user defaults
@@ -67,7 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
      * clicked in the Finder
      */
     func application(_ application: NSApplication, open urls: [URL]) {
-        DDLogInfo("Open urls: \(urls)")
+        Self.logger.trace("Open urls: \(urls)")
 
         // TODO: implement
     }
@@ -84,7 +85,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
                 try library.store!.save()
                 try library.write()
             } catch {
-                DDLogError("Failed to save library '\(String(describing: self.library))' during shutdown: \(error)")
+                Self.logger.error("Failed to save library '\(String(describing: self.library))' during shutdown: \(error.localizedDescription)")
 
                 NSApp.presentError(error)
             }
@@ -124,7 +125,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
                               completionHandler: @escaping (NSWindow?, Error?) -> Void) {
         // get a handle to the app delegate class
         guard let delegate = NSApp.delegate as? AppDelegate else {
-            DDLogError("Failed to convert delegate: \(String(describing: NSApp.delegate))")
+            Self.logger.error("Failed to convert delegate: \(String(describing: NSApp.delegate))")
             return completionHandler(nil, RestorationError.invalidAppDelegate)
         }
 
@@ -137,7 +138,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
 
             // get the url bookmark
             guard let bookmark = state.decodeObject(forKey: MainWindowController.StateKeys.libraryBookmark) as? Data else {
-                DDLogError("Failed to get library url bookmark")
+                Self.logger.error("Failed to get library url bookmark")
                 return completionHandler(nil, RestorationError.invalidLibraryUrl)
             }
 
@@ -148,7 +149,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
                 var isStale = false
                 libraryUrl = try URL(resolvingBookmarkData: bookmark, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
             } catch {
-                DDLogError("Failed to resolve library url bookmark: \(error)")
+                Self.logger.error("Failed to resolve library url bookmark: \(error.localizedDescription)")
                 return completionHandler(nil, error)
             }
 
@@ -156,7 +157,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
             do {
                 try delegate.openLibrary(libraryUrl)
             } catch {
-                DDLogError("Failed to open library from \(libraryUrl): \(error)")
+                Self.logger.error("Failed to open library from \(libraryUrl): \(error.localizedDescription)")
                 return completionHandler(nil, RestorationError.libraryLoadErr(error))
             }
             
@@ -173,7 +174,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
         }
 
         // unknown window type. should not happen
-        DDLogError("Request to restore window with unknown identifier \(identifier)")
+        Self.logger.error("Request to restore window with unknown identifier \(identifier.rawValue)")
         completionHandler(nil, RestorationError.unknown)
     }
 
@@ -293,14 +294,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowRestoration {
      * with an error message.
      */
     func openLibrary(_ url: URL) throws {
-        DDLogVerbose("Opening library from: \(url)")
+        Self.logger.trace("Opening library from: \(url)")
 
         // load the library and its data store
         self.library = try LibraryBundle(url, shouldOpenStore: true)
 
         // migrate store if required
         if self.library.store!.migrationRequired {
-            DDLogVerbose("Migration required for library '\(url)'")
+            Self.logger.trace("Migration required for library '\(url)'")
             abort() // XXX: remove this when implemented :)
         }
 

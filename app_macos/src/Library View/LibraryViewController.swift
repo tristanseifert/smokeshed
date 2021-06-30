@@ -6,11 +6,14 @@
 //
 
 import Cocoa
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 class LibraryViewController: LibraryBrowserBase, MainWindowContent {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryViewController.self).bundleIdentifier!,
+                                         category: "LibraryViewController")
+    
     /// Context menu controller for the collection view
     @IBOutlet private var menuController: LibraryViewMenuProvider!
 
@@ -253,14 +256,14 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
         do {
             try self.library.store.save()
         } catch {
-            DDLogError("Failed to save library prior to deletion: \(error)")
+            Self.logger.error("Failed to save library prior to deletion: \(error.localizedDescription)")
             self.presentError(error)
             return
         }
 
         // run the deletion
         guard let wc = self.view.window?.windowController as? MainWindowController else {
-            DDLogError("Failed to get window controller")
+            Self.logger.error("Failed to get window controller")
             return
         }
 
@@ -273,7 +276,7 @@ class LibraryViewController: LibraryBrowserBase, MainWindowContent {
         switch result {
             // Deletion completed
             case .success():
-                DDLogInfo("Finished removing images")
+            Self.logger.trace("Finished removing images")
 
             // Something went wrong
             case .failure(let error):

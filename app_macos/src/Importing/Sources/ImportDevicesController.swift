@@ -7,14 +7,16 @@
 
 import Foundation
 import ImageCaptureCore
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Provides the glue between the image capture framework and the sidebar UI to allow display and import from devices that are
  * connected to the machine.
  */
 internal class ImportDevicesController: NSObject, ICDeviceBrowserDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ImportDevicesController.self).bundleIdentifier!,
+                                         category: "ImportDevicesController")
+    
     typealias SidebarItem = ImportSidebarController.SidebarItem
     
     /// Sidebar in which the devices are appeared
@@ -101,7 +103,7 @@ internal class ImportDevicesController: NSObject, ICDeviceBrowserDelegate {
      * Enumeration of devices has completed.
      */
     func deviceBrowserDidEnumerateLocalDevices(_ browser: ICDeviceBrowser) {
-        DDLogInfo("Finished device enumeration")
+        Self.logger.trace("Finished device enumeration")
         
         DispatchQueue.main.async {
             self.enumeratingDevices = false
@@ -186,7 +188,7 @@ internal class ImportDevicesController: NSObject, ICDeviceBrowserDelegate {
                 return try ImageCaptureCameraSource(camera)
             }
         } catch {
-            DDLogError("Failed to create capture source: \(error)")
+            Self.logger.error("Failed to create capture source: \(error.localizedDescription)")
             NSApp.presentError(error)
         }
         

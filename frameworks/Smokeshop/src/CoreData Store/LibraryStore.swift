@@ -7,13 +7,15 @@
 
 import Foundation
 import CoreData
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Provides an interface to the CoreData store embedded in the library.
  */
 public class LibraryStore {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryStore.self).bundleIdentifier!,
+                                         category: "LibraryStore")
+    
     /// Library corresponding to this store
     private var library: LibraryBundle! = nil
 
@@ -94,7 +96,7 @@ public class LibraryStore {
         self.psc.addPersistentStore(with: desc, completionHandler: { (desc, error) in
             // failed to add the store
             if let error = error {
-                DDLogError("Failed to add persistent store '\(url)': \(error)")
+                Self.logger.error("Failed to add persistent store '\(url)': \(error.localizedDescription)")
 
                 // is migration required?
                 let nsErr = error as NSError
@@ -108,7 +110,7 @@ public class LibraryStore {
             }
             // success! no migration required
             else {
-                DDLogDebug("Added persistent store from '\(url)'")
+                Self.logger.debug("Added persistent store from '\(url)'")
             }
         })
 

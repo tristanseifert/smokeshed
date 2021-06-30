@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import AppKit
+import IOSurface
+import OSLog
 
 import Smokeshop
-import CocoaLumberjackSwift
 
 /**
  * Provides a shared endpoint to the thumbnail generation service.
@@ -25,6 +27,9 @@ import CocoaLumberjackSwift
  * created if they do not exist at retrieval time.
  */
 class ThumbHandler: ThumbXPCHandler {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ThumbHandler.self).bundleIdentifier!,
+                                         category: "ThumbHandler")
+    
     /// Shared thumb handler instance
     public static var shared = ThumbHandler()
 
@@ -65,7 +70,7 @@ class ThumbHandler: ThumbXPCHandler {
             // on quit, save thumb status
             self.service.save() {
                 if let error = $0 {
-                    DDLogError("Failed to save thumb service state: \(error)")
+                    Self.logger.error("Failed to save thumb service state: \(error.localizedDescription)")
                 }
             }
         }
@@ -93,13 +98,13 @@ class ThumbHandler: ThumbXPCHandler {
         
         // when invalidated, print a message and retry
         self.xpc.invalidationHandler = {
-            DDLogWarn("Thumb XPC connection invalidated")
+            Self.logger.warning("Thumb XPC connection invalidated")
             self.xpc = nil
         }
         
         // on interruption, attempt to get the service again
         self.xpc.interruptionHandler = {
-            DDLogWarn("Thumb connection interrupted; reconnecting")
+            Self.logger.warning("Thumb connection interrupted; reconnecting")
             self.getService()
         }
         
@@ -115,7 +120,7 @@ class ThumbHandler: ThumbXPCHandler {
      */
     private func getService() {
         self.service = self.xpc.remoteObjectProxyWithErrorHandler { error in
-            DDLogError("Failed to get remote object proxy: \(error)")
+            Self.logger.error("Failed to get remote object proxy: \(error.localizedDescription)")
         } as? ThumbXPCProtocol
     }
 
@@ -126,7 +131,7 @@ class ThumbHandler: ThumbXPCHandler {
         self.service!.wakeUp(handler: self, withReply: { error in
             // handle errors… not much we can do but invalidate connection
             guard error == nil else {
-                DDLogError("Failed to wake thumb service: \(error!)")
+                Self.logger.error("Failed to wake thumb service: \(error!.localizedDescription)")
 
                 self.service = nil
 
@@ -136,7 +141,7 @@ class ThumbHandler: ThumbXPCHandler {
             }
 
             // cool, we're ready for service™
-            DDLogVerbose("Thumb handler has woken up")
+            Self.logger.debug("Thumb handler has woken up")
         })
     }
 
@@ -152,7 +157,7 @@ class ThumbHandler: ThumbXPCHandler {
         if let service = self.service {
             service.openLibrary(id, withReply: { error in
                 if let err = error {
-                    DDLogError("Failed to open library in thumb handler: \(err)")
+                    Self.logger.error("Failed to open library in thumb handler: \(err.localizedDescription)")
                 }
             })
         }
@@ -212,7 +217,7 @@ class ThumbHandler: ThumbXPCHandler {
             { [weak self] notification in
                 self?.service.save() { error in
                     if let error = error {
-                        DDLogError("Failed to save thumb data: \(error)")
+                        Self.logger.error("Failed to save thumb data: \(error.localizedDescription)")
                     }
                 }
             }
@@ -417,7 +422,7 @@ class ThumbHandler: ThumbXPCHandler {
      * Cancels all thumbnail operations for a particular image id.
      */
     public func cancel(_ libraryId: UUID, _ imageIds: [UUID]) {
-//        DDLogDebug("Canceling thumb req: libId=\(libraryId), images=\(imageIds)")
+//        Self.logger.debug("Canceling thumb req: libId=\(libraryId), images=\(imageIds)")
     }
     
     // MARK: Maintenance
@@ -470,13 +475,13 @@ class ThumbHandler: ThumbXPCHandler {
      * Post a notification indicating that the thumbnail for this image has changed.
      */
     func thumbChanged(inLibrary library: UUID, _ imageId: UUID) {
-//        DDLogInfo("Thumb changed: library id \(library), image id \(imageId)")
+//        Self.logger.info("Thumb changed: library id \(library), image id \(imageId)")
         
         // fire all observers for the image id
         self.thumbCallbacksMapSem.wait()
         
         if let callbacks = self.thumbCallbacksMap[imageId] {
-//            DDLogVerbose("Callbacks for \(imageId): \(callbacks)")
+//            Self.logger.debug("Callbacks for \(imageId): \(callbacks)")
             
             // invoke each handler
             self.thumbCallbacksSem.wait()
@@ -521,7 +526,7 @@ class ThumbHandler: ThumbXPCHandler {
         
         self.thumbCallbacksMapSem.signal()
         
-//        DDLogVerbose("Added observer for image \(imageId): token is \(token)")
+//        Self.logger.trace("Added observer for image \(imageId): token is \(token)")
         
         // return the token
         return token
@@ -531,7 +536,7 @@ class ThumbHandler: ThumbXPCHandler {
      * Removes a thumbnail observer callback based on a previously issued token.
      */
     public func removeThumbObserver(_ token: UUID) {
-//        DDLogVerbose("Removing observer for token \(token)")
+//        Self.logger.trace("Removing observer for token \(token)")
         
         // search the callbacks map for this token
         self.thumbCallbacksMapSem.wait()

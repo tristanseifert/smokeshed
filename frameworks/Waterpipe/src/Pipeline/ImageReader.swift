@@ -9,7 +9,6 @@ import Foundation
 import UniformTypeIdentifiers
 
 import Paper
-import CocoaLumberjackSwift
 
 /**
  * Picks the most optimal image reader for the input file and uses it to read the file.

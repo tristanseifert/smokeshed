@@ -6,13 +6,15 @@
 //
 
 import Foundation
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Represents a library bundle on disk, and provides easy access to all of its contents.
  */
 public class LibraryBundle {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryBundle.self).bundleIdentifier!,
+                                         category: "LibraryBundle")
+    
     /// URL on disk of the bundle. May or may not exist
     private(set) public var url: URL! = nil
     /// File wrapper around the library bundle
@@ -297,7 +299,7 @@ public class LibraryBundle {
             do {
                 try self.writeMetadata()
             } catch {
-                DDLogError("Failed to write metadata after UUID generation: \(error)")
+                Self.logger.error("Failed to write metadata after UUID generation: \(error.localizedDescription, privacy: .public)")
             }
 
             return self.meta.uuid

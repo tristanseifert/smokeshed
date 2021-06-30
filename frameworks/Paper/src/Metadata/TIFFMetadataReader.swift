@@ -7,8 +7,6 @@
 
 import Foundation
 
-import CocoaLumberjackSwift
-
 /**
  * Consumes TIFF IFDs and extracts any known metadata out of them.
  */

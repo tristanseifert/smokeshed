@@ -6,10 +6,12 @@
 //
 
 import Cocoa
-
-import CocoaLumberjackSwift
+import OSLog
 
 class ActivityViewController: NSViewController, NSTableViewDelegate {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: ActivityViewController.self).bundleIdentifier!,
+                                         category: "ActivityViewController")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -33,7 +35,7 @@ class ActivityViewController: NSViewController, NSTableViewDelegate {
 
         self.preferredContentSize = CGSize(width: self.view.bounds.width,
                                            height: height)
-        DDLogVerbose("New activity list size: \(self.preferredContentSize)")
+        Self.logger.debug("New activity list size: \(self.preferredContentSize.debugDescription)")
     }
 
     // MARK: - Table handling

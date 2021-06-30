@@ -7,14 +7,16 @@
 
 import Foundation
 import Bowl
-
-import CocoaLumberjackSwift
+import OSLog
 
 /**
  * Provides an interface to the library open history. This is maintained as an ordered set of URLs, where the
  * topmost (first) URL is the most recently opened one.
  */
 class LibraryHistoryManager {
+    fileprivate static var logger = Logger(subsystem: Bundle(for: LibraryHistoryManager.self).bundleIdentifier!,
+                                         category: "LibraryHistoryManager")
+    
     /// URL to the history file
     static var historyUrl: URL! {
         return Bowl.ContainerHelper.groupCache.appendingPathComponent("LibraryHistory.plist", isDirectory: false)
@@ -39,7 +41,7 @@ class LibraryHistoryManager {
                 self.writeHistory()
             }
         } catch {
-            DDLogError("Failed to read history from \(self.historyUrl!): \(error)")
+            Self.logger.error("Failed to read history from \(self.historyUrl!): \(error.localizedDescription)")
        }
     }
     
@@ -53,7 +55,7 @@ class LibraryHistoryManager {
                                                         requiringSecureCoding: true)
             try data.write(to: self.historyUrl, options: .atomic)
         } catch {
-            DDLogError("Failed to write history to \(self.historyUrl!): \(error)")
+            Self.logger.error("Failed to write history to \(self.historyUrl!): \(error.localizedDescription)")
         }
     }
     
